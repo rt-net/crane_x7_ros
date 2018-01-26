@@ -1,0 +1,20 @@
+controller_manager_ns: /
+controller_list:
+  - name: /crane_x7/arm_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: true
+    joints:
+      - arm_joint1
+      - arm_joint2
+      - arm_joint3
+      - arm_joint4
+      - arm_joint5
+      - arm_joint6
+      - arm_joint7
+  - name: /crane_x7/hand_controller
+    action_ns: gripper_cmd
+    type: GripperCommand
+    default: true
+    joints:
+      - hand_joint1
