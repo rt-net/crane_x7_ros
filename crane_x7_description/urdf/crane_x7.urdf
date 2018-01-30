@@ -4,7 +4,7 @@
   <link name="base_frame_link">
     <visual>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Base_Frame.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/visual/Base_Frame.stl" scale="1.0 1.0 1.0"/>
       </geometry>
       <material name="almi_color">
         <color rgba="0.515625 0.52734375 0.53515625 1"/>
@@ -13,7 +13,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Base_Frame.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/collision/Base_Frame.stl" scale="1.0 1.0 1.0"/>
       </geometry>
     </collision>
     <inertial>
@@ -25,7 +25,7 @@
   <link name="base_link">
     <visual>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Base.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/visual/Base.stl" scale="1.0 1.0 1.0"/>
       </geometry>
       <material name="red_color">
         <color rgba="0.8984375 0.0 0.0703125 1"/>
@@ -34,7 +34,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Base.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/collision/Base.stl" scale="1.0 1.0 1.0"/>
       </geometry>
     </collision>
     <inertial>
@@ -46,7 +46,7 @@
   <link name="LINK1">
     <visual>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Link1.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/visual/Link1.stl" scale="1.0 1.0 1.0"/>
       </geometry>
       <material name="white_color">
         <color rgba="0.859375 0.859375 0.859375 1"/>
@@ -54,7 +54,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Link1.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/collision/Link1.stl" scale="1.0 1.0 1.0"/>
       </geometry>
     </collision>
     <inertial>
@@ -67,14 +67,14 @@
     <visual>
       <origin xyz="0.0 0.0 0.0" rpy="1.5708 0 0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Link2.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/visual/Link2.stl" scale="1.0 1.0 1.0"/>
       </geometry>
       <material name="white_color"/>
     </visual>
     <collision>
       <origin rpy="1.5708 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Link2.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/collision/Link2.stl" scale="1.0 1.0 1.0"/>
       </geometry>
     </collision>
     <inertial>
@@ -87,14 +87,14 @@
     <visual>
       <origin xyz="0.0 0.0 0.0" rpy="-1.5708 0 0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Link_Cover.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/visual/Link_Cover.stl" scale="1.0 1.0 1.0"/>
       </geometry>
       <material name="red_color"/>
     </visual>
     <collision>
       <origin rpy="-1.5708 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Link_Cover.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/collision/Link_Cover.stl" scale="1.0 1.0 1.0"/>
       </geometry>
     </collision>
     <inertial>
@@ -107,14 +107,14 @@
     <visual>
       <origin xyz="0.0 0.0 0.0" rpy="1.5708 0 0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Link_Cover.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/visual/Link_Cover.stl" scale="1.0 1.0 1.0"/>
       </geometry>
       <material name="red_color"/>
     </visual>
     <collision>
       <origin rpy="1.5708 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Link_Cover.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/collision/Link_Cover.stl" scale="1.0 1.0 1.0"/>
       </geometry>
     </collision>
     <inertial>
@@ -126,13 +126,13 @@
   <link name="LINK3">
     <visual>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Link3.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/visual/Link3.stl" scale="1.0 1.0 1.0"/>
       </geometry>
       <material name="white_color"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Link3.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/collision/Link3.stl" scale="1.0 1.0 1.0"/>
       </geometry>
     </collision>
     <inertial>
@@ -145,14 +145,14 @@
     <visual>
       <origin xyz="0.0 0.0 0.0" rpy="1.5708 0 0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Link4.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/visual/Link4.stl" scale="1.0 1.0 1.0"/>
       </geometry>
       <material name="white_color"/>
     </visual>
     <collision>
       <origin xyz="0.0 0.0 0.0" rpy="1.5708 0 0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Link4.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/collision/Link4.stl" scale="1.0 1.0 1.0"/>
       </geometry>
     </collision>
     <inertial>
@@ -165,14 +165,14 @@
     <visual>
       <origin xyz="0.0 0.0 0.0" rpy="-1.5708 0 0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Link_Cover.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/visual/Link_Cover.stl" scale="1.0 1.0 1.0"/>
       </geometry>
       <material name="red_color"/>
     </visual>
     <collision>
       <origin rpy="-1.5708 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Link_Cover.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/collision/Link_Cover.stl" scale="1.0 1.0 1.0"/>
       </geometry>
     </collision>
     <inertial>
@@ -185,14 +185,14 @@
     <visual>
       <origin xyz="0.0 0.0 0.0" rpy="1.5708 0 0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Link_Cover.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/visual/Link_Cover.stl" scale="1.0 1.0 1.0"/>
       </geometry>
       <material name="red_color"/>
     </visual>
     <collision>
       <origin rpy="1.5708 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Link_Cover.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/collision/Link_Cover.stl" scale="1.0 1.0 1.0"/>
       </geometry>
     </collision>
     <inertial>
@@ -204,13 +204,13 @@
   <link name="LINK5">
     <visual>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Link5.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/visual/Link5.stl" scale="1.0 1.0 1.0"/>
       </geometry>
       <material name="white_color"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Link5.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/collision/Link5.stl" scale="1.0 1.0 1.0"/>
       </geometry>
     </collision>
     <inertial>
@@ -223,14 +223,14 @@
     <visual>
       <origin xyz="0.0 0.0 0.0" rpy="-1.5708 1.5708 0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Logo_Rabbit.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/visual/Logo_Rabbit.stl" scale="1.0 1.0 1.0"/>
       </geometry>
       <material name="red_color"/>
     </visual>
     <collision>
       <origin rpy="-1.5708 1.5708 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Logo_Rabbit.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/collision/Logo_Rabbit.stl" scale="1.0 1.0 1.0"/>
       </geometry>
     </collision>
     <inertial>
@@ -243,7 +243,7 @@
     <visual>
       <origin xyz="0.0 0.0 0.0" rpy="-1.5708 1.5708 0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Logo_Corp.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/visual/Logo_Corp.stl" scale="1.0 1.0 1.0"/>
       </geometry>
       <material name="corp_color">
         <color rgba="0.2 0.2 0.2 1"/>
@@ -252,7 +252,7 @@
     <collision>
       <origin rpy="-1.5708 1.5708 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Logo_Corp.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/collision/Logo_Corp.stl" scale="1.0 1.0 1.0"/>
       </geometry>
     </collision>
     <inertial>
@@ -265,14 +265,14 @@
     <visual>
       <origin xyz="0.0 0.0 0.0" rpy="1.5708 -1.5708 0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Logo_Rabbit.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/visual/Logo_Rabbit.stl" scale="1.0 1.0 1.0"/>
       </geometry>
       <material name="red_color"/>
     </visual>
     <collision>
       <origin rpy="1.5708 -1.5708 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Logo_Rabbit.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/collision/Logo_Rabbit.stl" scale="1.0 1.0 1.0"/>
       </geometry>
     </collision>
     <inertial>
@@ -285,14 +285,14 @@
     <visual>
       <origin xyz="0.0 0.0 0.0" rpy="1.5708 -1.5708 0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Logo_Corp.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/visual/Logo_Corp.stl" scale="1.0 1.0 1.0"/>
       </geometry>
       <material name="corp_color"/>
     </visual>
     <collision>
       <origin rpy="1.5708 -1.5708 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Logo_Corp.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/collision/Logo_Corp.stl" scale="1.0 1.0 1.0"/>
       </geometry>
     </collision>
     <inertial>
@@ -305,14 +305,14 @@
     <visual>
       <origin xyz="0.0 0.0 0.0" rpy="1.5708 0 0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Link6.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/visual/Link6.stl" scale="1.0 1.0 1.0"/>
       </geometry>
       <material name="white_color"/>
     </visual>
     <collision>
       <origin rpy="1.5708 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Link6.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/collision/Link6.stl" scale="1.0 1.0 1.0"/>
       </geometry>
     </collision>
     <inertial>
@@ -324,13 +324,13 @@
   <link name="LINK7">
     <visual>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Link7.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/visual/Link7.stl" scale="1.0 1.0 1.0"/>
       </geometry>
       <material name="red_color"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/Link7.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/collision/Link7.stl" scale="1.0 1.0 1.0"/>
       </geometry>
     </collision>
     <inertial>
@@ -343,14 +343,14 @@
     <visual>
       <origin xyz="0.0 0.0 0.0" rpy="1.5708 0 0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/HandA.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/visual/HandA.stl" scale="1.0 1.0 1.0"/>
       </geometry>
       <material name="red_color"/>
     </visual>
     <collision>
       <origin xyz="0.0 0.0 0.0" rpy="1.5708 0 0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/HandA.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/collision/HandA.stl" scale="1.0 1.0 1.0"/>
       </geometry>
     </collision>
     <inertial>
@@ -363,14 +363,14 @@
     <visual>
       <origin xyz="0.0 0.0 0.0" rpy="1.5708 0 0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/HandB.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/visual/HandB.stl" scale="1.0 1.0 1.0"/>
       </geometry>
       <material name="red_color"/>
     </visual>
     <collision>
       <origin xyz="0.0 0.0 0.0" rpy="1.5708 0 0"/>
       <geometry>
-        <mesh filename="package://crane_x7_description/meshes/HandB.stl" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://crane_x7_description/meshes/collision/HandB.stl" scale="1.0 1.0 1.0"/>
       </geometry>
     </collision>
     <inertial>
