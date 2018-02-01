@@ -37,18 +37,18 @@
         <joint name="arm_joint1" value="0" />
         <joint name="arm_joint2" value="0.5062" />
         <joint name="arm_joint3" value="0" />
-        <joint name="arm_joint4" value="2.6" />
+        <joint name="arm_joint4" value="-2.8071" />
         <joint name="arm_joint5" value="0" />
-        <joint name="arm_joint6" value="1.037" />
+        <joint name="arm_joint6" value="0" />
         <joint name="arm_joint7" value="0" />
     </group_state>
     <group_state name="resting" group="crane_x7_arm">
         <joint name="arm_joint1" value="0" />
         <joint name="arm_joint2" value="0" />
         <joint name="arm_joint3" value="0" />
-        <joint name="arm_joint4" value="2.6" />
+        <joint name="arm_joint4" value="-2.8071" />
         <joint name="arm_joint5" value="0" />
-        <joint name="arm_joint6" value="0.2253" />
+        <joint name="arm_joint6" value="0" />
         <joint name="arm_joint7" value="0" />
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
