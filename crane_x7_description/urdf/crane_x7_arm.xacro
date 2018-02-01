@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find crane_x7_description)/urdf/crane_x7_arm_hardware.xacro"/>
+
+  <xacro:macro name="crane_x7_arm"
+      params="parent
+              end_effector_base_link
+              base_color
+              shoulder_color
+              shoulder_joint_cover_color
+              upper_arm_upper_color
+              upper_arm_lower_color
+              elbow_joint_cover_color
+              lower_arm_upper_color
+              lower_arm_lower_color
+              wrist_color
+              joints_vlimit
+              shoulder_llimit
+              shoulder_ulimit">
+
+    <!-- Shoulder -->
+    <crane_x7_shoulder
+        parent="${parent}"
+        name="crane_x7_shoulder"
+        fixed_part_color="${base_color}"
+        revolute_part_color="${shoulder_color}"
+        vlimit="${joints_vlimit}"
+        llimit="${shoulder_llimit}"
+        ulimit="${shoulder_ulimit}"
+        attached_link="crane_x7_upper_arm_fixed_part_link">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </crane_x7_shoulder>
+
+    <!-- Upper arm -->
+    <crane_x7_type_1_rotating_link
+        name="crane_x7_upper_arm"
+        fixed_part_color="${upper_arm_upper_color}"
+        fixed_vlimit="${joints_vlimit}"
+        fixed_llimit="-${M_PI/2}"
+        fixed_ulimit="${M_PI/2}"
+        revolute_part_color="${upper_arm_lower_color}"
+        revolute_vlimit="${joints_vlimit}"
+        revolute_llimit="-${M_PI/2}"
+        revolute_ulimit="${M_PI/2}"
+        joint_cover_color="${shoulder_joint_cover_color}"
+        attached_link="crane_x7_lower_arm_fixed_part_link">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </crane_x7_type_1_rotating_link>
+
+    <!-- Lower arm -->
+    <crane_x7_lower_arm
+        name="crane_x7_lower_arm"
+        fixed_part_color="${lower_arm_upper_color}"
+        fixed_vlimit="${joints_vlimit}"
+        fixed_llimit="-${M_PI/2}"
+        fixed_ulimit="${M_PI/2}"
+        revolute_part_color="${lower_arm_lower_color}"
+        revolute_vlimit="${joints_vlimit}"
+        revolute_llimit="-${M_PI/2}"
+        revolute_ulimit="${M_PI/2}"
+        joint_cover_color="${elbow_joint_cover_color}"
+        attached_link="crane_x7_wrist_link">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </crane_x7_effector_link_upper>
+
+    <!-- Wrist -->
+    <crane_x7_effector_link
+        name="crane_x7_wrist"
+        color="${wrist_color}"
+        vlimit="${joints_vlimit}"
+        llimit="-${M_PI/2}"
+        ulimit="${M_PI/2}"
+        attached_link="${end_effector_base_link}">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </crane_x7_effector_link>
+</robot>

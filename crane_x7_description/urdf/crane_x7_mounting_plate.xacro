@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:property name="M_PI" value="3.14159"/>
+  <xacro:property name="SCALE_MM" value="0.001"/>
+  <xacro:property name="SCALE_CM" value="0.01"/>
+
+  <xacro:property name="MOUNTING_PLATE_THICKNESS" value="0.005"/>
+
+  <xacro:macro name="crane_x7_mounting_plate" params="parent name color *origin">
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+
+    <link name="${name}_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://crane_x7_description/meshes/visual/mounting_plate.stl"
+              scale="1 1 1"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://crane_x7_description/meshes/collision/mounting_plate.stl"
+              scale="1 1 1"/>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <mass value="0.001"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia ixx="1" ixy="0.0" ixz="0.0"
+          iyy="1" iyz="0.0"
+          izz="1"/>
+      </inertial>
+    </link>
+  </xacro:macro>
+</robot>
