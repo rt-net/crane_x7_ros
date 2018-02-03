@@ -4,7 +4,8 @@
   <xacro:property name="SCALE_MM" value="0.001"/>
   <xacro:property name="SCALE_CM" value="0.01"/>
 
-  <xacro:macro name="crane_x7_wide_two_finger_gripper" params="name color *origin">
+  <xacro:macro name="crane_x7_wide_two_finger_gripper"
+      params="name color vlimit llimit ulimit *origin">
     <link name="${name}_base_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -33,7 +34,7 @@
     </link>
 
     <joint name="${name}_finger_a_joint" type="revolute">
-      <origin xyz="0 0 0" rpy="0 0 0"
+      <origin xyz="0 0 0" rpy="0 0 0"/>
       <axis xyz="0 0 1"/>
       <limit effort="30" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
       <parent link="${name}_base_link"/>
@@ -68,7 +69,7 @@
     </link>
 
     <joint name="${name}_finger_b_joint" type="revolute">
-      <origin xyz="0 0 0" rpy="0 0 0"
+      <origin xyz="0 0 0" rpy="0 0 0"/>
       <axis xyz="0 0 1"/>
       <limit effort="30" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
       <parent link="${name}_base_link"/>

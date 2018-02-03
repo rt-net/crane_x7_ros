@@ -17,19 +17,20 @@
        velocities limit and lower/upper limits for the first joint. This
        allows accessing different operational areas, e.g. left-handed vs.
        right-handed robots. -->
-  <crane_plus parent="base_link"
-              base_color="blue"
-              link_1_color="black"
-              link_2_color="black"
-              link_3_color="black"
-              link_4_color="black"
-              link_5_color="black"
-              link_6_color="black"
-              link_7_color="blue"
-              link_cover_color="blue"
+  <crane_x7 parent="base_link"
+              base_color="black"
+              shoulder_color="blue"
+              shoulder_joint_cover_color="red"
+              upper_arm_upper_color="green"
+              upper_arm_lower_color="white"
+              elbow_joint_cover_color="blue"
+              lower_arm_upper_color="red"
+              lower_arm_lower_color="green"
+              wrist_color="white"
               hand_color="blue"
               joints_vlimit="1.571"
-              pan_llimit="-2.617" pan_ulimit="2.617">
+              shoulder_llimit="-2.617"
+              shoulder_ulimit="2.617">
     <origin xyz="0 0 0"/>
-  </crane_plus>
+  </crane_x7>
 </robot>
