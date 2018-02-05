@@ -35,7 +35,7 @@
         pan_ulimit="${shoulder_ulimit}"
         revolute_part_color="${shoulder_color}"
         tilt_vlimit="${joints_vlimit}"
-        tilt_llimit="${M_PI/2}"
+        tilt_llimit="-${M_PI/2}"
         tilt_ulimit="${M_PI/2}"
         attached_link="crane_x7_upper_arm_fixed_part_link">
       <xacro:insert_block name="origin"/>
@@ -45,29 +45,27 @@
     <crane_x7_type_1_rotating_link
         name="crane_x7_upper_arm"
         fixed_part_color="${upper_arm_upper_color}"
-        fixed_vlimit="${joints_vlimit}"
-        fixed_llimit="-${M_PI/2}"
-        fixed_ulimit="${M_PI/2}"
+        twist_vlimit="${joints_vlimit}"
+        twist_llimit="-${M_PI/2}"
+        twist_ulimit="${M_PI/2}"
         revolute_part_color="${upper_arm_lower_color}"
-        revolute_vlimit="${joints_vlimit}"
-        revolute_llimit="-${M_PI/2}"
-        revolute_ulimit="${M_PI/2}"
+        rotate_vlimit="${joints_vlimit}"
+        rotate_llimit="-2.80718"
+        rotate_ulimit="0.04141"
         joint_cover_color="${shoulder_joint_cover_color}"
-        attached_link="crane_x7_lower_arm_fixed_part_link">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-    </crane_x7_type_1_rotating_link>
+        attached_link="crane_x7_lower_arm_fixed_part_link"/>
 
     <!-- Lower arm -->
     <crane_x7_type_2_rotating_link
         name="crane_x7_lower_arm"
         fixed_part_color="${lower_arm_upper_color}"
-        fixed_vlimit="${joints_vlimit}"
-        fixed_llimit="-${M_PI/2}"
-        fixed_ulimit="${M_PI/2}"
+        twist_vlimit="${joints_vlimit}"
+        twist_llimit="-2.77343"
+        twist_ulimit="1.51403"
         revolute_part_color="${lower_arm_lower_color}"
-        revolute_vlimit="${joints_vlimit}"
-        revolute_llimit="-${M_PI/2}"
-        revolute_ulimit="${M_PI/2}"
+        rotate_vlimit="${joints_vlimit}"
+        rotate_llimit="-${M_PI/2}"
+        rotate_ulimit="${M_PI/2}"
         joint_cover_color="${elbow_joint_cover_color}"
         attached_link="crane_x7_wrist_link">
       <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -78,8 +76,8 @@
         name="crane_x7_wrist"
         color="${wrist_color}"
         vlimit="${joints_vlimit}"
-        llimit="-${M_PI/2}"
-        ulimit="${M_PI/2}"
+        llimit="-2.96365"
+        ulimit="2.97132"
         attached_link="${end_effector_base_link}">
       <origin xyz="0 0 0" rpy="0 0 0"/>
     </crane_x7_wrist>
@@ -87,6 +85,7 @@
 
 
   <!-- Composite parts -->
+
   <!-- Base pan/tilt-like joint -->
   <xacro:macro name="crane_x7_base"
       params="parent name
@@ -109,17 +108,15 @@
         vlimit="${tilt_vlimit}"
         llimit="${tilt_llimit}"
         ulimit="${tilt_ulimit}"
-        attached_link="${attached_link}">
-      <xacro:insert_block name="origin"/>
-    </crane_x7_base_revolute_part>
+        attached_link="${attached_link}"/>
   </xacro:macro>
 
   <!-- Long link with twist capability -->
   <xacro:macro name="crane_x7_type_1_rotating_link"
       params="name
-      fixed_part_color fixed_vlimit fixed_llimit fixed_ulimit
-      revolute_part_color revolute_vlimit revolute_llimit revolute_ulimit
-      joint_cover_color attached_link *origin">
+      fixed_part_color twist_vlimit twist_llimit twist_ulimit
+      revolute_part_color rotate_vlimit rotate_llimit rotate_ulimit
+      joint_cover_color attached_link">
     <crane_x7_rotating_link_1_fixed_part
         name="${name}_fixed_part"
         color="${fixed_part_color}"/>
@@ -128,30 +125,28 @@
         parent="${name}_fixed_part_link"
         name="${name}_revolute_part"
         color="${revolute_part_color}"
-        rotate_vlimit="${fixed_vlimit}"
-        rotate_llimit="${fixed_llimit}"
-        rotate_ulimit="${fixed_ulimit}"
-        twist_vlimit="${revolute_vlimit}"
-        twist_llimit="${revolute_llimit}"
-        twist_ulimit="${revolute_ulimit}"
+        twist_vlimit="${twist_vlimit}"
+        twist_llimit="${twist_llimit}"
+        twist_ulimit="${twist_ulimit}"
+        rotate_vlimit="${rotate_vlimit}"
+        rotate_llimit="${rotate_llimit}"
+        rotate_ulimit="${rotate_ulimit}"
         joint_cover_color="${joint_cover_color}"
-        attached_link="${attached_link}">
-      <xacro:insert_block name="origin"/>
-    </crane_x7_rotating_link_1_revolute_part>
+        attached_link="${attached_link}"/>
   </xacro:macro>
 
   <!-- Arm-to-wrist link with twist capability -->
   <xacro:macro name="crane_x7_type_2_rotating_link"
       params="name
-      fixed_part_color fixed_vlimit fixed_llimit fixed_ulimit
-      revolute_part_color revolute_vlimit revolute_llimit revolute_ulimit
+      fixed_part_color twist_vlimit twist_llimit twist_ulimit
+      revolute_part_color rotate_vlimit rotate_llimit rotate_ulimit
       joint_cover_color attached_link *origin">
     <crane_x7_rotating_link_2_fixed_part
         name="${name}_fixed_part"
         color="${fixed_part_color}"
-        vlimit="${fixed_vlimit}"
-        llimit="${fixed_llimit}"
-        ulimit="${fixed_ulimit}"
+        vlimit="${twist_vlimit}"
+        llimit="${twist_llimit}"
+        ulimit="${twist_ulimit}"
         attached_link="${name}_revolute_part_link">
       <xacro:insert_block name="origin"/>
     </crane_x7_rotating_link_2_fixed_part>
@@ -159,9 +154,9 @@
     <crane_x7_rotating_link_2_revolute_part
         name="${name}_revolute_part"
         color="${revolute_part_color}"
-        vlimit="${revolute_vlimit}"
-        llimit="${revolute_llimit}"
-        ulimit="${revolute_ulimit}"
+        vlimit="${rotate_vlimit}"
+        llimit="${rotate_llimit}"
+        ulimit="${rotate_ulimit}"
         joint_cover_color="${joint_cover_color}"
         attached_link="${attached_link}">
       <xacro:insert_block name="origin"/>
@@ -201,8 +196,8 @@
       </collision>
 
       <inertial>
-        <mass value="0.001"/>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.387313"/>
+        <origin xyz="-0.00669 0.000049 0.017868" rpy="0 0 0"/>
         <inertia ixx="1" ixy="0.0" ixz="0.0"
           iyy="1" iyz="0.0"
           izz="1"/>
@@ -211,20 +206,21 @@
 
     <!-- Pan joint of the shoulder -->
     <joint name="${name}_pan_joint" type="revolute">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0 0 ${BASE_FIXED_PART_JOINT_Z}" rpy="0 0 0"/>
       <axis xyz="0 0 1"/>
-      <limit effort="30" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
+      <limit effort="0.5" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
       <parent link="${name}_link"/>
       <child link="${attached_link}"/>
     </joint>
   </xacro:macro>
+  <xacro:property name="BASE_FIXED_PART_JOINT_Z" value="0.041"/>
 
   <!-- Rotated part of base -->
   <xacro:macro name="crane_x7_base_revolute_part"
-      params="name color vlimit llimit ulimit attached_link *origin">
+      params="name color vlimit llimit ulimit attached_link">
     <link name="${name}_link">
       <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI}"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/visual/base_revolute_part.stl"
               scale="1 1 1"/>
@@ -233,7 +229,7 @@
       </visual>
 
       <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI}"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/collision/base_revolute_part.stl"
               scale="1 1 1"/>
@@ -241,8 +237,8 @@
       </collision>
 
       <inertial>
-        <mass value="0.001"/>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.235377"/>
+        <origin xyz="0.000013 -0.000407 0.046345" rpy="0 0 0"/>
         <inertia ixx="1" ixy="0.0" ixz="0.0"
           iyy="1" iyz="0.0"
           izz="1"/>
@@ -251,20 +247,21 @@
 
     <!-- Tilt joint of the shoulder -->
     <joint name="${name}_tilt_joint" type="revolute">
-      <xacro:insert_block name="origin"/>
+      <origin xyz="0 0 ${BASE_REVOLUTE_PART_JOINT_Z}" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
-      <limit effort="30" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
+      <limit effort="0.5" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
       <parent link="${name}_link"/>
       <child link="${attached_link}"/>
     </joint>
   </xacro:macro>
+  <xacro:property name="BASE_REVOLUTE_PART_JOINT_Z" value="0.064"/>
 
   <!-- "Fixed" part of long twistable link -->
   <xacro:macro name="crane_x7_rotating_link_1_fixed_part"
     params="name color">
     <link name="${name}_link">
       <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/visual/rotating_link_type_1_fixed_part.stl"
               scale="1 1 1"/>
@@ -273,7 +270,7 @@
       </visual>
 
       <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/collision/rotating_link_type_1_fixed_part.stl"
               scale="1 1 1"/>
@@ -281,27 +278,28 @@
       </collision>
 
       <inertial>
-        <mass value="0.001"/>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.120005"/>
+        <origin xyz="0.000036 0.037855 -0.00018" rpy="${M_PI/2} 0 0"/>
         <inertia ixx="1" ixy="0.0" ixz="0.0"
           iyy="1" iyz="0.0"
           izz="1"/>
       </inertial>
     </link>
   </xacro:macro>
+  <xacro:property name="TYPE_1_FIXED_PART_JOINT_Z" value="0.065"/>
 
   <!-- Rotating part of long twistable link -->
   <xacro:macro name="crane_x7_rotating_link_1_revolute_part"
-      params="parent name color rotate_vlimit rotate_llimit rotate_ulimit
-        twist_vlimit twist_llimit twist_ulimit joint_cover_color attached_link *origin">
-    <!-- Joint for rotating around long axis -->
+      params="parent name color twist_vlimit twist_llimit twist_ulimit
+        rotate_vlimit rotate_llimit rotate_ulimit joint_cover_color attached_link">
+    <!-- Joint for twisting around long axis -->
     <joint name="${name}_twist_joint" type="revolute">
-      <xacro:insert_block name="origin"/>
+      <origin xyz="0 0 ${TYPE_1_FIXED_PART_JOINT_Z}" rpy="0 0 0"/>
       <axis xyz="0 0 1"/>
-      <limit effort="30"
-          velocity="${rotate_vlimit}"
-          lower="${rotate_llimit}"
-          upper="${rotate_ulimit}"/>
+      <limit effort="0.5"
+          velocity="${twist_vlimit}"
+          lower="${twist_llimit}"
+          upper="${twist_ulimit}"/>
       <parent link="${parent}"/>
       <child link="${name}_link"/>
     </joint>
@@ -340,8 +338,8 @@
       </collision>
 
       <inertial>
-        <mass value="0.001"/>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.340878"/>
+        <origin xyz="-0.011533 0.000021 0.083707" rpy="${M_PI/2} 0 0"/>
         <inertia ixx="1" ixy="0.0" ixz="0.0"
           iyy="1" iyz="0.0"
           izz="1"/>
@@ -350,23 +348,24 @@
 
     <!-- Joint for rotating the attached part -->
     <joint name="${name}_rotate_joint" type="revolute">
-      <xacro:insert_block name="origin"/>
-      <axis xyz="0 0 1"/>
-      <limit effort="30"
-          velocity="${twist_vlimit}"
-          lower="${twist_llimit}"
-          upper="${twist_ulimit}"/>
+      <origin xyz="0 0 ${TYPE_1_REVOLUTE_PART_JOINT_Z}" rpy="0 0 0"/>
+      <axis xyz="0 -1 0"/>
+      <limit effort="0.5"
+          velocity="${rotate_vlimit}"
+          lower="${rotate_llimit}"
+          upper="${rotate_ulimit}"/>
       <parent link="${name}_link"/>
       <child link="${attached_link}"/>
     </joint>
   </xacro:macro>
+  <xacro:property name="TYPE_1_REVOLUTE_PART_JOINT_Z" value="0.185"/>
 
   <!-- "Fixed" part of arm-to-wrist twistable link -->
   <xacro:macro name="crane_x7_rotating_link_2_fixed_part"
       params="name color vlimit llimit ulimit attached_link *origin">
     <link name="${name}_link">
       <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/visual/rotating_link_type_2_fixed_part.stl"
               scale="1 1 1"/>
@@ -375,7 +374,7 @@
       </visual>
 
       <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/collision/rotating_link_type_2_fixed_part.stl"
               scale="1 1 1"/>
@@ -383,8 +382,8 @@
       </collision>
 
       <inertial>
-        <mass value="0.001"/>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.230634"/>
+        <origin xyz="-0.008641 0.083071 -0.000086" rpy="${M_PI} 0 0"/>
         <inertia ixx="1" ixy="0.0" ixz="0.0"
           iyy="1" iyz="0.0"
           izz="1"/>
@@ -392,13 +391,14 @@
     </link>
 
     <joint name="${name}_joint" type="revolute">
-      <xacro:insert_block name="origin"/>
-      <axis xyz="0 1 0"/>
-      <limit effort="30" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
+      <origin xyz="0 0 ${TYPE_2_FIXED_PART_JOINT_Z}" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
+      <limit effort="0.5" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
       <parent link="${name}_link"/>
       <child link="${attached_link}"/>
     </joint>
   </xacro:macro>
+  <xacro:property name="TYPE_2_FIXED_PART_JOINT_Z" value="0.121"/>
 
   <!-- Rotating part of arm-to-wrist twistable link -->
   <xacro:macro name="crane_x7_rotating_link_2_revolute_part"
@@ -437,8 +437,8 @@
       </collision>
 
       <inertial>
-        <mass value="0.001"/>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.192709"/>
+        <origin xyz="-0.000024 0.001285 0.063837" rpy="0 0 0"/>
         <inertia ixx="1" ixy="0.0" ixz="0.0"
           iyy="1" iyz="0.0"
           izz="1"/>
@@ -446,20 +446,21 @@
     </link>
 
     <joint name="${name}_joint" type="revolute">
-      <xacro:insert_block name="origin"/>
+      <origin xyz="0 0 ${TYPE_2_REVOLUTE_PART_JOINT_Z}" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
-      <limit effort="30" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
+      <limit effort="0.5" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
       <parent link="${name}_link"/>
       <child link="${attached_link}"/>
     </joint>
   </xacro:macro>
+  <xacro:property name="TYPE_2_REVOLUTE_PART_JOINT_Z" value="0.129"/>
 
   <!-- Wrist (end effector attachment link) -->
   <xacro:macro name="crane_x7_wrist"
       params="name color vlimit llimit ulimit attached_link *origin">
     <link name="${name}_link">
       <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/visual/wrist.stl"
               scale="1 1 1"/>
@@ -468,7 +469,7 @@
       </visual>
 
       <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/collision/wrist.stl"
               scale="1 1 1"/>
@@ -476,8 +477,8 @@
       </collision>
 
       <inertial>
-        <mass value="0.001"/>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.130549"/>
+        <origin xyz="0.005713 -0.003707 0.000781" rpy="${M_PI/2} 0 0"/>
         <inertia ixx="1" ixy="0.0" ixz="0.0"
           iyy="1" iyz="0.0"
           izz="1"/>
@@ -485,11 +486,12 @@
     </link>
 
     <joint name="${name}_joint" type="revolute">
-      <xacro:insert_block name="origin"/>
+      <origin xyz="0 0 ${WRIST_JOINT_Z}" rpy="0 0 0"/>
       <axis xyz="0 0 1"/>
-      <limit effort="30" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
+      <limit effort="0.5" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
       <parent link="${name}_link"/>
       <child link="${attached_link}"/>
     </joint>
   </xacro:macro>
+  <xacro:property name="WRIST_JOINT_Z" value="0.019"/>
 </robot>

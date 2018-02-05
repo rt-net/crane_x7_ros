@@ -15,13 +15,13 @@
     <color rgba="0.75 0.75 0.75 1.0"/>
   </material>
   <material name="red">
-    <color rgba="1.0 0.0 0.0 1.0"/>
+    <color rgba="1.0 0.3 0.3 1.0"/>
   </material>
   <material name="green">
-    <color rgba="0.0 1.0 0.0 1.0"/>
+    <color rgba="0.3 1.0 0.3 1.0"/>
   </material>
   <material name="blue">
-    <color rgba="0.0 0.0 1.0 1.0"/>
+    <color rgba="0.3 0.3 1.0 1.0"/>
   </material>
 
   <xacro:macro name="crane_x7"
@@ -66,17 +66,13 @@
         joints_vlimit="${joints_vlimit}"
         shoulder_llimit="${shoulder_llimit}"
         shoulder_ulimit="${shoulder_ulimit}">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0 0 ${MOUNTING_PLATE_THICKNESS}" rpy="0 0 0"/>
     </crane_x7_arm>
 
     <!-- End effector -->
     <crane_x7_wide_two_finger_gripper
         name="crane_x7_gripper"
         color="${hand_color}"
-        vlimit="${joints_vlimit}"
-        llimit="${M_PI/2}"
-        ulimit="${M_PI/2}">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-    </crane_x7_wide_two_finger_gripper>
+        vlimit="${joints_vlimit}"/>
   </xacro:macro>
 </robot>

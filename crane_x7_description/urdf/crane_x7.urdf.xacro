@@ -28,9 +28,9 @@
               lower_arm_lower_color="green"
               wrist_color="white"
               hand_color="blue"
-              joints_vlimit="1.571"
-              shoulder_llimit="-2.617"
-              shoulder_ulimit="2.617">
+              joints_vlimit="4.81710873"
+              shoulder_llimit="-2.97132"
+              shoulder_ulimit="2.97132">
     <origin xyz="0 0 0"/>
   </crane_x7>
 </robot>
