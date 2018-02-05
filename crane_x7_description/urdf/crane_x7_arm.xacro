@@ -23,6 +23,7 @@
               joints_vlimit
               shoulder_llimit
               shoulder_ulimit
+              logos_definition
               *origin">
 
     <!-- Shoulder -->
@@ -67,7 +68,8 @@
         rotate_llimit="-${M_PI/2}"
         rotate_ulimit="${M_PI/2}"
         joint_cover_color="${elbow_joint_cover_color}"
-        attached_link="crane_x7_wrist_link">
+        attached_link="crane_x7_wrist_link"
+        logos_definition="${logos_definition}">
       <origin xyz="0 0 0" rpy="0 0 0"/>
     </crane_x7_type_2_rotating_link>
 
@@ -119,7 +121,8 @@
       joint_cover_color attached_link">
     <crane_x7_rotating_link_1_fixed_part
         name="${name}_fixed_part"
-        color="${fixed_part_color}"/>
+        color="${fixed_part_color}"
+        joint_cover_color="${joint_cover_color}"/>
 
     <crane_x7_rotating_link_1_revolute_part
         parent="${name}_fixed_part_link"
@@ -131,7 +134,6 @@
         rotate_vlimit="${rotate_vlimit}"
         rotate_llimit="${rotate_llimit}"
         rotate_ulimit="${rotate_ulimit}"
-        joint_cover_color="${joint_cover_color}"
         attached_link="${attached_link}"/>
   </xacro:macro>
 
@@ -140,13 +142,14 @@
       params="name
       fixed_part_color twist_vlimit twist_llimit twist_ulimit
       revolute_part_color rotate_vlimit rotate_llimit rotate_ulimit
-      joint_cover_color attached_link *origin">
+      joint_cover_color attached_link logos_definition *origin">
     <crane_x7_rotating_link_2_fixed_part
         name="${name}_fixed_part"
         color="${fixed_part_color}"
         vlimit="${twist_vlimit}"
         llimit="${twist_llimit}"
         ulimit="${twist_ulimit}"
+        joint_cover_color="${joint_cover_color}"
         attached_link="${name}_revolute_part_link">
       <xacro:insert_block name="origin"/>
     </crane_x7_rotating_link_2_fixed_part>
@@ -157,8 +160,8 @@
         vlimit="${rotate_vlimit}"
         llimit="${rotate_llimit}"
         ulimit="${rotate_ulimit}"
-        joint_cover_color="${joint_cover_color}"
-        attached_link="${attached_link}">
+        attached_link="${attached_link}"
+        logos_definition="${logos_definition}">
       <xacro:insert_block name="origin"/>
     </crane_x7_rotating_link_2_revolute_part>
   </xacro:macro>
@@ -258,7 +261,7 @@
 
   <!-- "Fixed" part of long twistable link -->
   <xacro:macro name="crane_x7_rotating_link_1_fixed_part"
-    params="name color">
+    params="name color joint_cover_color">
     <link name="${name}_link">
       <visual>
         <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
@@ -285,13 +288,74 @@
           izz="1"/>
       </inertial>
     </link>
+
+    <!-- Joint covers -->
+    <!-- TODO: Once rviz fixes its multi-material display bug, move these into the parent link -->
+    <link name="${name}_joint_cover_l_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="-${M_PI/2} 0 0"/>
+        <geometry>
+          <mesh filename="package://crane_x7_description/meshes/visual/joint_cover.stl"
+              scale="1 1 1"/>
+        </geometry>
+        <material name="${joint_cover_color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://crane_x7_description/meshes/collision/joint_cover.stl"
+              scale="1 1 1"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.005"/>
+        <origin xyz="0.000036 0.037855 -0.00018" rpy="${M_PI/2} 0 0"/>
+        <inertia ixx="1" ixy="0.0" ixz="0.0"
+          iyy="1" iyz="0.0"
+          izz="1"/>
+      </inertial>
+    </link>
+    <joint name="${name}_joint_cover_l_joint" type="fixed">
+      <parent link="${name}_link"/>
+      <child link="${name}_joint_cover_l_link"/>
+      <origin xyz="0 0.0316 0" rpy="0 0 0"/>
+    </joint>
+    <link name="${name}_joint_cover_r_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
+        <geometry>
+          <mesh filename="package://crane_x7_description/meshes/visual/joint_cover.stl"
+              scale="1 1 1"/>
+        </geometry>
+        <material name="${joint_cover_color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://crane_x7_description/meshes/collision/joint_cover.stl"
+              scale="1 1 1"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.005"/>
+        <origin xyz="0.000036 0.037855 -0.00018" rpy="${M_PI/2} 0 0"/>
+        <inertia ixx="1" ixy="0.0" ixz="0.0"
+          iyy="1" iyz="0.0"
+          izz="1"/>
+      </inertial>
+    </link>
+    <joint name="${name}_joint_cover_r_joint" type="fixed">
+      <parent link="${name}_link"/>
+      <child link="${name}_joint_cover_r_link"/>
+      <origin xyz="0 -0.0316 0" rpy="0 0 0"/>
+    </joint>
   </xacro:macro>
   <xacro:property name="TYPE_1_FIXED_PART_JOINT_Z" value="0.065"/>
 
   <!-- Rotating part of long twistable link -->
   <xacro:macro name="crane_x7_rotating_link_1_revolute_part"
       params="parent name color twist_vlimit twist_llimit twist_ulimit
-        rotate_vlimit rotate_llimit rotate_ulimit joint_cover_color attached_link">
+        rotate_vlimit rotate_llimit rotate_ulimit attached_link">
     <!-- Joint for twisting around long axis -->
     <joint name="${name}_twist_joint" type="revolute">
       <origin xyz="0 0 ${TYPE_1_FIXED_PART_JOINT_Z}" rpy="0 0 0"/>
@@ -313,26 +377,11 @@
         </geometry>
         <material name="${color}"/>
       </visual>
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <mesh filename="package://crane_x7_description/meshes/visual/joint_cover.stl"
-              scale="1 1 1"/>
-        </geometry>
-        <material name="${joint_cover_color}"/>
-      </visual>
 
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/collision/rotating_link_type_1_revolute_part.stl"
-              scale="1 1 1"/>
-        </geometry>
-      </collision>
-      <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <mesh filename="package://crane_x7_description/meshes/collision/joint_cover.stl"
               scale="1 1 1"/>
         </geometry>
       </collision>
@@ -362,7 +411,7 @@
 
   <!-- "Fixed" part of arm-to-wrist twistable link -->
   <xacro:macro name="crane_x7_rotating_link_2_fixed_part"
-      params="name color vlimit llimit ulimit attached_link *origin">
+      params="name color vlimit llimit ulimit joint_cover_color attached_link *origin">
     <link name="${name}_link">
       <visual>
         <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
@@ -397,12 +446,73 @@
       <parent link="${name}_link"/>
       <child link="${attached_link}"/>
     </joint>
+
+    <!-- Joint covers -->
+    <!-- TODO: Once rviz fixes its multi-material display bug, move these into the parent link -->
+    <link name="${name}_joint_cover_l_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="-${M_PI/2} 0 0"/>
+        <geometry>
+          <mesh filename="package://crane_x7_description/meshes/visual/joint_cover.stl"
+              scale="1 1 1"/>
+        </geometry>
+        <material name="${joint_cover_color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://crane_x7_description/meshes/collision/joint_cover.stl"
+              scale="1 1 1"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.005"/>
+        <origin xyz="0.000036 0.037855 -0.00018" rpy="${M_PI/2} 0 0"/>
+        <inertia ixx="1" ixy="0.0" ixz="0.0"
+          iyy="1" iyz="0.0"
+          izz="1"/>
+      </inertial>
+    </link>
+    <joint name="${name}_joint_cover_l_joint" type="fixed">
+      <parent link="${name}_link"/>
+      <child link="${name}_joint_cover_l_link"/>
+      <origin xyz="0 0.025 0" rpy="0 0 0"/>
+    </joint>
+    <link name="${name}_joint_cover_r_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
+        <geometry>
+          <mesh filename="package://crane_x7_description/meshes/visual/joint_cover.stl"
+              scale="1 1 1"/>
+        </geometry>
+        <material name="${joint_cover_color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://crane_x7_description/meshes/collision/joint_cover.stl"
+              scale="1 1 1"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.005"/>
+        <origin xyz="0.000036 0.037855 -0.00018" rpy="${M_PI/2} 0 0"/>
+        <inertia ixx="1" ixy="0.0" ixz="0.0"
+          iyy="1" iyz="0.0"
+          izz="1"/>
+      </inertial>
+    </link>
+    <joint name="${name}_joint_cover_r_joint" type="fixed">
+      <parent link="${name}_link"/>
+      <child link="${name}_joint_cover_r_link"/>
+      <origin xyz="0 -0.025 0" rpy="0 0 0"/>
+    </joint>
   </xacro:macro>
   <xacro:property name="TYPE_2_FIXED_PART_JOINT_Z" value="0.121"/>
 
   <!-- Rotating part of arm-to-wrist twistable link -->
   <xacro:macro name="crane_x7_rotating_link_2_revolute_part"
-      params="name color vlimit llimit ulimit joint_cover_color attached_link *origin">
+      params="name color vlimit llimit ulimit attached_link logos_definition *origin">
     <link name="${name}_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -412,26 +522,11 @@
         </geometry>
         <material name="${color}"/>
       </visual>
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <mesh filename="package://crane_x7_description/meshes/visual/joint_cover.stl"
-              scale="1 1 1"/>
-        </geometry>
-        <material name="${joint_cover_color}"/>
-      </visual>
 
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/collision/rotating_link_type_2_revolute_part.stl"
-              scale="1 1 1"/>
-        </geometry>
-      </collision>
-      <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <mesh filename="package://crane_x7_description/meshes/collision/joint_cover.stl"
               scale="1 1 1"/>
         </geometry>
       </collision>
@@ -452,6 +547,11 @@
       <parent link="${name}_link"/>
       <child link="${attached_link}"/>
     </joint>
+
+    <!-- Logos -->
+    <!-- TODO: Once rviz fixes its multi-material display bug, move these into the parent link -->
+    <xacro:include filename="${logos_definition}"/>
+    <crane_x7_logos parent="${name}_link"/>
   </xacro:macro>
   <xacro:property name="TYPE_2_REVOLUTE_PART_JOINT_Z" value="0.129"/>
 

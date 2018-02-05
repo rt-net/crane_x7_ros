@@ -39,6 +39,7 @@
               joints_vlimit
               shoulder_llimit
               shoulder_ulimit
+              logos_definition
               *origin">
 
     <!-- Mounting plate
@@ -65,7 +66,8 @@
         wrist_color="${wrist_color}"
         joints_vlimit="${joints_vlimit}"
         shoulder_llimit="${shoulder_llimit}"
-        shoulder_ulimit="${shoulder_ulimit}">
+        shoulder_ulimit="${shoulder_ulimit}"
+        logos_definition="${logos_definition}">
       <origin xyz="0 0 ${MOUNTING_PLATE_THICKNESS}" rpy="0 0 0"/>
     </crane_x7_arm>
 
