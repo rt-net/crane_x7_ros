@@ -216,7 +216,7 @@
       <child link="${attached_link}"/>
     </joint>
   </xacro:macro>
-  <xacro:property name="BASE_FIXED_PART_JOINT_Z" value="0.041"/>
+  <xacro:property name="BASE_FIXED_PART_JOINT_Z" value="0.036"/>
 
   <!-- Rotated part of base -->
   <xacro:macro name="crane_x7_base_revolute_part"
@@ -301,7 +301,7 @@
         <material name="${joint_cover_color}"/>
       </visual>
       <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="-${M_PI/2} 0 0"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/collision/joint_cover.stl"
               scale="1 1 1"/>
@@ -330,7 +330,7 @@
         <material name="${joint_cover_color}"/>
       </visual>
       <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/collision/joint_cover.stl"
               scale="1 1 1"/>
@@ -459,7 +459,7 @@
         <material name="${joint_cover_color}"/>
       </visual>
       <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="-${M_PI/2} 0 0"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/collision/joint_cover.stl"
               scale="1 1 1"/>
@@ -488,7 +488,7 @@
         <material name="${joint_cover_color}"/>
       </visual>
       <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/collision/joint_cover.stl"
               scale="1 1 1"/>
