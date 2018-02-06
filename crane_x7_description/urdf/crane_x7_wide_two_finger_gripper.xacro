@@ -52,7 +52,7 @@
       </visual>
 
       <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/collision/wide_two_finger_gripper_finger_a.stl"
               scale="1 1 1"/>
@@ -88,7 +88,7 @@
       </visual>
 
       <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/collision/wide_two_finger_gripper_finger_b.stl"
               scale="1 1 1"/>
