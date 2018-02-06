@@ -300,13 +300,6 @@
         </geometry>
         <material name="${joint_cover_color}"/>
       </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="-${M_PI/2} 0 0"/>
-        <geometry>
-          <mesh filename="package://crane_x7_description/meshes/collision/joint_cover.stl"
-              scale="1 1 1"/>
-        </geometry>
-      </collision>
       <inertial>
         <mass value="0.005"/>
         <origin xyz="0.000036 0.037855 -0.00018" rpy="${M_PI/2} 0 0"/>
@@ -329,13 +322,6 @@
         </geometry>
         <material name="${joint_cover_color}"/>
       </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
-        <geometry>
-          <mesh filename="package://crane_x7_description/meshes/collision/joint_cover.stl"
-              scale="1 1 1"/>
-        </geometry>
-      </collision>
       <inertial>
         <mass value="0.005"/>
         <origin xyz="0.000036 0.037855 -0.00018" rpy="${M_PI/2} 0 0"/>
@@ -458,13 +444,6 @@
         </geometry>
         <material name="${joint_cover_color}"/>
       </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="-${M_PI/2} 0 0"/>
-        <geometry>
-          <mesh filename="package://crane_x7_description/meshes/collision/joint_cover.stl"
-              scale="1 1 1"/>
-        </geometry>
-      </collision>
       <inertial>
         <mass value="0.005"/>
         <origin xyz="0.000036 0.037855 -0.00018" rpy="${M_PI/2} 0 0"/>
@@ -487,13 +466,6 @@
         </geometry>
         <material name="${joint_cover_color}"/>
       </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
-        <geometry>
-          <mesh filename="package://crane_x7_description/meshes/collision/joint_cover.stl"
-              scale="1 1 1"/>
-        </geometry>
-      </collision>
       <inertial>
         <mass value="0.005"/>
         <origin xyz="0.000036 0.037855 -0.00018" rpy="${M_PI/2} 0 0"/>
