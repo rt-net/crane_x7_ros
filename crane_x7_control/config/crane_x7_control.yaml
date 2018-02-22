@@ -1,42 +1,43 @@
-# Publish all joint states -----------------------------------
-  joint_state_controller:
-    type: "joint_state_controller/JointStateController"
-    publish_rate: 250
+# Publish all joint states
+joint_state_controller:
+  type: "joint_state_controller/JointStateController"
+  publish_rate: 250
 
-  arm_controller:
-    type: "position_controllers/JointTrajectoryController"
-    publish_rate: 250
-    joints: 
-      - arm_joint1
-      - arm_joint2
-      - arm_joint3
-      - arm_joint4
-      - arm_joint5
-      - arm_joint6
-      - arm_joint7
+arm_controller:
+  type: "position_controllers/JointTrajectoryController"
+  publish_rate: 250
+  joints:
+    - crane_x7_shoulder_fixed_part_pan_joint
+    - crane_x7_shoulder_revolute_part_tilt_joint
+    - crane_x7_upper_arm_revolute_part_twist_joint
+    - crane_x7_upper_arm_revolute_part_rotate_joint
+    - crane_x7_lower_arm_fixed_part_joint
+    - crane_x7_lower_arm_revolute_part_joint
+    - crane_x7_wrist_joint
+    - crane_x7_gripper_finger_a_joint
 
-  hand_controller:
-    type: "position_controllers/GripperActionController"
-    publish_rate: 250
-    joint: hand_joint1
+hand_controller:
+  type: "position_controllers/GripperActionController"
+  publish_rate: 250
+  joint: crane_x7_gripper_finger_a_joint
 
-  dynamixel_port:
-    port_name: "/dev/ttyUSB0"
-    baud_rate: 3000000
-    joints:
-      - arm_joint1
-      - arm_joint2
-      - arm_joint3
-      - arm_joint4
-      - arm_joint5
-      - arm_joint6
-      - arm_joint7
-      - hand_joint1
-    arm_joint1: {id: 2, center: 2048, home: 2048 }
-    arm_joint2: {id: 3, center: 2048, home: 2048 }
-    arm_joint3: {id: 4, center: 2048, home: 2048 }
-    arm_joint4: {id: 5, center: 2048, home: 2048 }
-    arm_joint5: {id: 6, center: 2048, home: 2048 }
-    arm_joint6: {id: 7, center: 2048, home: 2048 }
-    arm_joint7: {id: 8, center: 2048, home: 2048 }
-    hand_joint1: {id: 9, center: 2048, home: 2048 }
+dynamixel_port:
+  port_name: "/dev/ttyUSB0"
+  baud_rate: 3000000
+  joints:
+    - crane_x7_shoulder_fixed_part_pan_joint
+    - crane_x7_shoulder_revolute_part_tilt_joint
+    - crane_x7_upper_arm_revolute_part_twist_joint
+    - crane_x7_upper_arm_revolute_part_rotate_joint
+    - crane_x7_lower_arm_fixed_part_joint
+    - crane_x7_lower_arm_revolute_part_joint
+    - crane_x7_wrist_joint
+    - crane_x7_gripper_finger_a_joint
+  arm_joint1: {id: 2, center: 2048, home: 2048 }
+  arm_joint2: {id: 3, center: 2048, home: 2048 }
+  arm_joint3: {id: 4, center: 2048, home: 2048 }
+  arm_joint4: {id: 5, center: 2048, home: 2048 }
+  arm_joint5: {id: 6, center: 2048, home: 2048 }
+  arm_joint6: {id: 7, center: 2048, home: 2048 }
+  arm_joint7: {id: 8, center: 2048, home: 2048 }
+  hand_joint1: {id: 9, center: 2048, home: 2048 }
