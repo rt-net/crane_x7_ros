@@ -27,35 +27,18 @@
   
 
   <!-- We do not have a robot connected, so publish fake joint states -->
-
-<!--
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
     <param name="/use_gui" value="$(arg use_gui)"/>
     <rosparam param="/source_list">[/move_group/fake_controller_joint_states]</rosparam>
   </node>
--->
-
-  <include file="$(find crane_x7_control)/launch/crane_x7_control.launch"/>
-
-  <arg name="model" default="$(find crane_x7_description)/urdf/crane_x7.urdf"/>
-  <param name="/crane_x7/robot_description" textfile="$(arg model)"/>
-  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-    <param name="/use_gui" value="$(arg use_gui)"/>
-    <param name="/rate" value="50"/>
-    <rosparam param="/source_list">[/crane_x7/joint_states]</rosparam>
-  </node>
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen">
-      <remap from="/joint_states" to="/crane_x7/joint_states" />
-  </node>
-
 
   <!-- Given the published joint states, publish tf for the robot links -->
-  <!--node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" /-->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
 
   <!-- Run the main MoveIt executable without trajectory execution (we do not have controllers configured by default) -->
   <include file="$(find crane_x7_moveit_config)/launch/move_group.launch">
     <arg name="allow_trajectory_execution" value="true"/>
-    <arg name="fake_execution" value="false"/>
+    <arg name="fake_execution" value="true"/>
     <arg name="info" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
   </include>
