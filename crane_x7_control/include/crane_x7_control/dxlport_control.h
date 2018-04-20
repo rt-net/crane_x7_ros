@@ -9,7 +9,7 @@
 #include    <hardware_interface/joint_state_interface.h>
 #include    <hardware_interface/robot_hw.h>
 
-#include    "dynamixel_sdk.h"                                  // Uses Dynamixel SDK library
+#include    <dynamixel_sdk/dynamixel_sdk.h>
 #include    <crane_x7_control/joint_control.h>
 #include    <crane_x7_control/control_setting.h>
 
