@@ -49,4 +49,8 @@ CATKIN_IGNORE
 # SketchUp backup files
 *~.skp
 
+# Swap files
 *.swp
+
+# MacOS metadata files
+.DS_store
