@@ -1,11 +1,9 @@
 <launch>
+  <param name="robot_description"
+    command="$(find xacro)/xacro --inorder '$(find crane_x7_description)/urdf/crane_x7.urdf.xacro'"
+    />
   <group ns="crane_x7">
     <rosparam file="$(find crane_x7_control)/config/crane_x7_control.yaml" command="load"/>
-
-    <arg name="model" default="$(find crane_x7_description)/urdf/crane_x7.urdf"/>
-    <arg name="gui" default="true"/>
-    <arg name="state_rate" default="10"/>
-    <param name="robot_description" textfile="$(arg model)"/>
 
     <node name="controller_manager"
         pkg="controller_manager"
@@ -18,6 +16,7 @@
     <node name="crane_x7_control" pkg="crane_x7_control" type="crane_x7_control" output="screen" respawn="false">
       <rosparam file="$(find crane_x7_control)/config/crane_x7_control.yaml" command="load"/>
     </node>
+
     <node name="robot_state_publisher" pkg="robot_state_publisher" 
         type="robot_state_publisher" respawn="false" output="screen">
       <remap from="/joint_states" to="/crane_x7/joint_states" />
