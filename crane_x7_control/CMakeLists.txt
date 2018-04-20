@@ -122,7 +122,6 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
-  ../../dynamixel_sdk/include/dynamixel_sdk
   ${Boost_INCLUDE_DIR})
 
 ## Declare a C++ library
