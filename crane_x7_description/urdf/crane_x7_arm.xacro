@@ -251,7 +251,7 @@
     <!-- Tilt joint of the shoulder -->
     <joint name="${name}_tilt_joint" type="revolute">
       <origin xyz="0 0 ${BASE_REVOLUTE_PART_JOINT_Z}" rpy="0 0 0"/>
-      <axis xyz="0 1 0"/>
+      <axis xyz="0 -1 0"/>
       <limit effort="0.5" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
       <parent link="${name}_link"/>
       <child link="${attached_link}"/>
@@ -542,7 +542,7 @@
 
     <joint name="${name}_joint" type="revolute">
       <origin xyz="0 0 ${TYPE_2_REVOLUTE_PART_JOINT_Z}" rpy="0 0 0"/>
-      <axis xyz="0 1 0"/>
+      <axis xyz="0 -1 0"/>
       <limit effort="0.5" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
       <parent link="${name}_link"/>
       <child link="${attached_link}"/>
