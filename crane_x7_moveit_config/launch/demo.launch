@@ -8,6 +8,9 @@
   <!-- By default, we are not in debug mode -->
   <arg name="debug" default="false" />
 
+  <!-- Allow user to turn fake_execution on and off -->
+  <arg name="fake_execution" default="false" />
+
   <!--
   By default, hide joint_state_publisher's GUI
 
@@ -38,7 +41,7 @@
   <!-- Run the main MoveIt executable without trajectory execution (we do not have controllers configured by default) -->
   <include file="$(find crane_x7_moveit_config)/launch/move_group.launch">
     <arg name="allow_trajectory_execution" value="true"/>
-    <arg name="fake_execution" value="true"/>
+    <arg name="fake_execution" value="$(arg fake_execution)"/>
     <arg name="info" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
   </include>
