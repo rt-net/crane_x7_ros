@@ -32,11 +32,11 @@
       - arm_joint6
       - arm_joint7
       - hand_joint1
-    arm_joint1: {id: 2, center: 2048, home: 2048 }
-    arm_joint2: {id: 3, center: 2048, home: 2048 }
-    arm_joint3: {id: 4, center: 2048, home: 2048 }
-    arm_joint4: {id: 5, center: 2048, home: 2048 }
-    arm_joint5: {id: 6, center: 2048, home: 2048 }
-    arm_joint6: {id: 7, center: 2048, home: 2048 }
-    arm_joint7: {id: 8, center: 2048, home: 2048 }
-    hand_joint1: {id: 9, center: 2048, home: 2048 }
+    arm_joint1: {id: 2, center: 2048, home: 2048, effort_const: 1.79, mode: 3 }
+    arm_joint2: {id: 3, center: 2048, home: 2048, effort_const: 2.79, mode: 3 }
+    arm_joint3: {id: 4, center: 2048, home: 2048, effort_const: 1.79, mode: 3 }
+    arm_joint4: {id: 5, center: 2048, home: 2048, effort_const: 1.79, mode: 3 }
+    arm_joint5: {id: 6, center: 2048, home: 2048, effort_const: 1.79, mode: 3 }
+    arm_joint6: {id: 7, center: 2048, home: 2048, effort_const: 1.79, mode: 3 }
+    arm_joint7: {id: 8, center: 2048, home: 2048, effort_const: 1.79, mode: 3 }
+    hand_joint1: {id: 9, center: 2048, home: 2048, effort_const: 1.79, mode: 3 }
