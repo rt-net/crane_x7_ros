@@ -414,25 +414,33 @@ void DXLPORT_CONTROL::set_goal_current( uint8_t dxl_id, uint16_t current )
     }
 }
 
-void DXLPORT_CONTROL::set_torque( bool torque )
+bool DXLPORT_CONTROL::set_torque( uint8_t dxl_id, bool torque )
 {
     int dxl_comm_result = COMM_TX_FAIL;             // Communication result
     uint32_t set_param = torque ? TORQUE_ENABLE:TORQUE_DISABLE;
     uint8_t dxl_error = 0;                          // Dynamixel error
+    bool result = false;
 
     last_error = "";
     if( !port_stat ){
-        return;
+        return true;
     }
-    for( int j=0 ; j<joint_num; ++j ){
-        dxl_comm_result = packetHandler->write1ByteTxRx( portHandler, joints[j].get_dxl_id(), ADDR_TORQUE_ENABLE, set_param, &dxl_error );
-        if( dxl_comm_result != COMM_SUCCESS ){
-            last_error = packetHandler->getTxRxResult( dxl_comm_result );
-            ++tx_err;
-        }else if( dxl_error != 0 ){
-            last_error = packetHandler->getRxPacketError( dxl_error );
-            ++tx_err;
-        }else{
+    dxl_comm_result = packetHandler->write1ByteTxRx( portHandler, dxl_id, ADDR_TORQUE_ENABLE, set_param, &dxl_error );
+    if( dxl_comm_result != COMM_SUCCESS ){
+        last_error = packetHandler->getTxRxResult( dxl_comm_result );
+        ++tx_err;
+    }else if( dxl_error != 0 ){
+        last_error = packetHandler->getRxPacketError( dxl_error );
+        ++tx_err;
+    }else{
+        result = true;
+    }
+    return result;
+}
+void DXLPORT_CONTROL::set_torque_all( bool torque )
+{
+    for( uint8_t j=0 ; j<joint_num; ++j ){
+        if( set_torque( joints[j].get_dxl_id(), torque ) ){
             joints[j].set_torque( torque );
         }
     }
@@ -449,7 +457,7 @@ void DXLPORT_CONTROL::startup_motion( void )
     int step_a, step_b;
     std::vector<ST_HOME_MOTION_DATA> home_motion_data;
 
-    set_torque( true );                             // 全関節トルクON
+    set_torque_all( true );                             // 全関節トルクON
     set_gain_all( DXL_DEFAULT_PGAIN );
 
     /* 開始位置取り込みと差分計算 */

@@ -20,6 +20,8 @@ static std::vector<ros::Publisher>  current_pub;
 static std::vector<ros::Publisher>  dxl_position_pub;
 static std::vector<ros::Publisher>  temp_pub;
 static std::vector<ros::Subscriber> gain_sub;
+typedef dynamic_reconfigure::Server<crane_x7_msgs::ServoParameterConfig> reconfigType;
+static std::vector<reconfigType*>   reconfig_srv;
 static DXLPORT_CONTROL*             driver_addr;
 
 typedef struct SET_GAIN_QUEUE
@@ -38,6 +40,8 @@ typedef struct SET_GAIN_QUEUE
     uint16_t gain;
 } ST_SET_GAIN_QUEUE;
 static std::queue<ST_SET_GAIN_QUEUE> set_gain_request;
+
+static std::queue<ST_JOINT_PARAM> set_joint_param_request;
 
 std::vector<std::string> split(const std::string& input, char delimiter)
 {
@@ -74,6 +78,30 @@ void gainCallback(const ros::MessageEvent<std_msgs::UInt16 const>& event)
         }
     }
 }
+void reconfigureCallback(crane_x7_msgs::ServoParameterConfig &config, uint32_t level, uint8_t id )
+{
+    ST_JOINT_PARAM set_req_data;
+    set_req_data.dxl_id            = id;
+    set_req_data.return_delay_time = config.return_delay_time;
+    set_req_data.drive_mode        = config.drive_mode;
+    set_req_data.operation_mode    = config.operation_mode;
+    set_req_data.moving_threshold  = config.moving_threshold;
+    set_req_data.homing_offset     = config.homing_offset;
+    set_req_data.temprature_limit  = config.temprature_limit;
+    set_req_data.max_vol_limit     = config.max_vol_limit;
+    set_req_data.min_vol_limit     = config.min_vol_limit;
+    set_req_data.current_limit     = config.current_limit;
+    set_req_data.torque_enable     = config.torque_enable?1:0;
+    set_req_data.velocity_i_gain   = config.velocity_i_gain;
+    set_req_data.velocity_p_gain   = config.velocity_p_gain;
+    set_req_data.position_d_gain   = config.position_d_gain;
+    set_req_data.position_i_gain   = config.position_i_gain;
+    set_req_data.position_p_gain   = config.position_p_gain;
+    set_req_data.goal_current      = config.goal_current;
+    set_req_data.goal_velocity     = config.goal_velocity;
+    set_req_data.goal_position     = config.goal_position;
+    set_joint_param_request.push( set_req_data );
+}
 
 void init_topics( DXLPORT_CONTROL *driver, ros::NodeHandle nh )
 {
@@ -94,6 +122,18 @@ void init_topics( DXLPORT_CONTROL *driver, ros::NodeHandle nh )
         gain_name = ( joint_name + "/gain");
         gain_sub.push_back( nh.subscribe(gain_name, 100, gainCallback) );
     }
+}
+
+void init_reconfigure(  DXLPORT_CONTROL *driver )
+{
+    for( std::vector<JOINT_CONTROL>::iterator it=driver->joints.begin() ; it!=driver->joints.end() ; ++it ){
+        // reconfig_srv.add( it->get_joint_name() );
+        reconfigType* server = new reconfigType( "~/"+it->get_joint_name() );
+        dynamic_reconfigure::Server<crane_x7_msgs::ServoParameterConfig>::CallbackType f;
+        f = boost::bind(reconfigureCallback, _1, _2, it->get_dxl_id());
+        server->setCallback(f);
+        reconfig_srv.push_back( server );
+     }
 }
 
 void publish_topic_data( DXLPORT_CONTROL *driver, bool temp_flg )
@@ -153,6 +193,7 @@ int main( int argc, char* argv[] )
 
     ros::Publisher lasterror_pub = nhPrivate.advertise<std_msgs::String>("lasterror", 10);
     init_topics( &crane_x7, nhPrivate );
+    init_reconfigure( &crane_x7 );
 
     ros::Rate rate( CONTROL_HZ );
     ros::AsyncSpinner spinner(4);
@@ -190,6 +231,12 @@ int main( int argc, char* argv[] )
             ST_SET_GAIN_QUEUE gain_data = set_gain_request.front();
             crane_x7.set_gain( gain_data.dxl_id, gain_data.gain );
             set_gain_request.pop();
+        }
+        while( set_joint_param_request.size() > 0 ){
+            ST_JOINT_PARAM param_data = set_joint_param_request.front();
+            crane_x7.set_gain( param_data.dxl_id, param_data.position_p_gain );
+            crane_x7.set_torque( param_data.dxl_id, (param_data.torque_enable?true:false) );
+            set_joint_param_request.pop();
         }
         crane_x7.effort_limitter();
         ros::spinOnce();

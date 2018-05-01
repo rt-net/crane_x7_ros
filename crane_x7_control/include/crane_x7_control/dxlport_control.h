@@ -39,7 +39,8 @@ public:
     void                readTemp( ros::Time, ros::Duration );
     void                readVel( ros::Time, ros::Duration );
     void                write( ros::Time, ros::Duration );
-    void                set_torque( bool torque );
+    void                set_torque_all( bool torque );
+    bool                set_torque( uint8_t dxl_id, bool torque );
     void                startup_motion( void );
     void                set_gain_all( uint16_t gain );
     void                set_gain( uint8_t dxl_id, uint16_t gain );
