@@ -197,6 +197,7 @@ int main( int argc, char* argv[] )
     }
     spinner.stop();
     crane_x7.set_gain_all( DXL_FREE_PGAIN );
+    crane_x7.set_goal_current_all( 0 );
 
     return 0;
 }

@@ -23,45 +23,54 @@ typedef struct {
     EN_DXL_MEMTYPE  type;           /* メモリ種別 */
     bool            selfcheck;      /* セルフチェック対象 */
 } ST_DYNAMIXEL_REG_TABLE;
+
+#define     REG_LENGTH_BYTE                 (1)
+#define     REG_LENGTH_WORD                 (2)
+#define     REG_LENGTH_DWORD                (4)
+
 static const ST_DYNAMIXEL_REG_TABLE RegTable[] ={
     /*  NAME                ADDR    LEN INIT    TYPE   */
-    { "RETURN_DELAY_TIME",  9,      1,  250,    enDXL_ROM,  false },/* 0 */
-    { "DRIVE_MODE",         10,     1,  0,      enDXL_ROM,  false },/* 1 */
-    { "OPERATION_MODE",     11,     1,  3,      enDXL_ROM,  false },/* 2 */
-    { "MOVING_THRESHOLD",   24,     4,  10,     enDXL_ROM,  false },/* 3 */
-    { "TEMPRATURE_LIMIT",   31,     1,  80,     enDXL_ROM,  false },/* 4 */
-    { "MAX_VOL_LIMIT",      32,     2,  160,    enDXL_ROM,  false },/* 5 */
-    { "MIN_VOL_LIMIT",      34,     2,  95,     enDXL_ROM,  false },/* 6 */
-    { "CURRENT_LIMIT",      38,     2,  1193,   enDXL_ROM,  false },/* 7 */
-    { "SHUTDOWN",           63,     1,  52,     enDXL_ROM,  false },/* 8 */
-    { "TORQUE_ENABLE",      64,     1,  0,      enDXL_RAM,  false },/* 9 */
-    { "VELOCITY_I_GAIN",    76,     2,  1920,   enDXL_RAM,  true  },/* 10 */
-    { "VELOCITY_P_GAIN",    78,     2,  100,    enDXL_RAM,  true  },/* 11 */
-    { "POSITION_D_GAIN",    80,     2,  0,      enDXL_RAM,  true  },/* 12 */
-    { "POSITION_I_GAIN",    82,     2,  0,      enDXL_RAM,  true  },/* 13 */
-    { "POSITION_P_GAIN",    84,     2,  800,    enDXL_RAM,  false },/* 14 */
-    { "GOAL_CURRENT",       102,    2,  0,      enDXL_RAM,  false },/* 15 */
-    { "GOAL_VELOCITY",      104,    2,  0,      enDXL_RAM,  false },/* 16 */
-    { "GOAL_POSITION",      116,    4,  0,      enDXL_RAM,  false },/* 17 */
-    { "PRESENT_CURRENT",    126,    2,  0,      enDXL_RAM,  false },/* 18 */
-    { "PRESENT_VELOCITY",   128,    2,  0,      enDXL_RAM,  false },/* 19 */
-    { "PRESENT_POSITION",   132,    4,  0,      enDXL_RAM,  false },/* 20 */
-    { "PRESENT_TEMPRATURE", 146,    1,  0,      enDXL_RAM,  false },/* 21 */
+    { "RETURN_DELAY_TIME",  9,      REG_LENGTH_BYTE,  250,    enDXL_ROM,  false },/* 0 */
+    { "DRIVE_MODE",         10,     REG_LENGTH_BYTE,  0,      enDXL_ROM,  false },/* 1 */
+    { "OPERATION_MODE",     11,     REG_LENGTH_BYTE,  3,      enDXL_ROM,  false },/* 2 */
+    { "MOVING_THRESHOLD",   24,     REG_LENGTH_DWORD, 10,     enDXL_ROM,  false },/* 3 */
+    { "TEMPRATURE_LIMIT",   31,     REG_LENGTH_BYTE,  80,     enDXL_ROM,  false },/* 4 */
+    { "MAX_VOL_LIMIT",      32,     REG_LENGTH_WORD,  160,    enDXL_ROM,  false },/* 5 */
+    { "MIN_VOL_LIMIT",      34,     REG_LENGTH_WORD,  95,     enDXL_ROM,  false },/* 6 */
+    { "CURRENT_LIMIT",      38,     REG_LENGTH_WORD,  1193,   enDXL_ROM,  false },/* 7 */
+    { "SHUTDOWN",           63,     REG_LENGTH_BYTE,  52,     enDXL_ROM,  false },/* 8 */
+    { "TORQUE_ENABLE",      64,     REG_LENGTH_BYTE,  0,      enDXL_RAM,  false },/* 9 */
+    { "VELOCITY_I_GAIN",    76,     REG_LENGTH_WORD,  1920,   enDXL_RAM,  true  },/* 10 */
+    { "VELOCITY_P_GAIN",    78,     REG_LENGTH_WORD,  100,    enDXL_RAM,  true  },/* 11 */
+    { "POSITION_D_GAIN",    80,     REG_LENGTH_WORD,  0,      enDXL_RAM,  true  },/* 12 */
+    { "POSITION_I_GAIN",    82,     REG_LENGTH_WORD,  0,      enDXL_RAM,  true  },/* 13 */
+    { "POSITION_P_GAIN",    84,     REG_LENGTH_WORD,  800,    enDXL_RAM,  false },/* 14 */
+    { "GOAL_CURRENT",       102,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },/* 15 */
+    { "GOAL_VELOCITY",      104,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },/* 16 */
+    { "GOAL_POSITION",      116,    REG_LENGTH_DWORD, 0,      enDXL_RAM,  false },/* 17 */
+    { "PRESENT_CURRENT",    126,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },/* 18 */
+    { "PRESENT_VELOCITY",   128,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },/* 19 */
+    { "PRESENT_POSITION",   132,    REG_LENGTH_DWORD, 0,      enDXL_RAM,  false },/* 20 */
+    { "PRESENT_TEMPRATURE", 146,    REG_LENGTH_BYTE,  0,      enDXL_RAM,  false },/* 21 */
 };
 
 // Parameter
 #define     BAUDRATE                        (3000000)         // 通信速度
 #define     ADDR_TORQUE_ENABLE              (RegTable[9].address)              // Control table address is different in Dynamixel model
 #define     ADDR_GOAL_POSITION              (RegTable[17].address)             // ゴールポジションアドレス
-#define     LEN_GOAL_POSITION               (RegTable[17].length)               // ゴールポジション
+#define     LEN_GOAL_POSITION               (RegTable[17].length)              // ゴールポジション
 #define     ADDR_PRESENT_POSITION           (RegTable[20].address)
 #define     LEN_PRESENT_POSITION            (RegTable[20].length)
 #define     ADDR_PRESENT_CURRENT            (RegTable[18].address)
 #define     LEN_PRESENT_CURRENT             (RegTable[18].length)
 #define     ADDR_PRESENT_TEMP               (RegTable[21].address)
 #define     LEN_PRESENT_TEMP                (RegTable[21].length)
+#define     ADDR_PRESENT_VEL                (RegTable[19].address)
+#define     LEN_PRESENT_VEL                 (RegTable[19].length)
 #define     ADDR_POSITION_PGAIN             (RegTable[14].address)
 #define     LEN_POSITION_PGAIN              (RegTable[14].length)
+#define     ADDR_GOAL_CURRENT               (RegTable[15].address)             // ゴールポジションアドレス
+#define     LEN_GOAL_CURRENT                (RegTable[15].length)              // ゴールポジション
 
 #define     TORQUE_ENABLE                   (1)                // Value for enabling the torque
 #define     TORQUE_DISABLE                  (0)                // Value for disabling the torque
@@ -70,7 +79,7 @@ static const ST_DYNAMIXEL_REG_TABLE RegTable[] ={
 #define     DXL_MIN_LIMIT                   (0.0)
 #define     DXL_MAX_LIMIT                   (4095.0)
 #define     DXL_CURRENT_UNIT                (2.69)             // mA
-#define     DXL_EFFORT_CONST                (0.00179)          // (mA*COEF)=Nm
+#define     DXL_EFFORT_CONST                (1.79)
 #define     DXL_TEMP_READ_DURATION          (5)
 #define     DXL_PGAIN_MAX                   (16383)
 #define     DXL_DEFAULT_PGAIN               (800)
@@ -82,19 +91,29 @@ static const ST_DYNAMIXEL_REG_TABLE RegTable[] ={
 #define     DXL_TORQUR_ON_STEP              (20)               // Hz
 #define     DXL_TORQUE_ON_STEP_MAX          (DXL_TORQUE_ON_TIME / (1000 / DXL_TORQUR_ON_STEP))
 
-#define     DXL_CURRENT2EFFORT(c)           (DXL_CURRENT_UNIT * c * DXL_EFFORT_COEF)
+#define     DXL_CURRENT2EFFORT(c,coef)      (DXL_CURRENT_UNIT * (c) * (coef) * 0.001)// (mA*CONST*0.001)=Nm
+#define     EFFORT2DXL_CURRENT(e,coef)      ((e) / (coef) / 0.001 / DXL_CURRENT_UNIT)// (Nm/CONST/0.001)=mA
 #define     DEFAULT_MAX_EFFORT              (5.0)
 #define     EFFORT_LIMITING_CNT             (10)
+#define     DXL_VELOCITY2RAD_S(v)           ((v) * 0.229 * 0.1047)
+
+#define     OPERATING_MODE_CURRENT          (0)
+#define     OPERATING_MODE_VELOCITY         (1)
+#define     OPERATING_MODE_POSITION         (3)
+#define     OPERATING_MODE_EXT_POS          (4)
+#define     OPERATING_MODE_CURR_POS         (5)
+#define     OPERATING_MODE_PWM              (16)
+
 
 // Joint control class
 class JOINT_CONTROL
 {
 public:
     JOINT_CONTROL(void);
-    JOINT_CONTROL( std::string init_name, uint8_t init_dxlid, uint16_t init_center, uint16_t init_home );
+    JOINT_CONTROL( std::string init_name, uint8_t init_dxlid, uint16_t init_center, uint16_t init_home, double init_eff_const, uint8_t init_mode );
     JOINT_CONTROL( const JOINT_CONTROL &src );
     ~JOINT_CONTROL(void){ /* Nothing todo... */ }
-    void                init_parameter( std::string init_name, uint8_t init_dxlid, uint16_t init_center, uint16_t init_home );
+    void                init_parameter( std::string init_name, uint8_t init_dxlid, uint16_t init_center, uint16_t init_home, double init_eff_const, uint8_t init_mode );
     void                set_joint_name( std::string set_name ) { name = set_name; }
     void                set_dxl_id( uint8_t set_id ){ id = set_id; }
     void                set_position( double set_rad ){ pos = set_rad; }
@@ -143,6 +162,8 @@ public:
     uint8_t*            get_dxl_goal_addr( void ){ return dxl_goal; }
     bool                is_effort_limiting( void ){ return eff_limiting; }
     uint8_t             get_eff_over_cnt( void ){ return eff_over_cnt; }
+    double              get_eff_const( void ){ return eff_const; }
+    uint8_t             get_ope_mode( void ){ return ope_mode; }
 private:
     std::string         name;       // ROS joint name
     uint8_t             id;         // Dynamixel ServoID
@@ -156,8 +177,10 @@ private:
     uint16_t            center;     // Servo center position offset( dynamixel position value, default:2048 )
     uint16_t            home;       // Servo home position( dynamixel position value )
     bool                connect;    // Servo connect status
+    double              eff_const;  // Servo effort constant
     bool                eff_limiting;// Effort limiting status
     uint8_t             eff_over_cnt;// Effort limiting status
+    uint8_t             ope_mode;   // Operating mode
 
     double              goal_pos;   // Goal position[rad]
     double              goal_vel;   // Goal velocity
