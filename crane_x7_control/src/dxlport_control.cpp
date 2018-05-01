@@ -459,11 +459,12 @@ void DXLPORT_CONTROL::startup_motion( void )
     int step_a, step_b;
     std::vector<ST_HOME_MOTION_DATA> home_motion_data;
 
-    set_torque_all( true );                             // 全関節トルクON
-    set_gain_all( DXL_DEFAULT_PGAIN );
-
     /* 開始位置取り込みと差分計算 */
     readPos( t, d );
+
+    set_torque_all( true );                         // 全関節トルクON
+    set_gain_all( DXL_DEFAULT_PGAIN );
+
     for( int j=0 ; j<joint_num ; ++j ){
         ST_HOME_MOTION_DATA motion_work;
         motion_work.home      = joints[j].get_home();
