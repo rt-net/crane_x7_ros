@@ -25,7 +25,7 @@ DXLPORT_CONTROL::DXLPORT_CONTROL( ros::NodeHandle handle, CONTROL_SETTING &setti
 
     portHandler      = NULL;
     readPosGroup     = NULL;
-    writePosGroup    = NULL;
+    writeGoalGroup   = NULL;
     readCurrentGroup = NULL;
     readTempGroup    = NULL;
     readVelGroup     = NULL;
@@ -41,7 +41,7 @@ DXLPORT_CONTROL::DXLPORT_CONTROL( ros::NodeHandle handle, CONTROL_SETTING &setti
     packetHandler    = dynamixel::PacketHandler::getPacketHandler( PROTOCOL_VERSION );
     portHandler      = dynamixel::PortHandler::getPortHandler( setting.getPortName().c_str() );
     readPosGroup     = new dynamixel::GroupBulkRead( portHandler, packetHandler );
-    writePosGroup    = new dynamixel::GroupBulkWrite( portHandler, packetHandler );
+    writeGoalGroup   = new dynamixel::GroupBulkWrite( portHandler, packetHandler );
     readTempGroup    = new dynamixel::GroupBulkRead( portHandler, packetHandler );
     readCurrentGroup = new dynamixel::GroupBulkRead( portHandler, packetHandler );
     readVelGroup     = new dynamixel::GroupBulkRead( portHandler, packetHandler );
@@ -52,9 +52,18 @@ DXLPORT_CONTROL::DXLPORT_CONTROL( ros::NodeHandle handle, CONTROL_SETTING &setti
             last_error = "Bulk pos read setting failed.";
             return;
         }
-        if( !writePosGroup->addParam( dxl_id, ADDR_GOAL_POSITION, LEN_GOAL_POSITION, joints[j].get_dxl_goal_addr() ) ){// [TODO]
-            last_error = "Bulk pos write setting failed.";
-            return;
+        if( joints[j].get_ope_mode() == OPERATING_MODE_CURRENT ){
+            //CURRENT MODE
+            if( !writeGoalGroup->addParam( dxl_id, ADDR_GOAL_CURRENT, LEN_GOAL_CURRENT, joints[j].get_dxl_goal_addr() ) ){// [TODO]
+                last_error = "Bulk current write setting failed.";
+                return;
+            }
+        }else{
+            //POSITION MODE
+            if( !writeGoalGroup->addParam( dxl_id, ADDR_GOAL_POSITION, LEN_GOAL_POSITION, joints[j].get_dxl_goal_addr() ) ){// [TODO]
+                last_error = "Bulk pos write setting failed.";
+                return;
+            }
         }
         if( !readTempGroup->addParam( dxl_id, ADDR_PRESENT_TEMP, LEN_PRESENT_TEMP ) ){
             last_error = "Bulk temp read setting failed.";
@@ -108,8 +117,14 @@ DXLPORT_CONTROL::DXLPORT_CONTROL( ros::NodeHandle handle, CONTROL_SETTING &setti
     registerInterface( &joint_stat_if );
 
     for( j=0 ; j<joint_num ; ++j ){
-        hardware_interface::JointHandle reg_pos_handle( joint_stat_if.getHandle(joints[j].get_joint_name()), joints[j].get_command_addr() );
-        joint_pos_if.registerHandle( reg_pos_handle );
+        hardware_interface::JointHandle reg_joint_handle( joint_stat_if.getHandle(joints[j].get_joint_name()), joints[j].get_command_addr() );
+        if( joints[j].get_ope_mode() == OPERATING_MODE_CURRENT ){
+            joint_eff_if.registerHandle( reg_joint_handle );
+            ++current_mode_joint_num;
+        }else{
+            joint_pos_if.registerHandle( reg_joint_handle );
+            ++position_mode_joint_num;
+        }
         // Get limits
         if( joint_limits_interface::getJointLimits( joints[j].get_joint_name(), handle, limits ) ){
             joints[j].set_limits( limits );
@@ -118,11 +133,16 @@ DXLPORT_CONTROL::DXLPORT_CONTROL( ros::NodeHandle handle, CONTROL_SETTING &setti
             soft_limits.max_position = limits.max_position;
             soft_limits.min_position = limits.min_position;
             joint_limits_interface::PositionJointSoftLimitsHandle
-                            reg_limits_handle( reg_pos_handle, limits, soft_limits );
+                            reg_limits_handle( reg_joint_handle, limits, soft_limits );
             joint_limits_if.registerHandle( reg_limits_handle );
         }
     }
-    registerInterface( &joint_pos_if );
+    if( position_mode_joint_num > 0 ){
+        registerInterface( &joint_pos_if );
+    }
+    if( current_mode_joint_num > 0 ){
+        registerInterface( &joint_eff_if );
+    }
 
     init_stat = true;
 }
@@ -134,7 +154,7 @@ DXLPORT_CONTROL::~DXLPORT_CONTROL()
 	/* packetHandlerはdeleteしないほうが良さそう*/
     if(readPosGroup!=NULL)     delete( readPosGroup );
     if(readTempGroup!=NULL)    delete( readTempGroup );
-    if(writePosGroup!=NULL)    delete( writePosGroup );
+    if(writeGoalGroup!=NULL)    delete( writeGoalGroup );
     if(readCurrentGroup!=NULL) delete( readCurrentGroup );
     if(readVelGroup!=NULL)     delete( readVelGroup );
 }
@@ -273,35 +293,54 @@ void DXLPORT_CONTROL::write( ros::Time time, ros::Duration period )
 {
     int dxl_comm_result = COMM_TX_FAIL;             // Communication result
     uint8_t dxl_error = 0;                          // Dynamixel error
+    double get_cmd;
 
     if( !port_stat){
         for( int j=0 ; j<joint_num ; ++j ){
-            joints[j].set_position( joints[j].get_command() );
+            get_cmd = joints[j].get_command();
+            joints[j].updt_d_command( get_cmd );
+            joints[j].set_position( get_cmd );
         }
         return;
     }
     last_error = "";
     for( int j=0 ; j<joint_num ; ++j ){
-        double work_pos = RAD2DXLPOS( joints[j].get_command() );
-        work_pos += joints[j].get_center();          // ROS(-180 <=> +180) => DXL(0 <=> 4095)
-        if( work_pos < DXL_MIN_LIMIT ){
-            work_pos = DXL_MIN_LIMIT;
+        get_cmd = joints[j].get_command();
+        if( joints[j].get_ope_mode() == OPERATING_MODE_CURRENT ){
+            // Current control
+            double work_cur = EFFORT2DXL_CURRENT( get_cmd, joints[j].get_eff_const() );
+            joints[j].updt_d_command( 0.0 );
+
+            uint16_t dxl_cur = (uint32_t)round( work_cur );
+            uint8_t* goal_data = joints[j].get_dxl_goal_addr();
+            goal_data[0] = (uint8_t)(dxl_cur&0x000000FF);
+            goal_data[1] = (uint8_t)((dxl_cur&0x0000FF00)>>8);
+
+            writeGoalGroup->changeParam( joints[j].get_dxl_id(), ADDR_GOAL_CURRENT, LEN_GOAL_CURRENT, goal_data );
+        }else{
+            // Position control
+            double work_pos = RAD2DXLPOS( get_cmd );
+            joints[j].updt_d_command( get_cmd );
+            work_pos += joints[j].get_center();          // ROS(-180 <=> +180) => DXL(0 <=> 4095)
+            if( work_pos < DXL_MIN_LIMIT ){
+                work_pos = DXL_MIN_LIMIT;
+            }
+            if( work_pos > DXL_MAX_LIMIT ){
+                work_pos = DXL_MAX_LIMIT;
+            }
+
+            uint32_t dxl_pos = (uint32_t)round( work_pos );
+            uint8_t* goal_data = joints[j].get_dxl_goal_addr();
+
+            goal_data[0] = (uint8_t)(dxl_pos&0x000000FF);
+            goal_data[1] = (uint8_t)((dxl_pos&0x0000FF00)>>8);
+            goal_data[2] = (uint8_t)((dxl_pos&0x00FF0000)>>16);
+            goal_data[3] = (uint8_t)((dxl_pos&0xFF000000)>>24);
+
+            writeGoalGroup->changeParam( joints[j].get_dxl_id(), ADDR_GOAL_POSITION, LEN_GOAL_POSITION, goal_data );
         }
-        if( work_pos > DXL_MAX_LIMIT ){
-            work_pos = DXL_MAX_LIMIT;
-        }
-
-        uint32_t dxl_pos = (uint32_t)round( work_pos );
-        uint8_t* goal_data = joints[j].get_dxl_goal_addr();
-
-        goal_data[0] = (uint8_t)(dxl_pos&0x000000FF);
-        goal_data[1] = (uint8_t)((dxl_pos&0x0000FF00)>>8);
-        goal_data[2] = (uint8_t)((dxl_pos&0x00FF0000)>>16);
-        goal_data[3] = (uint8_t)((dxl_pos&0xFF000000)>>24);
-
-        writePosGroup->changeParam( joints[j].get_dxl_id(), ADDR_GOAL_POSITION, LEN_GOAL_POSITION, goal_data );
     }
-    dxl_comm_result = writePosGroup->txPacket();
+    dxl_comm_result = writeGoalGroup->txPacket();
     if( dxl_comm_result != COMM_SUCCESS ){
         last_error = packetHandler->getTxRxResult( dxl_comm_result );
         ++tx_err;
@@ -321,6 +360,9 @@ void DXLPORT_CONTROL::set_gain_all( uint16_t gain )
     }
     last_error = "";
     for( int j=0 ; j<joint_num ; ++j ){
+        if( joints[j].get_ope_mode() == OPERATING_MODE_CURRENT ){
+            continue;
+        }
         set_gain( joints[j].get_dxl_id(), gain );
     }
 }
@@ -421,7 +463,11 @@ void DXLPORT_CONTROL::startup_motion( void )
         motion_work.step_rad  = 
             (motion_work.home > motion_work.start) ? ((motion_work.home_rad - motion_work.start_rad)/step_max)
                                                    : -((motion_work.start_rad - motion_work.home_rad)/step_max);
-        joints[j].set_command( joints[j].get_position() );
+        if( joints[j].get_ope_mode() == OPERATING_MODE_CURRENT ){
+            joints[j].set_command( 0.0 );
+        }else{
+            joints[j].set_command( joints[j].get_position() );
+        }
         home_motion_data.push_back( motion_work );
     }
     write( t, d );
@@ -433,23 +479,32 @@ void DXLPORT_CONTROL::startup_motion( void )
         readPos( t, d );
         if( !port_stat ){
             for( int j=0 ; j<joint_num ; ++j ){
+                if( joints[j].get_ope_mode() == OPERATING_MODE_CURRENT ){
+                    continue;
+                }
                 joints[j].set_command( DXLPOS2RAD( joints[j].get_home() ) - DXLPOS2RAD( joints[j].get_center() ) );
             }
             continue;
         }
         for( int j=0 ; j<joint_num ; ++j ){
-            /* [TODO]物理的に引っかかっている時に逃げられるよう何か対策を講じた方が良い */
+            if( joints[j].get_ope_mode() == OPERATING_MODE_CURRENT ){
+                continue;
+            }
             joints[j].set_command( joints[j].get_command() + home_motion_data[j].step_rad );
         }
         write( t, d );
         rate.sleep();
     }
-    /* [TODO]物理的に引っかかっている時に逃げられるよう何か対策を講じた方が良い */
-    /* ホームポジションを設定する */
     for( int j=0 ; j<joint_num ; ++j ){
+        if( joints[j].get_ope_mode() == OPERATING_MODE_CURRENT ){
+            continue;
+        }
         joints[j].set_command( home_motion_data[j].home_rad );
     }
     write( t, d );
+    for( int j=0 ; j<joint_num ; ++j ){
+        joints[j].updt_d_command( 0.0 );//差分の初期化
+    }
 }
 
 /* セルフチェック */
