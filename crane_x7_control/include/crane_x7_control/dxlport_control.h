@@ -45,7 +45,7 @@ public:
     bool                get_init_stat( void ){ return init_stat; }
     uint8_t             get_joint_num( void ){ return joint_num; }
     std::string         self_check( void );
-    
+    void                effort_limitter( void );
     std::string                                 last_error;
     uint32_t                                    tempCount;
     std::vector<JOINT_CONTROL>                  joints;
@@ -57,6 +57,7 @@ private:
     dynamixel::PortHandler                     *portHandler;
     hardware_interface::JointStateInterface     joint_stat_if;
     hardware_interface::PositionJointInterface  joint_pos_if;
+    joint_limits_interface::PositionJointSoftLimitsInterface joint_limits_if;
     dynamixel::GroupBulkRead                   *readPosGroup;
     dynamixel::GroupBulkRead                   *readCurrentGroup;
     dynamixel::GroupBulkRead                   *readTempGroup;

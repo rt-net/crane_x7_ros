@@ -15,6 +15,8 @@ DXLPORT_CONTROL::DXLPORT_CONTROL( ros::NodeHandle handle, CONTROL_SETTING &setti
     int j;
     int dxl_comm_result = COMM_TX_FAIL;             // Communication result
     uint8_t dxl_error = 0;                          // Dynamixel error
+    joint_limits_interface::JointLimits limits;
+    joint_limits_interface::SoftJointLimits soft_limits;
 
     init_stat = false;
     tx_err = rx_err = 0;
@@ -99,6 +101,17 @@ DXLPORT_CONTROL::DXLPORT_CONTROL( ros::NodeHandle handle, CONTROL_SETTING &setti
     for( j=0 ; j<joint_num ; ++j ){
         hardware_interface::JointHandle reg_pos_handle( joint_stat_if.getHandle(joints[j].get_joint_name()), joints[j].get_command_addr() );
         joint_pos_if.registerHandle( reg_pos_handle );
+        // Get limits
+        if( joint_limits_interface::getJointLimits( joints[j].get_joint_name(), handle, limits ) ){
+            joints[j].set_limits( limits );
+            soft_limits.k_position = 1.0;
+            soft_limits.k_velocity = 1.0;
+            soft_limits.max_position = limits.max_position;
+            soft_limits.min_position = limits.min_position;
+            joint_limits_interface::PositionJointSoftLimitsHandle
+                            reg_limits_handle( reg_pos_handle, limits, soft_limits );
+            joint_limits_if.registerHandle( reg_limits_handle );
+        }
     }
     registerInterface( &joint_pos_if );
 
@@ -181,7 +194,7 @@ void DXLPORT_CONTROL::readCurrent( ros::Time time, ros::Duration period )
                 present_current = readCurrentGroup->getData( dxl_id, ADDR_PRESENT_CURRENT, LEN_PRESENT_CURRENT );
                 joints[j].set_dxl_curr( present_current );
                 joints[j].set_current( (DXL_CURRENT_UNIT * present_current) );
-                joints[j].set_effort( (DXL_CURRENT_UNIT * present_current * DXL_EFFORT_COEF) );
+                joints[j].set_effort( fabs(DXL_CURRENT2EFFORT( present_current )) );//ROSは力のかかっている方向を扱わないので絶対値に加工する
             }
         }
     }
@@ -495,4 +508,64 @@ std::string DXLPORT_CONTROL::self_check( void )
         }
     }
     return res_str;
+}
+
+void DXLPORT_CONTROL::effort_limitter( void )
+{
+    int dxl_comm_result = COMM_TX_FAIL;             // Communication result
+    uint8_t dxl_error = 0;                          // Dynamixel error
+    double now_eff, max_eff;
+    uint16_t set_pgain = DXL_DEFAULT_PGAIN;
+    uint16_t get_pgain;
+    double eff_coeff = 0.95;
+
+    last_error = "";
+    if( !port_stat ){
+        return;
+    }
+    for( int j=0 ; j<joint_num; ++j ){
+        now_eff = fabs( joints[j].get_effort() );
+        max_eff = joints[j].get_max_effort();
+        if( now_eff > max_eff ){
+            joints[j].inc_eff_over();
+            if( joints[j].get_eff_over_cnt() >= EFFORT_LIMITING_CNT ){
+                // 設計回数以上連続して最大トルクを上回った
+                set_pgain = DXL_DEFAULT_PGAIN;
+                if( joints[j].is_effort_limiting() ){
+                    dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, joints[j].get_dxl_id(), ADDR_POSITION_PGAIN, &get_pgain, &dxl_error);
+                    if( dxl_comm_result != COMM_SUCCESS ){
+                        last_error = packetHandler->getTxRxResult( dxl_comm_result );
+                        ++rx_err;
+                    }else if( dxl_error != 0 ){
+                        last_error = packetHandler->getRxPacketError( dxl_error );
+                        ++rx_err;
+                    }else{
+                        set_pgain = get_pgain;
+                    }
+                }
+                set_pgain = (uint16_t)(set_pgain * ((max_eff*eff_coeff) / now_eff));
+                set_gain( joints[j].get_dxl_id(), set_pgain );
+                joints[j].set_eff_limiting( true );
+            }
+        }else{
+            // 制限中で電流値が下回った
+            if( joints[j].is_effort_limiting() ){
+                dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, joints[j].get_dxl_id(), ADDR_POSITION_PGAIN, &get_pgain, &dxl_error);
+                if( dxl_comm_result != COMM_SUCCESS ){
+                    last_error = packetHandler->getTxRxResult( dxl_comm_result );
+                    ++rx_err;
+                }else if( dxl_error != 0 ){
+                    last_error = packetHandler->getRxPacketError( dxl_error );
+                    ++rx_err;
+                }else if( get_pgain >= DXL_DEFAULT_PGAIN ){
+                    joints[j].clear_eff_over();
+                    joints[j].set_eff_limiting( false );
+                }else{
+                    set_gain( joints[j].get_dxl_id(), (get_pgain+2) );
+                    joints[j].set_eff_limiting( true );
+                }
+            }
+        }
+
+    }
 }

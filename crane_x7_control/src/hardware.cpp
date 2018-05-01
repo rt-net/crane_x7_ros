@@ -191,6 +191,7 @@ int main( int argc, char* argv[] )
             crane_x7.set_gain( gain_data.dxl_id, gain_data.gain );
             set_gain_request.pop();
         }
+        crane_x7.effort_limitter();
         ros::spinOnce();
         rate.sleep();
     }
