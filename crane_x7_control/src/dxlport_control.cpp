@@ -352,6 +352,18 @@ void DXLPORT_CONTROL::write( ros::Time time, ros::Duration period )
     }
 }
 
+bool DXLPORT_CONTROL::is_change_positions( void )
+{
+    bool result = false;
+
+    for( int j=0 ; j<joint_num ; ++j ){
+        if( fabs( joints[j].get_d_command() ) > 0.0 ){
+            result = true;
+        }
+    }
+    return result;
+}
+
 void DXLPORT_CONTROL::set_gain_all( uint16_t gain )
 {
     int dxl_comm_result = COMM_TX_FAIL;             // Communication result
