@@ -97,10 +97,30 @@ void reconfigureCallback(crane_x7_msgs::ServoParameterConfig &config, uint32_t l
     set_req_data.position_d_gain   = config.position_d_gain;
     set_req_data.position_i_gain   = config.position_i_gain;
     set_req_data.position_p_gain   = config.position_p_gain;
-    set_req_data.goal_current      = config.goal_current;
-    set_req_data.goal_velocity     = config.goal_velocity;
-    set_req_data.goal_position     = config.goal_position;
-    set_joint_param_request.push( set_req_data );
+    if( level != 0 ){
+        for( std::vector<JOINT_CONTROL>::iterator it=driver_addr->joints.begin() ; it!=driver_addr->joints.end() ; ++it ){
+            if( it->get_dxl_id() == id ){
+                ST_JOINT_PARAM load_data = it->get_joint_param();
+                config.return_delay_time = load_data.return_delay_time;
+                config.drive_mode        = load_data.drive_mode;
+                config.operation_mode    = load_data.operation_mode;
+                config.moving_threshold  = load_data.moving_threshold;
+                config.homing_offset     = load_data.homing_offset;
+                config.temprature_limit  = load_data.temprature_limit;
+                config.max_vol_limit     = load_data.max_vol_limit;
+                config.min_vol_limit     = load_data.min_vol_limit;
+                config.current_limit     = load_data.current_limit;
+                config.torque_enable     = true;
+                config.velocity_i_gain   = load_data.velocity_i_gain;
+                config.velocity_p_gain   = load_data.velocity_p_gain;
+                config.position_d_gain   = load_data.position_d_gain;
+                config.position_i_gain   = load_data.position_i_gain;
+                config.position_p_gain   = DXL_DEFAULT_PGAIN;
+            }
+        }
+    }else{
+        set_joint_param_request.push( set_req_data );
+    }
 }
 
 void init_topics( DXLPORT_CONTROL *driver, ros::NodeHandle nh )
@@ -165,6 +185,23 @@ void publish_topic_data( DXLPORT_CONTROL *driver, bool temp_flg )
     }
 }
 
+void write_joint_param( DXLPORT_CONTROL& driver, ST_JOINT_PARAM set_param )
+{
+    uint8_t dxl_id = set_param.dxl_id;
+
+    driver.set_param_delay_time( dxl_id, set_param.return_delay_time );
+    driver.set_param_drive_mode( dxl_id, set_param.drive_mode );
+    driver.set_param_ope_mode( dxl_id, set_param.operation_mode );
+    driver.set_param_home_offset( dxl_id, set_param.homing_offset );
+    driver.set_param_moving_threshold( dxl_id, set_param.moving_threshold );
+    driver.set_param_temp_limit( dxl_id, set_param.temprature_limit );
+    driver.set_param_vol_limit( dxl_id, set_param.max_vol_limit, set_param.min_vol_limit );
+    driver.set_param_current_limit( dxl_id, set_param.current_limit );
+    driver.set_param_vel_gain( dxl_id, set_param.velocity_p_gain, set_param.velocity_i_gain );
+    driver.set_param_pos_gain( dxl_id, set_param.position_p_gain, set_param.position_i_gain, set_param.position_d_gain );
+    driver.set_torque( dxl_id, (set_param.torque_enable?true:false) );
+}
+
 void SigintHandler( int sig )
 {
     ros::shutdown();
@@ -192,7 +229,6 @@ int main( int argc, char* argv[] )
 
     ros::Publisher lasterror_pub = nhPrivate.advertise<std_msgs::String>("lasterror", 10);
     init_topics( &crane_x7, nhPrivate );
-    init_reconfigure( &crane_x7 );
 
     ros::Rate rate( CONTROL_HZ );
     ros::AsyncSpinner spinner(4);
@@ -203,7 +239,9 @@ int main( int argc, char* argv[] )
     uint32_t prev_tempCount = 0;
     bool read_temp_flg = false;
 
+    crane_x7.set_gain_all( DXL_DEFAULT_PGAIN );
     ROS_INFO( "%s", crane_x7.self_check().c_str() );
+    init_reconfigure( &crane_x7 );
 
     crane_x7.startup_motion();
 
@@ -232,9 +270,7 @@ int main( int argc, char* argv[] )
             set_gain_request.pop();
         }
         while( set_joint_param_request.size() > 0 ){
-            ST_JOINT_PARAM param_data = set_joint_param_request.front();
-            crane_x7.set_gain( param_data.dxl_id, param_data.position_p_gain );
-            crane_x7.set_torque( param_data.dxl_id, (param_data.torque_enable?true:false) );
+            write_joint_param( crane_x7, set_joint_param_request.front() );
             set_joint_param_request.pop();
         }
         crane_x7.effort_limitter();

@@ -30,30 +30,57 @@ typedef struct {
 #define     REG_LENGTH_WORD                 (2)
 #define     REG_LENGTH_DWORD                (4)
 
+typedef enum {
+    enTableId_ReturnDelay = 0,
+    enTableId_DriveMode,
+    enTableId_OpeMode,
+    enTableId_HomingOffset,
+    enTableId_MovingThreshold,
+    enTableId_TempLimit,
+    enTableId_MaxVolLimit,
+    enTableId_MinVolLimit,
+    enTableId_CurrentLimit,
+    enTableId_Shutdown,
+    enTableId_TorqueEnable,
+    enTableId_VelocityIGain,
+    enTableId_VelocityPGain,
+    enTableId_PositionDGain,
+    enTableId_PositionIGain,
+    enTableId_PositionPGain,
+    enTableId_GoalCurrent,
+    enTableId_GoalVelocity,
+    enTableId_GoalPosition,
+    enTableId_PresentCurrent,
+    enTableId_PresentVelocity,
+    enTableId_PresentPosition,
+    enTableId_PresentTemp,
+} EN_TABLE_ID;
+
 static const ST_DYNAMIXEL_REG_TABLE RegTable[] ={
     /*  NAME                ADDR    LEN INIT    TYPE   */
     { "RETURN_DELAY_TIME",  9,      REG_LENGTH_BYTE,  250,    enDXL_ROM,  false },/* 0 */
     { "DRIVE_MODE",         10,     REG_LENGTH_BYTE,  0,      enDXL_ROM,  false },/* 1 */
     { "OPERATION_MODE",     11,     REG_LENGTH_BYTE,  3,      enDXL_ROM,  false },/* 2 */
-    { "MOVING_THRESHOLD",   24,     REG_LENGTH_DWORD, 10,     enDXL_ROM,  false },/* 3 */
-    { "TEMPRATURE_LIMIT",   31,     REG_LENGTH_BYTE,  80,     enDXL_ROM,  false },/* 4 */
-    { "MAX_VOL_LIMIT",      32,     REG_LENGTH_WORD,  160,    enDXL_ROM,  false },/* 5 */
-    { "MIN_VOL_LIMIT",      34,     REG_LENGTH_WORD,  95,     enDXL_ROM,  false },/* 6 */
-    { "CURRENT_LIMIT",      38,     REG_LENGTH_WORD,  1193,   enDXL_ROM,  false },/* 7 */
-    { "SHUTDOWN",           63,     REG_LENGTH_BYTE,  52,     enDXL_ROM,  false },/* 8 */
-    { "TORQUE_ENABLE",      64,     REG_LENGTH_BYTE,  0,      enDXL_RAM,  false },/* 9 */
-    { "VELOCITY_I_GAIN",    76,     REG_LENGTH_WORD,  1920,   enDXL_RAM,  true  },/* 10 */
-    { "VELOCITY_P_GAIN",    78,     REG_LENGTH_WORD,  100,    enDXL_RAM,  true  },/* 11 */
-    { "POSITION_D_GAIN",    80,     REG_LENGTH_WORD,  0,      enDXL_RAM,  true  },/* 12 */
-    { "POSITION_I_GAIN",    82,     REG_LENGTH_WORD,  0,      enDXL_RAM,  true  },/* 13 */
-    { "POSITION_P_GAIN",    84,     REG_LENGTH_WORD,  800,    enDXL_RAM,  false },/* 14 */
-    { "GOAL_CURRENT",       102,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },/* 15 */
-    { "GOAL_VELOCITY",      104,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },/* 16 */
-    { "GOAL_POSITION",      116,    REG_LENGTH_DWORD, 0,      enDXL_RAM,  false },/* 17 */
-    { "PRESENT_CURRENT",    126,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },/* 18 */
-    { "PRESENT_VELOCITY",   128,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },/* 19 */
-    { "PRESENT_POSITION",   132,    REG_LENGTH_DWORD, 0,      enDXL_RAM,  false },/* 20 */
-    { "PRESENT_TEMPRATURE", 146,    REG_LENGTH_BYTE,  0,      enDXL_RAM,  false },/* 21 */
+    { "HOMING_OFFSET",      20,     REG_LENGTH_DWORD, 0,      enDXL_ROM,  false },/* 3 */
+    { "MOVING_THRESHOLD",   24,     REG_LENGTH_DWORD, 10,     enDXL_ROM,  false },/* 4 */
+    { "TEMPRATURE_LIMIT",   31,     REG_LENGTH_BYTE,  80,     enDXL_ROM,  false },/* 5 */
+    { "MAX_VOL_LIMIT",      32,     REG_LENGTH_WORD,  160,    enDXL_ROM,  false },/* 6 */
+    { "MIN_VOL_LIMIT",      34,     REG_LENGTH_WORD,  95,     enDXL_ROM,  false },/* 7 */
+    { "CURRENT_LIMIT",      38,     REG_LENGTH_WORD,  1193,   enDXL_ROM,  false },/* 8 */
+    { "SHUTDOWN",           63,     REG_LENGTH_BYTE,  52,     enDXL_ROM,  false },/* 9 */
+    { "TORQUE_ENABLE",      64,     REG_LENGTH_BYTE,  0,      enDXL_RAM,  false },/* 10 */
+    { "VELOCITY_I_GAIN",    76,     REG_LENGTH_WORD,  1920,   enDXL_RAM,  true  },/* 11 */
+    { "VELOCITY_P_GAIN",    78,     REG_LENGTH_WORD,  100,    enDXL_RAM,  true  },/* 12 */
+    { "POSITION_D_GAIN",    80,     REG_LENGTH_WORD,  0,      enDXL_RAM,  true  },/* 13 */
+    { "POSITION_I_GAIN",    82,     REG_LENGTH_WORD,  0,      enDXL_RAM,  true  },/* 14 */
+    { "POSITION_P_GAIN",    84,     REG_LENGTH_WORD,  800,    enDXL_RAM,  false },/* 15 */
+    { "GOAL_CURRENT",       102,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },/* 16 */
+    { "GOAL_VELOCITY",      104,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },/* 17 */
+    { "GOAL_POSITION",      116,    REG_LENGTH_DWORD, 0,      enDXL_RAM,  false },/* 18 */
+    { "PRESENT_CURRENT",    126,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },/* 19 */
+    { "PRESENT_VELOCITY",   128,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },/* 20 */
+    { "PRESENT_POSITION",   132,    REG_LENGTH_DWORD, 0,      enDXL_RAM,  false },/* 21 */
+    { "PRESENT_TEMPRATURE", 146,    REG_LENGTH_BYTE,  0,      enDXL_RAM,  false },/* 22 */
 };
 
 typedef struct ST_JOINT_PARAM
@@ -78,21 +105,47 @@ typedef struct ST_JOINT_PARAM
 
 // Parameter
 #define     BAUDRATE                        (3000000)         // 通信速度
-#define     ADDR_TORQUE_ENABLE              (RegTable[9].address)              // Control table address is different in Dynamixel model
-#define     ADDR_GOAL_POSITION              (RegTable[17].address)             // ゴールポジションアドレス
-#define     LEN_GOAL_POSITION               (RegTable[17].length)              // ゴールポジション
-#define     ADDR_PRESENT_POSITION           (RegTable[20].address)
-#define     LEN_PRESENT_POSITION            (RegTable[20].length)
-#define     ADDR_PRESENT_CURRENT            (RegTable[18].address)
-#define     LEN_PRESENT_CURRENT             (RegTable[18].length)
-#define     ADDR_PRESENT_TEMP               (RegTable[21].address)
-#define     LEN_PRESENT_TEMP                (RegTable[21].length)
-#define     ADDR_PRESENT_VEL                (RegTable[19].address)
-#define     LEN_PRESENT_VEL                 (RegTable[19].length)
-#define     ADDR_POSITION_PGAIN             (RegTable[14].address)
-#define     LEN_POSITION_PGAIN              (RegTable[14].length)
-#define     ADDR_GOAL_CURRENT               (RegTable[15].address)             // ゴールポジションアドレス
-#define     LEN_GOAL_CURRENT                (RegTable[15].length)              // ゴールポジション
+#define     ADDR_RETURN_DELAY               (RegTable[enTableId_ReturnDelay].address)
+#define     LEN_PRETURN_DELAY               (RegTable[enTableId_ReturnDelay].length)
+#define     ADDR_DRIVE_MODE                 (RegTable[enTableId_DriveMode].address)
+#define     LEN_DRIVE_MODE                  (RegTable[enTableId_DriveMode].length)
+#define     ADDR_OPE_MODE                   (RegTable[enTableId_OpeMode].address)
+#define     LEN_OPE_MODE                    (RegTable[enTableId_OpeMode].length)
+#define     ADDR_HOMING_OFFSET              (RegTable[enTableId_HomingOffset].address)
+#define     LEN_HOMING_OFFSET               (RegTable[enTableId_HomingOffset].length)
+#define     ADDR_MOVING_THRESHOLD           (RegTable[enTableId_MovingThreshold].address)
+#define     LEN_MOVING_THRESHOLD            (RegTable[enTableId_MovingThreshold].length)
+#define     ADDR_TEMPRATURE_LIMIT           (RegTable[enTableId_TempLimit].address)
+#define     LEN_TEMPRATURE_LIMIT            (RegTable[enTableId_TempLimit].length)
+#define     ADDR_MAX_VOL_LIMIT              (RegTable[enTableId_MaxVolLimit].address)
+#define     LEN_MAX_VOL_LIMIT               (RegTable[enTableId_MaxVolLimit].length)
+#define     ADDR_MIN_VOL_LIMIT              (RegTable[enTableId_MinVolLimit].address)
+#define     LEN_MIN_VOL_LIMIT               (RegTable[enTableId_MinVolLimit].length)
+#define     ADDR_CURRENT_LIMIT              (RegTable[enTableId_CurrentLimit].address)
+#define     LEN_CURRENT_LIMIT               (RegTable[enTableId_CurrentLimit].length)
+#define     ADDR_TORQUE_ENABLE              (RegTable[enTableId_TorqueEnable].address)              // Control table address is different in Dynamixel model
+#define     ADDR_VELOCITY_IGAIN             (RegTable[enTableId_VelocityIGain].address)
+#define     LEN_VELOCITY_IGAIN              (RegTable[enTableId_VelocityIGain].length)
+#define     ADDR_VELOCITY_PGAIN             (RegTable[enTableId_VelocityPGain].address)
+#define     LEN_VELOCITY_PGAIN              (RegTable[enTableId_VelocityPGain].length)
+#define     ADDR_POSITION_DGAIN             (RegTable[enTableId_PositionDGain].address)
+#define     LEN_POSITION_DGAIN              (RegTable[enTableId_PositionDGain].length)
+#define     ADDR_POSITION_IGAIN             (RegTable[enTableId_PositionIGain].address)
+#define     LEN_POSITION_IGAIN              (RegTable[enTableId_PositionIGain].length)
+#define     ADDR_POSITION_PGAIN             (RegTable[enTableId_PositionPGain].address)
+#define     LEN_POSITION_PGAIN              (RegTable[enTableId_PositionPGain].length)
+#define     ADDR_GOAL_CURRENT               (RegTable[enTableId_GoalCurrent].address)             // ゴールカレントアドレス
+#define     LEN_GOAL_CURRENT                (RegTable[enTableId_GoalCurrent].length)              // ゴールカレント
+#define     ADDR_GOAL_POSITION              (RegTable[enTableId_GoalPosition].address)            // ゴールポジションアドレス
+#define     LEN_GOAL_POSITION               (RegTable[enTableId_GoalPosition].length)             // ゴールポジション
+#define     ADDR_PRESENT_CURRENT            (RegTable[enTableId_PresentCurrent].address)
+#define     LEN_PRESENT_CURRENT             (RegTable[enTableId_PresentCurrent].length)
+#define     ADDR_PRESENT_VEL                (RegTable[enTableId_PresentVelocity].address)
+#define     LEN_PRESENT_VEL                 (RegTable[enTableId_PresentVelocity].length)
+#define     ADDR_PRESENT_POSITION           (RegTable[enTableId_PresentPosition].address)
+#define     LEN_PRESENT_POSITION            (RegTable[enTableId_PresentPosition].length)
+#define     ADDR_PRESENT_TEMP               (RegTable[enTableId_PresentTemp].address)
+#define     LEN_PRESENT_TEMP                (RegTable[enTableId_PresentTemp].length)
 
 #define     TORQUE_ENABLE                   (1)                // Value for enabling the torque
 #define     TORQUE_DISABLE                  (0)                // Value for disabling the torque

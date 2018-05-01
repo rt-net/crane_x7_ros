@@ -50,6 +50,19 @@ public:
     uint8_t             get_joint_num( void ){ return joint_num; }
     std::string         self_check( void );
     void                effort_limitter( void );
+    void                init_joint_params( ST_JOINT_PARAM &param, int table_id, int value );
+
+    void                set_param_delay_time( uint8_t dxl_id, int val );
+    void                set_param_drive_mode( uint8_t dxl_id, int val );
+    void                set_param_ope_mode( uint8_t dxl_id, int val );
+    void                set_param_home_offset( uint8_t dxl_id, int val );
+    void                set_param_moving_threshold( uint8_t dxl_id, int val );
+    void                set_param_temp_limit( uint8_t dxl_id, int val );
+    void                set_param_vol_limit( uint8_t dxl_id, int max, int min );
+    void                set_param_current_limit( uint8_t dxl_id, int val );
+    void                set_param_vel_gain( uint8_t dxl_id, int p, int i );
+    void                set_param_pos_gain( uint8_t dxl_id, int p, int i, int d );
+
     std::string                                 last_error;
     uint32_t                                    tempCount;
     std::vector<JOINT_CONTROL>                  joints;
@@ -75,9 +88,9 @@ private:
     ros::Time                                   tempTime;
 //    uint32_t                                    tempCount;
 
-    bool                check_servo_param( uint8_t dxl_id, uint32_t test_addr, uint8_t equal );
-    bool                check_servo_param( uint8_t dxl_id, uint32_t test_addr, uint16_t equal );
-    bool                check_servo_param( uint8_t dxl_id, uint32_t test_addr, uint32_t equal );
+    bool                check_servo_param( uint8_t dxl_id, uint32_t test_addr, uint8_t equal, uint8_t& read_val );
+    bool                check_servo_param( uint8_t dxl_id, uint32_t test_addr, uint16_t equal, uint16_t& read_val );
+    bool                check_servo_param( uint8_t dxl_id, uint32_t test_addr, uint32_t equal, uint32_t& read_val );
 };
 
 #endif /* DXLPORT_CONTROL_H */
