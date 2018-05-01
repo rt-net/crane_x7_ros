@@ -67,7 +67,7 @@ static const ST_DYNAMIXEL_REG_TABLE RegTable[] ={
 #define     DXL_MIN_LIMIT                   (0.0)
 #define     DXL_MAX_LIMIT                   (4095.0)
 #define     DXL_CURRENT_UNIT                (2.69)             // mA
-#define     DXL_EFFORT_CONST                (1.79)
+#define     DXL_EFFORT_CONST                (0.00179)          // (mA*COEF)=Nm
 #define     DXL_TEMP_READ_DURATION          (5)
 #define     DXL_PGAIN_MAX                   (16383)
 #define     DXL_DEFAULT_PGAIN               (800)
