@@ -37,11 +37,14 @@ public:
     void                readPos( ros::Time, ros::Duration );
     void                readCurrent( ros::Time, ros::Duration );
     void                readTemp( ros::Time, ros::Duration );
+    void                readVel( ros::Time, ros::Duration );
     void                write( ros::Time, ros::Duration );
     void                set_torque( bool torque );
     void                startup_motion( void );
     void                set_gain_all( uint16_t gain );
     void                set_gain( uint8_t dxl_id, uint16_t gain );
+    void                set_goal_current_all( uint16_t current );
+    void                set_goal_current( uint8_t dxl_id, uint16_t current );
     bool                get_init_stat( void ){ return init_stat; }
     uint8_t             get_joint_num( void ){ return joint_num; }
     std::string         self_check( void );
@@ -57,11 +60,13 @@ private:
     dynamixel::PortHandler                     *portHandler;
     hardware_interface::JointStateInterface     joint_stat_if;
     hardware_interface::PositionJointInterface  joint_pos_if;
+    hardware_interface::EffortJointInterface    joint_eff_if;
     joint_limits_interface::PositionJointSoftLimitsInterface joint_limits_if;
     dynamixel::GroupBulkRead                   *readPosGroup;
     dynamixel::GroupBulkRead                   *readCurrentGroup;
     dynamixel::GroupBulkRead                   *readTempGroup;
-    dynamixel::GroupBulkWrite                  *writePosGroup;
+    dynamixel::GroupBulkRead                   *readVelGroup;
+    dynamixel::GroupBulkWrite                  *writeGoalGroup;
 
     bool                                        init_stat;
     uint32_t                                    rx_err;

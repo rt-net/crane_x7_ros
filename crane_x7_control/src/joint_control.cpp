@@ -3,7 +3,7 @@
 #include    <angles/angles.h>
 #include    <crane_x7_control/joint_control.h>
 
-void JOINT_CONTROL::init_parameter( std::string init_name, uint8_t init_dxlid, uint16_t init_center, uint16_t init_home )
+void JOINT_CONTROL::init_parameter( std::string init_name, uint8_t init_dxlid, uint16_t init_center, uint16_t init_home, double init_eff_const, uint8_t init_mode )
 {
     name     = init_name;
     id       = init_dxlid;
@@ -26,14 +26,23 @@ void JOINT_CONTROL::init_parameter( std::string init_name, uint8_t init_dxlid, u
     for( int i=0 ; i<sizeof(dxl_goal) ; ++i ){
         dxl_goal[i] = 0;
     }
+    eff_const = init_eff_const;
+    eff_limiting = false;
+    eff_over_cnt = 0;
+
+    if( init_mode == OPERATING_MODE_CURRENT ){
+        ope_mode = OPERATING_MODE_CURRENT;
+    }else{
+        ope_mode = OPERATING_MODE_POSITION;
+    }
 }
 JOINT_CONTROL::JOINT_CONTROL(void)
 { 
-    init_parameter( std::string(""), 0, DXL_OFFSET_DEFAULT, DXL_OFFSET_DEFAULT );
+    init_parameter( std::string(""), 0, DXL_OFFSET_DEFAULT, DXL_OFFSET_DEFAULT, DXL_EFFORT_CONST, OPERATING_MODE_POSITION );
 }
-JOINT_CONTROL::JOINT_CONTROL( std::string init_name, uint8_t init_dxlid, uint16_t init_center, uint16_t init_home )
+JOINT_CONTROL::JOINT_CONTROL( std::string init_name, uint8_t init_dxlid, uint16_t init_center, uint16_t init_home, double init_eff_const, uint8_t init_mode )
 {
-    init_parameter( init_name, init_dxlid, init_center, init_home );
+    init_parameter( init_name, init_dxlid, init_center, init_home, init_eff_const, init_mode );
 }
 JOINT_CONTROL::JOINT_CONTROL( const JOINT_CONTROL &src )
 {
@@ -58,4 +67,10 @@ JOINT_CONTROL::JOINT_CONTROL( const JOINT_CONTROL &src )
     for( int i=0 ; i<sizeof(dxl_goal) ; ++i ){
         dxl_goal[i] = src.dxl_goal[i];
     }
+    eff_const = src.eff_const;
+    eff_limiting = src.eff_limiting;
+    eff_over_cnt = src.eff_over_cnt;
+
+    ope_mode = src.ope_mode;
 }
+

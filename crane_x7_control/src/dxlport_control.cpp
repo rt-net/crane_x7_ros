@@ -6,8 +6,9 @@
 #include    <stdio.h>
 
 /* MACRO */
-#define     DXLPOS2RAD(pos)    (( (pos*(360.0/POSITION_STEP) )/360) *2*M_PI)
+#define     DXLPOS2RAD(pos)    (( ((pos)*(360.0/POSITION_STEP) )/360) *2*M_PI)
 #define     RAD2DXLPOS(rad)    (( ((rad)/2.0/M_PI)*360.0 ) * (POSITION_STEP / 360.0))
+#define     INIT_EFFCNST_UNIT(c) ((c)*0.001)
 
 
 DXLPORT_CONTROL::DXLPORT_CONTROL( ros::NodeHandle handle, CONTROL_SETTING &setting )
@@ -31,7 +32,7 @@ DXLPORT_CONTROL::DXLPORT_CONTROL( ros::NodeHandle handle, CONTROL_SETTING &setti
     joint_num = setting.getjointNum();
     std::vector<ST_SERVO_PARAM> list = setting.getServoParam();
     for( j=0 ; j<joint_num ; ++j ){
-        JOINT_CONTROL work( list[j].name, list[j].id, list[j].center, list[j].home );
+        JOINT_CONTROL work( list[j].name, list[j].id, list[j].center, list[j].home, list[j].eff_cnst, list[j].mode );
         joints.push_back( work );
     }
 
@@ -194,7 +195,7 @@ void DXLPORT_CONTROL::readCurrent( ros::Time time, ros::Duration period )
                 present_current = readCurrentGroup->getData( dxl_id, ADDR_PRESENT_CURRENT, LEN_PRESENT_CURRENT );
                 joints[j].set_dxl_curr( present_current );
                 joints[j].set_current( (DXL_CURRENT_UNIT * present_current) );
-                joints[j].set_effort( fabs(DXL_CURRENT2EFFORT( present_current )) );//ROSは力のかかっている方向を扱わないので絶対値に加工する
+                joints[j].set_effort( fabs(DXL_CURRENT2EFFORT( present_current, joints[j].get_eff_const() )) );//ROSは力のかかっている方向を扱わないので絶対値に加工する
             }
         }
     }
@@ -290,6 +291,38 @@ void DXLPORT_CONTROL::set_gain( uint8_t dxl_id, uint16_t gain )
     uint8_t dxl_error = 0;                          // Dynamixel error
 
     dxl_comm_result = packetHandler->write2ByteTxRx( portHandler, dxl_id, ADDR_POSITION_PGAIN, gain, &dxl_error );
+    if( dxl_comm_result != COMM_SUCCESS ){
+        last_error = packetHandler->getTxRxResult( dxl_comm_result );
+        ++tx_err;
+    }else if( dxl_error != 0 ){
+        last_error = packetHandler->getRxPacketError( dxl_error );
+        ++tx_err;
+    }
+}
+
+void DXLPORT_CONTROL::set_goal_current_all( uint16_t current )
+{
+    int dxl_comm_result = COMM_TX_FAIL;             // Communication result
+    uint8_t dxl_error = 0;                          // Dynamixel error
+
+    if( !port_stat ){
+        return;
+    }
+    last_error = "";
+    for( int j=0 ; j<joint_num ; ++j ){
+        if( joints[j].get_ope_mode() == OPERATING_MODE_CURRENT ){
+            set_goal_current( joints[j].get_dxl_id(), current );
+        }
+    }
+}
+
+
+void DXLPORT_CONTROL::set_goal_current( uint8_t dxl_id, uint16_t current )
+{
+    int dxl_comm_result = COMM_TX_FAIL;             // Communication result
+    uint8_t dxl_error = 0;                          // Dynamixel error
+
+    dxl_comm_result = packetHandler->write2ByteTxRx( portHandler, dxl_id, ADDR_GOAL_CURRENT, current, &dxl_error );
     if( dxl_comm_result != COMM_SUCCESS ){
         last_error = packetHandler->getTxRxResult( dxl_comm_result );
         ++tx_err;
