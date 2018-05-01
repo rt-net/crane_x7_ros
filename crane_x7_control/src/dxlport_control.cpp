@@ -181,6 +181,7 @@ void DXLPORT_CONTROL::readCurrent( ros::Time time, ros::Duration period )
                 present_current = readCurrentGroup->getData( dxl_id, ADDR_PRESENT_CURRENT, LEN_PRESENT_CURRENT );
                 joints[j].set_dxl_curr( present_current );
                 joints[j].set_current( (DXL_CURRENT_UNIT * present_current) );
+                joints[j].set_effort( (DXL_CURRENT_UNIT * present_current * DXL_EFFORT_COEF) );
             }
         }
     }
