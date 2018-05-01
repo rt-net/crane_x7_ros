@@ -14,6 +14,8 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   hardware_interface
   transmission_interface
+  crane_x7_msgs
+  dynamic_reconfigure
 )
 
 ## System dependencies are found with CMake's conventions

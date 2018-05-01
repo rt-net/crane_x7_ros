@@ -6,6 +6,8 @@
 #include    <joint_limits_interface/joint_limits.h>
 #include    <joint_limits_interface/joint_limits_interface.h>
 #include    <joint_limits_interface/joint_limits_rosparam.h>
+#include    <dynamic_reconfigure/server.h>
+#include    <crane_x7_msgs/ServoParameterConfig.h>
 
 // Protocol version
 #define     PROTOCOL_VERSION                (2.0)              // See which protocol version is used in the Dynamixel
@@ -53,6 +55,26 @@ static const ST_DYNAMIXEL_REG_TABLE RegTable[] ={
     { "PRESENT_POSITION",   132,    REG_LENGTH_DWORD, 0,      enDXL_RAM,  false },/* 20 */
     { "PRESENT_TEMPRATURE", 146,    REG_LENGTH_BYTE,  0,      enDXL_RAM,  false },/* 21 */
 };
+
+typedef struct ST_JOINT_PARAM
+{
+    uint8_t  dxl_id;
+    uint8_t  return_delay_time;
+    uint8_t  drive_mode;
+    uint8_t  operation_mode;
+    uint16_t moving_threshold;
+    int32_t homing_offset;
+    uint8_t  temprature_limit;
+    uint8_t  max_vol_limit;
+    uint8_t  min_vol_limit;
+    uint16_t current_limit;
+    uint8_t  torque_enable;
+    uint16_t velocity_i_gain;
+    uint16_t velocity_p_gain;
+    uint16_t position_d_gain;
+    uint16_t position_i_gain;
+    uint16_t position_p_gain;
+} ST_JOINT_PARAM;
 
 // Parameter
 #define     BAUDRATE                        (3000000)         // 通信速度
@@ -134,6 +156,7 @@ public:
     void                set_eff_limiting( bool set_limiting ){ eff_limiting = set_limiting; }
     void                inc_eff_over( void ){ ++eff_over_cnt; }
     void                clear_eff_over( void ){ eff_over_cnt = 0; }
+    ST_JOINT_PARAM      set_joint_param( ST_JOINT_PARAM set_param){ param = set_param; }
     
     std::string         get_joint_name( void ) { return name; }
     uint8_t             get_dxl_id( void ){ return id; }
@@ -164,6 +187,9 @@ public:
     uint8_t             get_eff_over_cnt( void ){ return eff_over_cnt; }
     double              get_eff_const( void ){ return eff_const; }
     uint8_t             get_ope_mode( void ){ return ope_mode; }
+
+    dynamic_reconfigure::Server<crane_x7_msgs::ServoParameterConfig> reconfigServer;
+
 private:
     std::string         name;       // ROS joint name
     uint8_t             id;         // Dynamixel ServoID
