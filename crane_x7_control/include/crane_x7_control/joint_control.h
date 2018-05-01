@@ -187,8 +187,7 @@ public:
     uint8_t             get_eff_over_cnt( void ){ return eff_over_cnt; }
     double              get_eff_const( void ){ return eff_const; }
     uint8_t             get_ope_mode( void ){ return ope_mode; }
-
-    dynamic_reconfigure::Server<crane_x7_msgs::ServoParameterConfig> reconfigServer;
+    ST_JOINT_PARAM      get_joint_param( void ){ return param; }
 
 private:
     std::string         name;       // ROS joint name
