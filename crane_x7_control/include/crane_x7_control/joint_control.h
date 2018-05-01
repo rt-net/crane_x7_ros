@@ -274,5 +274,7 @@ private:
     uint8_t             dxl_goal[4];// Dynamixel goal position
 
     joint_limits_interface::JointLimits limits;// Joint limit parameters
+
+    ST_JOINT_PARAM      param;
 };
 #endif /*DXL_JOINT_CONTROL_H */
