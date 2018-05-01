@@ -3,6 +3,9 @@
 
 #include    <cstdio>
 #include    <string>
+#include    <joint_limits_interface/joint_limits.h>
+#include    <joint_limits_interface/joint_limits_interface.h>
+#include    <joint_limits_interface/joint_limits_rosparam.h>
 
 // Protocol version
 #define     PROTOCOL_VERSION                (2.0)              // See which protocol version is used in the Dynamixel
@@ -79,6 +82,10 @@ static const ST_DYNAMIXEL_REG_TABLE RegTable[] ={
 #define     DXL_TORQUR_ON_STEP              (20)               // Hz
 #define     DXL_TORQUE_ON_STEP_MAX          (DXL_TORQUE_ON_TIME / (1000 / DXL_TORQUR_ON_STEP))
 
+#define     DXL_CURRENT2EFFORT(c)           (DXL_CURRENT_UNIT * c * DXL_EFFORT_COEF)
+#define     DEFAULT_MAX_EFFORT              (5.0)
+#define     EFFORT_LIMITING_CNT             (10)
+
 // Joint control class
 class JOINT_CONTROL
 {
@@ -104,6 +111,10 @@ public:
     void                set_dxl_curr( uint16_t set_dxl_curr ){ dxl_curr = set_dxl_curr; }
     void                set_dxl_temp( uint8_t set_dxl_temp ){ dxl_temp = set_dxl_temp; }
     //void                set_dxl_goal( uint32_t set_dxl_goal ){ dxl_goal = set_dxl_goal; }/* TBD   */
+    void                set_limits( joint_limits_interface::JointLimits &set_limits ){ limits = set_limits; }
+    void                set_eff_limiting( bool set_limiting ){ eff_limiting = set_limiting; }
+    void                inc_eff_over( void ){ ++eff_over_cnt; }
+    void                clear_eff_over( void ){ eff_over_cnt = 0; }
     
     std::string         get_joint_name( void ) { return name; }
     uint8_t             get_dxl_id( void ){ return id; }
@@ -112,6 +123,7 @@ public:
     double              get_velocity( void ){ return vel; }
     double*             get_velocity_addr( void ){ return &vel; }
     double              get_effort( void ){ return eff; }
+    double              get_max_effort( void ){ return (limits.has_effort_limits?limits.max_effort:DEFAULT_MAX_EFFORT); }
     double*             get_effort_addr( void ){ return &eff; }
     double              get_command( void ){ return cmd; }
     double*             get_command_addr( void ){ return &cmd; }
@@ -129,7 +141,8 @@ public:
                                                      | (uint32_t)((dxl_goal[2]<<16)&0x00FF0000)
                                                      | (uint32_t)((dxl_goal[3]<<24)&0xFF0000FF); }
     uint8_t*            get_dxl_goal_addr( void ){ return dxl_goal; }
-    
+    bool                is_effort_limiting( void ){ return eff_limiting; }
+    uint8_t             get_eff_over_cnt( void ){ return eff_over_cnt; }
 private:
     std::string         name;       // ROS joint name
     uint8_t             id;         // Dynamixel ServoID
@@ -143,6 +156,8 @@ private:
     uint16_t            center;     // Servo center position offset( dynamixel position value, default:2048 )
     uint16_t            home;       // Servo home position( dynamixel position value )
     bool                connect;    // Servo connect status
+    bool                eff_limiting;// Effort limiting status
+    uint8_t             eff_over_cnt;// Effort limiting status
 
     double              goal_pos;   // Goal position[rad]
     double              goal_vel;   // Goal velocity
@@ -152,5 +167,7 @@ private:
     uint16_t            dxl_curr;   // Dynamixel current
     uint8_t             dxl_temp;   // Dynamixel temprature
     uint8_t             dxl_goal[4];// Dynamixel goal position
+
+    joint_limits_interface::JointLimits limits;// Joint limit parameters
 };
 #endif /*DXL_JOINT_CONTROL_H */
