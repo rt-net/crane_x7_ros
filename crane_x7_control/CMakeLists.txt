@@ -126,7 +126,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/crane_x7_control.cpp
+#   src/${PROJECT_NAME}/hardware.cpp
 # )
 
 find_library( dxl_x64_cpp NAME libdxl_x64_cpp.so PATHS src/dynamixel_sdk/build/linux64 )
@@ -139,7 +139,7 @@ find_library( dxl_x64_cpp NAME libdxl_x64_cpp.so PATHS src/dynamixel_sdk/build/l
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(crane_x7_control src/crane_x7_control.cpp src/joint_control.cpp src/dxlport_control.cpp src/control_setting.cpp)
+add_executable(crane_x7_control src/hardware.cpp src/joint_control.cpp src/dxlport_control.cpp src/control_setting.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -201,7 +201,7 @@ install(DIRECTORY launch
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_crane_x7_control.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_hardware.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
