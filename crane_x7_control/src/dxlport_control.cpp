@@ -894,7 +894,7 @@ void DXLPORT_CONTROL::set_param_home_offset( uint8_t dxl_id, int val )
                     ++tx_err;
                 }
             }
-            new_param.homing_offset = set_param;
+            new_param.homing_offset = (int32_t)set_param;
             joints[j].set_joint_param( new_param );
             break;
         }
