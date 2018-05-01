@@ -63,6 +63,8 @@ public:
     void                set_param_vel_gain( uint8_t dxl_id, int p, int i );
     void                set_param_pos_gain( uint8_t dxl_id, int p, int i, int d );
 
+    bool                is_change_positions( void );
+     
     std::string                                 last_error;
     uint32_t                                    tempCount;
     std::vector<JOINT_CONTROL>                  joints;

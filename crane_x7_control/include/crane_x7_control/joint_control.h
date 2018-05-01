@@ -241,6 +241,8 @@ public:
     double              get_eff_const( void ){ return eff_const; }
     uint8_t             get_ope_mode( void ){ return ope_mode; }
     ST_JOINT_PARAM      get_joint_param( void ){ return param; }
+    void                updt_d_command( double val ){ d_cmd = (val - prev_cmd); prev_cmd = val; }
+    double              get_d_command( void ){ return d_cmd; }
 
 private:
     std::string         name;       // ROS joint name
@@ -249,6 +251,8 @@ private:
     double              vel;        // Present verocity
     double              eff;        // Present effort
     double              cmd;        // ROS HwInterface value
+    double              d_cmd;      // cmd value delta
+    double              prev_cmd;   // Previous cmd value
     double              curr;       // Present current[mA]
     double              temp;       // Present temprature
     bool                torque;     // Servo torque

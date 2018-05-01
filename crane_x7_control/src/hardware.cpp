@@ -13,7 +13,8 @@
 #include    <queue>
 
 /* ROS rate setting */
-#define     CONTROL_HZ (1000)
+#define     CONTROL_WAIT_HZ   (50)
+#define     CONTROL_ACTIVE_HZ (200)
 
 static std_msgs::String             lasterror_out;
 static std::vector<ros::Publisher>  current_pub;
@@ -230,7 +231,8 @@ int main( int argc, char* argv[] )
     ros::Publisher lasterror_pub = nhPrivate.advertise<std_msgs::String>("lasterror", 10);
     init_topics( &crane_x7, nhPrivate );
 
-    ros::Rate rate( CONTROL_HZ );
+    ros::Rate rate_wait( CONTROL_WAIT_HZ );
+    ros::Rate rate_active( CONTROL_ACTIVE_HZ );
     ros::AsyncSpinner spinner(4);
     spinner.start();
 
@@ -273,7 +275,12 @@ int main( int argc, char* argv[] )
             set_joint_param_request.pop();
         }
         crane_x7.effort_limitter();
-        rate.sleep();
+
+        if( crane_x7.is_change_positions() ){
+            rate_active.sleep();
+        }else{
+            rate_wait.sleep();
+        }
     }
     crane_x7.set_gain_all( DXL_FREE_PGAIN );
     crane_x7.set_goal_current_all( 0 );
