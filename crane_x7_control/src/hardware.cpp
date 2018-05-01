@@ -239,7 +239,6 @@ int main( int argc, char* argv[] )
     uint32_t prev_tempCount = 0;
     bool read_temp_flg = false;
 
-    crane_x7.set_gain_all( DXL_DEFAULT_PGAIN );
     ROS_INFO( "%s", crane_x7.self_check().c_str() );
     init_reconfigure( &crane_x7 );
 
