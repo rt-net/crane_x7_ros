@@ -227,7 +227,7 @@ void DXLPORT_CONTROL::readCurrent( ros::Time time, ros::Duration period )
                 present_current = readCurrentGroup->getData( dxl_id, ADDR_PRESENT_CURRENT, LEN_PRESENT_CURRENT );
                 joints[j].set_dxl_curr( present_current );
                 joints[j].set_current( (DXL_CURRENT_UNIT * present_current) );
-                joints[j].set_effort( fabs(DXL_CURRENT2EFFORT( present_current, joints[j].get_eff_const() )) );//ROSは力のかかっている方向を扱わないので絶対値に加工する
+                joints[j].set_effort( DXL_CURRENT2EFFORT( present_current, joints[j].get_eff_const() ) );
             }
         }
     }
