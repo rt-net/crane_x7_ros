@@ -20,8 +20,8 @@ static std::vector<ros::Publisher>  current_pub;
 static std::vector<ros::Publisher>  dxl_position_pub;
 static std::vector<ros::Publisher>  temp_pub;
 static std::vector<ros::Subscriber> gain_sub;
-typedef dynamic_reconfigure::Server<crane_x7_msgs::ServoParameterConfig> reconfigType;
-static std::vector<reconfigType*>   reconfig_srv;
+typedef dynamic_reconfigure::Server<crane_x7_msgs::ServoParameterConfig> RECONFIG_TYPE;
+static std::vector<std::unique_ptr<RECONFIG_TYPE>>  reconfig_srv;
 static DXLPORT_CONTROL*             driver_addr;
 
 typedef struct SET_GAIN_QUEUE
@@ -127,12 +127,11 @@ void init_topics( DXLPORT_CONTROL *driver, ros::NodeHandle nh )
 void init_reconfigure(  DXLPORT_CONTROL *driver )
 {
     for( std::vector<JOINT_CONTROL>::iterator it=driver->joints.begin() ; it!=driver->joints.end() ; ++it ){
-        // reconfig_srv.add( it->get_joint_name() );
-        reconfigType* server = new reconfigType( "~/"+it->get_joint_name() );
+        RECONFIG_TYPE* server = new RECONFIG_TYPE( "~/"+it->get_joint_name() );
         dynamic_reconfigure::Server<crane_x7_msgs::ServoParameterConfig>::CallbackType f;
         f = boost::bind(reconfigureCallback, _1, _2, it->get_dxl_id());
         server->setCallback(f);
-        reconfig_srv.push_back( server );
+        reconfig_srv.push_back( std::unique_ptr<RECONFIG_TYPE>(server) );
      }
 }
 
@@ -239,12 +238,11 @@ int main( int argc, char* argv[] )
             set_joint_param_request.pop();
         }
         crane_x7.effort_limitter();
-        ros::spinOnce();
         rate.sleep();
     }
-    spinner.stop();
     crane_x7.set_gain_all( DXL_FREE_PGAIN );
     crane_x7.set_goal_current_all( 0 );
+    spinner.stop();
 
     return 0;
 }
