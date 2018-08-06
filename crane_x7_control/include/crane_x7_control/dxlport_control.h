@@ -37,15 +37,34 @@ public:
     void                readPos( ros::Time, ros::Duration );
     void                readCurrent( ros::Time, ros::Duration );
     void                readTemp( ros::Time, ros::Duration );
+    void                readVel( ros::Time, ros::Duration );
     void                write( ros::Time, ros::Duration );
-    void                set_torque( bool torque );
+    void                set_torque_all( bool torque );
+    bool                set_torque( uint8_t dxl_id, bool torque );
     void                startup_motion( void );
     void                set_gain_all( uint16_t gain );
     void                set_gain( uint8_t dxl_id, uint16_t gain );
+    void                set_goal_current_all( uint16_t current );
+    void                set_goal_current( uint8_t dxl_id, uint16_t current );
     bool                get_init_stat( void ){ return init_stat; }
     uint8_t             get_joint_num( void ){ return joint_num; }
     std::string         self_check( void );
-    
+    void                effort_limitter( void );
+    void                init_joint_params( ST_JOINT_PARAM &param, int table_id, int value );
+
+    void                set_param_delay_time( uint8_t dxl_id, int val );
+    void                set_param_drive_mode( uint8_t dxl_id, int val );
+    void                set_param_ope_mode( uint8_t dxl_id, int val );
+    void                set_param_home_offset( uint8_t dxl_id, int val );
+    void                set_param_moving_threshold( uint8_t dxl_id, int val );
+    void                set_param_temp_limit( uint8_t dxl_id, int val );
+    void                set_param_vol_limit( uint8_t dxl_id, int max, int min );
+    void                set_param_current_limit( uint8_t dxl_id, int val );
+    void                set_param_vel_gain( uint8_t dxl_id, int p, int i );
+    void                set_param_pos_gain( uint8_t dxl_id, int p, int i, int d );
+
+    bool                is_change_positions( void );
+     
     std::string                                 last_error;
     uint32_t                                    tempCount;
     std::vector<JOINT_CONTROL>                  joints;
@@ -57,10 +76,13 @@ private:
     dynamixel::PortHandler                     *portHandler;
     hardware_interface::JointStateInterface     joint_stat_if;
     hardware_interface::PositionJointInterface  joint_pos_if;
+    hardware_interface::EffortJointInterface    joint_eff_if;
+    joint_limits_interface::PositionJointSoftLimitsInterface joint_limits_if;
     dynamixel::GroupBulkRead                   *readPosGroup;
     dynamixel::GroupBulkRead                   *readCurrentGroup;
     dynamixel::GroupBulkRead                   *readTempGroup;
-    dynamixel::GroupBulkWrite                  *writePosGroup;
+    dynamixel::GroupBulkRead                   *readVelGroup;
+    dynamixel::GroupBulkWrite                  *writeGoalGroup;
 
     bool                                        init_stat;
     uint32_t                                    rx_err;
@@ -68,9 +90,9 @@ private:
     ros::Time                                   tempTime;
 //    uint32_t                                    tempCount;
 
-    bool                check_servo_param( uint8_t dxl_id, uint32_t test_addr, uint8_t equal );
-    bool                check_servo_param( uint8_t dxl_id, uint32_t test_addr, uint16_t equal );
-    bool                check_servo_param( uint8_t dxl_id, uint32_t test_addr, uint32_t equal );
+    bool                check_servo_param( uint8_t dxl_id, uint32_t test_addr, uint8_t equal, uint8_t& read_val );
+    bool                check_servo_param( uint8_t dxl_id, uint32_t test_addr, uint16_t equal, uint16_t& read_val );
+    bool                check_servo_param( uint8_t dxl_id, uint32_t test_addr, uint32_t equal, uint32_t& read_val );
 };
 
 #endif /* DXLPORT_CONTROL_H */

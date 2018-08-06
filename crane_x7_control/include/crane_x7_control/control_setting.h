@@ -8,7 +8,13 @@
 #include <sstream>
 #include <map>
 
-#define     DEFAULT_CENTER     (2048)
+/* Operating Mode value */
+#define     OPE_CURRENT_MODE   (0)
+#define     OPE_VELOCITY_MODE  (1)
+#define     OPE_POSITION_MODE  (3)
+#define     OPE_EXT_POS_MODE   (4)
+#define     OPE_CURR_POS_MODE  (5)
+#define     OPE_PWM_MODE       (16)
 
 /* SETTING KEY STRINGS */
 #define     KEY_DXL_PORT       ("dynamixel_port")
@@ -18,18 +24,28 @@
 #define     KEY_JPARAM_ID      ("/id")
 #define     KEY_JPARAM_CENTER  ("/center")
 #define     KEY_JPARAM_HOME    ("/home")
+#define     KEY_JPARAM_EFFCNST ("/effort_const")
+#define     KEY_JPARAM_OPEMODE ("/mode")
+
+#define     DEFAULT_CENTER     (2048)
+#define     DEFAULT_EFF_CNST   (1.0)
+#define     DEFAULT_OPE_MODE   (OPE_POSITION_MODE)
 
 
 typedef struct SERVO_PARAM {
     SERVO_PARAM(){
         name = "";
         id = 0;
-        center = DEFAULT_CENTER;
+        center = home = DEFAULT_CENTER;
+        eff_cnst = DEFAULT_EFF_CNST;
+        mode = DEFAULT_OPE_MODE;
     }
     std::string name;
     uint8_t     id;
     uint16_t    center;
     uint16_t    home;
+    double      eff_cnst;
+    uint8_t     mode;
 } ST_SERVO_PARAM;
 
 class CONTROL_SETTING
