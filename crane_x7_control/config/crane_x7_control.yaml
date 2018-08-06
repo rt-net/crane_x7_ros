@@ -41,3 +41,84 @@ dynamixel_port:
   crane_x7_wrist_joint: {id: 8, center: 2048, home: 2048, effort_const: 1.79, mode: 3 }
   crane_x7_gripper_finger_a_joint: {id: 9, center: 2048, home: 2048, effort_const: 1.79, mode: 3 }
 
+joint_limits:
+  arm_joint1:
+    has_position_limits: true
+    min_position: -1.5707963268
+    max_position: 1.5707963268
+    has_velocity_limits: true
+    max_velocity: 5.969211435
+    has_acceleration_limits: false
+    has_jerk_limits: false
+    has_effort_limits: true
+    max_effort: 4.0
+  arm_joint2:
+    has_position_limits: true
+    min_position: -1.5707963268
+    max_position: 0.0
+    has_velocity_limits: true
+    max_velocity: 5.969211435
+    has_acceleration_limits: false
+    has_jerk_limits: false
+    has_effort_limits: true
+    max_effort: 4.0
+  arm_joint3:
+    has_position_limits: true
+    min_position: -1.5707963268
+    max_position: 1.5707963268
+    has_velocity_limits: true
+    max_velocity: 5.969211435
+    has_acceleration_limits: false
+    has_jerk_limits: false
+    has_effort_limits: true
+    max_effort: 4.0
+  arm_joint4:
+    has_position_limits: true
+    min_position: 0.0
+    max_position: 2.726204
+    has_velocity_limits: true
+    max_velocity: 5.969211435
+    has_acceleration_limits: false
+    has_jerk_limits: false
+    has_effort_limits: true
+    max_effort: 4.0
+  arm_joint5:
+    has_position_limits: true
+    min_position: -1.5707963268
+    max_position: 1.5707963268
+    has_velocity_limits: true
+    max_velocity: 5.969211435
+    has_acceleration_limits: false
+    has_jerk_limits: false
+    has_effort_limits: true
+    max_effort: 4.0
+  arm_joint6:
+    has_position_limits: true
+    min_position: -2.094395
+    max_position: 1.047196
+    has_velocity_limits: true
+    max_velocity: 5.969211435
+    has_acceleration_limits: false
+    has_jerk_limits: false
+    has_effort_limits: true
+    max_effort: 4.0
+  arm_joint7:
+    has_position_limits: true
+    min_position: -2.967060
+    max_position: 2.967060
+    has_velocity_limits: true
+    max_velocity: 5.969211435
+    has_acceleration_limits: false
+    has_jerk_limits: false
+    has_effort_limits: true
+    max_effort: 4.0
+  hand_joint1:
+    has_position_limits: true
+    min_position: 0.0
+    max_position: 0.523598776
+    has_velocity_limits: true
+    max_velocity: 5.969211435
+    has_acceleration_limits: false
+    has_jerk_limits: false
+    has_effort_limits: true
+    max_effort: 4.0
