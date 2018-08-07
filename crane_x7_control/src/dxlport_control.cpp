@@ -460,6 +460,32 @@ void DXLPORT_CONTROL::set_torque_all( bool torque )
     }
 }
 
+void DXLPORT_CONTROL::set_watchdog( uint8_t dxl_id, uint8_t value )
+{
+    int dxl_comm_result = COMM_TX_FAIL;             // Communication result
+    uint8_t dxl_error = 0;                          // Dynamixel error
+
+    last_error = "";
+    if( !port_stat ){
+        return;
+    }
+    dxl_comm_result = packetHandler->write1ByteTxRx( portHandler, dxl_id, ADDR_BUS_WATCHDOG, value, &dxl_error );
+    if( dxl_comm_result != COMM_SUCCESS ){
+        last_error = packetHandler->getTxRxResult( dxl_comm_result );
+        ++tx_err;
+    }else if( dxl_error != 0 ){
+        last_error = packetHandler->getRxPacketError( dxl_error );
+        ++tx_err;
+    }
+}
+
+void DXLPORT_CONTROL::set_watchdog_all( uint8_t value )
+{
+    for( uint8_t j=0 ; j<joint_num; ++j ){
+        set_watchdog( joints[j].get_dxl_id(), value );
+    }
+}
+
 /* 起動時モーション */
 void DXLPORT_CONTROL::startup_motion( void )
 {
@@ -473,9 +499,6 @@ void DXLPORT_CONTROL::startup_motion( void )
 
     /* 開始位置取り込みと差分計算 */
     readPos( t, d );
-
-    set_torque_all( true );                         // 全関節トルクON
-    set_gain_all( DXL_DEFAULT_PGAIN );
 
     for( int j=0 ; j<joint_num ; ++j ){
         ST_HOME_MOTION_DATA motion_work;
@@ -494,6 +517,9 @@ void DXLPORT_CONTROL::startup_motion( void )
         home_motion_data.push_back( motion_work );
     }
     write( t, d );
+
+    set_torque_all( true );                         // 全関節トルクON
+    set_gain_all( DXL_DEFAULT_PGAIN );
 
     /* ホームポジションへ移動する */
     for( int step=0 ; step<step_max ; ++step ){

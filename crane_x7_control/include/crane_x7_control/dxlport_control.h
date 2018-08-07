@@ -41,6 +41,8 @@ public:
     void                write( ros::Time, ros::Duration );
     void                set_torque_all( bool torque );
     bool                set_torque( uint8_t dxl_id, bool torque );
+    void                set_watchdog( uint8_t dxl_id, uint8_t value );
+    void                set_watchdog_all( uint8_t value );
     void                startup_motion( void );
     void                set_gain_all( uint16_t gain );
     void                set_gain( uint8_t dxl_id, uint16_t gain );

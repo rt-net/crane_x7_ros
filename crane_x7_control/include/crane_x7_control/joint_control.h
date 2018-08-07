@@ -47,6 +47,7 @@ typedef enum {
     enTableId_PositionDGain,
     enTableId_PositionIGain,
     enTableId_PositionPGain,
+    enTableId_BusWatchdog,
     enTableId_GoalCurrent,
     enTableId_GoalVelocity,
     enTableId_GoalPosition,
@@ -74,13 +75,14 @@ static const ST_DYNAMIXEL_REG_TABLE RegTable[] ={
     { "POSITION_D_GAIN",    80,     REG_LENGTH_WORD,  0,      enDXL_RAM,  true  },/* 13 */
     { "POSITION_I_GAIN",    82,     REG_LENGTH_WORD,  0,      enDXL_RAM,  true  },/* 14 */
     { "POSITION_P_GAIN",    84,     REG_LENGTH_WORD,  800,    enDXL_RAM,  false },/* 15 */
-    { "GOAL_CURRENT",       102,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },/* 16 */
-    { "GOAL_VELOCITY",      104,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },/* 17 */
-    { "GOAL_POSITION",      116,    REG_LENGTH_DWORD, 0,      enDXL_RAM,  false },/* 18 */
-    { "PRESENT_CURRENT",    126,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },/* 19 */
-    { "PRESENT_VELOCITY",   128,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },/* 20 */
-    { "PRESENT_POSITION",   132,    REG_LENGTH_DWORD, 0,      enDXL_RAM,  false },/* 21 */
-    { "PRESENT_TEMPRATURE", 146,    REG_LENGTH_BYTE,  0,      enDXL_RAM,  false },/* 22 */
+    { "BUS_WATCHDOG",       98,     REG_LENGTH_BYTE,  0,      enDXL_RAM,  false },/* 16 */
+    { "GOAL_CURRENT",       102,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },/* 17 */
+    { "GOAL_VELOCITY",      104,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },/* 18 */
+    { "GOAL_POSITION",      116,    REG_LENGTH_DWORD, 0,      enDXL_RAM,  false },/* 19 */
+    { "PRESENT_CURRENT",    126,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },/* 20 */
+    { "PRESENT_VELOCITY",   128,    REG_LENGTH_DWORD, 0,      enDXL_RAM,  false },/* 21 */
+    { "PRESENT_POSITION",   132,    REG_LENGTH_DWORD, 0,      enDXL_RAM,  false },/* 22 */
+    { "PRESENT_TEMPRATURE", 146,    REG_LENGTH_BYTE,  0,      enDXL_RAM,  false },/* 23 */
 };
 
 typedef struct ST_JOINT_PARAM
@@ -134,6 +136,8 @@ typedef struct ST_JOINT_PARAM
 #define     LEN_POSITION_IGAIN              (RegTable[enTableId_PositionIGain].length)
 #define     ADDR_POSITION_PGAIN             (RegTable[enTableId_PositionPGain].address)
 #define     LEN_POSITION_PGAIN              (RegTable[enTableId_PositionPGain].length)
+#define     ADDR_BUS_WATCHDOG               (RegTable[enTableId_BusWatchdog].address)
+#define     LEN_BUS_WATCHDOG                (RegTable[enTableId_BusWatchdog].length)
 #define     ADDR_GOAL_CURRENT               (RegTable[enTableId_GoalCurrent].address)             // ゴールカレントアドレス
 #define     LEN_GOAL_CURRENT                (RegTable[enTableId_GoalCurrent].length)              // ゴールカレント
 #define     ADDR_GOAL_POSITION              (RegTable[enTableId_GoalPosition].address)            // ゴールポジションアドレス
@@ -171,6 +175,9 @@ typedef struct ST_JOINT_PARAM
 #define     DEFAULT_MAX_EFFORT              (5.0)
 #define     EFFORT_LIMITING_CNT             (10)
 #define     DXL_VELOCITY2RAD_S(v)           ((v) * 0.229 * 0.1047)
+
+#define     DXL_WATCHDOG_RESET_VALUE        (0)
+#define     MSEC2DXL_WATCHDOG(msec)         ((uint8_t)(msec) / 20)
 
 #define     OPERATING_MODE_CURRENT          (0)
 #define     OPERATING_MODE_VELOCITY         (1)
