@@ -23,8 +23,8 @@ void JOINT_CONTROL::init_parameter( std::string init_name, uint8_t init_dxlid, u
     dxl_pos  = 0;
     dxl_curr = 0;
     dxl_temp = 0;
-    for( int i=0 ; i<sizeof(dxl_goal) ; ++i ){
-        dxl_goal[i] = 0;
+    for( int ii=0 ; ii<sizeof(dxl_goal) ; ++ii ){
+        dxl_goal[ii] = 0;
     }
     eff_const = init_eff_const;
     eff_limiting = false;
@@ -64,8 +64,8 @@ JOINT_CONTROL::JOINT_CONTROL( const JOINT_CONTROL &src )
     dxl_pos  = src.dxl_pos;
     dxl_curr = src.dxl_curr;
     dxl_temp = src.dxl_temp;
-    for( int i=0 ; i<sizeof(dxl_goal) ; ++i ){
-        dxl_goal[i] = src.dxl_goal[i];
+    for( int ii=0 ; ii<sizeof(dxl_goal) ; ++ii ){
+        dxl_goal[ii] = src.dxl_goal[ii];
     }
     eff_const = src.eff_const;
     eff_limiting = src.eff_limiting;
