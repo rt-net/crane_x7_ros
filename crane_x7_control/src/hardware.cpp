@@ -253,7 +253,9 @@ int main( int argc, char* argv[] )
     ROS_INFO( "%s", crane_x7.self_check().c_str() );
     init_reconfigure( &crane_x7 );
 
+    crane_x7.set_watchdog_all( DXL_WATCHDOG_RESET_VALUE );
     crane_x7.startup_motion();
+    crane_x7.set_watchdog_all( MSEC2DXL_WATCHDOG(1000) ); //1秒の間,無通信で停止
 
     while( ros::ok() ){
         d = crane_x7.getDuration(t);

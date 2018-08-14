@@ -122,8 +122,8 @@ bool CONTROL_SETTING::loadJointParam( void )
     bool load_result;
     bool result = true;
     
-    for( int j=0 ; j<joint_list.size() ; ++j ){
-        std::string key_jname = (key_joint_param + joint_list[j].name);
+    for( int jj=0 ; jj<joint_list.size() ; ++jj ){
+        std::string key_jname = (key_joint_param + joint_list[jj].name);
         std::string key_jparam_id = (key_jname + KEY_JPARAM_ID);
         std::string key_jparam_center = (key_jname + KEY_JPARAM_CENTER);
         std::string key_jparam_home = (key_jname + KEY_JPARAM_HOME);
@@ -152,11 +152,11 @@ bool CONTROL_SETTING::loadJointParam( void )
             load_result = false;
         }
         if( load_result ){
-            joint_list[j].id = load_id;
-            joint_list[j].center = load_center;
-            joint_list[j].home = load_home;
-            joint_list[j].eff_cnst = load_eff_cnst;
-            joint_list[j].mode = load_mode;
+            joint_list[jj].id = load_id;
+            joint_list[jj].center = load_center;
+            joint_list[jj].home = load_home;
+            joint_list[jj].eff_cnst = load_eff_cnst;
+            joint_list[jj].mode = load_mode;
         }else{
             result = false;
             break;

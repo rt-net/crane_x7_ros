@@ -47,6 +47,7 @@ typedef enum {
     enTableId_PositionDGain,
     enTableId_PositionIGain,
     enTableId_PositionPGain,
+    enTableId_BusWatchdog,
     enTableId_GoalCurrent,
     enTableId_GoalVelocity,
     enTableId_GoalPosition,
@@ -58,29 +59,30 @@ typedef enum {
 
 static const ST_DYNAMIXEL_REG_TABLE RegTable[] ={
     /*  NAME                ADDR    LEN INIT    TYPE   */
-    { "RETURN_DELAY_TIME",  9,      REG_LENGTH_BYTE,  250,    enDXL_ROM,  false },/* 0 */
-    { "DRIVE_MODE",         10,     REG_LENGTH_BYTE,  0,      enDXL_ROM,  false },/* 1 */
-    { "OPERATION_MODE",     11,     REG_LENGTH_BYTE,  3,      enDXL_ROM,  false },/* 2 */
-    { "HOMING_OFFSET",      20,     REG_LENGTH_DWORD, 0,      enDXL_ROM,  false },/* 3 */
-    { "MOVING_THRESHOLD",   24,     REG_LENGTH_DWORD, 10,     enDXL_ROM,  false },/* 4 */
-    { "TEMPRATURE_LIMIT",   31,     REG_LENGTH_BYTE,  80,     enDXL_ROM,  false },/* 5 */
-    { "MAX_VOL_LIMIT",      32,     REG_LENGTH_WORD,  160,    enDXL_ROM,  false },/* 6 */
-    { "MIN_VOL_LIMIT",      34,     REG_LENGTH_WORD,  95,     enDXL_ROM,  false },/* 7 */
-    { "CURRENT_LIMIT",      38,     REG_LENGTH_WORD,  1193,   enDXL_ROM,  false },/* 8 */
-    { "SHUTDOWN",           63,     REG_LENGTH_BYTE,  52,     enDXL_ROM,  false },/* 9 */
-    { "TORQUE_ENABLE",      64,     REG_LENGTH_BYTE,  0,      enDXL_RAM,  false },/* 10 */
-    { "VELOCITY_I_GAIN",    76,     REG_LENGTH_WORD,  1920,   enDXL_RAM,  true  },/* 11 */
-    { "VELOCITY_P_GAIN",    78,     REG_LENGTH_WORD,  100,    enDXL_RAM,  true  },/* 12 */
-    { "POSITION_D_GAIN",    80,     REG_LENGTH_WORD,  0,      enDXL_RAM,  true  },/* 13 */
-    { "POSITION_I_GAIN",    82,     REG_LENGTH_WORD,  0,      enDXL_RAM,  true  },/* 14 */
-    { "POSITION_P_GAIN",    84,     REG_LENGTH_WORD,  800,    enDXL_RAM,  false },/* 15 */
-    { "GOAL_CURRENT",       102,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },/* 16 */
-    { "GOAL_VELOCITY",      104,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },/* 17 */
-    { "GOAL_POSITION",      116,    REG_LENGTH_DWORD, 0,      enDXL_RAM,  false },/* 18 */
-    { "PRESENT_CURRENT",    126,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },/* 19 */
-    { "PRESENT_VELOCITY",   128,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },/* 20 */
-    { "PRESENT_POSITION",   132,    REG_LENGTH_DWORD, 0,      enDXL_RAM,  false },/* 21 */
-    { "PRESENT_TEMPRATURE", 146,    REG_LENGTH_BYTE,  0,      enDXL_RAM,  false },/* 22 */
+    { "RETURN_DELAY_TIME",  9,      REG_LENGTH_BYTE,  250,    enDXL_ROM,  false },
+    { "DRIVE_MODE",         10,     REG_LENGTH_BYTE,  0,      enDXL_ROM,  false },
+    { "OPERATION_MODE",     11,     REG_LENGTH_BYTE,  3,      enDXL_ROM,  false },
+    { "HOMING_OFFSET",      20,     REG_LENGTH_DWORD, 0,      enDXL_ROM,  false },
+    { "MOVING_THRESHOLD",   24,     REG_LENGTH_DWORD, 10,     enDXL_ROM,  false },
+    { "TEMPRATURE_LIMIT",   31,     REG_LENGTH_BYTE,  80,     enDXL_ROM,  false },
+    { "MAX_VOL_LIMIT",      32,     REG_LENGTH_WORD,  160,    enDXL_ROM,  false },
+    { "MIN_VOL_LIMIT",      34,     REG_LENGTH_WORD,  95,     enDXL_ROM,  false },
+    { "CURRENT_LIMIT",      38,     REG_LENGTH_WORD,  1193,   enDXL_ROM,  false },
+    { "SHUTDOWN",           63,     REG_LENGTH_BYTE,  52,     enDXL_ROM,  false },
+    { "TORQUE_ENABLE",      64,     REG_LENGTH_BYTE,  0,      enDXL_RAM,  false },
+    { "VELOCITY_I_GAIN",    76,     REG_LENGTH_WORD,  1920,   enDXL_RAM,  true  },
+    { "VELOCITY_P_GAIN",    78,     REG_LENGTH_WORD,  100,    enDXL_RAM,  true  },
+    { "POSITION_D_GAIN",    80,     REG_LENGTH_WORD,  0,      enDXL_RAM,  true  },
+    { "POSITION_I_GAIN",    82,     REG_LENGTH_WORD,  0,      enDXL_RAM,  true  },
+    { "POSITION_P_GAIN",    84,     REG_LENGTH_WORD,  800,    enDXL_RAM,  false },
+    { "BUS_WATCHDOG",       98,     REG_LENGTH_BYTE,  0,      enDXL_RAM,  false },
+    { "GOAL_CURRENT",       102,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },
+    { "GOAL_VELOCITY",      104,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },
+    { "GOAL_POSITION",      116,    REG_LENGTH_DWORD, 0,      enDXL_RAM,  false },
+    { "PRESENT_CURRENT",    126,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },
+    { "PRESENT_VELOCITY",   128,    REG_LENGTH_DWORD, 0,      enDXL_RAM,  false },
+    { "PRESENT_POSITION",   132,    REG_LENGTH_DWORD, 0,      enDXL_RAM,  false },
+    { "PRESENT_TEMPRATURE", 146,    REG_LENGTH_BYTE,  0,      enDXL_RAM,  false },
 };
 
 typedef struct ST_JOINT_PARAM
@@ -134,6 +136,8 @@ typedef struct ST_JOINT_PARAM
 #define     LEN_POSITION_IGAIN              (RegTable[enTableId_PositionIGain].length)
 #define     ADDR_POSITION_PGAIN             (RegTable[enTableId_PositionPGain].address)
 #define     LEN_POSITION_PGAIN              (RegTable[enTableId_PositionPGain].length)
+#define     ADDR_BUS_WATCHDOG               (RegTable[enTableId_BusWatchdog].address)
+#define     LEN_BUS_WATCHDOG                (RegTable[enTableId_BusWatchdog].length)
 #define     ADDR_GOAL_CURRENT               (RegTable[enTableId_GoalCurrent].address)             // ゴールカレントアドレス
 #define     LEN_GOAL_CURRENT                (RegTable[enTableId_GoalCurrent].length)              // ゴールカレント
 #define     ADDR_GOAL_POSITION              (RegTable[enTableId_GoalPosition].address)            // ゴールポジションアドレス
@@ -171,6 +175,9 @@ typedef struct ST_JOINT_PARAM
 #define     DEFAULT_MAX_EFFORT              (5.0)
 #define     EFFORT_LIMITING_CNT             (10)
 #define     DXL_VELOCITY2RAD_S(v)           ((v) * 0.229 * 0.1047)
+
+#define     DXL_WATCHDOG_RESET_VALUE        (0)
+#define     MSEC2DXL_WATCHDOG(msec)         ((uint8_t)(msec) / 20)
 
 #define     OPERATING_MODE_CURRENT          (0)
 #define     OPERATING_MODE_VELOCITY         (1)
