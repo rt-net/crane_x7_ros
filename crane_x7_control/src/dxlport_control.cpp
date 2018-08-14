@@ -26,11 +26,9 @@ DXLPORT_CONTROL::DXLPORT_CONTROL( ros::NodeHandle handle, CONTROL_SETTING &setti
     tempCount = 0;
 
     portHandler      = NULL;
-    readPosGroup     = NULL;
     writeGoalGroup   = NULL;
-    readCurrentGroup = NULL;
     readTempGroup    = NULL;
-    readVelGroup     = NULL;
+    readMovementGroup= NULL;
 
     joint_num = setting.getjointNum();
     std::vector<ST_SERVO_PARAM> list = setting.getServoParam();
@@ -42,18 +40,12 @@ DXLPORT_CONTROL::DXLPORT_CONTROL( ros::NodeHandle handle, CONTROL_SETTING &setti
     /* DynamixelSDKとros_controlへの接続初期化 */
     packetHandler    = dynamixel::PacketHandler::getPacketHandler( PROTOCOL_VERSION );
     portHandler      = dynamixel::PortHandler::getPortHandler( setting.getPortName().c_str() );
-    readPosGroup     = new dynamixel::GroupBulkRead( portHandler, packetHandler );
     writeGoalGroup   = new dynamixel::GroupBulkWrite( portHandler, packetHandler );
     readTempGroup    = new dynamixel::GroupBulkRead( portHandler, packetHandler );
-    readCurrentGroup = new dynamixel::GroupBulkRead( portHandler, packetHandler );
-    readVelGroup     = new dynamixel::GroupBulkRead( portHandler, packetHandler );
+    readMovementGroup     = new dynamixel::GroupBulkRead( portHandler, packetHandler );
     
     for( jj=0 ; jj<joint_num ; ++jj ){
         uint8_t dxl_id = joints[jj].get_dxl_id();
-        if( !readPosGroup->addParam( dxl_id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION ) ){
-            last_error = "Bulk pos read setting failed.";
-            return;
-        }
         if( joints[jj].get_ope_mode() == OPERATING_MODE_CURRENT ){
             //CURRENT MODE
             if( !writeGoalGroup->addParam( dxl_id, ADDR_GOAL_CURRENT, LEN_GOAL_CURRENT, joints[jj].get_dxl_goal_addr() ) ){// [TODO]
@@ -71,15 +63,9 @@ DXLPORT_CONTROL::DXLPORT_CONTROL( ros::NodeHandle handle, CONTROL_SETTING &setti
             last_error = "Bulk temp read setting failed.";
             return;
         }
-        if( !readCurrentGroup->addParam( dxl_id, ADDR_PRESENT_CURRENT, LEN_PRESENT_CURRENT ) ){
-            last_error = "Bulk current read setting failed.";
+        if( !readMovementGroup->addParam( dxl_id, ADDR_PRESENT_MOVEMENT, LEN_PRESENT_MOVEMENT ) ){
+            last_error = "Bulk group read setting failed.";
             return;
-        }
-        if( joints[jj].get_ope_mode() == OPERATING_MODE_CURRENT ){
-            if( !readVelGroup->addParam( dxl_id, ADDR_PRESENT_VEL, LEN_PRESENT_VEL ) ){
-                last_error = "Bulk velocity read setting failed.";
-                return;
-            }
         }
     }
 
@@ -94,23 +80,11 @@ DXLPORT_CONTROL::DXLPORT_CONTROL( ros::NodeHandle handle, CONTROL_SETTING &setti
             last_error = "Setup baudrate failed.";
             port_stat = false;
         }else{
-            for( jj=0 ; jj<joint_num ; ++jj ){
-                uint8_t dxl_id = joints[jj].get_dxl_id();
-                int32_t present_pos = 0;
-
-                uint8_t dxl_error = 0; // Dynamixel error
-                int dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, dxl_id, ADDR_PRESENT_POSITION, (uint32_t*)&present_pos, &dxl_error);
-                if (dxl_comm_result != COMM_SUCCESS){
-                    last_error = packetHandler->getTxRxResult( dxl_comm_result );
-                    return;
-                }else if ( dxl_error != 0 ){
-                    last_error = packetHandler->getRxPacketError( dxl_error );
-                    return;
-                }else{
-                    joints[jj].set_position( DXLPOS2RAD( present_pos ) );
-                }
+            port_stat = true; // 有効と仮定してread
+            if( !read( ros::Time::now(), ros::Duration(0) ) ){
+                last_error = "Initialize communication failed.";
+                port_stat = false;
             }
-            port_stat = true;
         }
     }
     for( jj=0 ; jj<joint_num ; ++jj ){
@@ -155,125 +129,105 @@ DXLPORT_CONTROL::~DXLPORT_CONTROL()
     portHandler->closePort();
 	delete( portHandler );
 	/* packetHandlerはdeleteしないほうが良さそう*/
-    if(readPosGroup!=NULL)     delete( readPosGroup );
     if(readTempGroup!=NULL)    delete( readTempGroup );
     if(writeGoalGroup!=NULL)    delete( writeGoalGroup );
-    if(readCurrentGroup!=NULL) delete( readCurrentGroup );
-    if(readVelGroup!=NULL)     delete( readVelGroup );
+    if(readMovementGroup!=NULL)     delete( readMovementGroup );
 }
 
-void DXLPORT_CONTROL::read( ros::Time time, ros::Duration period )
+bool DXLPORT_CONTROL::read( ros::Time time, ros::Duration period )
 {
+    bool result = false;
+
     if( !port_stat ){
-        return;
+        return true;
     }
-    readPos( time, period );
-    readVel( time, period );
-    readCurrent( time, period );
+
+    int dxl_comm_result = readMovementGroup->txRxPacket();
+    if (dxl_comm_result != COMM_SUCCESS){
+        last_error = packetHandler->getTxRxResult( dxl_comm_result );
+        ++rx_err;
+        ROS_INFO("read failed.");
+    }else{
+        readCurrent( time, period );
+        readVel( time, period );
+        readPos( time, period );
+        last_error = "";
+        result = true;
+    }
     if( (time - tempTime).toSec() > DXL_TEMP_READ_DURATION ){
         readTemp( time, period );
         tempTime = time;
     }
+    return result;
 }
 
 void DXLPORT_CONTROL::readPos( ros::Time time, ros::Duration period )
 {
-    last_error = "";
-    int dxl_comm_result = readPosGroup->txRxPacket();
-    if (dxl_comm_result != COMM_SUCCESS){
-        last_error = packetHandler->getTxRxResult( dxl_comm_result );
-        ++rx_err;
-    }else{
-        for( int jj=0 ; jj<joint_num ; ++jj ){
-            int32_t present_pos = 0;
-            uint8_t dxl_id = joints[jj].get_dxl_id();
-            bool dxl_getdata_result = readPosGroup->isAvailable( dxl_id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION );
-            if( !dxl_getdata_result ){
-                ++rx_err;
-                break;
-            }else{
-                present_pos = readPosGroup->getData( dxl_id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION );
-                joints[jj].set_dxl_pos( present_pos );
-                present_pos = (present_pos - joints[jj].get_center());
-                joints[jj].set_position( DXLPOS2RAD( present_pos ) );
-            }
+    for( int jj=0 ; jj<joint_num ; ++jj ){
+        int32_t present_pos = 0;
+        uint8_t dxl_id = joints[jj].get_dxl_id();
+        bool dxl_getdata_result = readMovementGroup->isAvailable( dxl_id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION );
+        if( !dxl_getdata_result ){
+            ++rx_err;
+            break;
+        }else{
+            present_pos = readMovementGroup->getData( dxl_id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION );
+            joints[jj].set_dxl_pos( present_pos );
+            present_pos = (present_pos - joints[jj].get_center());
+            joints[jj].set_position( DXLPOS2RAD( present_pos ) );
         }
     }
 }
 
 void DXLPORT_CONTROL::readCurrent( ros::Time time, ros::Duration period )
 {
-    last_error = "";
-    int dxl_comm_result = readCurrentGroup->txRxPacket();
-    if (dxl_comm_result != COMM_SUCCESS){
-        last_error = packetHandler->getTxRxResult( dxl_comm_result );
-        ++rx_err;
-    }else{
-        for( int jj=0 ; jj<joint_num ; ++jj ){
-            int16_t present_current = 0;
-            uint8_t dxl_id = joints[jj].get_dxl_id();
-            bool dxl_getdata_result = readCurrentGroup->isAvailable( dxl_id, ADDR_PRESENT_CURRENT, LEN_PRESENT_CURRENT );
-            if( !dxl_getdata_result ){
-                ++rx_err;
-                break;
-            }else{
-                present_current = readCurrentGroup->getData( dxl_id, ADDR_PRESENT_CURRENT, LEN_PRESENT_CURRENT );
-                joints[jj].set_dxl_curr( present_current );
-                joints[jj].set_current( (DXL_CURRENT_UNIT * present_current) );
-                joints[jj].set_effort( DXL_CURRENT2EFFORT( present_current, joints[jj].get_eff_const() ) );
-            }
+    for( int jj=0 ; jj<joint_num ; ++jj ){
+        int16_t present_current = 0;
+        uint8_t dxl_id = joints[jj].get_dxl_id();
+        bool dxl_getdata_result = readMovementGroup->isAvailable( dxl_id, ADDR_PRESENT_CURRENT, LEN_PRESENT_CURRENT );
+        if( !dxl_getdata_result ){
+            ++rx_err;
+            break;
+        }else{
+            present_current = readMovementGroup->getData( dxl_id, ADDR_PRESENT_CURRENT, LEN_PRESENT_CURRENT );
+            joints[jj].set_dxl_curr( present_current );
+            joints[jj].set_current( (DXL_CURRENT_UNIT * present_current) );
+            joints[jj].set_effort( DXL_CURRENT2EFFORT( present_current, joints[jj].get_eff_const() ) );
         }
     }
 }
 
 void DXLPORT_CONTROL::readTemp( ros::Time time, ros::Duration period )
 {
-    last_error = "";
-    int dxl_comm_result = readTempGroup->txRxPacket();
-    if (dxl_comm_result != COMM_SUCCESS){
-        last_error = packetHandler->getTxRxResult( dxl_comm_result );
-        ++rx_err;
-    }else{
-        for( int jj=0 ; jj<joint_num ; ++jj ){
-            uint8_t dxl_id = joints[jj].get_dxl_id();
-            bool dxl_getdata_result = readTempGroup->isAvailable( dxl_id, ADDR_PRESENT_TEMP, LEN_PRESENT_TEMP );
-            if( !dxl_getdata_result ){
-                ++rx_err;
-                break;
-            }else{
-                uint8_t present_current = readTempGroup->getData( dxl_id, ADDR_PRESENT_TEMP, LEN_PRESENT_TEMP );
-                joints[jj].set_dxl_temp( present_current );
-                joints[jj].set_temprature( present_current );
-            }
+    for( int jj=0 ; jj<joint_num ; ++jj ){
+        uint8_t dxl_id = joints[jj].get_dxl_id();
+        bool dxl_getdata_result = readTempGroup->isAvailable( dxl_id, ADDR_PRESENT_TEMP, LEN_PRESENT_TEMP );
+        if( !dxl_getdata_result ){
+            ++rx_err;
+            break;
+        }else{
+            uint8_t present_current = readTempGroup->getData( dxl_id, ADDR_PRESENT_TEMP, LEN_PRESENT_TEMP );
+            joints[jj].set_dxl_temp( present_current );
+            joints[jj].set_temprature( present_current );
         }
-        ++tempCount;
     }
+    ++tempCount;
 }
 
 void DXLPORT_CONTROL::readVel( ros::Time time, ros::Duration period )
 {
-    last_error = "";
-    int dxl_comm_result = readVelGroup->txRxPacket();
-     if (dxl_comm_result != COMM_SUCCESS){
-        last_error = packetHandler->getTxRxResult( dxl_comm_result );
-        ++rx_err;
-    }else{
-        for( int jj=0 ; jj<joint_num ; ++jj ){
-            if( joints[jj].get_ope_mode() != OPERATING_MODE_CURRENT ){
-                continue;
-            }
-            uint8_t dxl_id = joints[jj].get_dxl_id();
-            bool dxl_getdata_result = readVelGroup->isAvailable( dxl_id, ADDR_PRESENT_VEL, LEN_PRESENT_VEL );
-            if( !dxl_getdata_result ){
-                ++rx_err;
-                break;
-            }else{
-                int16_t present_velocity = readVelGroup->getData( dxl_id, ADDR_PRESENT_VEL, LEN_PRESENT_VEL );
-                joints[jj].set_velocity( DXL_VELOCITY2RAD_S(present_velocity) );
-            }
+    for( int jj=0 ; jj<joint_num ; ++jj ){
+        uint8_t dxl_id = joints[jj].get_dxl_id();
+        bool dxl_getdata_result = readMovementGroup->isAvailable( dxl_id, ADDR_PRESENT_VEL, LEN_PRESENT_VEL );
+        if( !dxl_getdata_result ){
+            ++rx_err;
+            break;
+        }else{
+            int16_t present_velocity = readMovementGroup->getData( dxl_id, ADDR_PRESENT_VEL, LEN_PRESENT_VEL );
+            joints[jj].set_velocity( DXL_VELOCITY2RAD_S(present_velocity) );
         }
-        ++tempCount;
     }
+    ++tempCount;
 }
 
 void DXLPORT_CONTROL::write( ros::Time time, ros::Duration period )

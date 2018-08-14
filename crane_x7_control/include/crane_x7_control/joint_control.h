@@ -151,6 +151,9 @@ typedef struct ST_JOINT_PARAM
 #define     ADDR_PRESENT_TEMP               (RegTable[enTableId_PresentTemp].address)
 #define     LEN_PRESENT_TEMP                (RegTable[enTableId_PresentTemp].length)
 
+#define     ADDR_PRESENT_MOVEMENT           (ADDR_PRESENT_CURRENT)
+#define     LEN_PRESENT_MOVEMENT             (LEN_PRESENT_CURRENT+LEN_PRESENT_VEL+LEN_PRESENT_POSITION)
+
 #define     TORQUE_ENABLE                   (1)                // Value for enabling the torque
 #define     TORQUE_DISABLE                  (0)                // Value for disabling the torque
 
