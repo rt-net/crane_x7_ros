@@ -24,6 +24,7 @@ DXLPORT_CONTROL::DXLPORT_CONTROL( ros::NodeHandle handle, CONTROL_SETTING &setti
     init_stat = false;
     tx_err = rx_err = 0;
     tempCount = 0;
+    tempTime = getTime();
 
     portHandler      = NULL;
     writeGoalGroup   = NULL;
@@ -199,19 +200,26 @@ void DXLPORT_CONTROL::readCurrent( ros::Time time, ros::Duration period )
 
 void DXLPORT_CONTROL::readTemp( ros::Time time, ros::Duration period )
 {
-    for( int jj=0 ; jj<joint_num ; ++jj ){
-        uint8_t dxl_id = joints[jj].get_dxl_id();
-        bool dxl_getdata_result = readTempGroup->isAvailable( dxl_id, ADDR_PRESENT_TEMP, LEN_PRESENT_TEMP );
-        if( !dxl_getdata_result ){
-            ++rx_err;
-            break;
-        }else{
-            uint8_t present_current = readTempGroup->getData( dxl_id, ADDR_PRESENT_TEMP, LEN_PRESENT_TEMP );
-            joints[jj].set_dxl_temp( present_current );
-            joints[jj].set_temprature( present_current );
+    last_error = "";
+    int dxl_comm_result = readTempGroup->txRxPacket();
+    if (dxl_comm_result != COMM_SUCCESS){
+        last_error = packetHandler->getTxRxResult( dxl_comm_result );
+        ++rx_err;
+    }else{
+        for( int jj=0 ; jj<joint_num ; ++jj ){
+            uint8_t dxl_id = joints[jj].get_dxl_id();
+            bool dxl_getdata_result = readTempGroup->isAvailable( dxl_id, ADDR_PRESENT_TEMP, LEN_PRESENT_TEMP );
+            if( !dxl_getdata_result ){
+                ++rx_err;
+                break;
+            }else{
+                uint8_t present_temp = readTempGroup->getData( dxl_id, ADDR_PRESENT_TEMP, LEN_PRESENT_TEMP );
+                joints[jj].set_dxl_temp( present_temp );
+                joints[jj].set_temprature( present_temp );
+            }
         }
+        ++tempCount;
     }
-    ++tempCount;
 }
 
 void DXLPORT_CONTROL::readVel( ros::Time time, ros::Duration period )
@@ -227,7 +235,6 @@ void DXLPORT_CONTROL::readVel( ros::Time time, ros::Duration period )
             joints[jj].set_velocity( DXL_VELOCITY2RAD_S(present_velocity) );
         }
     }
-    ++tempCount;
 }
 
 void DXLPORT_CONTROL::write( ros::Time time, ros::Duration period )
