@@ -268,14 +268,20 @@ int main( int argc, char* argv[] )
             read_temp_flg = false;
         }
         publish_topic_data( &crane_x7, read_temp_flg );
-        if( lasterror_out.data != crane_x7.last_error ){
-            lasterror_out.data = crane_x7.last_error;
-            lasterror_pub.publish( lasterror_out );
-        }
 
         crane_x7.read( t, d );
+        if( lasterror_out.data != crane_x7.last_error ){    //read error log check
+            lasterror_out.data = "[read]" + crane_x7.last_error;
+            lasterror_pub.publish( lasterror_out );
+            lasterror_out.data = "";
+        }
         cm.update( t, d );
         crane_x7.write( t, d );
+        if( lasterror_out.data != crane_x7.last_error ){    //write error log check
+            lasterror_out.data = "[write]" + crane_x7.last_error;
+            lasterror_pub.publish( lasterror_out );
+            lasterror_out.data = "";
+        }
         while( set_gain_request.size() > 0 ){
             ST_SET_GAIN_QUEUE gain_data = set_gain_request.front();
             crane_x7.set_gain( gain_data.dxl_id, gain_data.gain );
