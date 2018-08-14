@@ -231,7 +231,7 @@ void DXLPORT_CONTROL::readVel( ros::Time time, ros::Duration period )
             ++rx_err;
             break;
         }else{
-            int16_t present_velocity = readMovementGroup->getData( dxl_id, ADDR_PRESENT_VEL, LEN_PRESENT_VEL );
+            int32_t present_velocity = readMovementGroup->getData( dxl_id, ADDR_PRESENT_VEL, LEN_PRESENT_VEL );
             joints[jj].set_velocity( DXL_VELOCITY2RAD_S(present_velocity) );
         }
     }
