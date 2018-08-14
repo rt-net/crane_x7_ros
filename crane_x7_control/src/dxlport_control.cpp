@@ -71,7 +71,6 @@ DXLPORT_CONTROL::DXLPORT_CONTROL( ros::NodeHandle handle, CONTROL_SETTING &setti
     }
 
     // Open port
-    last_error = "";
     if( !portHandler->openPort() ){
         last_error = "Port open failed.";
         port_stat = false;
@@ -85,6 +84,8 @@ DXLPORT_CONTROL::DXLPORT_CONTROL( ros::NodeHandle handle, CONTROL_SETTING &setti
             if( !read( ros::Time::now(), ros::Duration(0) ) ){
                 last_error = "Initialize communication failed.";
                 port_stat = false;
+            }else{
+                last_error = "";
             }
         }
     }
@@ -147,7 +148,6 @@ bool DXLPORT_CONTROL::read( ros::Time time, ros::Duration period )
     if (dxl_comm_result != COMM_SUCCESS){
         last_error = packetHandler->getTxRxResult( dxl_comm_result );
         ++rx_err;
-        ROS_INFO("read failed.");
     }else{
         readCurrent( time, period );
         readVel( time, period );
@@ -200,7 +200,6 @@ void DXLPORT_CONTROL::readCurrent( ros::Time time, ros::Duration period )
 
 void DXLPORT_CONTROL::readTemp( ros::Time time, ros::Duration period )
 {
-    last_error = "";
     int dxl_comm_result = readTempGroup->txRxPacket();
     if (dxl_comm_result != COMM_SUCCESS){
         last_error = packetHandler->getTxRxResult( dxl_comm_result );
@@ -218,6 +217,7 @@ void DXLPORT_CONTROL::readTemp( ros::Time time, ros::Duration period )
                 joints[jj].set_temprature( present_temp );
             }
         }
+        last_error = "";
         ++tempCount;
     }
 }
@@ -249,7 +249,6 @@ void DXLPORT_CONTROL::write( ros::Time time, ros::Duration period )
         }
         return;
     }
-    last_error = "";
     for( int jj=0 ; jj<joint_num ; ++jj ){
         get_cmd = joints[jj].get_command();
         if( joints[jj].get_ope_mode() == OPERATING_MODE_CURRENT ){
@@ -290,6 +289,8 @@ void DXLPORT_CONTROL::write( ros::Time time, ros::Duration period )
     if( dxl_comm_result != COMM_SUCCESS ){
         last_error = packetHandler->getTxRxResult( dxl_comm_result );
         ++tx_err;
+    }else{
+        last_error = "";
     }
 }
 
@@ -310,7 +311,6 @@ void DXLPORT_CONTROL::set_gain_all( uint16_t gain )
     if( !port_stat ){
         return;
     }
-    last_error = "";
     for( int jj=0 ; jj<joint_num ; ++jj ){
         if( joints[jj].get_ope_mode() == OPERATING_MODE_CURRENT ){
             continue;
@@ -330,6 +330,8 @@ void DXLPORT_CONTROL::set_gain( uint8_t dxl_id, uint16_t gain )
     }else if( dxl_error != 0 ){
         last_error = packetHandler->getRxPacketError( dxl_error );
         ++tx_err;
+    }else{
+        last_error = "";
     }
 }
 
@@ -338,7 +340,6 @@ void DXLPORT_CONTROL::set_goal_current_all( uint16_t current )
     if( !port_stat ){
         return;
     }
-    last_error = "";
     for( int jj=0 ; jj<joint_num ; ++jj ){
         if( joints[jj].get_ope_mode() == OPERATING_MODE_CURRENT ){
             set_goal_current( joints[jj].get_dxl_id(), current );
@@ -358,6 +359,8 @@ void DXLPORT_CONTROL::set_goal_current( uint8_t dxl_id, uint16_t current )
     }else if( dxl_error != 0 ){
         last_error = packetHandler->getRxPacketError( dxl_error );
         ++tx_err;
+    }else{
+        last_error = "";
     }
 }
 
@@ -366,7 +369,6 @@ bool DXLPORT_CONTROL::set_torque( uint8_t dxl_id, bool torque )
     uint32_t set_param = torque ? TORQUE_ENABLE:TORQUE_DISABLE;
     bool result = false;
 
-    last_error = "";
     if( !port_stat ){
         return true;
     }
@@ -380,6 +382,7 @@ bool DXLPORT_CONTROL::set_torque( uint8_t dxl_id, bool torque )
         last_error = packetHandler->getRxPacketError( dxl_error );
         ++tx_err;
     }else{
+        last_error = "";
         result = true;
     }
     return result;
@@ -408,6 +411,8 @@ void DXLPORT_CONTROL::set_watchdog( uint8_t dxl_id, uint8_t value )
     }else if( dxl_error != 0 ){
         last_error = packetHandler->getRxPacketError( dxl_error );
         ++tx_err;
+    }else{
+        last_error = "";
     }
 }
 
@@ -500,6 +505,8 @@ bool DXLPORT_CONTROL::check_servo_param( uint8_t dxl_id, uint32_t test_addr, uin
     }else if( dxl_error != 0 ){
         last_error = packetHandler->getRxPacketError( dxl_error );
         ++rx_err;
+    }else{
+        last_error = "";
     }
     if( read_data == equal ){
         result = true;
@@ -520,6 +527,8 @@ bool DXLPORT_CONTROL::check_servo_param( uint8_t dxl_id, uint32_t test_addr, uin
     }else if( dxl_error != 0 ){
         last_error = packetHandler->getRxPacketError( dxl_error );
         ++rx_err;
+    }else{
+        last_error = "";
     }
     if( read_data == equal ){
         result = true;
@@ -540,6 +549,8 @@ bool DXLPORT_CONTROL::check_servo_param( uint8_t dxl_id, uint32_t test_addr, uin
     }else if( dxl_error != 0 ){
         last_error = packetHandler->getRxPacketError( dxl_error );
         ++rx_err;
+    }else{
+        last_error = "";
     }
     if( read_data == equal ){
         result = true;
@@ -687,7 +698,6 @@ void DXLPORT_CONTROL::effort_limitter( void )
     uint16_t set_pgain = DXL_DEFAULT_PGAIN;
     uint16_t get_pgain;
 
-    last_error = "";
     if( !port_stat ){
         return;
     }
@@ -708,6 +718,7 @@ void DXLPORT_CONTROL::effort_limitter( void )
                         last_error = packetHandler->getRxPacketError( dxl_error );
                         ++rx_err;
                     }else{
+                        last_error = "";
                         set_pgain = get_pgain;
                     }
                 }
@@ -728,9 +739,11 @@ void DXLPORT_CONTROL::effort_limitter( void )
                 }else if( get_pgain >= DXL_DEFAULT_PGAIN ){
                     joints[jj].clear_eff_over();
                     joints[jj].set_eff_limiting( false );
+                    last_error = "";
                 }else{
                     set_gain( joints[jj].get_dxl_id(), (get_pgain+2) );
                     joints[jj].set_eff_limiting( true );
+                    last_error = "";
                 }
             }
         }
@@ -744,7 +757,6 @@ void DXLPORT_CONTROL::set_param_delay_time( uint8_t dxl_id, int val )
 {
     uint8_t set_param = (uint8_t)val;
 
-    last_error = "";
     if( !port_stat ){
         return;
     }
@@ -760,6 +772,8 @@ void DXLPORT_CONTROL::set_param_delay_time( uint8_t dxl_id, int val )
                 }else if( dxl_error != 0 ){
                     last_error = packetHandler->getRxPacketError( dxl_error );
                     ++tx_err;
+                }else{
+                    last_error = "";
                 }
             }
             new_param.return_delay_time = set_param;
@@ -772,7 +786,6 @@ void DXLPORT_CONTROL::set_param_drive_mode( uint8_t dxl_id, int val )
 {
     uint8_t set_param = (uint8_t)val;
 
-    last_error = "";
     if( !port_stat ){
         return;
     }
@@ -788,6 +801,8 @@ void DXLPORT_CONTROL::set_param_drive_mode( uint8_t dxl_id, int val )
                 }else if( dxl_error != 0 ){
                     last_error = packetHandler->getRxPacketError( dxl_error );
                     ++tx_err;
+                }else{
+                    last_error = "";
                 }
             }
             new_param.drive_mode = set_param;
@@ -800,7 +815,6 @@ void DXLPORT_CONTROL::set_param_ope_mode( uint8_t dxl_id, int val )
 {
     uint8_t set_param = (uint8_t)val;
 
-    last_error = "";
     if( !port_stat ){
         return;
     }
@@ -816,6 +830,8 @@ void DXLPORT_CONTROL::set_param_ope_mode( uint8_t dxl_id, int val )
                 }else if( dxl_error != 0 ){
                     last_error = packetHandler->getRxPacketError( dxl_error );
                     ++tx_err;
+                }else{
+                    last_error = "";
                 }
             }
             new_param.operation_mode = set_param;
@@ -828,7 +844,6 @@ void DXLPORT_CONTROL::set_param_home_offset( uint8_t dxl_id, int val )
 {
     uint32_t set_param = (uint32_t)val;
 
-    last_error = "";
     if( !port_stat ){
         return;
     }
@@ -844,6 +859,8 @@ void DXLPORT_CONTROL::set_param_home_offset( uint8_t dxl_id, int val )
                 }else if( dxl_error != 0 ){
                     last_error = packetHandler->getRxPacketError( dxl_error );
                     ++tx_err;
+                }else{
+                    last_error = "";
                 }
             }
             new_param.homing_offset = (int32_t)set_param;
@@ -856,7 +873,6 @@ void DXLPORT_CONTROL::set_param_moving_threshold( uint8_t dxl_id, int val )
 {
     uint32_t set_param = (uint32_t)val;
 
-    last_error = "";
     if( !port_stat ){
         return;
     }
@@ -872,6 +888,8 @@ void DXLPORT_CONTROL::set_param_moving_threshold( uint8_t dxl_id, int val )
                 }else if( dxl_error != 0 ){
                     last_error = packetHandler->getRxPacketError( dxl_error );
                     ++tx_err;
+                }else{
+                    last_error = "";
                 }
             }
             new_param.moving_threshold = set_param;
@@ -884,7 +902,6 @@ void DXLPORT_CONTROL::set_param_temp_limit( uint8_t dxl_id, int val )
 {
     uint8_t set_param = (uint8_t)val;
 
-    last_error = "";
     if( !port_stat ){
         return;
     }
@@ -900,6 +917,8 @@ void DXLPORT_CONTROL::set_param_temp_limit( uint8_t dxl_id, int val )
                 }else if( dxl_error != 0 ){
                     last_error = packetHandler->getRxPacketError( dxl_error );
                     ++tx_err;
+                }else{
+                    last_error = "";
                 }
             }
             new_param.temprature_limit = set_param;
@@ -913,7 +932,6 @@ void DXLPORT_CONTROL::set_param_vol_limit( uint8_t dxl_id, int max, int min )
     uint16_t set_max_param = (uint32_t)max;
     uint16_t set_min_param = (uint32_t)min;
 
-    last_error = "";
     if( !port_stat ){
         return;
     }
@@ -929,6 +947,8 @@ void DXLPORT_CONTROL::set_param_vol_limit( uint8_t dxl_id, int max, int min )
                 }else if( dxl_error != 0 ){
                     last_error = packetHandler->getRxPacketError( dxl_error );
                     ++tx_err;
+                }else{
+                    last_error = "";
                 }
             }
             if( new_param.min_vol_limit != set_min_param ){
@@ -940,6 +960,8 @@ void DXLPORT_CONTROL::set_param_vol_limit( uint8_t dxl_id, int max, int min )
                 }else if( dxl_error != 0 ){
                     last_error = packetHandler->getRxPacketError( dxl_error );
                     ++tx_err;
+                }else{
+                    last_error = "";
                 }
             }
             new_param.max_vol_limit = set_max_param;
@@ -953,7 +975,6 @@ void DXLPORT_CONTROL::set_param_current_limit( uint8_t dxl_id, int val )
 {
     uint16_t set_param = (uint16_t)val;
 
-    last_error = "";
     if( !port_stat ){
         return;
     }
@@ -969,6 +990,8 @@ void DXLPORT_CONTROL::set_param_current_limit( uint8_t dxl_id, int val )
                 }else if( dxl_error != 0 ){
                     last_error = packetHandler->getRxPacketError( dxl_error );
                     ++tx_err;
+                }else{
+                    last_error = "";
                 }
             }
             new_param.current_limit = set_param;
@@ -982,7 +1005,6 @@ void DXLPORT_CONTROL::set_param_vel_gain( uint8_t dxl_id, int p, int i )
     uint16_t set_p_param = (uint16_t)p;
     uint16_t set_i_param = (uint16_t)i;
 
-    last_error = "";
     if( !port_stat ){
         return;
     }
@@ -998,6 +1020,8 @@ void DXLPORT_CONTROL::set_param_vel_gain( uint8_t dxl_id, int p, int i )
                 }else if( dxl_error != 0 ){
                     last_error = packetHandler->getRxPacketError( dxl_error );
                     ++tx_err;
+                }else{
+                    last_error = "";
                 }
             }
             if( (new_param.velocity_i_gain != set_i_param) ){
@@ -1009,6 +1033,8 @@ void DXLPORT_CONTROL::set_param_vel_gain( uint8_t dxl_id, int p, int i )
                 }else if( dxl_error != 0 ){
                     last_error = packetHandler->getRxPacketError( dxl_error );
                     ++tx_err;
+                }else{
+                    last_error = "";
                 }
             }
             new_param.velocity_p_gain = set_p_param;
@@ -1024,7 +1050,6 @@ void DXLPORT_CONTROL::set_param_pos_gain( uint8_t dxl_id, int p, int i, int d )
     uint16_t set_i_param = (uint16_t)i;
     uint16_t set_d_param = (uint16_t)d;
 
-    last_error = "";
     if( !port_stat ){
         return;
     }
@@ -1040,6 +1065,8 @@ void DXLPORT_CONTROL::set_param_pos_gain( uint8_t dxl_id, int p, int i, int d )
                 }else if( dxl_error != 0 ){
                     last_error = packetHandler->getRxPacketError( dxl_error );
                     ++tx_err;
+                }else{
+                    last_error = "";
                 }
             }
             if( new_param.position_i_gain != set_i_param ){
@@ -1051,6 +1078,8 @@ void DXLPORT_CONTROL::set_param_pos_gain( uint8_t dxl_id, int p, int i, int d )
                 }else if( dxl_error != 0 ){
                     last_error = packetHandler->getRxPacketError( dxl_error );
                     ++tx_err;
+                }else{
+                    last_error = "";
                 }
             }
             if( new_param.position_d_gain != set_d_param ){
@@ -1062,6 +1091,8 @@ void DXLPORT_CONTROL::set_param_pos_gain( uint8_t dxl_id, int p, int i, int d )
                 }else if( dxl_error != 0 ){
                     last_error = packetHandler->getRxPacketError( dxl_error );
                     ++tx_err;
+                }else{
+                    last_error = "";
                 }
             }
             new_param.position_p_gain = set_p_param;
