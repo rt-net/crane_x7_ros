@@ -4,6 +4,7 @@
 #include    <map>
 #include    <string>
 #include    <vector>
+#include    <queue>
 #include    <ros/ros.h>
 #include    <hardware_interface/joint_command_interface.h>
 #include    <hardware_interface/joint_state_interface.h>
@@ -66,8 +67,8 @@ public:
     void                set_param_pos_gain( uint8_t dxl_id, int p, int i, int d );
 
     bool                is_change_positions( void );
-     
-    std::string                                 last_error;
+    std::string::size_type get_error( std::string& errorlog );
+
     uint32_t                                    tempCount;
     std::vector<JOINT_CONTROL>                  joints;
     
@@ -88,6 +89,8 @@ private:
     uint32_t                                    rx_err;
     uint32_t                                    tx_err;
     ros::Time                                   tempTime;
+
+    std::queue<std::string>                     error_queue;
 
     bool                check_servo_param( uint8_t dxl_id, uint32_t test_addr, uint8_t equal, uint8_t& read_val );
     bool                check_servo_param( uint8_t dxl_id, uint32_t test_addr, uint16_t equal, uint16_t& read_val );
