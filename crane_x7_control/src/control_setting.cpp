@@ -117,14 +117,18 @@ bool CONTROL_SETTING::loadJointParam( void )
     int load_id = 0;
     int load_center = DEFAULT_CENTER;
     int load_home = DEFAULT_CENTER;
+    double load_eff_cnst = DEFAULT_EFF_CNST;
+    int load_mode = DEFAULT_OPE_MODE;
     bool load_result;
     bool result = true;
     
-    for( int j=0 ; j<joint_list.size() ; ++j ){
-        std::string key_jname = (key_joint_param + joint_list[j].name);
+    for( int jj=0 ; jj<joint_list.size() ; ++jj ){
+        std::string key_jname = (key_joint_param + joint_list[jj].name);
         std::string key_jparam_id = (key_jname + KEY_JPARAM_ID);
         std::string key_jparam_center = (key_jname + KEY_JPARAM_CENTER);
         std::string key_jparam_home = (key_jname + KEY_JPARAM_HOME);
+        std::string key_jparam_eff_cnst = (key_jname + KEY_JPARAM_EFFCNST);
+        std::string key_jparam_mode = (key_jname + KEY_JPARAM_OPEMODE);
         load_result = true;
         
         if( !node_handle.getParam( key_jparam_id, load_id ) ){
@@ -139,10 +143,20 @@ bool CONTROL_SETTING::loadJointParam( void )
             ROS_ERROR("Undefined joint id key %s. line%d", key_jparam_id.c_str(), __LINE__);
             load_result = false;
         }
+        if( !node_handle.getParam( key_jparam_eff_cnst, load_eff_cnst ) ){
+            ROS_ERROR("Undefined joint id key %s. line%d", key_jparam_id.c_str(), __LINE__);
+            load_result = false;
+        }
+        if( !node_handle.getParam( key_jparam_mode, load_mode ) ){
+            ROS_ERROR("Undefined joint id key %s. line%d", key_jparam_id.c_str(), __LINE__);
+            load_result = false;
+        }
         if( load_result ){
-            joint_list[j].id = load_id;
-            joint_list[j].center = load_center;
-            joint_list[j].home = load_home;
+            joint_list[jj].id = load_id;
+            joint_list[jj].center = load_center;
+            joint_list[jj].home = load_home;
+            joint_list[jj].eff_cnst = load_eff_cnst;
+            joint_list[jj].mode = load_mode;
         }else{
             result = false;
             break;
