@@ -1,4 +1,6 @@
 <launch>
+  <arg name="port_name" default="/dev/ttyUSB0"/>
+
   <param name="robot_description"
     command="$(find xacro)/xacro --inorder '$(find crane_x7_description)/urdf/crane_x7.urdf.xacro'"
     />
@@ -15,6 +17,7 @@
 
     <node name="crane_x7_control" pkg="crane_x7_control" type="crane_x7_control" output="screen" respawn="false">
       <rosparam file="$(find crane_x7_control)/config/crane_x7_control.yaml" command="load"/>
+      <param name="dynamixel_port/port_name" value="$(arg port_name)"/>
     </node>
 
     <node name="robot_state_publisher" pkg="robot_state_publisher" 
