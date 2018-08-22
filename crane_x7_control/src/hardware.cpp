@@ -227,7 +227,10 @@ int main( int argc, char* argv[] )
 
     DXLPORT_CONTROL crane_x7( nhPrivate, setting );
     if( !crane_x7.get_init_stat() ){
-        ROS_INFO("%s",crane_x7.last_error.c_str());
+        std::string errorlog;
+        if( crane_x7.get_error( errorlog ) > 0 ){
+            ROS_INFO("Initialize error (%s)",errorlog.c_str());
+        }
         return -1;
     }
     controller_manager::ControllerManager cm( &crane_x7, nh );
@@ -268,14 +271,11 @@ int main( int argc, char* argv[] )
             read_temp_flg = false;
         }
         publish_topic_data( &crane_x7, read_temp_flg );
-        if( lasterror_out.data != crane_x7.last_error ){
-            lasterror_out.data = crane_x7.last_error;
-            lasterror_pub.publish( lasterror_out );
-        }
 
         crane_x7.read( t, d );
         cm.update( t, d );
         crane_x7.write( t, d );
+
         while( set_gain_request.size() > 0 ){
             ST_SET_GAIN_QUEUE gain_data = set_gain_request.front();
             crane_x7.set_gain( gain_data.dxl_id, gain_data.gain );
@@ -286,6 +286,12 @@ int main( int argc, char* argv[] )
             set_joint_param_request.pop();
         }
         crane_x7.effort_limitter();
+
+        std::string errorlog;
+        while( crane_x7.get_error( errorlog ) > 0  ){    // error log check
+            lasterror_out.data = errorlog;
+            lasterror_pub.publish( lasterror_out );
+        }
 
 #ifdef REACTIVE_RATE_FUNCTION
         if( crane_x7.is_change_positions() ){

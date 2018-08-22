@@ -4,6 +4,7 @@
 #include    <map>
 #include    <string>
 #include    <vector>
+#include    <queue>
 #include    <ros/ros.h>
 #include    <hardware_interface/joint_command_interface.h>
 #include    <hardware_interface/joint_state_interface.h>
@@ -33,7 +34,7 @@ public:
     ~DXLPORT_CONTROL();
     ros::Time getTime() const { return ros::Time::now(); }
     ros::Duration       getDuration( ros::Time t ) const { return (ros::Time::now() - t); }
-    void                read( ros::Time, ros::Duration );
+    bool                read( ros::Time, ros::Duration );
     void                readPos( ros::Time, ros::Duration );
     void                readCurrent( ros::Time, ros::Duration );
     void                readTemp( ros::Time, ros::Duration );
@@ -66,8 +67,8 @@ public:
     void                set_param_pos_gain( uint8_t dxl_id, int p, int i, int d );
 
     bool                is_change_positions( void );
-     
-    std::string                                 last_error;
+    std::string::size_type get_error( std::string& errorlog );
+
     uint32_t                                    tempCount;
     std::vector<JOINT_CONTROL>                  joints;
     
@@ -80,17 +81,16 @@ private:
     hardware_interface::PositionJointInterface  joint_pos_if;
     hardware_interface::EffortJointInterface    joint_eff_if;
     joint_limits_interface::PositionJointSoftLimitsInterface joint_limits_if;
-    dynamixel::GroupBulkRead                   *readPosGroup;
-    dynamixel::GroupBulkRead                   *readCurrentGroup;
     dynamixel::GroupBulkRead                   *readTempGroup;
-    dynamixel::GroupBulkRead                   *readVelGroup;
+    dynamixel::GroupBulkRead                   *readMovementGroup;
     dynamixel::GroupBulkWrite                  *writeGoalGroup;
 
     bool                                        init_stat;
     uint32_t                                    rx_err;
     uint32_t                                    tx_err;
     ros::Time                                   tempTime;
-//    uint32_t                                    tempCount;
+
+    std::queue<std::string>                     error_queue;
 
     bool                check_servo_param( uint8_t dxl_id, uint32_t test_addr, uint8_t equal, uint8_t& read_val );
     bool                check_servo_param( uint8_t dxl_id, uint32_t test_addr, uint16_t equal, uint16_t& read_val );

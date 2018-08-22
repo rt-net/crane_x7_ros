@@ -24,13 +24,12 @@ DXLPORT_CONTROL::DXLPORT_CONTROL( ros::NodeHandle handle, CONTROL_SETTING &setti
     init_stat = false;
     tx_err = rx_err = 0;
     tempCount = 0;
+    tempTime = getTime();
 
     portHandler      = NULL;
-    readPosGroup     = NULL;
     writeGoalGroup   = NULL;
-    readCurrentGroup = NULL;
     readTempGroup    = NULL;
-    readVelGroup     = NULL;
+    readMovementGroup= NULL;
 
     joint_num = setting.getjointNum();
     std::vector<ST_SERVO_PARAM> list = setting.getServoParam();
@@ -42,75 +41,50 @@ DXLPORT_CONTROL::DXLPORT_CONTROL( ros::NodeHandle handle, CONTROL_SETTING &setti
     /* DynamixelSDKとros_controlへの接続初期化 */
     packetHandler    = dynamixel::PacketHandler::getPacketHandler( PROTOCOL_VERSION );
     portHandler      = dynamixel::PortHandler::getPortHandler( setting.getPortName().c_str() );
-    readPosGroup     = new dynamixel::GroupBulkRead( portHandler, packetHandler );
     writeGoalGroup   = new dynamixel::GroupBulkWrite( portHandler, packetHandler );
     readTempGroup    = new dynamixel::GroupBulkRead( portHandler, packetHandler );
-    readCurrentGroup = new dynamixel::GroupBulkRead( portHandler, packetHandler );
-    readVelGroup     = new dynamixel::GroupBulkRead( portHandler, packetHandler );
+    readMovementGroup     = new dynamixel::GroupBulkRead( portHandler, packetHandler );
     
     for( jj=0 ; jj<joint_num ; ++jj ){
         uint8_t dxl_id = joints[jj].get_dxl_id();
-        if( !readPosGroup->addParam( dxl_id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION ) ){
-            last_error = "Bulk pos read setting failed.";
-            return;
-        }
         if( joints[jj].get_ope_mode() == OPERATING_MODE_CURRENT ){
             //CURRENT MODE
             if( !writeGoalGroup->addParam( dxl_id, ADDR_GOAL_CURRENT, LEN_GOAL_CURRENT, joints[jj].get_dxl_goal_addr() ) ){// [TODO]
-                last_error = "Bulk current write setting failed.";
+                error_queue.push("Bulk current write setting failed.");
                 return;
             }
         }else{
             //POSITION MODE
             if( !writeGoalGroup->addParam( dxl_id, ADDR_GOAL_POSITION, LEN_GOAL_POSITION, joints[jj].get_dxl_goal_addr() ) ){// [TODO]
-                last_error = "Bulk pos write setting failed.";
+                error_queue.push("Bulk pos write setting failed.");
                 return;
             }
         }
         if( !readTempGroup->addParam( dxl_id, ADDR_PRESENT_TEMP, LEN_PRESENT_TEMP ) ){
-            last_error = "Bulk temp read setting failed.";
+            error_queue.push("Bulk temp read setting failed.");
             return;
         }
-        if( !readCurrentGroup->addParam( dxl_id, ADDR_PRESENT_CURRENT, LEN_PRESENT_CURRENT ) ){
-            last_error = "Bulk current read setting failed.";
+        if( !readMovementGroup->addParam( dxl_id, ADDR_PRESENT_MOVEMENT, LEN_PRESENT_MOVEMENT ) ){
+            error_queue.push("Bulk group read setting failed.");
             return;
-        }
-        if( joints[jj].get_ope_mode() == OPERATING_MODE_CURRENT ){
-            if( !readVelGroup->addParam( dxl_id, ADDR_PRESENT_VEL, LEN_PRESENT_VEL ) ){
-                last_error = "Bulk velocity read setting failed.";
-                return;
-            }
         }
     }
 
     // Open port
-    last_error = "";
     if( !portHandler->openPort() ){
-        last_error = "Port open failed.";
+        error_queue.push("Port open failed.");
         port_stat = false;
     }else{
         // Set port baudrate
         if( !portHandler->setBaudRate( setting.getBaudrate() ) ){
-            last_error = "Setup baudrate failed.";
+            error_queue.push("Setup baudrate failed.");
             port_stat = false;
         }else{
-            for( jj=0 ; jj<joint_num ; ++jj ){
-                uint8_t dxl_id = joints[jj].get_dxl_id();
-                int32_t present_pos = 0;
-
-                uint8_t dxl_error = 0; // Dynamixel error
-                int dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, dxl_id, ADDR_PRESENT_POSITION, (uint32_t*)&present_pos, &dxl_error);
-                if (dxl_comm_result != COMM_SUCCESS){
-                    last_error = packetHandler->getTxRxResult( dxl_comm_result );
-                    return;
-                }else if ( dxl_error != 0 ){
-                    last_error = packetHandler->getRxPacketError( dxl_error );
-                    return;
-                }else{
-                    joints[jj].set_position( DXLPOS2RAD( present_pos ) );
-                }
+            port_stat = true; // 有効と仮定してread
+            if( !read( ros::Time::now(), ros::Duration(0) ) ){
+                error_queue.push("Initialize communication failed.");
+                port_stat = false;
             }
-            port_stat = true;
         }
     }
     for( jj=0 ; jj<joint_num ; ++jj ){
@@ -155,83 +129,77 @@ DXLPORT_CONTROL::~DXLPORT_CONTROL()
     portHandler->closePort();
 	delete( portHandler );
 	/* packetHandlerはdeleteしないほうが良さそう*/
-    if(readPosGroup!=NULL)     delete( readPosGroup );
     if(readTempGroup!=NULL)    delete( readTempGroup );
     if(writeGoalGroup!=NULL)    delete( writeGoalGroup );
-    if(readCurrentGroup!=NULL) delete( readCurrentGroup );
-    if(readVelGroup!=NULL)     delete( readVelGroup );
+    if(readMovementGroup!=NULL)     delete( readMovementGroup );
 }
 
-void DXLPORT_CONTROL::read( ros::Time time, ros::Duration period )
+bool DXLPORT_CONTROL::read( ros::Time time, ros::Duration period )
 {
+    bool result = false;
+
     if( !port_stat ){
-        return;
+        return true;
     }
-    readPos( time, period );
-    readVel( time, period );
-    readCurrent( time, period );
+
+    int dxl_comm_result = readMovementGroup->txRxPacket();
+    if (dxl_comm_result != COMM_SUCCESS){
+        error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
+        ++rx_err;
+    }else{
+        readCurrent( time, period );
+        readVel( time, period );
+        readPos( time, period );
+        result = true;
+    }
     if( (time - tempTime).toSec() > DXL_TEMP_READ_DURATION ){
         readTemp( time, period );
         tempTime = time;
     }
+    return result;
 }
 
 void DXLPORT_CONTROL::readPos( ros::Time time, ros::Duration period )
 {
-    last_error = "";
-    int dxl_comm_result = readPosGroup->txRxPacket();
-    if (dxl_comm_result != COMM_SUCCESS){
-        last_error = packetHandler->getTxRxResult( dxl_comm_result );
-        ++rx_err;
-    }else{
-        for( int jj=0 ; jj<joint_num ; ++jj ){
-            int32_t present_pos = 0;
-            uint8_t dxl_id = joints[jj].get_dxl_id();
-            bool dxl_getdata_result = readPosGroup->isAvailable( dxl_id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION );
-            if( !dxl_getdata_result ){
-                ++rx_err;
-                break;
-            }else{
-                present_pos = readPosGroup->getData( dxl_id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION );
-                joints[jj].set_dxl_pos( present_pos );
-                present_pos = (present_pos - joints[jj].get_center());
-                joints[jj].set_position( DXLPOS2RAD( present_pos ) );
-            }
+    for( int jj=0 ; jj<joint_num ; ++jj ){
+        int32_t present_pos = 0;
+        uint8_t dxl_id = joints[jj].get_dxl_id();
+        bool dxl_getdata_result = readMovementGroup->isAvailable( dxl_id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION );
+        if( !dxl_getdata_result ){
+            ++rx_err;
+            break;
+        }else{
+            present_pos = readMovementGroup->getData( dxl_id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION );
+            joints[jj].set_dxl_pos( present_pos );
+            present_pos = (present_pos - joints[jj].get_center());
+            joints[jj].set_position( DXLPOS2RAD( present_pos ) );
         }
     }
 }
 
 void DXLPORT_CONTROL::readCurrent( ros::Time time, ros::Duration period )
 {
-    last_error = "";
-    int dxl_comm_result = readCurrentGroup->txRxPacket();
-    if (dxl_comm_result != COMM_SUCCESS){
-        last_error = packetHandler->getTxRxResult( dxl_comm_result );
-        ++rx_err;
-    }else{
-        for( int jj=0 ; jj<joint_num ; ++jj ){
-            int16_t present_current = 0;
-            uint8_t dxl_id = joints[jj].get_dxl_id();
-            bool dxl_getdata_result = readCurrentGroup->isAvailable( dxl_id, ADDR_PRESENT_CURRENT, LEN_PRESENT_CURRENT );
-            if( !dxl_getdata_result ){
-                ++rx_err;
-                break;
-            }else{
-                present_current = readCurrentGroup->getData( dxl_id, ADDR_PRESENT_CURRENT, LEN_PRESENT_CURRENT );
-                joints[jj].set_dxl_curr( present_current );
-                joints[jj].set_current( (DXL_CURRENT_UNIT * present_current) );
-                joints[jj].set_effort( DXL_CURRENT2EFFORT( present_current, joints[jj].get_eff_const() ) );
-            }
+    for( int jj=0 ; jj<joint_num ; ++jj ){
+        int16_t present_current = 0;
+        uint8_t dxl_id = joints[jj].get_dxl_id();
+        bool dxl_getdata_result = readMovementGroup->isAvailable( dxl_id, ADDR_PRESENT_CURRENT, LEN_PRESENT_CURRENT );
+        if( !dxl_getdata_result ){
+            ++rx_err;
+            break;
+        }else{
+            present_current = readMovementGroup->getData( dxl_id, ADDR_PRESENT_CURRENT, LEN_PRESENT_CURRENT );
+            joints[jj].set_dxl_curr( present_current );
+            joints[jj].set_current( (DXL_CURRENT_UNIT * present_current) );
+            joints[jj].set_effort( DXL_CURRENT2EFFORT( present_current, joints[jj].get_eff_const() ) );
         }
     }
 }
 
 void DXLPORT_CONTROL::readTemp( ros::Time time, ros::Duration period )
 {
-    last_error = "";
     int dxl_comm_result = readTempGroup->txRxPacket();
     if (dxl_comm_result != COMM_SUCCESS){
-        last_error = packetHandler->getTxRxResult( dxl_comm_result );
+        error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
         ++rx_err;
     }else{
         for( int jj=0 ; jj<joint_num ; ++jj ){
@@ -241,9 +209,9 @@ void DXLPORT_CONTROL::readTemp( ros::Time time, ros::Duration period )
                 ++rx_err;
                 break;
             }else{
-                uint8_t present_current = readTempGroup->getData( dxl_id, ADDR_PRESENT_TEMP, LEN_PRESENT_TEMP );
-                joints[jj].set_dxl_temp( present_current );
-                joints[jj].set_temprature( present_current );
+                uint8_t present_temp = readTempGroup->getData( dxl_id, ADDR_PRESENT_TEMP, LEN_PRESENT_TEMP );
+                joints[jj].set_dxl_temp( present_temp );
+                joints[jj].set_temprature( present_temp );
             }
         }
         ++tempCount;
@@ -252,27 +220,16 @@ void DXLPORT_CONTROL::readTemp( ros::Time time, ros::Duration period )
 
 void DXLPORT_CONTROL::readVel( ros::Time time, ros::Duration period )
 {
-    last_error = "";
-    int dxl_comm_result = readVelGroup->txRxPacket();
-     if (dxl_comm_result != COMM_SUCCESS){
-        last_error = packetHandler->getTxRxResult( dxl_comm_result );
-        ++rx_err;
-    }else{
-        for( int jj=0 ; jj<joint_num ; ++jj ){
-            if( joints[jj].get_ope_mode() != OPERATING_MODE_CURRENT ){
-                continue;
-            }
-            uint8_t dxl_id = joints[jj].get_dxl_id();
-            bool dxl_getdata_result = readVelGroup->isAvailable( dxl_id, ADDR_PRESENT_VEL, LEN_PRESENT_VEL );
-            if( !dxl_getdata_result ){
-                ++rx_err;
-                break;
-            }else{
-                int16_t present_velocity = readVelGroup->getData( dxl_id, ADDR_PRESENT_VEL, LEN_PRESENT_VEL );
-                joints[jj].set_velocity( DXL_VELOCITY2RAD_S(present_velocity) );
-            }
+    for( int jj=0 ; jj<joint_num ; ++jj ){
+        uint8_t dxl_id = joints[jj].get_dxl_id();
+        bool dxl_getdata_result = readMovementGroup->isAvailable( dxl_id, ADDR_PRESENT_VEL, LEN_PRESENT_VEL );
+        if( !dxl_getdata_result ){
+            ++rx_err;
+            break;
+        }else{
+            int32_t present_velocity = readMovementGroup->getData( dxl_id, ADDR_PRESENT_VEL, LEN_PRESENT_VEL );
+            joints[jj].set_velocity( DXL_VELOCITY2RAD_S(present_velocity) );
         }
-        ++tempCount;
     }
 }
 
@@ -288,7 +245,6 @@ void DXLPORT_CONTROL::write( ros::Time time, ros::Duration period )
         }
         return;
     }
-    last_error = "";
     for( int jj=0 ; jj<joint_num ; ++jj ){
         get_cmd = joints[jj].get_command();
         if( joints[jj].get_ope_mode() == OPERATING_MODE_CURRENT ){
@@ -327,7 +283,7 @@ void DXLPORT_CONTROL::write( ros::Time time, ros::Duration period )
     }
     int dxl_comm_result = writeGoalGroup->txPacket();
     if( dxl_comm_result != COMM_SUCCESS ){
-        last_error = packetHandler->getTxRxResult( dxl_comm_result );
+        error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
         ++tx_err;
     }
 }
@@ -349,7 +305,6 @@ void DXLPORT_CONTROL::set_gain_all( uint16_t gain )
     if( !port_stat ){
         return;
     }
-    last_error = "";
     for( int jj=0 ; jj<joint_num ; ++jj ){
         if( joints[jj].get_ope_mode() == OPERATING_MODE_CURRENT ){
             continue;
@@ -364,10 +319,10 @@ void DXLPORT_CONTROL::set_gain( uint8_t dxl_id, uint16_t gain )
 
     int dxl_comm_result = packetHandler->write2ByteTxRx( portHandler, dxl_id, ADDR_POSITION_PGAIN, gain, &dxl_error );
     if( dxl_comm_result != COMM_SUCCESS ){
-        last_error = packetHandler->getTxRxResult( dxl_comm_result );
+        error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
         ++tx_err;
     }else if( dxl_error != 0 ){
-        last_error = packetHandler->getRxPacketError( dxl_error );
+        error_queue.push( (std::string(__func__) + " ") + packetHandler->getRxPacketError( dxl_error ) );
         ++tx_err;
     }
 }
@@ -377,7 +332,6 @@ void DXLPORT_CONTROL::set_goal_current_all( uint16_t current )
     if( !port_stat ){
         return;
     }
-    last_error = "";
     for( int jj=0 ; jj<joint_num ; ++jj ){
         if( joints[jj].get_ope_mode() == OPERATING_MODE_CURRENT ){
             set_goal_current( joints[jj].get_dxl_id(), current );
@@ -392,10 +346,10 @@ void DXLPORT_CONTROL::set_goal_current( uint8_t dxl_id, uint16_t current )
 
     int dxl_comm_result = packetHandler->write2ByteTxRx( portHandler, dxl_id, ADDR_GOAL_CURRENT, current, &dxl_error );
     if( dxl_comm_result != COMM_SUCCESS ){
-        last_error = packetHandler->getTxRxResult( dxl_comm_result );
+        error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
         ++tx_err;
     }else if( dxl_error != 0 ){
-        last_error = packetHandler->getRxPacketError( dxl_error );
+        error_queue.push( (std::string(__func__) + " ") + packetHandler->getRxPacketError( dxl_error ) );
         ++tx_err;
     }
 }
@@ -405,7 +359,6 @@ bool DXLPORT_CONTROL::set_torque( uint8_t dxl_id, bool torque )
     uint32_t set_param = torque ? TORQUE_ENABLE:TORQUE_DISABLE;
     bool result = false;
 
-    last_error = "";
     if( !port_stat ){
         return true;
     }
@@ -413,10 +366,10 @@ bool DXLPORT_CONTROL::set_torque( uint8_t dxl_id, bool torque )
     uint8_t dxl_error = 0; // Dynamixel error
     int dxl_comm_result = packetHandler->write1ByteTxRx( portHandler, dxl_id, ADDR_TORQUE_ENABLE, set_param, &dxl_error );
     if( dxl_comm_result != COMM_SUCCESS ){
-        last_error = packetHandler->getTxRxResult( dxl_comm_result );
+        error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
         ++tx_err;
     }else if( dxl_error != 0 ){
-        last_error = packetHandler->getRxPacketError( dxl_error );
+        error_queue.push( (std::string(__func__) + " ") + packetHandler->getRxPacketError( dxl_error ) );
         ++tx_err;
     }else{
         result = true;
@@ -434,7 +387,6 @@ void DXLPORT_CONTROL::set_torque_all( bool torque )
 
 void DXLPORT_CONTROL::set_watchdog( uint8_t dxl_id, uint8_t value )
 {
-    last_error = "";
     if( !port_stat ){
         return;
     }
@@ -442,10 +394,10 @@ void DXLPORT_CONTROL::set_watchdog( uint8_t dxl_id, uint8_t value )
     uint8_t dxl_error = 0; // Dynamixel error
     int dxl_comm_result = packetHandler->write1ByteTxRx( portHandler, dxl_id, ADDR_BUS_WATCHDOG, value, &dxl_error );
     if( dxl_comm_result != COMM_SUCCESS ){
-        last_error = packetHandler->getTxRxResult( dxl_comm_result );
+        error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
         ++tx_err;
     }else if( dxl_error != 0 ){
-        last_error = packetHandler->getRxPacketError( dxl_error );
+        error_queue.push( (std::string(__func__) + " ") + packetHandler->getRxPacketError( dxl_error ) );
         ++tx_err;
     }
 }
@@ -534,10 +486,10 @@ bool DXLPORT_CONTROL::check_servo_param( uint8_t dxl_id, uint32_t test_addr, uin
 
     int dxl_comm_result = packetHandler->read1ByteTxRx(portHandler, dxl_id, test_addr, &read_data, &dxl_error);
     if( dxl_comm_result != COMM_SUCCESS ){
-        last_error = packetHandler->getTxRxResult( dxl_comm_result );
+        error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
         ++rx_err;
     }else if( dxl_error != 0 ){
-        last_error = packetHandler->getRxPacketError( dxl_error );
+        error_queue.push( (std::string(__func__) + " ") + packetHandler->getRxPacketError( dxl_error ) );
         ++rx_err;
     }
     if( read_data == equal ){
@@ -554,10 +506,10 @@ bool DXLPORT_CONTROL::check_servo_param( uint8_t dxl_id, uint32_t test_addr, uin
 
     int dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, dxl_id, test_addr, &read_data, &dxl_error);
     if( dxl_comm_result != COMM_SUCCESS ){
-        last_error = packetHandler->getTxRxResult( dxl_comm_result );
+        error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
         ++rx_err;
     }else if( dxl_error != 0 ){
-        last_error = packetHandler->getRxPacketError( dxl_error );
+        error_queue.push( (std::string(__func__) + " ") + packetHandler->getRxPacketError( dxl_error ) );
         ++rx_err;
     }
     if( read_data == equal ){
@@ -574,10 +526,10 @@ bool DXLPORT_CONTROL::check_servo_param( uint8_t dxl_id, uint32_t test_addr, uin
 
     int dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, dxl_id, test_addr, &read_data, &dxl_error);
     if( dxl_comm_result != COMM_SUCCESS ){
-        last_error = packetHandler->getTxRxResult( dxl_comm_result );
+        error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
         ++rx_err;
     }else if( dxl_error != 0 ){
-        last_error = packetHandler->getRxPacketError( dxl_error );
+        error_queue.push( (std::string(__func__) + " ") + packetHandler->getRxPacketError( dxl_error ) );
         ++rx_err;
     }
     if( read_data == equal ){
@@ -726,7 +678,6 @@ void DXLPORT_CONTROL::effort_limitter( void )
     uint16_t set_pgain = DXL_DEFAULT_PGAIN;
     uint16_t get_pgain;
 
-    last_error = "";
     if( !port_stat ){
         return;
     }
@@ -741,10 +692,10 @@ void DXLPORT_CONTROL::effort_limitter( void )
                 if( joints[jj].is_effort_limiting() ){
                     int dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, joints[jj].get_dxl_id(), ADDR_POSITION_PGAIN, &get_pgain, &dxl_error);
                     if( dxl_comm_result != COMM_SUCCESS ){
-                        last_error = packetHandler->getTxRxResult( dxl_comm_result );
+                        error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
                         ++rx_err;
                     }else if( dxl_error != 0 ){
-                        last_error = packetHandler->getRxPacketError( dxl_error );
+                        error_queue.push( (std::string(__func__) + " ") + packetHandler->getRxPacketError( dxl_error ) );
                         ++rx_err;
                     }else{
                         set_pgain = get_pgain;
@@ -759,10 +710,10 @@ void DXLPORT_CONTROL::effort_limitter( void )
             if( joints[jj].is_effort_limiting() ){
                 int dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, joints[jj].get_dxl_id(), ADDR_POSITION_PGAIN, &get_pgain, &dxl_error);
                 if( dxl_comm_result != COMM_SUCCESS ){
-                    last_error = packetHandler->getTxRxResult( dxl_comm_result );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
                     ++rx_err;
                 }else if( dxl_error != 0 ){
-                    last_error = packetHandler->getRxPacketError( dxl_error );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getRxPacketError( dxl_error ) );
                     ++rx_err;
                 }else if( get_pgain >= DXL_DEFAULT_PGAIN ){
                     joints[jj].clear_eff_over();
@@ -783,7 +734,6 @@ void DXLPORT_CONTROL::set_param_delay_time( uint8_t dxl_id, int val )
 {
     uint8_t set_param = (uint8_t)val;
 
-    last_error = "";
     if( !port_stat ){
         return;
     }
@@ -794,10 +744,10 @@ void DXLPORT_CONTROL::set_param_delay_time( uint8_t dxl_id, int val )
                 uint8_t dxl_error = 0; // Dynamixel error
                 int dxl_comm_result = packetHandler->write1ByteTxRx( portHandler, dxl_id, ADDR_RETURN_DELAY, set_param, &dxl_error );
                 if( dxl_comm_result != COMM_SUCCESS ){
-                    last_error = packetHandler->getTxRxResult( dxl_comm_result );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
                     ++tx_err;
                 }else if( dxl_error != 0 ){
-                    last_error = packetHandler->getRxPacketError( dxl_error );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getRxPacketError( dxl_error ) );
                     ++tx_err;
                 }
             }
@@ -811,7 +761,6 @@ void DXLPORT_CONTROL::set_param_drive_mode( uint8_t dxl_id, int val )
 {
     uint8_t set_param = (uint8_t)val;
 
-    last_error = "";
     if( !port_stat ){
         return;
     }
@@ -822,10 +771,10 @@ void DXLPORT_CONTROL::set_param_drive_mode( uint8_t dxl_id, int val )
                 uint8_t dxl_error = 0; // Dynamixel error
                 int dxl_comm_result = packetHandler->write1ByteTxRx( portHandler, dxl_id, ADDR_DRIVE_MODE, set_param, &dxl_error );
                 if( dxl_comm_result != COMM_SUCCESS ){
-                    last_error = packetHandler->getTxRxResult( dxl_comm_result );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
                     ++tx_err;
                 }else if( dxl_error != 0 ){
-                    last_error = packetHandler->getRxPacketError( dxl_error );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getRxPacketError( dxl_error ) );
                     ++tx_err;
                 }
             }
@@ -839,7 +788,6 @@ void DXLPORT_CONTROL::set_param_ope_mode( uint8_t dxl_id, int val )
 {
     uint8_t set_param = (uint8_t)val;
 
-    last_error = "";
     if( !port_stat ){
         return;
     }
@@ -850,10 +798,10 @@ void DXLPORT_CONTROL::set_param_ope_mode( uint8_t dxl_id, int val )
                 uint8_t dxl_error = 0; // Dynamixel error
                 int dxl_comm_result = packetHandler->write1ByteTxRx( portHandler, dxl_id, ADDR_OPE_MODE, set_param, &dxl_error );
                 if( dxl_comm_result != COMM_SUCCESS ){
-                    last_error = packetHandler->getTxRxResult( dxl_comm_result );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
                     ++tx_err;
                 }else if( dxl_error != 0 ){
-                    last_error = packetHandler->getRxPacketError( dxl_error );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getRxPacketError( dxl_error ) );
                     ++tx_err;
                 }
             }
@@ -867,7 +815,6 @@ void DXLPORT_CONTROL::set_param_home_offset( uint8_t dxl_id, int val )
 {
     uint32_t set_param = (uint32_t)val;
 
-    last_error = "";
     if( !port_stat ){
         return;
     }
@@ -878,10 +825,10 @@ void DXLPORT_CONTROL::set_param_home_offset( uint8_t dxl_id, int val )
                 uint8_t dxl_error = 0; // Dynamixel error
                 int dxl_comm_result = packetHandler->write4ByteTxRx( portHandler, dxl_id, ADDR_MOVING_THRESHOLD, set_param, &dxl_error );
                 if( dxl_comm_result != COMM_SUCCESS ){
-                    last_error = packetHandler->getTxRxResult( dxl_comm_result );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
                     ++tx_err;
                 }else if( dxl_error != 0 ){
-                    last_error = packetHandler->getRxPacketError( dxl_error );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getRxPacketError( dxl_error ) );
                     ++tx_err;
                 }
             }
@@ -895,7 +842,6 @@ void DXLPORT_CONTROL::set_param_moving_threshold( uint8_t dxl_id, int val )
 {
     uint32_t set_param = (uint32_t)val;
 
-    last_error = "";
     if( !port_stat ){
         return;
     }
@@ -906,10 +852,10 @@ void DXLPORT_CONTROL::set_param_moving_threshold( uint8_t dxl_id, int val )
                 uint8_t dxl_error = 0; // Dynamixel error
                 int dxl_comm_result = packetHandler->write4ByteTxRx( portHandler, dxl_id, ADDR_MOVING_THRESHOLD, set_param, &dxl_error );
                 if( dxl_comm_result != COMM_SUCCESS ){
-                    last_error = packetHandler->getTxRxResult( dxl_comm_result );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
                     ++tx_err;
                 }else if( dxl_error != 0 ){
-                    last_error = packetHandler->getRxPacketError( dxl_error );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getRxPacketError( dxl_error ) );
                     ++tx_err;
                 }
             }
@@ -923,7 +869,6 @@ void DXLPORT_CONTROL::set_param_temp_limit( uint8_t dxl_id, int val )
 {
     uint8_t set_param = (uint8_t)val;
 
-    last_error = "";
     if( !port_stat ){
         return;
     }
@@ -934,10 +879,10 @@ void DXLPORT_CONTROL::set_param_temp_limit( uint8_t dxl_id, int val )
                 uint8_t dxl_error = 0; // Dynamixel error
                 int dxl_comm_result = packetHandler->write1ByteTxRx( portHandler, dxl_id, ADDR_TEMPRATURE_LIMIT, set_param, &dxl_error );
                 if( dxl_comm_result != COMM_SUCCESS ){
-                    last_error = packetHandler->getTxRxResult( dxl_comm_result );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
                     ++tx_err;
                 }else if( dxl_error != 0 ){
-                    last_error = packetHandler->getRxPacketError( dxl_error );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getRxPacketError( dxl_error ) );
                     ++tx_err;
                 }
             }
@@ -952,7 +897,6 @@ void DXLPORT_CONTROL::set_param_vol_limit( uint8_t dxl_id, int max, int min )
     uint16_t set_max_param = (uint32_t)max;
     uint16_t set_min_param = (uint32_t)min;
 
-    last_error = "";
     if( !port_stat ){
         return;
     }
@@ -963,10 +907,10 @@ void DXLPORT_CONTROL::set_param_vol_limit( uint8_t dxl_id, int max, int min )
                 uint8_t dxl_error = 0; // Dynamixel error
                 int dxl_comm_result = packetHandler->write2ByteTxRx( portHandler, dxl_id, ADDR_MAX_VOL_LIMIT, set_max_param, &dxl_error );
                 if( dxl_comm_result != COMM_SUCCESS ){
-                    last_error = packetHandler->getTxRxResult( dxl_comm_result );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
                     ++tx_err;
                 }else if( dxl_error != 0 ){
-                    last_error = packetHandler->getRxPacketError( dxl_error );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getRxPacketError( dxl_error ) );
                     ++tx_err;
                 }
             }
@@ -974,10 +918,10 @@ void DXLPORT_CONTROL::set_param_vol_limit( uint8_t dxl_id, int max, int min )
                 uint8_t dxl_error = 0; // Dynamixel error
                 int dxl_comm_result = packetHandler->write2ByteTxRx( portHandler, dxl_id, ADDR_MIN_VOL_LIMIT, set_min_param, &dxl_error );
                 if( dxl_comm_result != COMM_SUCCESS ){
-                    last_error = packetHandler->getTxRxResult( dxl_comm_result );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
                     ++tx_err;
                 }else if( dxl_error != 0 ){
-                    last_error = packetHandler->getRxPacketError( dxl_error );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getRxPacketError( dxl_error ) );
                     ++tx_err;
                 }
             }
@@ -992,7 +936,6 @@ void DXLPORT_CONTROL::set_param_current_limit( uint8_t dxl_id, int val )
 {
     uint16_t set_param = (uint16_t)val;
 
-    last_error = "";
     if( !port_stat ){
         return;
     }
@@ -1003,10 +946,10 @@ void DXLPORT_CONTROL::set_param_current_limit( uint8_t dxl_id, int val )
                 uint8_t dxl_error = 0; // Dynamixel error
                 int dxl_comm_result = packetHandler->write2ByteTxRx( portHandler, dxl_id, ADDR_CURRENT_LIMIT, set_param, &dxl_error );
                 if( dxl_comm_result != COMM_SUCCESS ){
-                    last_error = packetHandler->getTxRxResult( dxl_comm_result );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
                     ++tx_err;
                 }else if( dxl_error != 0 ){
-                    last_error = packetHandler->getRxPacketError( dxl_error );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getRxPacketError( dxl_error ) );
                     ++tx_err;
                 }
             }
@@ -1021,7 +964,6 @@ void DXLPORT_CONTROL::set_param_vel_gain( uint8_t dxl_id, int p, int i )
     uint16_t set_p_param = (uint16_t)p;
     uint16_t set_i_param = (uint16_t)i;
 
-    last_error = "";
     if( !port_stat ){
         return;
     }
@@ -1032,10 +974,10 @@ void DXLPORT_CONTROL::set_param_vel_gain( uint8_t dxl_id, int p, int i )
                 uint8_t dxl_error = 0; // Dynamixel error
                 int dxl_comm_result = packetHandler->write2ByteTxRx( portHandler, dxl_id, ADDR_VELOCITY_PGAIN, set_p_param, &dxl_error );
                 if( dxl_comm_result != COMM_SUCCESS ){
-                    last_error = packetHandler->getTxRxResult( dxl_comm_result );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
                     ++tx_err;
                 }else if( dxl_error != 0 ){
-                    last_error = packetHandler->getRxPacketError( dxl_error );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getRxPacketError( dxl_error ) );
                     ++tx_err;
                 }
             }
@@ -1043,10 +985,10 @@ void DXLPORT_CONTROL::set_param_vel_gain( uint8_t dxl_id, int p, int i )
                 uint8_t dxl_error = 0; // Dynamixel error
                 int dxl_comm_result = packetHandler->write2ByteTxRx( portHandler, dxl_id, ADDR_VELOCITY_IGAIN, set_i_param, &dxl_error );
                 if( dxl_comm_result != COMM_SUCCESS ){
-                    last_error = packetHandler->getTxRxResult( dxl_comm_result );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
                     ++tx_err;
                 }else if( dxl_error != 0 ){
-                    last_error = packetHandler->getRxPacketError( dxl_error );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getRxPacketError( dxl_error ) );
                     ++tx_err;
                 }
             }
@@ -1063,7 +1005,6 @@ void DXLPORT_CONTROL::set_param_pos_gain( uint8_t dxl_id, int p, int i, int d )
     uint16_t set_i_param = (uint16_t)i;
     uint16_t set_d_param = (uint16_t)d;
 
-    last_error = "";
     if( !port_stat ){
         return;
     }
@@ -1074,10 +1015,10 @@ void DXLPORT_CONTROL::set_param_pos_gain( uint8_t dxl_id, int p, int i, int d )
                 uint8_t dxl_error = 0; // Dynamixel error
                 int dxl_comm_result = packetHandler->write2ByteTxRx( portHandler, dxl_id, ADDR_POSITION_PGAIN, set_p_param, &dxl_error );
                 if( dxl_comm_result != COMM_SUCCESS ){
-                    last_error = packetHandler->getTxRxResult( dxl_comm_result );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
                     ++tx_err;
                 }else if( dxl_error != 0 ){
-                    last_error = packetHandler->getRxPacketError( dxl_error );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getRxPacketError( dxl_error ) );
                     ++tx_err;
                 }
             }
@@ -1085,10 +1026,10 @@ void DXLPORT_CONTROL::set_param_pos_gain( uint8_t dxl_id, int p, int i, int d )
                 uint8_t dxl_error = 0; // Dynamixel error
                 int dxl_comm_result = packetHandler->write2ByteTxRx( portHandler, dxl_id, ADDR_POSITION_IGAIN, set_i_param, &dxl_error );
                 if( dxl_comm_result != COMM_SUCCESS ){
-                    last_error = packetHandler->getTxRxResult( dxl_comm_result );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
                     ++tx_err;
                 }else if( dxl_error != 0 ){
-                    last_error = packetHandler->getRxPacketError( dxl_error );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getRxPacketError( dxl_error ) );
                     ++tx_err;
                 }
             }
@@ -1096,10 +1037,10 @@ void DXLPORT_CONTROL::set_param_pos_gain( uint8_t dxl_id, int p, int i, int d )
                 uint8_t dxl_error = 0; // Dynamixel error
                 int dxl_comm_result = packetHandler->write2ByteTxRx( portHandler, dxl_id, ADDR_POSITION_DGAIN, set_d_param, &dxl_error );
                 if( dxl_comm_result != COMM_SUCCESS ){
-                    last_error = packetHandler->getTxRxResult( dxl_comm_result );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getTxRxResult( dxl_comm_result ) );
                     ++tx_err;
                 }else if( dxl_error != 0 ){
-                    last_error = packetHandler->getRxPacketError( dxl_error );
+                    error_queue.push( (std::string(__func__) + " ") + packetHandler->getRxPacketError( dxl_error ) );
                     ++tx_err;
                 }
             }
@@ -1110,4 +1051,14 @@ void DXLPORT_CONTROL::set_param_pos_gain( uint8_t dxl_id, int p, int i, int d )
             break;
         }
     }
+}
+
+std::string::size_type DXLPORT_CONTROL::get_error( std::string& errorlog )
+{
+    std::string::size_type result = error_queue.size();
+    if( result > 0 ){
+        errorlog = error_queue.front();
+        error_queue.pop();
+    }
+    return result;
 }
