@@ -1,0 +1,17 @@
+os: linux
+group: stable
+sudo: required
+dist: trusty
+services:
+  - docker
+language: generic
+python:
+  - "2.7"
+env:
+  matrix:
+    - ROS_DISTRO=kinetic ROS_REPO=ros-shadow-fixed UPSTREAM_WORKSPACE=debian OS_NAME=ubuntu OS_CODE_NAME=xenial
+    - ROS_DISTRO=melodic ROS_REPO=ros-shadow-fixed UPSTREAM_WORKSPACE=debian OS_NAME=ubuntu OS_CODE_NAME=bionic
+install:
+    - git clone https://github.com/ros-industrial/industrial_ci.git .ci_config
+script:
+    - source .ci_config/travis.sh
