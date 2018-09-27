@@ -1,18 +1,16 @@
+<?xml version="1.0"?>
 <package>
-
   <name>crane_x7_moveit_config</name>
   <version>0.3.0</version>
   <description>
      An automatically generated package with all the configuration and launch files for using the crane_x7 with the MoveIt! Motion Planning Framework
   </description>
-  <author email="nomura@rt-net.jp">nomura</author>
-  <maintainer email="nomura@rt-net.jp">nomura</maintainer>
 
-  <license>BSD</license>
+  <maintainer email="shop@rt-net.jp">RT Corporation</maintainer>
+  <author email="nomura@rt-net.jp">Hiroyuki Nomura</author>
+  <author email="geoffrey.biggs@aist.go.jp">Geoffrey Biggs</author>
 
-  <url type="website">http://moveit.ros.org/</url>
-  <url type="bugtracker">https://github.com/ros-planning/moveit/issues</url>
-  <url type="repository">https://github.com/ros-planning/moveit</url>
+  <license>Apache 2.0</license>
 
   <buildtool_depend>catkin</buildtool_depend>
 
