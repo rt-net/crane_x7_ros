@@ -19,8 +19,6 @@
   <arg name="max_safe_path_cost" default="1"/>
   <arg name="jiggle_fraction" default="0.05" />
   <arg name="publish_monitored_planning_scene" default="true"/>
-  <arg name="joint_states_topic" value="crane_x7/joint_states" unless="$(arg fake_execution)"/>
-  <arg name="joint_states_topic" value="joint_states" if="$(arg fake_execution)"/>
 
   <!-- Planning Functionality -->
   <include ns="move_group" file="$(find crane_x7_moveit_config)/launch/planning_pipeline.launch.xml">
@@ -33,9 +31,6 @@
     <arg name="moveit_controller_manager" value="crane_x7" unless="$(arg fake_execution)"/>
     <arg name="moveit_controller_manager" value="fake" if="$(arg fake_execution)"/>
   </include>
-
-  <!-- If fake==false, launch X7 controller -->
-  <include file="$(find crane_x7_control)/launch/crane_x7_control.launch" unless="$(arg fake_execution)"/>
 
   <!-- Sensors Functionality -->
   <include ns="move_group" file="$(find crane_x7_moveit_config)/launch/sensor_manager.launch.xml" if="$(arg allow_trajectory_execution)">
@@ -73,8 +68,8 @@
     <param name="planning_scene_monitor/publish_state_updates" value="$(arg publish_monitored_planning_scene)" />
     <param name="planning_scene_monitor/publish_transforms_updates" value="$(arg publish_monitored_planning_scene)" />
 
-    <!-- Remap to the joint_states topic -->
-    <remap from="joint_states" to="$(arg joint_states_topic)"/>
+    <!-- Remap to the /crane_x7/joint_states topic -->
+    <remap from="joint_states" to="crane_x7/joint_states"/>
   </node>
 
 </launch>
