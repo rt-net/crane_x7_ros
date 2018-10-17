@@ -134,7 +134,6 @@
     <disable_collisions link1="crane_x7_lower_arm_revolute_part_logo_symbol_r_link" link2="crane_x7_shoulder_revolute_part_link" reason="Never" />
     <disable_collisions link1="crane_x7_lower_arm_revolute_part_logo_symbol_r_link" link2="crane_x7_upper_arm_fixed_part_joint_cover_l_link" reason="Never" />
     <disable_collisions link1="crane_x7_lower_arm_revolute_part_logo_symbol_r_link" link2="crane_x7_upper_arm_fixed_part_joint_cover_r_link" reason="Never" />
-    <disable_collisions link1="crane_x7_lower_arm_revolute_part_logo_symbol_r_link" link2="crane_x7_upper_arm_fixed_part_link" reason="Never" />
     <disable_collisions link1="crane_x7_lower_arm_revolute_part_logo_symbol_r_link" link2="crane_x7_wrist_link" reason="Never" />
     <disable_collisions link1="crane_x7_lower_arm_revolute_part_logo_text_l_link" link2="crane_x7_lower_arm_revolute_part_logo_text_r_link" reason="Never" />
     <disable_collisions link1="crane_x7_lower_arm_revolute_part_logo_text_l_link" link2="crane_x7_upper_arm_fixed_part_joint_cover_l_link" reason="Never" />
