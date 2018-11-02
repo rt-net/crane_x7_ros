@@ -2,7 +2,7 @@
 <package>
   <name>crane_x7_description</name>
   <version>0.0.1</version>
-  <description>The CRANE X7 description package</description>
+  <description>The CRANE-X7 description package</description>
 
   <maintainer email="shop@rt-net.jp">RT Corporation</maintainer>
   <author email="nomura@rt-net.jp">Hiroyuki Nomura</author>
