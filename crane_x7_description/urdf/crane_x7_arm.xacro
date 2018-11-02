@@ -7,7 +7,7 @@
 
   <xacro:property name="BASE_FIXED_PART_HEIGHT" value="0.005"/>
 
-  <!-- Macro for the standard CRANE X7 configuration -->
+  <!-- Macro for the standard CRANE-X7 configuration -->
   <xacro:macro name="crane_x7_arm"
       params="parent
               end_effector_base_link
