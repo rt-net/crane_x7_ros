@@ -38,3 +38,9 @@ dynamixel_sdkのC++ライブラリが必要です．
 MoveIt!のパッケージです．下記のコマンドで起動します．   
 
 `roslaunch crane_x7_moveit_config demo.launch`   
+
+### crane_x7_bringup
+
+初めて`crane_x7_ros`を使うことを意識して作成されたbringupパッケージです．
+
+`crane_x7_bringup` の使い方については[./crane_x7_bringup/README.md](./crane_x7_bringup/README.md)を参照してください．
