@@ -419,7 +419,7 @@ void DXLPORT_CONTROL::startup_motion( void )
     std::vector<ST_HOME_MOTION_DATA> home_motion_data;
 
     /* 開始位置取り込みと差分計算 */
-    readPos( t, d );
+    read( t, d );
 
     for( int jj=0 ; jj<joint_num ; ++jj ){
         ST_HOME_MOTION_DATA motion_work;
@@ -446,7 +446,7 @@ void DXLPORT_CONTROL::startup_motion( void )
     for( int step=0 ; step<step_max ; ++step ){
         d = getDuration(t);
         t = getTime();
-        readPos( t, d );
+        read( t, d );
         if( !port_stat ){
             for( int jj=0 ; jj<joint_num ; ++jj ){
                 if( joints[jj].get_ope_mode() == OPERATING_MODE_CURRENT ){
