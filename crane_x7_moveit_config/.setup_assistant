@@ -5,6 +5,6 @@ moveit_setup_assistant_config:
   SRDF:
     relative_path: config/crane_x7.srdf
   CONFIG:
-    author_name: nomura
+    author_name: Hiroyuki Nomura
     author_email: nomura@rt-net.jp
-    generated_timestamp: 1524206903
+    generated_timestamp: 1541403107
