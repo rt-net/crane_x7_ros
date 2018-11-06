@@ -14,6 +14,9 @@ arm_controller:
     - crane_x7_lower_arm_fixed_part_joint
     - crane_x7_lower_arm_revolute_part_joint
     - crane_x7_wrist_joint
+  constraints:
+    goal_time: 0.0
+    stopped_velocity_tolerance: 1.0
 
 gripper_controller:
   type: "position_controllers/GripperActionController"
