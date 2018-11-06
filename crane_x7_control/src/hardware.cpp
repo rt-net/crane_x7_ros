@@ -218,9 +218,12 @@ int main( int argc, char* argv[] )
     ros::init( argc, argv, ros::this_node::getName(), ros::init_options::NoSigintHandler );
     ros::NodeHandle nh;
     ros::NodeHandle nhPrivate("~");
+    std::string config_ns_str;
+    nhPrivate.getParam("config_ns", config_ns_str);
+    ros::NodeHandle nhConfig(config_ns_str);
     signal(SIGINT, SigintHandler);
 
-    CONTROL_SETTING setting( nhPrivate );
+    CONTROL_SETTING setting( nhConfig );
     if( !setting.load() ){
         return -1;
     }
