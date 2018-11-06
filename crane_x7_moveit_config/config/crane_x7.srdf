@@ -54,6 +54,7 @@
     <disable_collisions link1="crane_x7_gripper_base_link" link2="crane_x7_lower_arm_revolute_part_logo_text_r_link" reason="Never" />
     <disable_collisions link1="crane_x7_gripper_base_link" link2="crane_x7_upper_arm_revolute_part_link" reason="Never" />
     <disable_collisions link1="crane_x7_gripper_base_link" link2="crane_x7_wrist_link" reason="Adjacent" />
+    <disable_collisions link1="crane_x7_gripper_finger_a_link" link2="crane_x7_gripper_finger_b_link" reason="User" />
     <disable_collisions link1="crane_x7_gripper_finger_a_link" link2="crane_x7_lower_arm_fixed_part_joint_cover_l_link" reason="Never" />
     <disable_collisions link1="crane_x7_gripper_finger_a_link" link2="crane_x7_lower_arm_fixed_part_joint_cover_r_link" reason="Never" />
     <disable_collisions link1="crane_x7_gripper_finger_a_link" link2="crane_x7_lower_arm_fixed_part_link" reason="Never" />
