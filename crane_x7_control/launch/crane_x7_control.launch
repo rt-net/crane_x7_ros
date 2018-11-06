@@ -14,7 +14,7 @@
               gripper_controller"/>
 
     <node name="crane_x7_control" pkg="crane_x7_control" type="crane_x7_control" output="screen" respawn="false">
-      <rosparam file="$(find crane_x7_control)/config/crane_x7_control.yaml" command="load"/>
+      <!-- <param name="config_ns" value="/crane_x7"/> -->
     </node>
 
     <node name="robot_state_publisher" pkg="robot_state_publisher" 
