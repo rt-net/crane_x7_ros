@@ -6,44 +6,44 @@ joint_limits:
     has_velocity_limits: true
     max_velocity: 4.81710873
     has_acceleration_limits: true
-    max_acceleration: 8.0
+    max_acceleration: 4.4
   crane_x7_gripper_finger_b_joint:
     has_velocity_limits: true
     max_velocity: 4.81710873
     has_acceleration_limits: true
-    max_acceleration: 8.0
+    max_acceleration: 4.4
   crane_x7_lower_arm_fixed_part_joint:
     has_velocity_limits: true
     max_velocity: 4.81710873
     has_acceleration_limits: true
-    max_acceleration: 8.0
+    max_acceleration: 4.4
   crane_x7_lower_arm_revolute_part_joint:
     has_velocity_limits: true
     max_velocity: 4.81710873
     has_acceleration_limits: true
-    max_acceleration: 8.0
+    max_acceleration: 4.4
   crane_x7_shoulder_fixed_part_pan_joint:
     has_velocity_limits: true
     max_velocity: 4.81710873
     has_acceleration_limits: true
-    max_acceleration: 8.0
+    max_acceleration: 4.4
   crane_x7_shoulder_revolute_part_tilt_joint:
     has_velocity_limits: true
     max_velocity: 4.81710873
     has_acceleration_limits: true
-    max_acceleration: 8.0
+    max_acceleration: 4.4
   crane_x7_upper_arm_revolute_part_rotate_joint:
     has_velocity_limits: true
     max_velocity: 4.81710873
     has_acceleration_limits: true
-    max_acceleration: 8.0
+    max_acceleration: 4.4
   crane_x7_upper_arm_revolute_part_twist_joint:
     has_velocity_limits: true
     max_velocity: 4.81710873
     has_acceleration_limits: true
-    max_acceleration: 8.0
+    max_acceleration: 4.4
   crane_x7_wrist_joint:
     has_velocity_limits: true
     max_velocity: 4.81710873
     has_acceleration_limits: true
-    max_acceleration: 8.0
+    max_acceleration: 4.4
