@@ -3,7 +3,7 @@
 CRANE-X7のROSパッケージです．  
 
 製品ページはこちらです．  
-[https://www.rt-net.jp/crane-x7/](https://www.rt-net.jp/crane-x7/)
+[https://www.rt-net.jp/products/crane-x7](https://www.rt-net.jp/products/crane-x7)
 
 ROS Wikiはこちらです．  
 [https://wiki.ros.org/crane_x7](https://wiki.ros.org/crane_x7)
