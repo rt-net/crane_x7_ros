@@ -53,8 +53,18 @@ target_link_libraries( crane_x7_control
 install(TARGETS crane_x7_control
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
-install(DIRECTORY launch
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.h"
+  PATTERN ".svn" EXCLUDE
+)
+
+foreach(dir config launch)
+  install(DIRECTORY ${dir}/ 
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/${dir}
+  )
+endforeach(dir)
 
 #############
 ## Testing ##
