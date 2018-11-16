@@ -7,7 +7,7 @@
   <maintainer email="shop@rt-net.jp">RT Corporation</maintainer>
   <author email="nomura@rt-net.jp">Hiroyuki Nomura</author>
 
-  <license>Apache 2.0</license>
+  <license>NON-COMMERCIAL LICENSE AGREEMENT</license>
 
   <build_depend>message_generation</build_depend>
   <build_export_depend>message_generation</build_export_depend>
