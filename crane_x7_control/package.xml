@@ -8,7 +8,7 @@
   <author email="nomura@rt-net.jp">Hiroyuki Nomura</author>
   <author email="geoffrey.biggs@aist.go.jp">Geoffrey Biggs</author>
 
-  <license>Apache 2.0</license>
+  <license>NON-COMMERCIAL LICENSE AGREEMENT</license>
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>controller_manager</build_depend>
