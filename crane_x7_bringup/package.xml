@@ -7,7 +7,7 @@
   <maintainer email="shop@rt-net.jp">RT Corporation</maintainer>
   <author email="tiryoh@gmail.com">Daisuke Sato</author>
 
-  <license>Apache 2.0</license>
+  <license>NON-COMMERCIAL LICENSE AGREEMENT</license>
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>crane_x7_moveit_config</build_depend>
