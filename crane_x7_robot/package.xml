@@ -1,5 +1,5 @@
 <package>
-  <name>crane_x7_ros</name>
+  <name>crane_x7_robot</name>
   <version>0.0.1</version>
   <description>
     ROS package suite of CRANE-X7
