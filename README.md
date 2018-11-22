@@ -61,7 +61,7 @@ sudo chmod 666 /dev/ttyUSB0
 
 ## パッケージ概要
 
-CRANE-X7の各パッケージはcrane_x7_rosにまとめています。  
+CRANE-X7の各パッケージはメタパッケージである`crane_x7_robot`にまとめています。  
 
 ### crane_x7_description
 
