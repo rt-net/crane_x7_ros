@@ -58,7 +58,7 @@ gripper_controller:
   publish_rate: 250
   joint: crane_x7_gripper_finger_a_joint
 +  gains:
-+    r_hand_joint: { p: 1.0, i: 0.01, d: 0.1 }
++    crane_x7_gripper_finger_a_joint: { p: 1.0, i: 0.01, d: 0.1 }
   action_monitor_rate: 10
   state_publish_rate:  100
   stalled_velocity_threshold: 0.01
