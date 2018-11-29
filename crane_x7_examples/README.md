@@ -1,6 +1,6 @@
-# crane_x7_bringup
+# crane_x7_examples
 
-CRANE-X7のためのパッケージ、 `crane_x7_ros` のbringupパッケージです。
+CRANE-X7のためのパッケージ、 `crane_x7` で用いるサンプルをまとめたパッケージです。
 
 ## 使い方
 
@@ -12,10 +12,10 @@ Terminalを開き、 `crane_x7_bringup` の `demo.launch` を起動します。
 roslaunch crane_x7_bringup demo.launch fake_execution:=true
 ```
 
-次に、もう1つTerminalを開き、 `crane_x7_bringup` の `crane_x7_pick_and_place_demo.py` を実行するとCRANE-X7にPick and Placeのデモを実行させることができます。
+次に、もう1つTerminalを開き、 `crane_x7_examples` の `crane_x7_pick_and_place_demo.py` を実行するとCRANE-X7にPick and Placeのデモを実行させることができます。
 
 ```
-rosrun crane_x7_bringup crane_x7_pick_and_place_demo.py
+rosrun crane_x7_examples crane_x7_pick_and_place_demo.py
 ```
 
 ![bringup_rviz](https://github.com/rt-net/crane_x7_ros/blob/images/images/bringup_rviz.gif "bringup_rviz")
@@ -34,10 +34,10 @@ Terminalを開き、 `crane_x7_bringup` の `demo.launch` を起動します。
 roslaunch crane_x7_bringup demo.launch fake_execution:=false
 ```
 
-次に、もう1つTerminalを開き、 `crane_x7_bringup` の `crane_x7_pick_and_place_demo.py` を実行するとCRANE-X7にPick and Placeのデモを実行させることができます。
+次に、もう1つTerminalを開き、 `crane_x7_examples` の `crane_x7_pick_and_place_demo.py` を実行するとCRANE-X7にPick and Placeのデモを実行させることができます。
 
 ```
-rosrun crane_x7_bringup crane_x7_pick_and_place_demo.py
+rosrun crane_x7_examples crane_x7_pick_and_place_demo.py
 ```
 
 デモ動画は[こちら](https://youtu.be/_8xBgpgMhk8)。

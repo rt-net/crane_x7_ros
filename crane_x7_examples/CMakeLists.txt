@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(crane_x7_bringup)
+project(crane_x7_examples)
 
 find_package(catkin REQUIRED COMPONENTS
   rospy
@@ -16,7 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES crane_x7_bringup
+#  LIBRARIES crane_x7_examples
 #  CATKIN_DEPENDS rospy
 #  DEPENDS system_lib
 )
@@ -35,6 +35,9 @@ include_directories(
 ## Install ##
 #############
 
-install(DIRECTORY launch/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+install(PROGRAMS
+  scripts/crane_x7_pick_and_place_demo.py
+  scripts/gripper_action_example.py
+  scripts/pose_groupstate_example.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
