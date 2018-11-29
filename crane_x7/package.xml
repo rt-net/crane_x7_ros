@@ -18,6 +18,7 @@
   <buildtool_depend>catkin</buildtool_depend>
   <run_depend>crane_x7_control</run_depend>
   <run_depend>crane_x7_description</run_depend>
+  <run_depend>crane_x7_examples</run_depend>
   <run_depend>crane_x7_moveit_config</run_depend>
   <run_depend>crane_x7_msgs</run_depend>
 
