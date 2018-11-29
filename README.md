@@ -89,9 +89,14 @@ MoveIt!のパッケージです。下記のコマンドで起動します。
 
 ### crane_x7_bringup
 
-初めて`crane_x7_ros`を使うことを意識して作成されたbringupパッケージです。
+CRANE-X7の起動に必要なlaunchファイルをまとめたパッケージです。
 
-`crane_x7_bringup` の使い方については[./crane_x7_bringup/README.md](./crane_x7_bringup/README.md)を参照してください。
+### crane_x7_examples
+
+初めて`crane_x7`を使うことを意識して作成されたbringupパッケージです。
+
+`crane_x7_examples` の使い方については[./crane_x7_examples/README.md](./crane_x7_examples/README.md)を参照してください。
+
 
 ### 知的財産権について
 
