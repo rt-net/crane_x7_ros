@@ -36,12 +36,24 @@ roslaunch crane_x7_bringup demo.launch fake_execution:=false
 `demo.launch`を実行している状態で各サンプルを実行することができます。
 
 
+### gripper_action_example.pyの実行
+
+ハンドを開閉させるコード例です。
+
+
+次のコマンドで45度まで開いて閉じる動作を実行します。
+
+```sh
+rosrun crane_x7_examples gripper_action_example.py
+```
+
 ### crane_x7_pick_and_place_demo.pyの実行
 
 モノを掴む・持ち上げる・運ぶ・置くコード例です。
+
 次のコマンドを実行します。
 
-```
+```sh
 rosrun crane_x7_examples crane_x7_pick_and_place_demo.py
 ```
 
@@ -56,3 +68,5 @@ CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 サンプルで使用しているこのオレンジ色のソフトボールはRT ROBOT SHOPの[こちらのページ](https://www.rt-shop.jp/index.php?main_page=product_info&cPath=1299_1307&products_id=3701)から入手することができます。
 
 動作させると[こちら](https://youtu.be/_8xBgpgMhk8)のような動きになります。
+
+
