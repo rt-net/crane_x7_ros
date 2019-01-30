@@ -1,0 +1,5 @@
+<launch>
+  <node name="preset_reconfigure" pkg="crane_x7_control" type="preset_reconfigure.py" />
+
+  <node name="preset_pid_gain" pkg="crane_x7_examples" type="preset_pid_gain_example.py" required="true" output="screen" />
+</launch>

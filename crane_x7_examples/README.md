@@ -70,3 +70,15 @@ CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 動作させると[こちら](https://youtu.be/_8xBgpgMhk8)のような動きになります。
 
 
+### preset_pid_gain_example.pyの実行
+
+`crane_x7_control`の`preset_reconfigure`を使うコード例です。
+サーボモータのPIDゲインを一斉に変更できます。
+
+プリセットは`crane_x7_control/scripts/preset_reconfigure.py`にて編集できます。
+
+次のコマンドを実行すると、`preset_reconfigure.py`と`preset_pid_gain_example.py`のノードを起動します。
+
+```sh
+roslaunch crane_x7_examples preset_pid_gain_example.launch
+```
