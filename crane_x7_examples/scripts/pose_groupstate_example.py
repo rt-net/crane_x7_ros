@@ -9,7 +9,7 @@ from tf.transformations import quaternion_from_euler
 
 
 def main():
-    rospy.init_node("crane_x7_pick_and_place_controller")
+    rospy.init_node("pose_groupstate_example")
     robot = moveit_commander.RobotCommander()
     arm = moveit_commander.MoveGroupCommander("arm")
     arm.set_max_velocity_scaling_factor(0.1)
@@ -34,7 +34,13 @@ def main():
     gripper.set_joint_value_target([0.9, 0.9])
     gripper.go()
 
+    # SRDFに定義されている"home"の姿勢にする
+    print("home")
+    arm.set_named_target("home")
+    arm.go()
+
     # SRDFに定義されている"vertical"の姿勢にする
+    print("vertical")
     arm.set_named_target("vertical")
     arm.go()
 

@@ -39,12 +39,26 @@ roslaunch crane_x7_bringup demo.launch fake_execution:=false
 ### gripper_action_example.pyの実行
 
 ハンドを開閉させるコード例です。
-
+このサンプルは実機動作のみに対応しています。
 
 次のコマンドで45度まで開いて閉じる動作を実行します。
 
 ```sh
 rosrun crane_x7_examples gripper_action_example.py
+```
+
+
+### pose_groupstate_example.pyの実行
+
+group_stateを使うコード例です。
+
+SRDFファイル[crane_x7_moveit_config/config/crane_x7.srdf](../crane_x7_moveit_config/config/crane_x7.srdf)
+に記載されている`home`と`vertical`の姿勢に移行します。
+
+次のコマンドを実行します。
+
+```sh
+rosrun crane_x7_examples pose_groupstate_example.py
 ```
 
 ### crane_x7_pick_and_place_demo.pyの実行
@@ -75,7 +89,8 @@ CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 `crane_x7_control`の`preset_reconfigure`を使うコード例です。
 サーボモータのPIDゲインを一斉に変更できます。
 
-プリセットは`crane_x7_control/scripts/preset_reconfigure.py`にて編集できます。
+プリセットは[crane_x7_control/scripts/preset_reconfigure.py](../crane_x7_control/scripts/preset_reconfigure.py)
+にて編集できます。
 
 次のコマンドを実行すると、`preset_reconfigure.py`と`preset_pid_gain_example.py`のノードを起動します。
 
