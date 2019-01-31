@@ -7,11 +7,7 @@ find_package(catkin REQUIRED COMPONENTS
   dynamic_reconfigure
   message_generation
 )
-generate_messages(
-  DEPENDENCIES
-  std_msgs
-  actionlib_msgs
-)
+
 generate_dynamic_reconfigure_options(
     cfg/ServoParameter.cfg
 )
