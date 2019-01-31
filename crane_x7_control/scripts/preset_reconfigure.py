@@ -25,7 +25,7 @@ class PRESET_RECONFIGURE:
         for i in range(self.JOINT_NUM):
             self.preset_init.append( { "p_gain": 800, "i_gain": 0, "d_gain": 0 } )
 
-        ### プリセット定義 - 1 ###
+        ### プリセット定義 - 1  脱力状態 ###
         self.preset_1 = [   
                             { "name":"crane_x7_shoulder_fixed_part_pan_joint",          "p_gain": 10, "i_gain": 0, "d_gain": 0 },\
                             { "name":"crane_x7_shoulder_revolute_part_tilt_joint",      "p_gain": 10, "i_gain": 0, "d_gain": 0 },\
@@ -36,7 +36,7 @@ class PRESET_RECONFIGURE:
                             { "name":"crane_x7_wrist_joint",                            "p_gain": 10, "i_gain": 0, "d_gain": 0 },\
                         ]
 
-        ### プリセット定義 - 2 ###
+        ### プリセット定義 - 2 PゲインをInitial parametersの半分にする ###
         self.preset_2 = [   
                             { "name":"crane_x7_shoulder_fixed_part_pan_joint",          "p_gain": 400, "i_gain": 0, "d_gain": 0 },\
                             { "name":"crane_x7_shoulder_revolute_part_tilt_joint",      "p_gain": 400, "i_gain": 0, "d_gain": 0 },\
@@ -47,7 +47,7 @@ class PRESET_RECONFIGURE:
                             { "name":"crane_x7_wrist_joint",                            "p_gain": 400, "i_gain": 0, "d_gain": 0 },\
                         ]
 
-        ### プリセット定義 - 3 ###
+        ### プリセット定義 - 3 未設定。モノを掴んだ時や、アームの形状を変えた時に設定してみてください ###
         self.preset_3 = [   
                             { "name":"crane_x7_shoulder_fixed_part_pan_joint",          "p_gain": 800, "i_gain": 0, "d_gain": 0 },\
                             { "name":"crane_x7_shoulder_revolute_part_tilt_joint",      "p_gain": 800, "i_gain": 0, "d_gain": 0 },\
