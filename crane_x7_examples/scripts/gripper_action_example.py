@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# このサンプルは実機動作のみに対応しています
+# fake_execution:=trueにすると、GripperCommandActionのサーバが立ち上がりません
+
 import sys
 import rospy
 import time
