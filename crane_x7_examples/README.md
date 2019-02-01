@@ -30,6 +30,13 @@ roslaunch crane_x7_bringup demo.launch fake_execution:=true
 roslaunch crane_x7_bringup demo.launch fake_execution:=false
 ```
 
+ケーブルの接続ポート名はデフォルトで`/dev/ttyUSB0`です。
+別のポート名(例: /dev/ttyUSB1)を使う場合は次のコマンドを実行します。
+
+```sh
+roslaunch crane_x7_bringup demo.launch fake_execution:=false port:=/dev/ttyUSB1
+```
+
 
 ## サンプルの実行方法
 

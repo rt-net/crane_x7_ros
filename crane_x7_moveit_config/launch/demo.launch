@@ -11,6 +11,9 @@
   <!-- Allow user to turn fake_execution on and off -->
   <arg name="fake_execution" default="false" />
 
+  <!-- USB port name for dynamixel_port -->
+  <arg name="port" default="/dev/ttyUSB0" />
+
   <!--
   By default, hide joint_state_publisher's GUI
 
@@ -45,6 +48,7 @@
     <arg name="fake_execution" value="$(arg fake_execution)"/>
     <arg name="info" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
+    <arg name="port" value="$(arg port)" />
   </include>
 
   <!-- Run Rviz and load the default config to see the state of the move_group node -->
