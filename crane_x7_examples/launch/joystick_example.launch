@@ -5,6 +5,8 @@
     <param name="dev" type="string" value="$(arg joydev)" />
   </node>
 
+  <node name="preset_reconfigure" pkg="crane_x7_control" type="preset_reconfigure.py" required="true"/>
+
   <node name="joystick_example" pkg="crane_x7_examples" type="joystick_example.py" required="true" output="screen">
     <param name="button_shutdown_1" value="8" type="int" />
     <param name="button_shutdown_2" value="9" type="int" />
@@ -12,6 +14,7 @@
     <param name="button_posi_enable" value="4" type="int" />
     <param name="button_grip_enable" value="5" type="int" />
     <param name="button_rpy_enable" value="6" type="int" />
+    <param name="button_preset_pid" value="7" type="int" />
     <param name="axis_position_x"   value="0" type="int" />
     <param name="axis_position_y"   value="1" type="int" />
     <param name="axis_position_z"   value="3" type="int" />
