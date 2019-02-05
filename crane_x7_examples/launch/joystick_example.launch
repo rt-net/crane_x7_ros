@@ -1,11 +1,12 @@
 <launch>
   <arg name="joydev" default="/dev/input/js0" />
+  <arg name="sim" default="false" />
 
   <node name="joy_core" pkg="joy" type="joy_node">
     <param name="dev" type="string" value="$(arg joydev)" />
   </node>
 
-  <node name="preset_reconfigure" pkg="crane_x7_control" type="preset_reconfigure.py" required="true"/>
+  <node name="preset_reconfigure" pkg="crane_x7_control" type="preset_reconfigure.py" required="true" unless="$(arg sim)"/>
 
   <node name="joystick_example" pkg="crane_x7_examples" type="joystick_example.py" required="true" output="screen">
     <param name="button_shutdown_1" value="8" type="int" />

@@ -129,11 +129,13 @@ class JoyWrapper(object):
             self._target_arm_pose.pose.orientation = self._rpy_to_orientation(self._target_arm_rpy)
             self._pose_updated = True
 
+        # 誤操作を防ぐため、target_nameフラグはボタン２つを同時押しでTrueにする
         if msg.buttons[self._BUTTON_HOME]:
-            self._target_name = "home"
-            self._name_updated = True
+            if msg.buttons[self._BUTTON_SHUTDOWN_1]:
+                self._target_name = "home"
+                self._name_updated = True
 
-        # ご操作を防ぐため、presetフラグはボタン２つを同時押しでTrueにする
+        # 誤操作を防ぐため、presetフラグはボタン２つを同時押しでTrueにする
         if msg.buttons[self._BUTTON_PRESET_PID]:
             if msg.buttons[self._BUTTON_SHUTDOWN_2]:
                 self._preset_updated = True
@@ -174,6 +176,7 @@ def main():
     # 現在のアーム姿勢を、目標姿勢にセットする
     joy_wrapper.set_target_arm(arm.get_current_pose())
     joy_wrapper.set_target_gripper(gripper.get_current_joint_values())
+
 
     while joy_wrapper.do_shutdown() == False:
         # グリッパーの角度を変更する
