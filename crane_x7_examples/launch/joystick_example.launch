@@ -12,6 +12,10 @@
     <param name="button_shutdown_1" value="8" type="int" />
     <param name="button_shutdown_2" value="9" type="int" />
     <param name="button_home"       value="0" type="int" />
+    <param name="button_teaching_enable" value="3" type="int" />
+    <param name="button_teaching_save"   value="2" type="int" />
+    <param name="button_teaching_load"   value="0" type="int" />
+    <param name="button_teaching_delete" value="1" type="int" />
     <param name="button_posi_enable" value="4" type="int" />
     <param name="button_grip_enable" value="5" type="int" />
     <param name="button_rpy_enable" value="6" type="int" />

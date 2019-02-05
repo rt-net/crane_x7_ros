@@ -23,10 +23,20 @@ class JoyWrapper(object):
         self._preset_updated = False
         self._do_shutdown = False # ジョイスティックによる終了操作フラグ
 
+        self.TEACHING_NONE = 0
+        self.TEACHING_SAVE = 1
+        self.TEACHING_LOAD = 2
+        self.TEACHING_DELETE = 3
+        self._teaching_mode = self.TEACHING_NONE
+
         # /rane_x7_examples/launch/joystick_example.launch でキー割り当てを変更する
         self._BUTTON_SHUTDOWN_1 = rospy.get_param("~button_shutdown_1")
         self._BUTTON_SHUTDOWN_2 = rospy.get_param("~button_shutdown_2")
         self._BUTTON_HOME       = rospy.get_param("~button_home")
+        self._BUTTON_TEACHING_ENABLE = rospy.get_param("~button_teaching_enable")
+        self._BUTTON_TEACHING_SAVE = rospy.get_param("~button_teaching_save")
+        self._BUTTON_TEACHING_LOAD = rospy.get_param("~button_teaching_load")
+        self._BUTTON_TEACHING_DELETE = rospy.get_param("~button_teaching_delete")
         self._BUTTON_POSI_ENABLE = rospy.get_param("~button_posi_enable")
         self._BUTTON_GRIP_ENABLE = rospy.get_param("~button_grip_enable")
         self._BUTTON_RPY_ENABLE = rospy.get_param("~button_rpy_enable")
@@ -41,6 +51,9 @@ class JoyWrapper(object):
         self._target_arm_rpy = Vector3()
         self._target_name = "vertical"
 
+        # ティーチング
+        self._teaching_joint_values = []
+        self._teaching_index = 0
 
     def set_target_gripper(self, joint_values):
         self._target_gripper_joint_values = joint_values
@@ -63,24 +76,46 @@ class JoyWrapper(object):
         return self._do_shutdown
 
     def get_and_reset_grip_update_flag(self):
-        flag = self._grip_updated
-        self._grip_updated = False
+        self._grip_updated, flag = False, self._grip_updated
         return flag
 
     def get_and_reset_pose_update_flag(self):
-        flag = self._pose_updated
-        self._pose_updated = False
+        self._pose_updated, flag = False, self._pose_updated
         return flag
 
     def get_and_reset_name_update_flag(self):
-        flag = self._name_updated
-        self._name_updated = False
+        self._name_updated, flag = False, self._name_updated
         return flag
 
     def get_and_reset_preset_update_flag(self):
-        flag = self._preset_updated
-        self._preset_updated = False
+        self._preset_updated, flag = False, self._preset_updated
         return flag
+
+    def get_and_reset_teaching_mode(self):
+        self._teaching_mode, flag = self.TEACHING_NONE, self._teaching_mode
+        return flag
+
+    def save_joint_values(self, arm, gripper):
+        rospy.loginfo("Teaching. Save")
+        self._teaching_joint_values.append([arm, gripper])
+
+    def load_joint_values(self):
+        if self._teaching_joint_values:
+            rospy.loginfo("Teaching. Load")
+            joint_values = self._teaching_joint_values[self._teaching_index]
+            self._teaching_index += 1
+
+            if self._teaching_index >= len(self._teaching_joint_values):
+                rospy.logwarn("Teaching. Index reset")
+                self._teaching_index = 0
+            return joint_values
+        else:
+            rospy.logwarn("Teaching. Joint Values is nothing")
+            return False
+
+    def delete_joint_values(self):
+        rospy.loginfo("Teaching. Delete")
+        self._teaching_joint_values = []
 
     def _orientation_to_rpy(self, orientation):
         x = orientation.x
@@ -103,9 +138,19 @@ class JoyWrapper(object):
             self._do_shutdown = True
             return
 
+        # ティーチング
+        if msg.buttons[self._BUTTON_TEACHING_ENABLE]:
+            if msg.buttons[self._BUTTON_TEACHING_SAVE]:
+                self._teaching_mode = self.TEACHING_SAVE
+            elif msg.buttons[self._BUTTON_TEACHING_LOAD]:
+                self._teaching_mode = self.TEACHING_LOAD
+            elif msg.buttons[self._BUTTON_TEACHING_DELETE]:
+                self._teaching_mode = self.TEACHING_DELETE
+            return
+
         # grip_enableが押されている時のみ、gripperの開閉を実行する
         if msg.buttons[self._BUTTON_GRIP_ENABLE]:
-            grip_value = math.fabs(msg.axes[self._AXIS_POSITION_Z])
+            grip_value = 1.0 - math.fabs(msg.axes[self._AXIS_POSITION_Z])
 
             if not grip_value:
                 grip_value = 0.01
@@ -213,6 +258,23 @@ def main():
             preset_pid_gain(pid_gain_no)
             # 現在のアーム姿勢を、目標姿勢にセットする
             joy_wrapper.set_target_arm(arm.get_current_pose())
+
+        teaching_mode = joy_wrapper.get_and_reset_teaching_mode()
+        if teaching_mode == joy_wrapper.TEACHING_SAVE:
+            joy_wrapper.save_joint_values(
+                    arm.get_current_joint_values(), 
+                    gripper.get_current_joint_values())
+        elif teaching_mode == joy_wrapper.TEACHING_LOAD:
+            joint_values = joy_wrapper.load_joint_values()
+            if joint_values:
+                arm.set_joint_value_target(joint_values[0])
+                arm.go()
+                gripper.set_joint_value_target(joint_values[1])
+                gripper.go()
+                joy_wrapper.set_target_arm(arm.get_current_pose())
+                joy_wrapper.set_target_gripper(gripper.get_current_joint_values())
+        elif teaching_mode == joy_wrapper.TEACHING_DELETE:
+            joy_wrapper.delete_joint_values()
 
 
     rospy.loginfo("Shutdown...")
