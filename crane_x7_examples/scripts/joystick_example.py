@@ -27,20 +27,28 @@ class JoyWrapper(object):
         self.TEACHING_SAVE = 1
         self.TEACHING_LOAD = 2
         self.TEACHING_DELETE = 3
-        self._teaching_mode = self.TEACHING_NONE
+        self._teaching_flag = self.TEACHING_NONE
 
         # /rane_x7_examples/launch/joystick_example.launch でキー割り当てを変更する
         self._BUTTON_SHUTDOWN_1 = rospy.get_param("~button_shutdown_1")
         self._BUTTON_SHUTDOWN_2 = rospy.get_param("~button_shutdown_2")
-        self._BUTTON_HOME       = rospy.get_param("~button_home")
+
+        self._BUTTON_NAME_ENABLE = rospy.get_param("~button_name_enable")
+        self._BUTTON_NAME_HOME = rospy.get_param("~button_name_home")
+
+        self._BUTTON_PRESET_ENABLE = rospy.get_param("~button_preset_enable")
+        self._BUTTON_PRESET_NO1 = rospy.get_param("~button_preset_no1")
+
         self._BUTTON_TEACHING_ENABLE = rospy.get_param("~button_teaching_enable")
         self._BUTTON_TEACHING_SAVE = rospy.get_param("~button_teaching_save")
         self._BUTTON_TEACHING_LOAD = rospy.get_param("~button_teaching_load")
         self._BUTTON_TEACHING_DELETE = rospy.get_param("~button_teaching_delete")
-        self._BUTTON_POSI_ENABLE = rospy.get_param("~button_posi_enable")
+
         self._BUTTON_GRIP_ENABLE = rospy.get_param("~button_grip_enable")
+        self._AXIS_GRIPPER = rospy.get_param("~axis_gripper")
+
+        self._BUTTON_POSI_ENABLE = rospy.get_param("~button_posi_enable")
         self._BUTTON_RPY_ENABLE = rospy.get_param("~button_rpy_enable")
-        self._BUTTON_PRESET_PID = rospy.get_param("~button_preset_pid")
         self._AXIS_POSITION_X   = rospy.get_param("~axis_position_x")
         self._AXIS_POSITION_Y   = rospy.get_param("~axis_position_y")
         self._AXIS_POSITION_Z   = rospy.get_param("~axis_position_z")
@@ -61,7 +69,6 @@ class JoyWrapper(object):
     def set_target_arm(self, pose):
         self._target_arm_pose = pose
         self._target_arm_rpy = self._orientation_to_rpy(pose.pose.orientation)
-
 
     def get_target_gripper(self):
         return self._target_gripper_joint_values
@@ -91,22 +98,28 @@ class JoyWrapper(object):
         self._preset_updated, flag = False, self._preset_updated
         return flag
 
-    def get_and_reset_teaching_mode(self):
-        self._teaching_mode, flag = self.TEACHING_NONE, self._teaching_mode
+    def get_and_reset_teaching_flag(self):
+        self._teaching_flag, flag = self.TEACHING_NONE, self._teaching_flag
         return flag
 
     def save_joint_values(self, arm, gripper):
+        # ティーチング
+        # アームの各関節角度と、グリッパー開閉角度を配列に保存する
         rospy.loginfo("Teaching. Save")
         self._teaching_joint_values.append([arm, gripper])
 
     def load_joint_values(self):
+        # ティーチング
+        # 保存した角度情報を返す
+        # 配列のインデックスが末尾まで来たら、インデックスを0に戻す
+        # 何も保存していない場合はFalseを返す
         if self._teaching_joint_values:
             rospy.loginfo("Teaching. Load")
             joint_values = self._teaching_joint_values[self._teaching_index]
             self._teaching_index += 1
 
             if self._teaching_index >= len(self._teaching_joint_values):
-                rospy.logwarn("Teaching. Index reset")
+                rospy.loginfo("Teaching. Index reset")
                 self._teaching_index = 0
             return joint_values
         else:
@@ -114,10 +127,13 @@ class JoyWrapper(object):
             return False
 
     def delete_joint_values(self):
+        # ティーチング
+        # 角度情報が格納された配列を初期化する
         rospy.loginfo("Teaching. Delete")
         self._teaching_joint_values = []
 
     def _orientation_to_rpy(self, orientation):
+        # クォータニオンをRPY(Role, Pitch, Yaw)に変換する
         x = orientation.x
         y = orientation.y
         z = orientation.z
@@ -127,63 +143,72 @@ class JoyWrapper(object):
         return Vector3(e[0], e[1], e[2])
 
     def _rpy_to_orientation(self, rpy):
+        # RPY(Role, Pitch, Yaw)をクォータニオンに変換する
         q = quaternion_from_euler(rpy.x, rpy.y, rpy.z)
         return Quaternion(q[0], q[1], q[2], q[3])
 
-
     def _callback_joy(self, msg):
+        # ジョイスティック信号用のコールバック関数
+        # ボタン入力に合わせてフラグと制御量を設定する
 
-        # shutdown1, 2を同時押しでexampleを終了する
+        # シャットダウン
         if msg.buttons[self._BUTTON_SHUTDOWN_1] and msg.buttons[self._BUTTON_SHUTDOWN_2]:
             self._do_shutdown = True
             return
 
-        # ティーチング
+        # Group State
+        if msg.buttons[self._BUTTON_NAME_ENABLE]:
+            if msg.buttons[self._BUTTON_NAME_HOME]:
+                self._target_name = "home"
+                self._name_updated = True
+                return 
+
+        # PIDゲインプリセット
+        if msg.buttons[self._BUTTON_PRESET_ENABLE]:
+            if msg.buttons[self._BUTTON_PRESET_NO1]:
+                self._preset_updated = True
+                return
+
+        # ティーチングフラグ
         if msg.buttons[self._BUTTON_TEACHING_ENABLE]:
             if msg.buttons[self._BUTTON_TEACHING_SAVE]:
-                self._teaching_mode = self.TEACHING_SAVE
+                self._teaching_flag = self.TEACHING_SAVE
             elif msg.buttons[self._BUTTON_TEACHING_LOAD]:
-                self._teaching_mode = self.TEACHING_LOAD
+                self._teaching_flag = self.TEACHING_LOAD
             elif msg.buttons[self._BUTTON_TEACHING_DELETE]:
-                self._teaching_mode = self.TEACHING_DELETE
+                self._teaching_flag = self.TEACHING_DELETE
             return
 
-        # grip_enableが押されている時のみ、gripperの開閉を実行する
+        # グリッパー開閉
         if msg.buttons[self._BUTTON_GRIP_ENABLE]:
-            grip_value = 1.0 - math.fabs(msg.axes[self._AXIS_POSITION_Z])
+            # ジョイスティックを倒した量に合わせて、グリッパーを閉じる
+            grip_value = 1.0 - math.fabs(msg.axes[self._AXIS_GRIPPER])
 
             if not grip_value:
                 grip_value = 0.01
 
             self._target_gripper_joint_values = [grip_value, grip_value]
             self._grip_updated = True
+            return
         
-        # posi_enableが押されている時のみ、armの位置を変更する
+        # アーム姿勢(位置)変更
         if msg.buttons[self._BUTTON_POSI_ENABLE]:
+            # ジョイスティックを倒した量に合わせて、目標姿勢を変える
             # ジョイスティックの仕様に合わせて、符号を変えてください
             self._target_arm_pose.pose.position.x -= msg.axes[self._AXIS_POSITION_X] * 0.1
             self._target_arm_pose.pose.position.y += msg.axes[self._AXIS_POSITION_Y] * 0.1
             self._target_arm_pose.pose.position.z += msg.axes[self._AXIS_POSITION_Z] * 0.1
             self._pose_updated = True
 
-        # rpy_enableが押されている時のみ、armの角度を変更する
+        # アーム姿勢(角度)変更
         if msg.buttons[self._BUTTON_RPY_ENABLE]:
+            # ジョイスティックを倒した量に合わせて、目標姿勢を変える
+            # ジョイスティックの仕様に合わせて、符号を変えてください
             self._target_arm_rpy.x -= msg.axes[self._AXIS_POSITION_X] * math.pi * 0.1
             self._target_arm_rpy.y += msg.axes[self._AXIS_POSITION_Y] * math.pi * 0.1
             self._target_arm_rpy.z += msg.axes[self._AXIS_POSITION_Z] * math.pi * 0.1
             self._target_arm_pose.pose.orientation = self._rpy_to_orientation(self._target_arm_rpy)
             self._pose_updated = True
-
-        # 誤操作を防ぐため、target_nameフラグはボタン２つを同時押しでTrueにする
-        if msg.buttons[self._BUTTON_HOME]:
-            if msg.buttons[self._BUTTON_SHUTDOWN_1]:
-                self._target_name = "home"
-                self._name_updated = True
-
-        # 誤操作を防ぐため、presetフラグはボタン２つを同時押しでTrueにする
-        if msg.buttons[self._BUTTON_PRESET_PID]:
-            if msg.buttons[self._BUTTON_SHUTDOWN_2]:
-                self._preset_updated = True
 
 
 def preset_pid_gain(pid_gain_no):
@@ -254,26 +279,30 @@ def main():
                 # 安全のため、現在のアームの姿勢を目標姿勢に変更する
                 arm.set_pose_target(arm.get_current_pose())
                 arm.go()
-
             preset_pid_gain(pid_gain_no)
             # 現在のアーム姿勢を、目標姿勢にセットする
             joy_wrapper.set_target_arm(arm.get_current_pose())
 
-        teaching_mode = joy_wrapper.get_and_reset_teaching_mode()
-        if teaching_mode == joy_wrapper.TEACHING_SAVE:
+        # ティーチング
+        teaching_flag = joy_wrapper.get_and_reset_teaching_flag()
+        if teaching_flag == joy_wrapper.TEACHING_SAVE:
+            # 現在のアーム姿勢、グリッパー角度を保存する
             joy_wrapper.save_joint_values(
                     arm.get_current_joint_values(), 
                     gripper.get_current_joint_values())
-        elif teaching_mode == joy_wrapper.TEACHING_LOAD:
+        elif teaching_flag == joy_wrapper.TEACHING_LOAD:
+            # 保存したアーム、グリッパー角度を取り出す
             joint_values = joy_wrapper.load_joint_values()
             if joint_values:
                 arm.set_joint_value_target(joint_values[0])
                 arm.go()
                 gripper.set_joint_value_target(joint_values[1])
                 gripper.go()
+                # 現在のアーム姿勢を、目標姿勢にセットする
                 joy_wrapper.set_target_arm(arm.get_current_pose())
                 joy_wrapper.set_target_gripper(gripper.get_current_joint_values())
-        elif teaching_mode == joy_wrapper.TEACHING_DELETE:
+        elif teaching_flag == joy_wrapper.TEACHING_DELETE:
+            # 保存したアーム姿勢、グリッパー角度を削除する
             joy_wrapper.delete_joint_values()
 
 
