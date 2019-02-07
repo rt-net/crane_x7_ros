@@ -97,3 +97,72 @@ CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 ```sh
 roslaunch crane_x7_examples preset_pid_gain_example.launch
 ```
+
+### joystick_example.pyの実行
+
+ジョイスティックでX7を動かすコード例です。
+手先の位置・姿勢の変更、グリッパーの開閉、PIDゲインのプリセット、ティーチングができます。
+
+ジョイスティックをPCに接続し、`/dev/input/js0`が存在することを確認してください。
+
+次のコマンドでノードを起動します。
+
+#### 実機を使う場合
+
+```sh
+roslaunch crane_x7_examples joystick_example.launch
+```
+
+#### シミュレータを使う場合
+
+シミュレータを使う場合は、エラーを防ぐため`sim`オプションを追加してください。
+
+```sh
+roslaunch crane_x7_examples joystick_example.launch sim:=true
+```
+
+#### キー割り当ての変更
+
+デフォルトのキー割り当てはこちらです。
+![key_config](https://github.com/rt-net/crane_x7_ros/blob/images/images/joystick_example_key_config.png "key_config")
+
+[crane_x7_example/launch/joystick_example.launch](./launch/joystick_example.launch)
+のキー番号を編集することで、キー割り当てを変更できます。
+
+```xml
+ <node name="joystick_example" pkg="crane_x7_examples" type="joystick_example.py" required="true" output="screen">
+    <!-- 使用するジョイスティックコントローラに合わせてvalueを変更してください -->
+    <!-- ひとつのボタンに複数の機能を割り当てています -->
+    <param name="button_shutdown_1" value="8" type="int" />
+    <param name="button_shutdown_2" value="9" type="int" />
+
+    <param name="button_name_enable" value="7" type="int" />
+    <param name="button_name_home"  value="8" type="int" />
+
+    <param name="button_preset_enable" value="7" type="int" />
+    <param name="button_preset_no1" value="9" type="int" />
+```
+
+デフォルトのキー番号はこちらです。
+![key_numbers](https://github.com/rt-net/crane_x7_ros/blob/images/images/joystick_example_key_numbers.png "key_numbers")
+
+ジョイスティックのキー番号はトピック`/joy`で確認できます。
+
+```sh
+# ノードを起動する
+roslaunch crane_x7_examples joystick_example.launch sim:=true
+
+# 別のターミナルでコマンドを入力
+rostopic echo /joy
+
+# ジョイスティックのボタンを押す
+header: 
+  seq: 1
+  stamp: 
+    secs: 1549359364
+    nsecs: 214800952
+  frame_id: ''
+axes: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+buttons: [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+---
+```
