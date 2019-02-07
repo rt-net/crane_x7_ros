@@ -115,7 +115,7 @@ roslaunch crane_x7_examples joystick_example.launch
 
 #### シミュレータを使う場合
 
-シミュレータを使う場合、PIDゲインのプリセットができません。
+シミュレータを使う場合は、エラーを防ぐため`sim`オプションを追加してください。
 
 ```sh
 roslaunch crane_x7_examples joystick_example.launch sim:=true
