@@ -10,17 +10,14 @@ import sys, tty, termios
 class TeachingDataBase(object):
     def __init__(self):
 
-        # ティーチング
         self._teaching_joint_values = []
         self._teaching_index = 0
 
     def save_joint_values(self, arm, gripper):
-        # ティーチング
         # アームの各関節角度と、グリッパー開閉角度を配列に保存する
         self._teaching_joint_values.append([arm, gripper])
 
     def load_joint_values(self):
-        # ティーチング
         # 保存した角度情報を返す
         # 配列のインデックスが末尾まで来たら、インデックスを0に戻す
         # 何も保存していない場合はFalseを返す
@@ -32,11 +29,19 @@ class TeachingDataBase(object):
                 self._teaching_index = 0
             return joint_values
         else:
-            rospy.logwarn("Teaching. Joint Values is nothing")
+            rospy.logwarn("Joint Values is nothing")
+            return False
+
+    def load_all_joint_values(self):
+        # 保存した角度情報をすべて返す
+        # 何も保存していない場合はFalseを返す
+        if self._teaching_joint_values:
+            return self._teaching_joint_values
+        else:
+            rospy.logwarn("Joint Values is nothing")
             return False
 
     def delete_joint_values(self):
-        # ティーチング
         # 角度情報が格納された配列を初期化する
         self._teaching_joint_values = []
         self._teaching_index = 0
@@ -74,26 +79,31 @@ def main():
     arm.set_max_velocity_scaling_factor(0.5)
     gripper = moveit_commander.MoveGroupCommander("gripper")
 
-    GRIPPER_FULL_OPEN = 1.0
-    GRIPPER_FULL_CLOSE = 0.1
-    gripper_control_angle = 0.05
-    gripper_angle = GRIPPER_FULL_OPEN
-
-    # 何かを掴んでいた時のためにハンドを開く
-    gripper.set_joint_value_target([GRIPPER_FULL_OPEN, GRIPPER_FULL_OPEN])
-    gripper.go()
-
-    # SRDFに定義されている"home"の姿勢にする
-    arm.set_named_target("home")
-    arm.go()
+    TORQUE_ON_PID = 0
+    TORQUE_OFF_PID = 3
 
     CTRL_C = 3 # Unicode Code
 
     input_code = 0
     do_shutdown = False
     do_restart = True
-    is_teaching_mode = False
-    is_torque_enabled = True
+    is_teaching_mode = True
+
+
+    # 何かを掴んでいた時のためにハンドを開く
+    gripper.set_joint_value_target([0.9, 0.9])
+    gripper.go()
+
+    # SRDFに定義されている"home"の姿勢にする
+    arm.set_named_target("home")
+    arm.go()
+
+    # preset_reconfigureノードが起動するまで待機
+    rospy.sleep(1)
+
+    # トルクをオフにする
+    preset_pid_gain(TORQUE_OFF_PID)
+    print "Torque OFF"
 
     print "TeachingExample"
     while do_shutdown is False:
@@ -106,15 +116,13 @@ def main():
             if is_teaching_mode:
                 print "[Teaching Mode] "
                 print "[Next Pose:" + str(pose_index) + " of " + str(poses_num) + "]",
-                print "[Current Gripper Angle:" + str(round(gripper_angle, 2)) + "]"
-                print "[q]: Quit, [m]: Mode switch to Action mode, [h]: Home pose, [v]: Vertical pose"
-                print "[t]: Toggle torques, [s]: Save, [d]: Delete, [o]: Open gripper, [c]: Close gripper"
+                print "[q]: Quit, [m]: switch to action Mode"
+                print "[s]: Save, [d]: Delete"
             else:
                 print "[Action Mode] "
                 print "[Next Pose:" + str(pose_index) + " of " + str(poses_num) + "]",
-                print "[Current Gripper Angle:" + str(round(gripper_angle, 2)) + "]"
-                print "[q]: Quit, [m]: Mode switch to Teaching mode [h]: Home pose, [v]: Vertical pose"
-                print "[l]: Load"
+                print "[q]: Quit, [m]: switch to teaching Mode"
+                print "[l]: Load 1 pose, [a]: play All pose"
 
             print "Keyboard input >>>",
             do_restart = False
@@ -127,69 +135,42 @@ def main():
         # シャットダウン
         if input_code == CTRL_C or input_code == ord('q') or input_code == ord('Q'):
             print "\nShutdown..."
+
+            # トルクをONにしてから終了する
+            if is_teaching_mode:
+                print "Torque ON"
+                # PIDゲインをdefaultに戻すと、目標姿勢に向かって急に動き出す
+                # 安全のため、現在のアームの姿勢を目標姿勢に変更する
+                rospy.sleep(1)
+                arm.set_pose_target(arm.get_current_pose())
+                arm.go()
+                preset_pid_gain(TORQUE_ON_PID)
+
             do_shutdown = True
             continue
 
         # モード切替
         if input_code == ord('m') or input_code == ord('M'):
             print "\nMode switch"
+            is_teaching_mode = not is_teaching_mode
 
-            # トルクオフの状態ではアクションモードには遷移できないようにする
-            if is_teaching_mode is True and is_torque_enabled is False:
-                print "Please toggle torques to switch to Action mode"
+            if is_teaching_mode:
+                print "Torque OFF"
+                preset_pid_gain(TORQUE_OFF_PID)
             else:
-                is_teaching_mode = not is_teaching_mode
-            do_restart = True
-            continue
-
-        # Home pose
-        if input_code == ord('h') or input_code == ord('H'):
-            print "\nHome pose"
-            if is_torque_enabled is False:
-                print "Please toggle torques"
-            else:
-                gripper.set_joint_value_target([GRIPPER_FULL_OPEN, GRIPPER_FULL_OPEN])
-                gripper_angle = GRIPPER_FULL_OPEN
-                gripper.go()
-                arm.set_named_target("home")
+                print "Torque ON"
+                # PIDゲインをdefaultに戻すと、目標姿勢に向かって急に動き出す
+                # 安全のため、現在のアームの姿勢を目標姿勢に変更する
+                rospy.sleep(1)
+                arm.set_pose_target(arm.get_current_pose())
                 arm.go()
+                preset_pid_gain(TORQUE_ON_PID)
+
             do_restart = True
             continue
 
-        # Vertical pose
-        if input_code == ord('v') or input_code == ord('V'):
-            print "\nVertical pose"
-            if is_torque_enabled is False:
-                print "Please toggle torques"
-            else:
-                gripper.set_joint_value_target([GRIPPER_FULL_OPEN, GRIPPER_FULL_OPEN])
-                gripper_angle = GRIPPER_FULL_OPEN
-                gripper.go()
-                arm.set_named_target("vertical")
-                arm.go()
-            do_restart = True
-            continue
 
         if is_teaching_mode:
-            # トルク ON/OFF
-            if input_code == ord('t') or input_code == ord('T'):
-                print "\nToggle Torques"
-                is_torque_enabled = not is_torque_enabled
-                
-                if is_torque_enabled:
-                    print "Torque ON"
-                    # PIDゲインをdefaultに戻すと、目標姿勢に向かって急に動き出す
-                    # 安全のため、現在のアームの姿勢を目標姿勢に変更する
-                    rospy.sleep(1)
-                    arm.set_pose_target(arm.get_current_pose())
-                    arm.go()
-                    preset_pid_gain(0)
-                else:
-                    print "Torque OFF"
-                    preset_pid_gain(1)
-                do_restart = True
-                continue
-
             # 現在のアーム姿勢、グリッパー角度を保存する
             if input_code == ord('s') or input_code == ord('S'):
                 print "\nSave joint values"
@@ -206,26 +187,6 @@ def main():
                 do_restart = True
                 continue
 
-            # グリッパーを開く
-            if input_code == ord('o') or input_code == ord('O'):
-                gripper_angle += gripper_control_angle
-                if gripper_angle > GRIPPER_FULL_OPEN:
-                    gripper_angle = GRIPPER_FULL_OPEN
-                gripper.set_joint_value_target([gripper_angle, gripper_angle])
-                gripper.go()
-                do_restart = True
-                continue
-
-            # グリッパーを閉じる
-            if input_code == ord('c') or input_code == ord('C'):
-                gripper_angle -= gripper_control_angle
-                if gripper_angle < GRIPPER_FULL_CLOSE:
-                    gripper_angle = GRIPPER_FULL_CLOSE
-                gripper.set_joint_value_target([gripper_angle, gripper_angle])
-                gripper.go()
-                do_restart = True
-                continue
-
         else:
             # 保存したアーム、グリッパー角度を取り出す
             if input_code == ord('l') or input_code == ord('L'):
@@ -235,10 +196,25 @@ def main():
                     arm.set_joint_value_target(joint_values[0])
                     arm.go()
                     gripper.set_joint_value_target(joint_values[1])
-                    gripper_angle = joint_values[1][0]
                     gripper.go()
                 do_restart = True
                 continue
+
+            # 保存したアーム、グリッパー角度を連続再生する
+            if input_code == ord('a') or input_code == ord('A'):
+                print "\nplay All poses"
+                all_joint_values = data_base.load_all_joint_values()
+                if all_joint_values:
+                    num_of_poses = len(all_joint_values)
+                    for i, joint_values in enumerate(all_joint_values):
+                        print "Play: " + str(i+1) + " of " + str(num_of_poses)
+                        arm.set_joint_value_target(joint_values[0])
+                        arm.go()
+                        gripper.set_joint_value_target(joint_values[1])
+                        gripper.go()
+                do_restart = True
+                continue
+
 
 
     # SRDFに定義されている"vertical"の姿勢にする
