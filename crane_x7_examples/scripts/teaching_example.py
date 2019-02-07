@@ -183,6 +183,15 @@ def main():
             # 現在のアーム姿勢、グリッパー角度を保存する
             if input_code == ord('s') or input_code == ord('S'):
                 print "\nSave joint values"
+                # アームの角度が制御範囲内にない場合、例外が発生する
+                try:
+                    arm.set_joint_value_target(arm.get_current_joint_values())
+                    gripper.set_joint_value_target(gripper.get_current_joint_values())
+                except moveit_commander.exception.MoveItCommanderException:
+                    print "Error setting joint target. Is the target within bounds?"
+                    do_restart = True
+                    continue
+
                 data_base.save_joint_values(
                         arm.get_current_joint_values(),
                         gripper.get_current_joint_values())
