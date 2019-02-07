@@ -4,7 +4,7 @@
 import rospy
 import moveit_commander
 from std_msgs.msg import UInt8
-import sys, tty, termios
+import sys, tty, termios, select
 
 
 class TeachingDataBase(object):
@@ -53,13 +53,19 @@ class TeachingDataBase(object):
         return len(self._teaching_joint_values)
 
 
-def getch():
+def getch(timeout):
     # 1文字のキーボード入力を返す
     fd = sys.stdin.fileno()
     old = termios.tcgetattr(fd)
     try:
         tty.setraw(fd)
-        return sys.stdin.read(1)
+        (result_stdin, w, x) = select.select([sys.stdin], [], [], timeout)
+        if len(result_stdin):
+            return result_stdin[0].read(1)
+        else:
+            return False
+
+        # return sys.stdin.read(1)
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, old)
 
@@ -88,7 +94,7 @@ def main():
     do_shutdown = False
     do_restart = True
     is_teaching_mode = True
-
+    do_loop_playing = False
 
     # 何かを掴んでいた時のためにハンドを開く
     gripper.set_joint_value_target([0.9, 0.9])
@@ -105,13 +111,12 @@ def main():
     preset_pid_gain(TORQUE_OFF_PID)
     print "Torque OFF"
 
-    print "TeachingExample"
     while do_shutdown is False:
+        poses_num = data_base.get_num_of_poses()
+        pose_index = data_base.get_current_index() + 1 if poses_num else 0
+
         # リスタート時はキーボード入力の説明を表示
         if do_restart:
-            poses_num = data_base.get_num_of_poses()
-            pose_index = data_base.get_current_index() + 1 if poses_num else 0
-
             print ""
             if is_teaching_mode:
                 print "[Teaching Mode]",
@@ -120,15 +125,17 @@ def main():
             else:
                 print "[Action Mode]",
                 print "[Next Pose:" + str(pose_index) + " of " + str(poses_num) + "]"
-                print "[q]: Quit, [m]: switch to teaching Mode, [l]: Load 1 pose, [a]: play All pose"
+                print "[q]: Quit, [m]: switch to teaching Mode, [p]: Play 1 pose, [a]: play All pose, [l]: Loop play on/off"
 
-            print "Keyboard input >>>",
+            print "Keyboard input >>>"
             do_restart = False
             
         # 文字入力
-        input_key = getch()
-        print input_key,
-        input_code = ord(input_key)
+        input_key = getch(0.1) # 一定時間入力がなければFalseを返す
+        input_code = ""
+        if input_key is not False:
+            print input_key,
+            input_code = ord(input_key)
 
         # シャットダウン
         if input_code == CTRL_C or input_code == ord('q') or input_code == ord('Q'):
@@ -142,6 +149,8 @@ def main():
                 rospy.sleep(1)
                 arm.set_pose_target(arm.get_current_pose())
                 arm.go()
+                gripper.set_joint_value_target(gripper.get_current_joint_values())
+                gripper.go()
                 preset_pid_gain(TORQUE_ON_PID)
 
             do_shutdown = True
@@ -162,6 +171,8 @@ def main():
                 rospy.sleep(1)
                 arm.set_pose_target(arm.get_current_pose())
                 arm.go()
+                gripper.set_joint_value_target(gripper.get_current_joint_values())
+                gripper.go()
                 preset_pid_gain(TORQUE_ON_PID)
 
             do_restart = True
@@ -187,8 +198,8 @@ def main():
 
         else:
             # 保存したアーム、グリッパー角度を取り出す
-            if input_code == ord('l') or input_code == ord('L'):
-                print "\nLoad joint values"
+            if input_code == ord('p') or input_code == ord('P'):
+                print "\nPlay 1 pose"
                 joint_values = data_base.load_joint_values()
                 if joint_values:
                     arm.set_joint_value_target(joint_values[0])
@@ -203,9 +214,8 @@ def main():
                 print "\nplay All poses"
                 all_joint_values = data_base.load_all_joint_values()
                 if all_joint_values:
-                    num_of_poses = len(all_joint_values)
                     for i, joint_values in enumerate(all_joint_values):
-                        print "Play: " + str(i+1) + " of " + str(num_of_poses)
+                        print "Play: " + str(i+1) + " of " + str(poses_num)
                         arm.set_joint_value_target(joint_values[0])
                         arm.go()
                         gripper.set_joint_value_target(joint_values[1])
@@ -213,6 +223,37 @@ def main():
                 do_restart = True
                 continue
 
+            # 保存したアーム、グリッパー角度をループ再生する
+            if input_code == ord('l') or input_code == ord('L'):
+                print "\nLoop play",
+
+                do_loop_playing = not do_loop_playing
+                
+                if do_loop_playing:
+                    print "ON"
+                else:
+                    print "OFF"
+                    # 再び再生しないようにsleepを設ける
+                    rospy.sleep(1)
+                    do_restart = True
+                    continue
+
+            # ループ再生
+            if do_loop_playing:
+                joint_values = data_base.load_joint_values()
+                if joint_values:
+                    print "Play " + str(pose_index) + " of " + str(poses_num)
+
+                    arm.set_joint_value_target(joint_values[0])
+                    arm.go()
+                    gripper.set_joint_value_target(joint_values[1])
+                    gripper.go()
+                else:
+                    # 姿勢が保存されていなかったらループ再生を終了する
+                    print "Loop play OFF"
+                    do_loop_playing = False
+                    do_restart = True
+                    continue
 
 
     # SRDFに定義されている"vertical"の姿勢にする
