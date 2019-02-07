@@ -112,7 +112,7 @@ roslaunch crane_x7_examples teaching_example.launch
 
 **Teaching Mode**
 
-起動時はTeachin Modeです。トルクがOFFになります。
+起動時のモードです。トルクOFF状態です。
 
 | キー | 機能 |
 ----|----
@@ -124,7 +124,7 @@ roslaunch crane_x7_examples teaching_example.launch
 
 **Action Mode**
 
-トルクがオンになります。
+Teaching Modeから遷移します。トルクON状態です。
 
 | キー | 機能 |
 ----|----
