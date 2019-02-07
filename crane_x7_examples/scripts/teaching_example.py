@@ -114,15 +114,13 @@ def main():
 
             print ""
             if is_teaching_mode:
-                print "[Teaching Mode] "
-                print "[Next Pose:" + str(pose_index) + " of " + str(poses_num) + "]",
-                print "[q]: Quit, [m]: switch to action Mode"
-                print "[s]: Save, [d]: Delete"
+                print "[Teaching Mode]",
+                print "[Next Pose:" + str(pose_index) + " of " + str(poses_num) + "]"
+                print "[q]: Quit, [m]: switch to action Mode, [s]: Save, [d]: Delete"
             else:
-                print "[Action Mode] "
-                print "[Next Pose:" + str(pose_index) + " of " + str(poses_num) + "]",
-                print "[q]: Quit, [m]: switch to teaching Mode"
-                print "[l]: Load 1 pose, [a]: play All pose"
+                print "[Action Mode]",
+                print "[Next Pose:" + str(pose_index) + " of " + str(poses_num) + "]"
+                print "[q]: Quit, [m]: switch to teaching Mode, [l]: Load 1 pose, [a]: play All pose"
 
             print "Keyboard input >>>",
             do_restart = False
