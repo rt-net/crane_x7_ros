@@ -112,7 +112,7 @@ roslaunch crane_x7_examples teaching_example.launch
 
 **Teaching Mode**
 
-起動時のモードです。トルクOFF状態です。
+起動時のモードです。トルクOFF*状態です。
 
 | キー | 機能 |
 ----|----
@@ -124,7 +124,7 @@ roslaunch crane_x7_examples teaching_example.launch
 
 **Action Mode**
 
-Teaching Modeから遷移します。トルクON状態です。
+Teaching Modeから遷移します。トルクON*状態です。
 
 | キー | 機能 |
 ----|----
@@ -132,6 +132,8 @@ Teaching Modeから遷移します。トルクON状態です。
 | a / A | 保存した姿勢のすべてを連続再生 |
 | m / M | **Teaching Mode**へ遷移 |
 | q / Q | シャットダウン |
+
+- トルクのON/OFFはサーボモータのPIDゲインに小さい値をプリセットすることで実現しています。
 
 ### joystick_example.pyの実行
 
