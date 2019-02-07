@@ -230,10 +230,6 @@ def main():
     PRESET_FREE     = 1
     pid_gain_no = PRESET_DEFAULT
 
-    # rvizが起動するまで待つ
-    while len([s for s in rosnode.get_node_names() if 'rviz' in s]) == 0:
-        rospy.sleep(1.0)
-    rospy.sleep(1.0)
 
     # 何かを掴んでいた時のためにハンドを開く
     gripper.set_joint_value_target([0.9, 0.9])
