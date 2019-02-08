@@ -161,7 +161,9 @@ roslaunch crane_x7_examples joystick_example.launch sim:=true
 
 #### キー割り当ての変更
 
-デフォルトのキー割り当てはこちらです。
+デフォルトのキー割り当てはこちらです。ジョイスティックは
+[Logicool Wireless Gamepad F710](https://support.logicool.co.jp/ja_jp/product/wireless-gamepad-f710)
+を使っています。
 ![key_config](https://github.com/rt-net/crane_x7_ros/blob/images/images/joystick_example_key_config.png "key_config")
 
 [crane_x7_example/launch/joystick_example.launch](./launch/joystick_example.launch)
