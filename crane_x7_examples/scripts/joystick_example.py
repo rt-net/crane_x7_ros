@@ -283,9 +283,16 @@ def main():
         teaching_flag = joy_wrapper.get_and_reset_teaching_flag()
         if teaching_flag == joy_wrapper.TEACHING_SAVE:
             # 現在のアーム姿勢、グリッパー角度を保存する
-            joy_wrapper.save_joint_values(
-                    arm.get_current_joint_values(), 
-                    gripper.get_current_joint_values())
+            # アームの角度が制御範囲内にない場合、例外が発生する
+            try:
+                arm_joint_values = arm.get_current_joint_values()
+                gripper_joint_values = gripper.get_current_joint_values()
+
+                arm.set_joint_value_target(arm_joint_values)
+                gripper.set_joint_value_target(gripper_joint_values)
+                joy_wrapper.save_joint_values(arm_joint_values, gripper_joint_values)
+            except moveit_commander.exception.MoveItCommanderException:
+                print "Error setting joint target. Is the target within bounds?"
         elif teaching_flag == joy_wrapper.TEACHING_LOAD:
             # 保存したアーム、グリッパー角度を取り出す
             joint_values = joy_wrapper.load_joint_values()
