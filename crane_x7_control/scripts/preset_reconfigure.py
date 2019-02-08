@@ -17,12 +17,12 @@ class PRESET_RECONFIGURE:
                             {"control":"/crane_x7/crane_x7_control","joint":"crane_x7_lower_arm_fixed_part_joint"}, \
                             {"control":"/crane_x7/crane_x7_control","joint":"crane_x7_lower_arm_revolute_part_joint"}, \
                             {"control":"/crane_x7/crane_x7_control","joint":"crane_x7_wrist_joint"}, \
+                            {"control":"/crane_x7/crane_x7_control","joint":"crane_x7_gripper_finger_a_joint"}, \
                         ]
-        self.JOINT_NUM = 7
 
         ### プリセット定義 - 0.Initial parameters ###
         self.preset_init = []
-        for i in range(self.JOINT_NUM):
+        for i in range(len(self.joint_list)):
             self.preset_init.append( { "p_gain": 800, "i_gain": 0, "d_gain": 0 } )
 
         ### プリセット定義 - 1  脱力状態 ###
@@ -34,6 +34,7 @@ class PRESET_RECONFIGURE:
                             { "name":"crane_x7_lower_arm_fixed_part_joint",             "p_gain": 10, "i_gain": 0, "d_gain": 0 },\
                             { "name":"crane_x7_lower_arm_revolute_part_joint",          "p_gain": 10, "i_gain": 0, "d_gain": 0 },\
                             { "name":"crane_x7_wrist_joint",                            "p_gain": 10, "i_gain": 0, "d_gain": 0 },\
+                            { "name":"crane_x7_gripper_finger_a_joint",                 "p_gain": 10, "i_gain": 0, "d_gain": 0 },\
                         ]
 
         ### プリセット定義 - 2 PゲインをInitial parametersの半分にする ###
@@ -45,10 +46,23 @@ class PRESET_RECONFIGURE:
                             { "name":"crane_x7_lower_arm_fixed_part_joint",             "p_gain": 400, "i_gain": 0, "d_gain": 0 },\
                             { "name":"crane_x7_lower_arm_revolute_part_joint",          "p_gain": 400, "i_gain": 0, "d_gain": 0 },\
                             { "name":"crane_x7_wrist_joint",                            "p_gain": 400, "i_gain": 0, "d_gain": 0 },\
+                            { "name":"crane_x7_gripper_finger_a_joint",                 "p_gain": 400, "i_gain": 0, "d_gain": 0 },\
                         ]
 
-        ### プリセット定義 - 3 未設定。モノを掴んだ時や、アームの形状を変えた時に設定してみてください ###
+        ### プリセット定義 - 3 ティーチングサンプル用のPIDゲイン ###
         self.preset_3 = [   
+                            { "name":"crane_x7_shoulder_fixed_part_pan_joint",          "p_gain": 5, "i_gain": 0, "d_gain": 0 },\
+                            { "name":"crane_x7_shoulder_revolute_part_tilt_joint",      "p_gain": 5, "i_gain": 0, "d_gain": 0 },\
+                            { "name":"crane_x7_upper_arm_revolute_part_twist_joint",    "p_gain": 5, "i_gain": 0, "d_gain": 0 },\
+                            { "name":"crane_x7_upper_arm_revolute_part_rotate_joint",   "p_gain": 5, "i_gain": 0, "d_gain": 0 },\
+                            { "name":"crane_x7_lower_arm_fixed_part_joint",             "p_gain": 1, "i_gain": 0, "d_gain": 0 },\
+                            { "name":"crane_x7_lower_arm_revolute_part_joint",          "p_gain": 1, "i_gain": 0, "d_gain": 0 },\
+                            { "name":"crane_x7_wrist_joint",                            "p_gain": 1, "i_gain": 0, "d_gain": 0 },\
+                            { "name":"crane_x7_gripper_finger_a_joint",                 "p_gain": 1, "i_gain": 0, "d_gain": 0 },\
+                        ]
+
+        ### プリセット定義 - 4 未設定。モノを掴んだ時や、アームの形状を変えた時に設定してみてください ###
+        self.preset_4 = [   
                             { "name":"crane_x7_shoulder_fixed_part_pan_joint",          "p_gain": 800, "i_gain": 0, "d_gain": 0 },\
                             { "name":"crane_x7_shoulder_revolute_part_tilt_joint",      "p_gain": 800, "i_gain": 0, "d_gain": 0 },\
                             { "name":"crane_x7_upper_arm_revolute_part_twist_joint",    "p_gain": 800, "i_gain": 0, "d_gain": 0 },\
@@ -56,6 +70,7 @@ class PRESET_RECONFIGURE:
                             { "name":"crane_x7_lower_arm_fixed_part_joint",             "p_gain": 800, "i_gain": 0, "d_gain": 0 },\
                             { "name":"crane_x7_lower_arm_revolute_part_joint",          "p_gain": 800, "i_gain": 0, "d_gain": 0 },\
                             { "name":"crane_x7_wrist_joint",                            "p_gain": 800, "i_gain": 0, "d_gain": 0 },\
+                            { "name":"crane_x7_gripper_finger_a_joint",                 "p_gain": 800, "i_gain": 0, "d_gain": 0 },\
                         ]
 
         ### プリセットデータリスト ###
@@ -64,6 +79,7 @@ class PRESET_RECONFIGURE:
         self.preset_list.append( self.preset_1 )
         self.preset_list.append( self.preset_2 )
         self.preset_list.append( self.preset_3 )
+        self.preset_list.append( self.preset_4 )
 
         self.reconfigure = []
         for joint in self.joint_list:
