@@ -98,6 +98,9 @@ CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 roslaunch crane_x7_examples preset_pid_gain_example.launch
 ```
 
+動作させると[こちら](https://youtu.be/0rBbgNDwm6Y)のような動きになります。
+
+
 ### teaching_example.pyの実行
 
 ティーチングのコード例です。X7のPIDゲインを小さくすることでダイレクトティーチングができます。
@@ -135,6 +138,8 @@ Teaching Modeから遷移します。トルクON*状態です。
 | q / Q | シャットダウン |
 
 - トルクのON / OFFはサーボモータのPIDゲインに小さい値をプリセットすることで実現しています。
+
+動作させると[こちら](https://youtu.be/--5_l1DpQ-0)のような動きになります。
 
 ### joystick_example.pyの実行
 
@@ -206,3 +211,5 @@ axes: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 buttons: [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ---
 ```
+
+動作させると[こちら](https://youtu.be/IQci_vb3owM)のような動きになります。
