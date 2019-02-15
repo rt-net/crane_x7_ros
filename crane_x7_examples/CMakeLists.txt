@@ -3,7 +3,13 @@ project(crane_x7_examples)
 
 find_package(catkin REQUIRED COMPONENTS
   rospy
+  std_msgs
+  geometry_msgs
+  message_generation
 )
+
+add_service_files(FILES ObstacleAvoidance.srv)
+generate_messages(DEPENDENCIES std_msgs geometry_msgs)
 
 ###################################
 ## catkin specific configuration ##
@@ -17,7 +23,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES crane_x7_examples
-#  CATKIN_DEPENDS rospy
+ CATKIN_DEPENDS message_runtime
 #  DEPENDS system_lib
 )
 

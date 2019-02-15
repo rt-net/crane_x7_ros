@@ -5,79 +5,73 @@ import rospy
 import moveit_commander
 from geometry_msgs.msg import Pose, PoseStamped
 from tf.transformations import quaternion_from_euler
+from crane_x7_examples.srv import ObstacleAvoidance, ObstacleAvoidanceResponse
 
 import copy
 import math
 
-def obstacle_callback(self, msg):
-    print msg
 
-def main():
-    rospy.init_node("obstacle_avoidance_example")
-    robot = moveit_commander.RobotCommander()
+def hook_shutdown():
+    # shutdown時にvertical姿勢へ移行する
+    print 'shutdown'
     arm = moveit_commander.MoveGroupCommander("arm")
     arm.set_max_velocity_scaling_factor(0.3)
+    arm.set_named_target("vertical")
+    arm.go()
 
-    sub_obstacle = rospy.Subscriber("~obstacle", PoseStamped, obstacle_callback)
 
+def callback(req):
+    arm = moveit_commander.MoveGroupCommander("arm")
+    arm.set_max_velocity_scaling_factor(0.3)
     scene = moveit_commander.PlanningSceneInterface()
-    rospy.sleep(1) # このsleepを消すと、sceneの更新ができなくなる
+    rospy.sleep(1)
 
     # 障害物を取り除く
     scene.remove_world_object()
+    rospy.sleep(1) 
 
-    # 目標姿勢の定義
-    target_poses = []
+    # 障害物を設置する
+    if req.obstacle_enable:
+        scene.add_box(req.obstacle_name, req.obstacle_pose_stamped, 
+                (req.obstacle_size.x, req.obstacle_size.y, req.obstacle_size.z))
+        rospy.sleep(1) 
 
-    pose = Pose()
-    pose.position.x = 0.3
-    pose.position.y = -0.2
-    pose.position.z = 0.1
-    q = quaternion_from_euler(0.0, math.pi/2.0, 0.0)
-    pose.orientation.x = q[0]
-    pose.orientation.y = q[1]
-    pose.orientation.z = q[2]
-    pose.orientation.w = q[3]
-    target_poses.append(pose)
+    result = True
+    # home姿勢に移行
+    arm.set_named_target('home')
+    if arm.go() is False:
+        result = False
 
-    pose2 = copy.deepcopy(pose)
-    pose2.position.y = 0.2
-    target_poses.append(pose2)
+    # スタート姿勢に移行
+    arm.set_pose_target(req.start_pose)
+    if arm.go() is False:
+        result = False
 
-    # SRDFに定義されている"vertical"の姿勢にする
-    arm.set_named_target("vertical")
-    arm.go()
-    arm.set_named_target("home")
-    arm.go()
+    # ゴール姿勢に移行
+    arm.set_pose_target(req.goal_pose)
+    if arm.go() is False:
+        result = False
 
-    target_no = 0
-    while not rospy.is_shutdown():
-        # 障害物が無い空間で、目標位置を行き来する
-        arm.set_pose_target(target_poses[target_no])
-        arm.go()
+    # home姿勢に移行
+    arm.set_named_target('home')
+    if arm.go() is False:
+        result = False
 
-        target_no += 1
-        if target_no >= 2:
-            target_no = 0
+    # 障害物を取り除く
+    scene.remove_world_object()
+    rospy.sleep(1) 
 
-    # # 障害物を追加する
-    # box_size = (0.24, 0.16, 0.16)
-    # box_pose = PoseStamped()
-    # box_pose.header.frame_id = "/base_link"
-    # box_pose.pose.position.x = 0.3
-    # box_pose.pose.position.z = box_size[2] * 0.5
-    # box_name = "box"
-    # scene.add_box(box_name, box_pose, box_size)
-    #
-    # # 障害物を設置するための待ち時間
-    # setting_time = 5.0
-    # print "wait " + str(setting_time) + " seconds for setting an object."
-    # rospy.sleep(setting_time)
+    return ObstacleAvoidanceResponse(result)
 
-    arm.set_named_target("vertical")
-    arm.go()
 
-    rospy.loginfo("done")
+def main():
+    rospy.init_node("obstacle_avoidance_example")
+    rospy.on_shutdown(hook_shutdown)
+
+    server = rospy.Service('~obstacle_avoidance', ObstacleAvoidance, callback)
+    print 'Ready to avoid obstacles'
+
+    rospy.spin()
 
 
 if __name__ == '__main__':
