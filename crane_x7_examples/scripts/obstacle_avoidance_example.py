@@ -15,7 +15,7 @@ def hook_shutdown():
     # shutdown時にvertical姿勢へ移行する
     print 'shutdown'
     arm = moveit_commander.MoveGroupCommander("arm")
-    arm.set_max_velocity_scaling_factor(0.3)
+    arm.set_max_velocity_scaling_factor(0.1)
     arm.set_named_target("vertical")
     arm.go()
 
@@ -24,7 +24,7 @@ def callback(req):
     SLEEP_TIME = 1.0 # sceneを更新するための待ち時間
 
     arm = moveit_commander.MoveGroupCommander("arm")
-    arm.set_max_velocity_scaling_factor(0.3)
+    arm.set_max_velocity_scaling_factor(0.1)
     scene = moveit_commander.PlanningSceneInterface()
     rospy.sleep(SLEEP_TIME)
 
