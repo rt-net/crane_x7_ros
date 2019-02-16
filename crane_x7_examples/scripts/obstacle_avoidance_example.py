@@ -21,20 +21,22 @@ def hook_shutdown():
 
 
 def callback(req):
+    SLEEP_TIME = 1.0 # sceneを更新するための待ち時間
+
     arm = moveit_commander.MoveGroupCommander("arm")
     arm.set_max_velocity_scaling_factor(0.3)
     scene = moveit_commander.PlanningSceneInterface()
-    rospy.sleep(1)
+    rospy.sleep(SLEEP_TIME)
 
     # 障害物を取り除く
     scene.remove_world_object()
-    rospy.sleep(1) 
+    rospy.sleep(SLEEP_TIME) 
 
     # 障害物を設置する
     if req.obstacle_enable:
         scene.add_box(req.obstacle_name, req.obstacle_pose_stamped, 
                 (req.obstacle_size.x, req.obstacle_size.y, req.obstacle_size.z))
-        rospy.sleep(1) 
+        rospy.sleep(SLEEP_TIME) 
 
     result = True
     # home姿勢に移行
@@ -59,7 +61,7 @@ def callback(req):
 
     # 障害物を取り除く
     scene.remove_world_object()
-    rospy.sleep(1) 
+    rospy.sleep(SLEEP_TIME) 
 
     return ObstacleAvoidanceResponse(result)
 
