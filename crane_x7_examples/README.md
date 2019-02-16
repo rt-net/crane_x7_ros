@@ -206,3 +206,13 @@ axes: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 buttons: [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ---
 ```
+
+### obstacle_avoidance_example.pyの実行
+
+ROSのServiceを使って、障害物の追加と障害物回避をするコード例です。
+
+次のコマンドでノードを起動します。
+
+```sh
+roslaunch crane_x7_examples obstacle_avoidance_example.launch
+```
