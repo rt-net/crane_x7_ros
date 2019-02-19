@@ -47,6 +47,7 @@ roslaunch crane_x7_bringup demo.launch fake_execution:=false
 rosrun crane_x7_examples gripper_action_example.py
 ```
 
+---
 
 ### pose_groupstate_example.pyの実行
 
@@ -60,6 +61,8 @@ SRDFファイル[crane_x7_moveit_config/config/crane_x7.srdf](../crane_x7_moveit
 ```sh
 rosrun crane_x7_examples pose_groupstate_example.py
 ```
+
+---
 
 ### crane_x7_pick_and_place_demo.pyの実行
 
@@ -83,6 +86,7 @@ CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 
 動作させると[こちら](https://youtu.be/_8xBgpgMhk8)のような動きになります。
 
+---
 
 ### preset_pid_gain_example.pyの実行
 
@@ -100,6 +104,7 @@ roslaunch crane_x7_examples preset_pid_gain_example.launch
 
 動作させると[こちら](https://youtu.be/0rBbgNDwm6Y)のような動きになります。
 
+---
 
 ### teaching_example.pyの実行
 
@@ -140,6 +145,8 @@ Teaching Modeから遷移します。トルクON*状態です。
 - トルクのON / OFFはサーボモータのPIDゲインに小さい値をプリセットすることで実現しています。
 
 動作させると[こちら](https://youtu.be/--5_l1DpQ-0)のような動きになります。
+
+---
 
 ### joystick_example.pyの実行
 
@@ -213,3 +220,52 @@ buttons: [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ```
 
 動作させると[こちら](https://youtu.be/IQci_vb3owM)のような動きになります。
+
+---
+
+### obstacle_avoidance_example.pyの実行
+
+ROSのServiceを使って、障害物の追加と障害物回避をするコード例です。
+
+次のコマンドでノードを起動します。
+
+```sh
+roslaunch crane_x7_examples obstacle_avoidance_example.launch
+```
+
+このサンプルでは目標姿勢と障害物の大きさ・姿勢を定義した[サービスファイル](./srv/ObstacleAvoidance.srv)を使用します。
+
+目標姿勢と障害物の大きさ・姿勢は
+[`crane_x7_examples/scripts/obstacle_client.py`](./scripts/obstacle_client.py)を編集することで変更できます。
+デフォルトでは、直方体の箱を障害物として設定しています。
+
+```python
+    # 障害物を設定
+    obstacle_name = "box"
+    obstacle_size = Vector3(0.28, 0.16, 0.14)
+    obstacle_pose_stamped = PoseStamped()
+    obstacle_pose_stamped.header.frame_id = "/base_link"
+    obstacle_pose_stamped.pose.position.x = 0.35
+    obstacle_pose_stamped.pose.position.z = obstacle_size.z/2.0
+```
+
+安全のため障害物として床を設置しています。
+不要であれば[`crane_x7_examples/scripts/obstacle_avoidance_example.py`](./scripts/obstacle_avoidance_example.py)
+を編集してください。
+
+```python
+    # 安全のため床を障害物として生成する
+    floor_name = "floor"
+    floor_size = (2.0, 2.0, 0.01)
+    floor_pose = PoseStamped()
+    floor_pose.header.frame_id = "/base_link"
+    floor_pose.pose.position.z = -floor_size[2]/2.0
+    scene.add_box(floor_name, floor_pose, floor_size)
+    rospy.sleep(SLEEP_TIME)
+```
+
+moveitが障害物回避のパスを生成できない場合、X7は動作せず、次の目標位置に対するパスを計算します。
+この場合、サーバからの返答は`result=False`となります。
+
+<img src="https://github.com/rt-net/crane_x7_ros/blob/images/images/obstacle_avoidance_1.png" width="400"><img src="https://github.com/rt-net/crane_x7_ros/blob/images/images/obstacle_avoidance_2.png" width="400">
+
