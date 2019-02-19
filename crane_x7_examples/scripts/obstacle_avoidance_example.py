@@ -36,6 +36,15 @@ def callback(req):
     scene.remove_world_object()
     rospy.sleep(SLEEP_TIME) 
 
+    # 安全のため床を障害物として生成する
+    floor_name = "floor"
+    floor_size = (2.0, 2.0, 0.01)
+    floor_pose = PoseStamped()
+    floor_pose.header.frame_id = "/base_link"
+    floor_pose.pose.position.z = -floor_size[2]/2.0
+    scene.add_box(floor_name, floor_pose, floor_size)
+    rospy.sleep(SLEEP_TIME)
+
     # 障害物を設置する
     if req.obstacle_enable:
         scene.add_box(req.obstacle_name, req.obstacle_pose_stamped, 
