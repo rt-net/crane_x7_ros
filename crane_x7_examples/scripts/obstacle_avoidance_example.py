@@ -10,8 +10,12 @@ from crane_x7_examples.srv import ObstacleAvoidance, ObstacleAvoidanceResponse
 import copy
 import math
 
+server = None
 
 def hook_shutdown():
+    global server
+    server.shutdown('rospy shutdown')
+
     # shutdown時にvertical姿勢へ移行する
     print 'shutdown'
     arm = moveit_commander.MoveGroupCommander("arm")
@@ -67,6 +71,8 @@ def callback(req):
 
 
 def main():
+    global server
+
     rospy.init_node("obstacle_avoidance_example")
     rospy.on_shutdown(hook_shutdown)
 
