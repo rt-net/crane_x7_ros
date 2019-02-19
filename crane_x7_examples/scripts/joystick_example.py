@@ -227,7 +227,7 @@ def main():
     gripper = moveit_commander.MoveGroupCommander("gripper")
 
     PRESET_DEFAULT  = 0
-    PRESET_FREE     = 1
+    PRESET_FREE     = 3
     pid_gain_no = PRESET_DEFAULT
 
 
