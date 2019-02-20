@@ -269,3 +269,34 @@ moveitが障害物回避のパスを生成できない場合、X7は動作せず
 
 <img src="https://github.com/rt-net/crane_x7_ros/blob/images/images/obstacle_avoidance_1.png" width="400"><img src="https://github.com/rt-net/crane_x7_ros/blob/images/images/obstacle_avoidance_2.png" width="400">
 
+---
+
+### servo_info_example.pyの実行
+
+サーボモータ（joint）の情報を取得するコード例です。
+
+次のコマンドでノードを起動します。
+
+```sh
+rosrun crane_x7_examples servo_info_example.py
+```
+
+このサンプルではグリッパーのモータ`crane_x7_gripper_finger_a_joint`のトピックを取得しています。
+
+実行するとターミナル画面にモータの電流・位置・温度が表示されます。
+
+```sh
+# 表示例
+ current: 5.38    dxl_position_callback: 2634    temp: 0.0   
+ current: 0.0     dxl_position_callback: 2634    temp: 0.0   
+ current: 0.0     dxl_position_callback: 2634    temp: 0.0   
+ current: 0.0     dxl_position_callback: 2634    temp: 0.0   
+ current: 2.69    dxl_position_callback: 2634    temp: 0.0   
+ current: 8.07    dxl_position_callback: 2634    temp: 0.0
+ ...
+```
+
+また、電流が一定値を超えるとグリッパーを開く（閉じる）処理を入れてます。
+これにより、手でグリッパーを開く（閉じる）ことができます。
+
+トピックの詳細については、[`crane_x7_control/README.md`](../crane_x7_control/README.md#ネームスペースとトピック)を確認してください。
