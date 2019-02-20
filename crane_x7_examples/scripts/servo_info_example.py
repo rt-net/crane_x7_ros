@@ -65,9 +65,9 @@ def main():
     
     r = rospy.Rate(60)
     while not rospy.is_shutdown():
-        print " current: "                  + str(gripper_current).ljust(6),
-        print " dxl_position_callback: "    + str(gripper_dxl_position).ljust(6),
-        print " temp: "                     + str(gripper_temp).ljust(6)
+        print " current [mA]: "     + str(gripper_current).ljust(6),
+        print " dxl_position: "     + str(gripper_dxl_position).ljust(6),
+        print " temp [deg C]: "     + str(gripper_temp).ljust(6)
 
         # 電流値がしきい値を超えれば、グリッパーを閉じる
         if gripper_is_open is True and gripper_current > CLOSE_THRESHOLD:
