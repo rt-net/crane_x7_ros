@@ -287,12 +287,11 @@ rosrun crane_x7_examples servo_info_example.py
 
 ```sh
 # 表示例
- current: 5.38    dxl_position_callback: 2634    temp: 0.0   
- current: 0.0     dxl_position_callback: 2634    temp: 0.0   
- current: 0.0     dxl_position_callback: 2634    temp: 0.0   
- current: 0.0     dxl_position_callback: 2634    temp: 0.0   
- current: 2.69    dxl_position_callback: 2634    temp: 0.0   
- current: 8.07    dxl_position_callback: 2634    temp: 0.0
+ current [mA]: 0.0     dxl_position: 2634    temp [deg C]: 42.0  
+ current [mA]: 2.69    dxl_position: 2634    temp [deg C]: 42.0  
+ current [mA]: 0.0     dxl_position: 2634    temp [deg C]: 42.0  
+ current [mA]: 0.0     dxl_position: 2634    temp [deg C]: 42.0  
+ current [mA]: 2.69    dxl_position: 2634    temp [deg C]: 42.0
  ...
 ```
 
