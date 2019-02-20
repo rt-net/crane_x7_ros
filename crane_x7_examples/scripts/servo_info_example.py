@@ -83,7 +83,7 @@ def main():
 
         r.sleep()
 
-    print "shuotdown"
+    print "shutdown"
 
     # SRDFに定義されている"vertical"の姿勢にする
     arm.set_named_target("vertical")
