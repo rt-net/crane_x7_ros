@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="CRANE-X7 with Table">
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    <!-- ここにX7のモデルを追加する -->
+
+    <include>
+      <uri>model://table</uri>
+    </include>
+
+    <!-- <model name="work_table">                 -->
+    <!--   <include>                               -->
+    <!--     <uri>model://table</uri>              -->
+    <!--   </include>                              -->
+    <!--   <pose>0.29 0 0 0 0 1.5708</pose>        -->
+    <!--   <joint name='table_joint' type='fixed'> -->
+    <!--     <parent>table::link</parent>          -->
+    <!--     <child>crane_x7::base_link</child>    -->
+    <!--   </joint>                                -->
+    <!-- </model>                                  -->
+
+  </world>
+</sdf>
