@@ -30,15 +30,11 @@
               scale="1 1 1"/>
         </geometry>
       </collision>
-
-      <inertial>
-        <mass value="0.001"/>
-        <origin xyz="-0.00669 0.000049 0.017868" rpy="0 0 0"/>
-        <inertia ixx="1.0" ixy="0.0" ixz="0.0"
-          iyy="1.0" iyz="0.0"
-          izz="1.0"/>
-        <mass value="0.387313"/>
-      </inertial>
     </link>
+
+    <!-- For gazebo simulation -->
+    <gazebo reference="${name}_link">
+      <material>Gazebo/Black</material>
+    </gazebo>
   </xacro:macro>
 </robot>

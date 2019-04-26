@@ -80,11 +80,11 @@
       </collision>
 
       <inertial>
-        <mass value="0.387313"/>
-        <origin xyz="-0.00669 0.000049 0.017868" rpy="0 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
+        <mass value="0.388"/>
+        <origin xyz="-6.73E-03 -1.00E-06 1.79E-02" rpy="0 0 0"/>
+        <inertia ixx="3.25E-04" ixy="1.20E-09" ixz="-4.71E-05"
+          iyy="4.83E-04" iyz="1.95E-08"
+          izz="5.86E-04"/>
       </inertial>
     </link>
 
@@ -92,10 +92,26 @@
     <joint name="${NAME_JOINT_1}" type="revolute">
       <origin xyz="0 0 0.036" rpy="0 0 0"/>
       <axis xyz="0 0 1"/>
-      <limit effort="0.5" velocity="${joints_vlimit}" lower="${shoulder_llimit}" upper="${shoulder_ulimit}"/>
+      <limit effort="10.0" velocity="${joints_vlimit}" lower="${shoulder_llimit}" upper="${shoulder_ulimit}"/>
       <parent link="${NAME_LINK_BASE}"/>
       <child link="${NAME_LINK_1}"/>
+      <dynamics damping="0.0" friction="0.0"/>
     </joint>
+
+    <!-- For gazebo simulation -->
+    <transmission name="${NAME_JOINT_1}_trans">
+      <provideFeedback>true</provideFeedback>
+      <implicitSpringDamper>0</implicitSpringDamper>
+      <motorTorqueConstant>0.418</motorTorqueConstant>
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${NAME_JOINT_1}">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${NAME_JOINT_1}_motor">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
 
     <!-- crane_x7_link_1 -->
     <link name="${NAME_LINK_1}">
@@ -117,11 +133,11 @@
       </collision>
 
       <inertial>
-        <mass value="0.235377"/>
-        <origin xyz="0.000013 -0.000407 0.046345" rpy="0 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
+        <mass value="0.253"/>
+        <origin xyz="2.43e-04 -1.05E-04 4.70E-02" rpy="0 0 0"/>
+        <inertia ixx="1.79E-04" ixy="-7.32E-08" ixz="8.89E-07"
+          iyy="1.76E-04" iyz="6.23E-07"
+          izz="8.96E-05"/>
       </inertial>
     </link>
 
@@ -129,10 +145,26 @@
     <joint name="${NAME_JOINT_2}" type="revolute">
       <origin xyz="0 0 0.064" rpy="0 0 0"/>
       <axis xyz="0 -1 0"/>
-      <limit effort="0.5" velocity="${joints_vlimit}" lower="-${M_PI/2}" upper="${M_PI/2}"/>
+      <limit effort="10.0" velocity="${joints_vlimit}" lower="-${M_PI/2}" upper="${M_PI/2}"/>
       <parent link="${NAME_LINK_1}"/>
       <child link="${NAME_LINK_2}"/>
+      <dynamics damping="0.0" friction="0.0"/>
     </joint>
+
+    <!-- For gazebo simulation -->
+    <transmission name="${NAME_JOINT_2}_trans">
+      <provideFeedback>true</provideFeedback>
+      <implicitSpringDamper>0</implicitSpringDamper>
+      <motorTorqueConstant>0.418</motorTorqueConstant>
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${NAME_JOINT_2}">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${NAME_JOINT_2}_motor">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
 
     <!-- crane_x7_link_2 -->
     <link name="${NAME_LINK_2}">
@@ -154,11 +186,11 @@
       </collision>
 
       <inertial>
-        <mass value="0.120005"/>
-        <origin xyz="0.000036 0.037855 -0.00018" rpy="${M_PI/2} 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
+        <mass value="0.136"/>
+        <origin xyz="3.10E-05 1.90E-05 3.42E-02" rpy="${M_PI/2} 0 0"/>
+        <inertia ixx="1.68E-04" ixy="2.05E-08" ixz="-4.00E-07"
+          iyy="9.62E-05" iyz="6.24E-08"
+          izz="1.34E-04"/>
       </inertial>
     </link>
 
@@ -186,13 +218,6 @@
               scale="1 1 1"/>
         </geometry>
       </collision>
-      <inertial>
-        <mass value="0.005"/>
-        <origin xyz="0.000036 0.037855 -0.00018" rpy="${M_PI/2} 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
-      </inertial>
     </link>
 
     <!-- crane_x7_joint_cover_2_r -->
@@ -219,26 +244,35 @@
               scale="1 1 1"/>
         </geometry>
       </collision>
-      <inertial>
-        <mass value="0.005"/>
-        <origin xyz="0.000036 0.037855 -0.00018" rpy="${M_PI/2} 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
-      </inertial>
     </link>
 
     <!-- crane_x7_joint_3 -->
     <joint name="${NAME_JOINT_3}" type="revolute">
       <origin xyz="0 0 0.065" rpy="0 0 0"/>
       <axis xyz="0 0 1"/>
-      <limit effort="0.5"
+      <limit effort="4.0"
           velocity="${joints_vlimit}"
           lower="-${M_PI/2}"
           upper="${M_PI/2}"/>
       <parent link="${NAME_LINK_2}"/>
       <child link="${NAME_LINK_3}"/>
+      <dynamics damping="0.0" friction="0.0"/>
     </joint>
+
+    <!-- For gazebo simulation -->
+    <transmission name="${NAME_JOINT_3}_trans">
+      <provideFeedback>true</provideFeedback>
+      <implicitSpringDamper>0</implicitSpringDamper>
+      <motorTorqueConstant>0.418</motorTorqueConstant>
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${NAME_JOINT_3}">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${NAME_JOINT_3}_motor">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
 
     <!-- crane_x7_link_3 -->
     <link name="${NAME_LINK_3}">
@@ -260,11 +294,11 @@
       </collision>
 
       <inertial>
-        <mass value="0.340878"/>
-        <origin xyz="-0.011533 0.000021 0.083707" rpy="${M_PI/2} 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
+        <mass value="0.321"/>
+        <origin xyz="-1.37E-02 -8.10E-05 9.52E-02" rpy="0 0 0"/>
+        <inertia ixx="1.82E-03" ixy="7.54E-07" ixz="-3.73E-05"
+          iyy="1.88E-03" iyz="4.15E-06"
+          izz="1.59E-04"/>
       </inertial>
     </link>
 
@@ -272,13 +306,29 @@
     <joint name="${NAME_JOINT_4}" type="revolute">
       <origin xyz="0 0 0.185" rpy="0 0 0"/>
       <axis xyz="0 -1 0"/>
-      <limit effort="0.5"
+      <limit effort="4.0"
           velocity="${joints_vlimit}"
           lower="-2.80718"
           upper="0.04141"/>
       <parent link="${NAME_LINK_3}"/>
       <child link="${NAME_LINK_4}"/>
+      <dynamics damping="0.0" friction="0.0"/>
     </joint>
+
+    <!-- For gazebo simulation -->
+    <transmission name="${NAME_JOINT_4}_trans">
+      <provideFeedback>true</provideFeedback>
+      <implicitSpringDamper>0</implicitSpringDamper>
+      <motorTorqueConstant>0.418</motorTorqueConstant>
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${NAME_JOINT_4}">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${NAME_JOINT_4}_motor">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
 
     <!-- crane_x7_link_4 -->
     <link name="${NAME_LINK_4}">
@@ -300,11 +350,11 @@
       </collision>
 
       <inertial>
-        <mass value="0.230634"/>
-        <origin xyz="-0.008641 0.083071 -0.000086" rpy="${M_PI} 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
+        <mass value="0.222"/>
+        <origin xyz="-9.39E-03 6.40E-05 8.04E-02" rpy="${M_PI/2} 0 0"/>
+        <inertia ixx="4.89E-04" ixy="-3.90E-06" ixz="8.29E-08"
+          iyy="1.14E-04" iyz="2.82E-06"
+          izz="5.03E-04"/>
       </inertial>
     </link>
 
@@ -332,13 +382,6 @@
               scale="1 1 1"/>
         </geometry>
       </collision>
-      <inertial>
-        <mass value="0.005"/>
-        <origin xyz="0.000036 0.037855 -0.00018" rpy="${M_PI/2} 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
-      </inertial>
     </link>
 
     <!-- crane_x7_joint_cover_4_r -->
@@ -365,23 +408,32 @@
               scale="1 1 1"/>
         </geometry>
       </collision>
-      <inertial>
-        <mass value="0.005"/>
-        <origin xyz="0.000036 0.037855 -0.00018" rpy="${M_PI/2} 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
-      </inertial>
     </link>
 
     <!-- crane_x7_joint_5 -->
     <joint name="${NAME_JOINT_5}" type="revolute">
       <origin xyz="0 0 0.121" rpy="0 0 0"/>
       <axis xyz="0 0 1"/>
-      <limit effort="0.5" velocity="${joints_vlimit}" lower="-2.77343" upper="1.51403"/>
+      <limit effort="4.0" velocity="${joints_vlimit}" lower="-2.77343" upper="1.51403"/>
       <parent link="${NAME_LINK_4}"/>
       <child link="${NAME_LINK_5}"/>
+      <dynamics damping="0.0" friction="0.0"/>
     </joint>
+
+    <!-- For gazebo simulation -->
+    <transmission name="${NAME_JOINT_5}_trans">
+      <provideFeedback>true</provideFeedback>
+      <implicitSpringDamper>0</implicitSpringDamper>
+      <motorTorqueConstant>0.418</motorTorqueConstant>
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${NAME_JOINT_5}">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${NAME_JOINT_5}_motor">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
 
     <!-- crane_x7_link_5 -->
     <link name="${NAME_LINK_5}">
@@ -403,11 +455,11 @@
       </collision>
 
       <inertial>
-        <mass value="0.192709"/>
-        <origin xyz="-0.000024 0.001285 0.063837" rpy="0 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
+        <mass value="0.207"/>
+        <origin xyz="-8.40E-05 4.62E-04 6.37E-02" rpy="0 0 0"/>
+        <inertia ixx="2.90E-04" ixy="1.00E-07" ixz="-4.77E-07"
+          iyy="2.57E-04" iyz="-1.69E-05"
+          izz="8.75E-05"/>
       </inertial>
     </link>
 
@@ -421,10 +473,26 @@
     <joint name="${NAME_JOINT_6}" type="revolute">
       <origin xyz="0 0 0.129" rpy="0 0 0"/>
       <axis xyz="0 -1 0"/>
-      <limit effort="0.5" velocity="${joints_vlimit}" lower="-${M_PI/2}" upper="${M_PI/2}"/>
+      <limit effort="4.0" velocity="${joints_vlimit}" lower="-${M_PI/2}" upper="${M_PI/2}"/>
       <parent link="${NAME_LINK_5}"/>
       <child link="${NAME_LINK_6}"/>
+      <dynamics damping="0.0" friction="0.0"/>
     </joint>
+
+    <!-- For gazebo simulation -->
+    <transmission name="${NAME_JOINT_6}_trans">
+      <provideFeedback>true</provideFeedback>
+      <implicitSpringDamper>0</implicitSpringDamper>
+      <motorTorqueConstant>0.418</motorTorqueConstant>
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${NAME_JOINT_6}">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${NAME_JOINT_6}_motor">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
 
     <!-- crane_x7_link_6 -->
     <link name="${NAME_LINK_6}">
@@ -446,11 +514,11 @@
       </collision>
 
       <inertial>
-        <mass value="0.130549"/>
-        <origin xyz="0.005713 -0.003707 0.000781" rpy="${M_PI/2} 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
+        <mass value="0.14"/>
+        <origin xyz="6.10E-03 8.26E-04 -3.55E-03" rpy="${M_PI/2} 0 0"/>
+        <inertia ixx="4.01E-05" ixy="-2.91E-06" ixz="6.39E-07"
+          iyy="6.13E-05" iyz="-4.90E-07"
+          izz="7.35E-05"/>
       </inertial>
     </link>
 
@@ -458,10 +526,68 @@
     <joint name="${NAME_JOINT_7}" type="revolute">
       <origin xyz="0 0 0.019" rpy="0 0 0"/>
       <axis xyz="0 0 1"/>
-      <limit effort="0.5" velocity="${joints_vlimit}" lower="-2.96365" upper="2.97132"/>
+      <limit effort="4.0" velocity="${joints_vlimit}" lower="-2.96365" upper="2.97132"/>
       <parent link="${NAME_LINK_6}"/>
       <child link="${end_effector_base_link}"/>
+      <dynamics damping="0.0" friction="0.0"/>
     </joint>
+
+    <!-- For gazebo simulation -->
+    <transmission name="${NAME_JOINT_7}_trans">
+      <provideFeedback>true</provideFeedback>
+      <implicitSpringDamper>0</implicitSpringDamper>
+      <motorTorqueConstant>0.418</motorTorqueConstant>
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${NAME_JOINT_7}">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${NAME_JOINT_7}_motor">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <gazebo>
+      <plugin name='gazebo_ros_control' filename='libgazebo_ros_control.so'>
+        <robotNamespace>/crane_x7</robotNamespace>
+        <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+        <legacyModeNS>true</legacyModeNS>
+      </plugin>
+    </gazebo>
+
+    <gazebo reference="${NAME_LINK_BASE}">
+      <material>Gazebo/Red</material>
+    </gazebo>
+    <gazebo reference="${NAME_LINK_1}">
+      <material>Gazebo/White</material>
+    </gazebo>
+    <gazebo reference="${NAME_LINK_2}">
+      <material>Gazebo/White</material>
+    </gazebo>
+    <gazebo reference="${NAME_LINK_3}">
+      <material>Gazebo/White</material>
+    </gazebo>
+    <gazebo reference="${NAME_LINK_4}">
+      <material>Gazebo/White</material>
+    </gazebo>
+    <gazebo reference="${NAME_LINK_5}">
+      <material>Gazebo/White</material>
+    </gazebo>
+    <gazebo reference="${NAME_LINK_6}">
+      <material>Gazebo/White</material>
+    </gazebo>
+    <gazebo reference="${NAME_LINK_COVER_2_L}">
+      <material>Gazebo/Red</material>
+    </gazebo>
+    <gazebo reference="${NAME_LINK_COVER_2_R}">
+      <material>Gazebo/Red</material>
+    </gazebo>
+    <gazebo reference="${NAME_LINK_COVER_4_L}">
+      <material>Gazebo/Red</material>
+    </gazebo>
+    <gazebo reference="${NAME_LINK_COVER_4_R}">
+      <material>Gazebo/Red</material>
+    </gazebo>
 
   </xacro:macro>
 

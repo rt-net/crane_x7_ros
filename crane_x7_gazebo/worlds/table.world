@@ -6,22 +6,13 @@
       <uri>model://sun</uri>
     </include>
 
-    <include>
-      <uri>model://crane_x7</uri>
-      <pose>0 0 1.016 0 0 0</pose>
-    </include>
-
-    <model name="work_table">
+    <model name="table">
       <include>
         <uri>model://table</uri>
       </include>
 
       <!-- X7を机の端に配置するため、机を移動、回転する -->
       <pose>0.29 0 0 0 0 1.5708</pose>
-      <joint name='table_joint' type='fixed'>
-        <parent>table::link</parent>
-        <child>crane_x7::base_link</child>
-      </joint>
     </model>
 
     <model name="ground_plane">

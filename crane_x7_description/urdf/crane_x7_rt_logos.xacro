@@ -14,13 +14,6 @@
           <color rgba="1.0 0.3 0.3 1.0"/>
         </material>
       </visual>
-      <inertial>
-        <mass value="0"/>
-        <origin xyz="0.000036 0.037855 -0.00018" rpy="${M_PI/2} 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
-      </inertial>
     </link>
     <joint name="${name}_logo_text_l_joint" type="fixed">
       <parent link="${parent}"/>
@@ -38,13 +31,6 @@
         </geometry>
         <material name="logo_red"/>
       </visual>
-      <inertial>
-        <mass value="0"/>
-        <origin xyz="0.000036 0.037855 -0.00018" rpy="${M_PI/2} 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
-      </inertial>
     </link>
     <joint name="${name}_logo_symbol_l_joint" type="fixed">
       <parent link="${parent}"/>
@@ -62,13 +48,6 @@
         </geometry>
         <material name="logo_red"/>
       </visual>
-      <inertial>
-        <mass value="0"/>
-        <origin xyz="0.000036 0.037855 -0.00018" rpy="${M_PI/2} 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
-      </inertial>
     </link>
     <joint name="${name}_logo_text_r_joint" type="fixed">
       <parent link="${parent}"/>
@@ -86,18 +65,26 @@
         </geometry>
         <material name="logo_red"/>
       </visual>
-      <inertial>
-        <mass value="0"/>
-        <origin xyz="0.000036 0.037855 -0.00018" rpy="${M_PI/2} 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
-      </inertial>
     </link>
     <joint name="${name}_logo_symbol_r_joint" type="fixed">
       <parent link="${parent}"/>
       <child link="${name}_logo_symbol_r_link"/>
       <origin xyz="0 -0.0345 0.065" rpy="0 0 0"/>
     </joint>
+
+    <!-- For gazebo simulation -->
+    <gazebo reference="${name}_logo_symbol_r_link">
+      <material>Gazebo/Red</material>
+    </gazebo>
+    <gazebo reference="${name}_logo_symbol_l_link">
+      <material>Gazebo/Red</material>
+    </gazebo>
+    <gazebo reference="${name}_logo_text_r_link">
+      <material>Gazebo/Black</material>
+    </gazebo>
+    <gazebo reference="${name}_logo_text_l_link">
+      <material>Gazebo/Black</material>
+    </gazebo>
+
   </xacro:macro>
 </robot>

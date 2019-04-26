@@ -21,6 +21,7 @@ class GripperClient(object):
         self._goal = GripperCommandGoal()
 
         # Wait 10 Seconds for the gripper action server to start or exit
+        self._client.wait_for_server(rospy.Duration(10.0))
         if not self._client.wait_for_server(rospy.Duration(10.0)):
             rospy.logerr("Exiting - Gripper Action Server Not Found.")
             rospy.signal_shutdown("Action Server not found.")
