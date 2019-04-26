@@ -109,6 +109,8 @@ GazeboでCRANE-X7のシミュレーションを行うパッケージです。
 
 `roslaunch crane_x7_gazebo crane_x7_with_table.launch`
 
+![crane_x7_gazebo](https://github.com/rt-net/crane_x7_ros/blob/images/images/crane_x7_gazebo.png "crane_x7_gazebo")
+
 ---
 
 ### 知的財産権について
