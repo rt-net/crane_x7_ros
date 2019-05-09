@@ -11,6 +11,9 @@
   <!-- Allow user to turn fake_execution on and off -->
   <arg name="fake_execution" default="true" />
 
+  <!-- USB port name for dynamixel_port -->
+  <arg name="port" default="/dev/ttyUSB0" />
+
   <!--
   By default, hide joint_state_publisher's GUI
 
@@ -27,6 +30,7 @@
     <arg name="debug" default="$(arg debug)" />
     <arg name="fake_execution" default="$(arg fake_execution)" />
     <arg name="use_gui" default="$(arg use_gui)" />
+    <arg name="port" value="$(arg port)"/>
   </include>
 
 </launch>

@@ -24,6 +24,9 @@
   <arg name="joint_states_topic" value="crane_x7/joint_states" unless="$(arg fake_execution)"/>
   <arg name="joint_states_topic" value="joint_states" if="$(arg fake_execution)"/>
 
+  <!-- USB port name for dynamixel_port -->
+  <arg name="port" default="/dev/ttyUSB0" />
+
   <!-- Planning Functionality -->
   <include ns="move_group" file="$(find crane_x7_moveit_config)/launch/planning_pipeline.launch.xml">
     <arg name="pipeline" value="ompl" />
@@ -38,7 +41,9 @@
 
   <group unless="$(arg use_gazebo)">
     <!-- If fake==false, launch X7 controller -->
-    <include file="$(find crane_x7_control)/launch/crane_x7_control.launch" unless="$(arg fake_execution)"/>
+    <include file="$(find crane_x7_control)/launch/crane_x7_control.launch" unless="$(arg fake_execution)">
+      <arg name="port" value="$(arg port)" />
+    </include>
   </group>
 
   <!-- Sensors Functionality -->
