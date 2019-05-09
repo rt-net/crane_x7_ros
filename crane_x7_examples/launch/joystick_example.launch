@@ -1,0 +1,37 @@
+<launch>
+  <arg name="joydev" default="/dev/input/js0" />
+  <arg name="sim" default="false" />
+
+  <node name="joy_core" pkg="joy" type="joy_node">
+    <param name="dev" type="string" value="$(arg joydev)" />
+  </node>
+
+  <node name="preset_reconfigure" pkg="crane_x7_control" type="preset_reconfigure.py" required="true" unless="$(arg sim)"/>
+
+  <node name="joystick_example" pkg="crane_x7_examples" type="joystick_example.py" required="true" output="screen">
+    <!-- 使用するジョイスティックコントローラに合わせてvalueを変更してください -->
+    <!-- ひとつのボタンに複数の機能を割り当てています -->
+    <param name="button_shutdown_1" value="8" type="int" />
+    <param name="button_shutdown_2" value="9" type="int" />
+
+    <param name="button_name_enable" value="7" type="int" />
+    <param name="button_name_home"  value="8" type="int" />
+
+    <param name="button_preset_enable" value="7" type="int" />
+    <param name="button_preset_no1" value="9" type="int" />
+
+    <param name="button_teaching_enable" value="3" type="int" />
+    <param name="button_teaching_save"   value="2" type="int" />
+    <param name="button_teaching_load"   value="0" type="int" />
+    <param name="button_teaching_delete" value="1" type="int" />
+
+    <param name="button_grip_enable" value="5" type="int" />
+    <param name="axis_gripper"      value="3" type="int" />
+
+    <param name="button_posi_enable" value="4" type="int" />
+    <param name="button_rpy_enable" value="6" type="int" />
+    <param name="axis_position_x"   value="0" type="int" />
+    <param name="axis_position_y"   value="1" type="int" />
+    <param name="axis_position_z"   value="3" type="int" />
+  </node>
+</launch>

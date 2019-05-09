@@ -12,8 +12,13 @@
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>crane_x7_moveit_config</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
   <run_depend>crane_x7_moveit_config</run_depend>
   <run_depend>moveit_commander</run_depend>
+  <run_depend>message_runtime</run_depend>
+  <run_depend>joy</run_depend>
 
   <export>
 

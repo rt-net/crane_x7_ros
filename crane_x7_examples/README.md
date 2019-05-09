@@ -54,6 +54,7 @@ roslaunch crane_x7_bringup demo.launch fake_execution:=false port:=/dev/ttyUSB1
 rosrun crane_x7_examples gripper_action_example.py
 ```
 
+---
 
 ### pose_groupstate_example.pyの実行
 
@@ -67,6 +68,8 @@ SRDFファイル[crane_x7_moveit_config/config/crane_x7.srdf](../crane_x7_moveit
 ```sh
 rosrun crane_x7_examples pose_groupstate_example.py
 ```
+
+---
 
 ### crane_x7_pick_and_place_demo.pyの実行
 
@@ -90,6 +93,7 @@ CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 
 動作させると[こちら](https://youtu.be/_8xBgpgMhk8)のような動きになります。
 
+---
 
 ### preset_pid_gain_example.pyの実行
 
@@ -104,3 +108,201 @@ CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 ```sh
 roslaunch crane_x7_examples preset_pid_gain_example.launch
 ```
+
+動作させると[こちら](https://youtu.be/0rBbgNDwm6Y)のような動きになります。
+
+---
+
+### teaching_example.pyの実行
+
+ティーチングのコード例です。X7のPIDゲインを小さくすることでダイレクトティーチングができます。
+
+次のコマンドでノードを起動します。
+
+```sh
+roslaunch crane_x7_examples teaching_example.launch
+```
+
+以下のキー割当を参考に、キーボードから操作してください。
+
+**Teaching Mode**
+
+起動時のモードです。トルクOFF*状態です。
+
+| キー | 機能 |
+----|----
+| s / S | 現在の姿勢を保存 |
+| d / D | これまでに保存した姿勢を削除 |
+| m / M | **Action Mode**へ遷移 |
+| q / Q | シャットダウン |
+
+
+**Action Mode**
+
+Teaching Modeから遷移します。トルクON*状態です。
+
+| キー | 機能 |
+----|----
+| p / P | 保存した姿勢を１つずつ再生 |
+| a / A | 保存した姿勢のすべてを連続再生 |
+| l / L | ループ再生 ON / OFF |
+| m / M | **Teaching Mode**へ遷移 |
+| q / Q | シャットダウン |
+
+- トルクのON / OFFはサーボモータのPIDゲインに小さい値をプリセットすることで実現しています。
+
+動作させると[こちら](https://youtu.be/--5_l1DpQ-0)のような動きになります。
+
+---
+
+### joystick_example.pyの実行
+
+ジョイスティックでX7を動かすコード例です。
+手先の位置・姿勢の変更、グリッパーの開閉、PIDゲインのプリセット、ティーチングができます。
+
+ジョイスティックをPCに接続し、`/dev/input/js0`が存在することを確認してください。
+
+次のコマンドでノードを起動します。
+
+#### 実機を使う場合
+
+```sh
+roslaunch crane_x7_examples joystick_example.launch
+```
+
+#### シミュレータを使う場合
+
+シミュレータを使う場合は、エラーを防ぐため`sim`オプションを追加してください。
+
+```sh
+roslaunch crane_x7_examples joystick_example.launch sim:=true
+```
+
+#### キー割り当ての変更
+
+デフォルトのキー割り当てはこちらです。ジョイスティックは
+[Logicool Wireless Gamepad F710](https://support.logicool.co.jp/ja_jp/product/wireless-gamepad-f710)
+を使っています。
+![key_config](https://github.com/rt-net/crane_x7_ros/blob/images/images/joystick_example_key_config.png "key_config")
+
+[crane_x7_example/launch/joystick_example.launch](./launch/joystick_example.launch)
+のキー番号を編集することで、キー割り当てを変更できます。
+
+```xml
+ <node name="joystick_example" pkg="crane_x7_examples" type="joystick_example.py" required="true" output="screen">
+    <!-- 使用するジョイスティックコントローラに合わせてvalueを変更してください -->
+    <!-- ひとつのボタンに複数の機能を割り当てています -->
+    <param name="button_shutdown_1" value="8" type="int" />
+    <param name="button_shutdown_2" value="9" type="int" />
+
+    <param name="button_name_enable" value="7" type="int" />
+    <param name="button_name_home"  value="8" type="int" />
+
+    <param name="button_preset_enable" value="7" type="int" />
+    <param name="button_preset_no1" value="9" type="int" />
+```
+
+デフォルトのキー番号はこちらです。
+![key_numbers](https://github.com/rt-net/crane_x7_ros/blob/images/images/joystick_example_key_numbers.png "key_numbers")
+
+ジョイスティックのキー番号はトピック`/joy`で確認できます。
+
+```sh
+# ノードを起動する
+roslaunch crane_x7_examples joystick_example.launch sim:=true
+
+# 別のターミナルでコマンドを入力
+rostopic echo /joy
+
+# ジョイスティックのボタンを押す
+header: 
+  seq: 1
+  stamp: 
+    secs: 1549359364
+    nsecs: 214800952
+  frame_id: ''
+axes: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+buttons: [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+---
+```
+
+動作させると[こちら](https://youtu.be/IQci_vb3owM)のような動きになります。
+
+---
+
+### obstacle_avoidance_example.pyの実行
+
+ROSのServiceを使って、障害物の追加と障害物回避をするコード例です。
+
+次のコマンドでノードを起動します。
+
+```sh
+roslaunch crane_x7_examples obstacle_avoidance_example.launch
+```
+
+このサンプルでは目標姿勢と障害物の大きさ・姿勢を定義した[サービスファイル](./srv/ObstacleAvoidance.srv)を使用します。
+
+目標姿勢と障害物の大きさ・姿勢は
+[`crane_x7_examples/scripts/obstacle_client.py`](./scripts/obstacle_client.py)を編集することで変更できます。
+デフォルトでは、直方体の箱を障害物として設定しています。
+
+```python
+    # 障害物を設定
+    obstacle_name = "box"
+    obstacle_size = Vector3(0.28, 0.16, 0.14)
+    obstacle_pose_stamped = PoseStamped()
+    obstacle_pose_stamped.header.frame_id = "/base_link"
+    obstacle_pose_stamped.pose.position.x = 0.35
+    obstacle_pose_stamped.pose.position.z = obstacle_size.z/2.0
+```
+
+安全のため障害物として床を設置しています。
+不要であれば[`crane_x7_examples/scripts/obstacle_avoidance_example.py`](./scripts/obstacle_avoidance_example.py)
+を編集してください。
+
+```python
+    # 安全のため床を障害物として生成する
+    floor_name = "floor"
+    floor_size = (2.0, 2.0, 0.01)
+    floor_pose = PoseStamped()
+    floor_pose.header.frame_id = "/base_link"
+    floor_pose.pose.position.z = -floor_size[2]/2.0
+    scene.add_box(floor_name, floor_pose, floor_size)
+    rospy.sleep(SLEEP_TIME)
+```
+
+moveitが障害物回避のパスを生成できない場合、X7は動作せず、次の目標位置に対するパスを計算します。
+この場合、サーバからの返答は`result=False`となります。
+
+<img src="https://github.com/rt-net/crane_x7_ros/blob/images/images/obstacle_avoidance_1.png" width="400"><img src="https://github.com/rt-net/crane_x7_ros/blob/images/images/obstacle_avoidance_2.png" width="400">
+
+---
+
+### servo_info_example.pyの実行
+
+サーボモータ（joint）の情報を取得するコード例です。
+
+次のコマンドでノードを起動します。
+
+```sh
+rosrun crane_x7_examples servo_info_example.py
+```
+
+このサンプルではグリッパーのモータ`crane_x7_gripper_finger_a_joint`のトピックを取得しています。
+
+実行するとターミナル画面にモータの電流・位置・温度が表示されます。
+
+```sh
+# 表示例
+ current [mA]: 0.0     dxl_position: 2634    temp [deg C]: 42.0  
+ current [mA]: 2.69    dxl_position: 2634    temp [deg C]: 42.0  
+ current [mA]: 0.0     dxl_position: 2634    temp [deg C]: 42.0  
+ current [mA]: 0.0     dxl_position: 2634    temp [deg C]: 42.0  
+ current [mA]: 2.69    dxl_position: 2634    temp [deg C]: 42.0
+ ...
+```
+
+また、電流が一定値を超えるとグリッパーを開く（閉じる）処理を入れてます。
+これにより、手でグリッパーを開く（閉じる）ことができます。
+
+トピックの詳細については、[`crane_x7_control/README.md`](../crane_x7_control/README.md#ネームスペースとトピック)を確認してください。

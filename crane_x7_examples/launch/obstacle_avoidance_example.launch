@@ -1,0 +1,5 @@
+<launch>
+  <node name="obstacle_avoidance_example" pkg="crane_x7_examples" type="obstacle_avoidance_example.py" required="true" output="screen" />
+
+  <node name="obstacle_client" pkg="crane_x7_examples" type="obstacle_client.py" required="true" output="screen" />
+</launch>

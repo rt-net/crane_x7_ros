@@ -5,7 +5,34 @@
   <xacro:property name="SCALE_MM" value="0.001"/>
   <xacro:property name="SCALE_CM" value="0.01"/>
 
-  <xacro:property name="BASE_FIXED_PART_HEIGHT" value="0.005"/>
+  <xacro:property name="NAME_JOINT_BASE" value="crane_x7_shoulder_fixed_part_mount_joint"/>
+  <xacro:property name="NAME_JOINT_1" value="crane_x7_shoulder_fixed_part_pan_joint"/>
+  <xacro:property name="NAME_JOINT_2" value="crane_x7_shoulder_revolute_part_tilt_joint"/>
+  <xacro:property name="NAME_JOINT_3" value="crane_x7_upper_arm_revolute_part_twist_joint"/>
+  <xacro:property name="NAME_JOINT_4" value="crane_x7_upper_arm_revolute_part_rotate_joint"/>
+  <xacro:property name="NAME_JOINT_5" value="crane_x7_lower_arm_fixed_part_joint"/>
+  <xacro:property name="NAME_JOINT_6" value="crane_x7_lower_arm_revolute_part_joint"/>
+  <xacro:property name="NAME_JOINT_7" value="crane_x7_wrist_joint"/>
+
+  <xacro:property name="NAME_LINK_BASE" value="crane_x7_shoulder_fixed_part_link"/>
+  <xacro:property name="NAME_LINK_1" value="crane_x7_shoulder_revolute_part_link"/>
+  <xacro:property name="NAME_LINK_2" value="crane_x7_upper_arm_fixed_part_link"/>
+  <xacro:property name="NAME_LINK_3" value="crane_x7_upper_arm_revolute_part_link"/>
+  <xacro:property name="NAME_LINK_4" value="crane_x7_lower_arm_fixed_part_link"/>
+  <xacro:property name="NAME_LINK_5" value="crane_x7_lower_arm_revolute_part_link"/>
+  <xacro:property name="NAME_LINK_6" value="crane_x7_wrist_link"/>
+
+  <xacro:property name="NAME_JOINT_COVER_2_L" value="crane_x7_upper_arm_fixed_part_joint_cover_l_joint"/>
+  <xacro:property name="NAME_JOINT_COVER_2_R" value="crane_x7_upper_arm_fixed_part_joint_cover_r_joint"/>
+  <xacro:property name="NAME_JOINT_COVER_4_L" value="crane_x7_lower_arm_fixed_part_joint_cover_l_joint"/>
+  <xacro:property name="NAME_JOINT_COVER_4_R" value="crane_x7_lower_arm_fixed_part_joint_cover_r_joint"/>
+
+  <xacro:property name="NAME_LINK_COVER_2_L" value="crane_x7_upper_arm_fixed_part_joint_cover_l_link"/>
+  <xacro:property name="NAME_LINK_COVER_2_R" value="crane_x7_upper_arm_fixed_part_joint_cover_r_link"/>
+  <xacro:property name="NAME_LINK_COVER_4_L" value="crane_x7_lower_arm_fixed_part_joint_cover_l_link"/>
+  <xacro:property name="NAME_LINK_COVER_4_R" value="crane_x7_lower_arm_fixed_part_joint_cover_r_link"/>
+
+  <xacro:property name="NAME_LOGO" value="crane_x7_lower_arm_revolute_part"/>
 
   <!-- Macro for the standard CRANE-X7 configuration -->
   <xacro:macro name="crane_x7_arm"
@@ -26,168 +53,22 @@
               logos_definition
               *origin">
 
-    <!-- Shoulder -->
-    <crane_x7_base
-        parent="${parent}"
-        name="crane_x7_shoulder"
-        fixed_part_color="${base_color}"
-        pan_vlimit="${joints_vlimit}"
-        pan_llimit="${shoulder_llimit}"
-        pan_ulimit="${shoulder_ulimit}"
-        revolute_part_color="${shoulder_color}"
-        tilt_vlimit="${joints_vlimit}"
-        tilt_llimit="-${M_PI/2}"
-        tilt_ulimit="${M_PI/2}"
-        attached_link="crane_x7_upper_arm_fixed_part_link">
-      <xacro:insert_block name="origin"/>
-    </crane_x7_base>
-
-    <!-- Upper arm -->
-    <crane_x7_type_1_rotating_link
-        name="crane_x7_upper_arm"
-        fixed_part_color="${upper_arm_upper_color}"
-        twist_vlimit="${joints_vlimit}"
-        twist_llimit="-${M_PI/2}"
-        twist_ulimit="${M_PI/2}"
-        revolute_part_color="${upper_arm_lower_color}"
-        rotate_vlimit="${joints_vlimit}"
-        rotate_llimit="-2.80718"
-        rotate_ulimit="0.04141"
-        joint_cover_color="${shoulder_joint_cover_color}"
-        attached_link="crane_x7_lower_arm_fixed_part_link"/>
-
-    <!-- Lower arm -->
-    <crane_x7_type_2_rotating_link
-        name="crane_x7_lower_arm"
-        fixed_part_color="${lower_arm_upper_color}"
-        twist_vlimit="${joints_vlimit}"
-        twist_llimit="-2.77343"
-        twist_ulimit="1.51403"
-        revolute_part_color="${lower_arm_lower_color}"
-        rotate_vlimit="${joints_vlimit}"
-        rotate_llimit="-${M_PI/2}"
-        rotate_ulimit="${M_PI/2}"
-        joint_cover_color="${elbow_joint_cover_color}"
-        attached_link="crane_x7_wrist_link"
-        logos_definition="${logos_definition}">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-    </crane_x7_type_2_rotating_link>
-
-    <!-- Wrist -->
-    <crane_x7_wrist
-        name="crane_x7_wrist"
-        color="${wrist_color}"
-        vlimit="${joints_vlimit}"
-        llimit="-2.96365"
-        ulimit="2.97132"
-        attached_link="${end_effector_base_link}">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-    </crane_x7_wrist>
-  </xacro:macro>
-
-
-  <!-- Composite parts -->
-
-  <!-- Base pan/tilt-like joint -->
-  <xacro:macro name="crane_x7_base"
-      params="parent name
-      fixed_part_color pan_vlimit pan_llimit pan_ulimit
-      revolute_part_color tilt_vlimit tilt_llimit tilt_ulimit attached_link *origin">
-    <crane_x7_base_fixed_part
-        parent="${parent}"
-        name="${name}_fixed_part"
-        color="${fixed_part_color}"
-        vlimit="${pan_vlimit}"
-        llimit="${pan_llimit}"
-        ulimit="${pan_ulimit}"
-        attached_link="${name}_revolute_part_link">
-      <xacro:insert_block name="origin"/>
-    </crane_x7_base_fixed_part>
-
-    <crane_x7_base_revolute_part
-        name="${name}_revolute_part"
-        color="${revolute_part_color}"
-        vlimit="${tilt_vlimit}"
-        llimit="${tilt_llimit}"
-        ulimit="${tilt_ulimit}"
-        attached_link="${attached_link}"/>
-  </xacro:macro>
-
-  <!-- Long link with twist capability -->
-  <xacro:macro name="crane_x7_type_1_rotating_link"
-      params="name
-      fixed_part_color twist_vlimit twist_llimit twist_ulimit
-      revolute_part_color rotate_vlimit rotate_llimit rotate_ulimit
-      joint_cover_color attached_link">
-    <crane_x7_rotating_link_1_fixed_part
-        name="${name}_fixed_part"
-        color="${fixed_part_color}"
-        joint_cover_color="${joint_cover_color}"/>
-
-    <crane_x7_rotating_link_1_revolute_part
-        parent="${name}_fixed_part_link"
-        name="${name}_revolute_part"
-        color="${revolute_part_color}"
-        twist_vlimit="${twist_vlimit}"
-        twist_llimit="${twist_llimit}"
-        twist_ulimit="${twist_ulimit}"
-        rotate_vlimit="${rotate_vlimit}"
-        rotate_llimit="${rotate_llimit}"
-        rotate_ulimit="${rotate_ulimit}"
-        attached_link="${attached_link}"/>
-  </xacro:macro>
-
-  <!-- Arm-to-wrist link with twist capability -->
-  <xacro:macro name="crane_x7_type_2_rotating_link"
-      params="name
-      fixed_part_color twist_vlimit twist_llimit twist_ulimit
-      revolute_part_color rotate_vlimit rotate_llimit rotate_ulimit
-      joint_cover_color attached_link logos_definition *origin">
-    <crane_x7_rotating_link_2_fixed_part
-        name="${name}_fixed_part"
-        color="${fixed_part_color}"
-        vlimit="${twist_vlimit}"
-        llimit="${twist_llimit}"
-        ulimit="${twist_ulimit}"
-        joint_cover_color="${joint_cover_color}"
-        attached_link="${name}_revolute_part_link">
-      <xacro:insert_block name="origin"/>
-    </crane_x7_rotating_link_2_fixed_part>
-
-    <crane_x7_rotating_link_2_revolute_part
-        name="${name}_revolute_part"
-        color="${revolute_part_color}"
-        vlimit="${rotate_vlimit}"
-        llimit="${rotate_llimit}"
-        ulimit="${rotate_ulimit}"
-        attached_link="${attached_link}"
-        logos_definition="${logos_definition}">
-      <xacro:insert_block name="origin"/>
-    </crane_x7_rotating_link_2_revolute_part>
-  </xacro:macro>
-
-
-  <!-- Individual parts -->
-
-  <!-- Mountable part of base -->
-  <xacro:macro name="crane_x7_base_fixed_part"
-      params="parent name color vlimit llimit ulimit attached_link *origin">
-    <!-- Fixed joint to the mounting point -->
-    <joint name="${name}_mount_joint" type="fixed">
+    <!-- crane_x7_joint_base -->
+    <joint name="${NAME_JOINT_BASE}" type="fixed">
       <xacro:insert_block name="origin"/>
       <parent link="${parent}"/>
-      <child link="${name}_link"/>
+      <child link="${NAME_LINK_BASE}"/>
     </joint>
 
-    <!-- Main link -->
-    <link name="${name}_link">
+    <!-- crane_x7_link_base -->
+    <link name="${NAME_LINK_BASE}">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/visual/base_fixed_part.stl"
               scale="1 1 1"/>
         </geometry>
-        <material name="${color}"/>
+        <material name="${base_color}"/>
       </visual>
 
       <collision>
@@ -199,36 +80,48 @@
       </collision>
 
       <inertial>
-        <mass value="0.387313"/>
-        <origin xyz="-0.00669 0.000049 0.017868" rpy="0 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
+        <mass value="0.388"/>
+        <origin xyz="-6.73E-03 -1.00E-06 1.79E-02" rpy="0 0 0"/>
+        <inertia ixx="3.25E-04" ixy="1.20E-09" ixz="-4.71E-05"
+          iyy="4.83E-04" iyz="1.95E-08"
+          izz="5.86E-04"/>
       </inertial>
     </link>
 
-    <!-- Pan joint of the shoulder -->
-    <joint name="${name}_pan_joint" type="revolute">
-      <origin xyz="0 0 ${BASE_FIXED_PART_JOINT_Z}" rpy="0 0 0"/>
+    <!-- crane_x7_joint_1 -->
+    <joint name="${NAME_JOINT_1}" type="revolute">
+      <origin xyz="0 0 0.036" rpy="0 0 0"/>
       <axis xyz="0 0 1"/>
-      <limit effort="0.5" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
-      <parent link="${name}_link"/>
-      <child link="${attached_link}"/>
+      <limit effort="10.0" velocity="${joints_vlimit}" lower="${shoulder_llimit}" upper="${shoulder_ulimit}"/>
+      <parent link="${NAME_LINK_BASE}"/>
+      <child link="${NAME_LINK_1}"/>
+      <dynamics damping="0.0" friction="0.0"/>
     </joint>
-  </xacro:macro>
-  <xacro:property name="BASE_FIXED_PART_JOINT_Z" value="0.036"/>
 
-  <!-- Rotated part of base -->
-  <xacro:macro name="crane_x7_base_revolute_part"
-      params="name color vlimit llimit ulimit attached_link">
-    <link name="${name}_link">
+    <!-- For gazebo simulation -->
+    <transmission name="${NAME_JOINT_1}_trans">
+      <provideFeedback>true</provideFeedback>
+      <implicitSpringDamper>0</implicitSpringDamper>
+      <motorTorqueConstant>0.418</motorTorqueConstant>
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${NAME_JOINT_1}">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${NAME_JOINT_1}_motor">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <!-- crane_x7_link_1 -->
+    <link name="${NAME_LINK_1}">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 ${M_PI}"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/visual/base_revolute_part.stl"
               scale="1 1 1"/>
         </geometry>
-        <material name="${color}"/>
+        <material name="${shoulder_color}"/>
       </visual>
 
       <collision>
@@ -240,36 +133,48 @@
       </collision>
 
       <inertial>
-        <mass value="0.235377"/>
-        <origin xyz="0.000013 -0.000407 0.046345" rpy="0 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
+        <mass value="0.253"/>
+        <origin xyz="2.43e-04 -1.05E-04 4.70E-02" rpy="0 0 0"/>
+        <inertia ixx="1.79E-04" ixy="-7.32E-08" ixz="8.89E-07"
+          iyy="1.76E-04" iyz="6.23E-07"
+          izz="8.96E-05"/>
       </inertial>
     </link>
 
-    <!-- Tilt joint of the shoulder -->
-    <joint name="${name}_tilt_joint" type="revolute">
-      <origin xyz="0 0 ${BASE_REVOLUTE_PART_JOINT_Z}" rpy="0 0 0"/>
+    <!-- crane_x7_joint_2 -->
+    <joint name="${NAME_JOINT_2}" type="revolute">
+      <origin xyz="0 0 0.064" rpy="0 0 0"/>
       <axis xyz="0 -1 0"/>
-      <limit effort="0.5" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
-      <parent link="${name}_link"/>
-      <child link="${attached_link}"/>
+      <limit effort="10.0" velocity="${joints_vlimit}" lower="-${M_PI/2}" upper="${M_PI/2}"/>
+      <parent link="${NAME_LINK_1}"/>
+      <child link="${NAME_LINK_2}"/>
+      <dynamics damping="0.0" friction="0.0"/>
     </joint>
-  </xacro:macro>
-  <xacro:property name="BASE_REVOLUTE_PART_JOINT_Z" value="0.064"/>
 
-  <!-- "Fixed" part of long twistable link -->
-  <xacro:macro name="crane_x7_rotating_link_1_fixed_part"
-    params="name color joint_cover_color">
-    <link name="${name}_link">
+    <!-- For gazebo simulation -->
+    <transmission name="${NAME_JOINT_2}_trans">
+      <provideFeedback>true</provideFeedback>
+      <implicitSpringDamper>0</implicitSpringDamper>
+      <motorTorqueConstant>0.418</motorTorqueConstant>
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${NAME_JOINT_2}">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${NAME_JOINT_2}_motor">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <!-- crane_x7_link_2 -->
+    <link name="${NAME_LINK_2}">
       <visual>
         <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/visual/rotating_link_type_1_fixed_part.stl"
               scale="1 1 1"/>
         </geometry>
-        <material name="${color}"/>
+        <material name="${upper_arm_upper_color}"/>
       </visual>
 
       <collision>
@@ -281,53 +186,56 @@
       </collision>
 
       <inertial>
-        <mass value="0.120005"/>
-        <origin xyz="0.000036 0.037855 -0.00018" rpy="${M_PI/2} 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
+        <mass value="0.136"/>
+        <origin xyz="3.10E-05 1.90E-05 3.42E-02" rpy="${M_PI/2} 0 0"/>
+        <inertia ixx="1.68E-04" ixy="2.05E-08" ixz="-4.00E-07"
+          iyy="9.62E-05" iyz="6.24E-08"
+          izz="1.34E-04"/>
       </inertial>
     </link>
 
-    <!-- Joint covers -->
-    <!-- TODO: Once rviz fixes its multi-material display bug, move these into the parent link -->
-    <link name="${name}_joint_cover_l_link">
-      <visual>
-        <origin xyz="0 0 0" rpy="-${M_PI/2} 0 0"/>
-        <geometry>
-          <mesh filename="package://crane_x7_description/meshes/visual/joint_cover.stl"
-              scale="1 1 1"/>
-        </geometry>
-        <material name="${joint_cover_color}"/>
-      </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="-${M_PI/2} 0 0"/>
-        <geometry>
-          <mesh filename="package://crane_x7_description/meshes/collision/joint_cover.stl"
-              scale="1 1 1"/>
-        </geometry>
-      </collision>
-      <inertial>
-        <mass value="0.005"/>
-        <origin xyz="0.000036 0.037855 -0.00018" rpy="${M_PI/2} 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
-      </inertial>
-    </link>
-    <joint name="${name}_joint_cover_l_joint" type="fixed">
-      <parent link="${name}_link"/>
-      <child link="${name}_joint_cover_l_link"/>
+    <!-- crane_x7_joint_cover_2_l -->
+    <joint name="${NAME_JOINT_COVER_2_L}" type="fixed">
+      <parent link="${NAME_LINK_2}"/>
+      <child link="${NAME_LINK_COVER_2_L}"/>
       <origin xyz="0 0.0316 0" rpy="0 0 0"/>
     </joint>
-    <link name="${name}_joint_cover_r_link">
+
+    <!-- crane_x7_link_cover_2_l -->
+    <link name="${NAME_LINK_COVER_2_L}">
+      <visual>
+        <origin xyz="0 0 0" rpy="-${M_PI/2} 0 0"/>
+        <geometry>
+          <mesh filename="package://crane_x7_description/meshes/visual/joint_cover.stl"
+              scale="1 1 1"/>
+        </geometry>
+        <material name="${shoulder_joint_cover_color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="-${M_PI/2} 0 0"/>
+        <geometry>
+          <mesh filename="package://crane_x7_description/meshes/collision/joint_cover.stl"
+              scale="1 1 1"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- crane_x7_joint_cover_2_r -->
+    <joint name="${NAME_JOINT_COVER_2_R}" type="fixed">
+      <parent link="${NAME_LINK_2}"/>
+      <child link="${NAME_LINK_COVER_2_R}"/>
+      <origin xyz="0 -0.0316 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- crane_x7_link_cover_2_r -->
+    <link name="${NAME_LINK_COVER_2_R}">
       <visual>
         <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/visual/joint_cover.stl"
               scale="1 1 1"/>
         </geometry>
-        <material name="${joint_cover_color}"/>
+        <material name="${shoulder_joint_cover_color}"/>
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
@@ -336,46 +244,45 @@
               scale="1 1 1"/>
         </geometry>
       </collision>
-      <inertial>
-        <mass value="0.005"/>
-        <origin xyz="0.000036 0.037855 -0.00018" rpy="${M_PI/2} 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
-      </inertial>
     </link>
-    <joint name="${name}_joint_cover_r_joint" type="fixed">
-      <parent link="${name}_link"/>
-      <child link="${name}_joint_cover_r_link"/>
-      <origin xyz="0 -0.0316 0" rpy="0 0 0"/>
-    </joint>
-  </xacro:macro>
-  <xacro:property name="TYPE_1_FIXED_PART_JOINT_Z" value="0.065"/>
 
-  <!-- Rotating part of long twistable link -->
-  <xacro:macro name="crane_x7_rotating_link_1_revolute_part"
-      params="parent name color twist_vlimit twist_llimit twist_ulimit
-        rotate_vlimit rotate_llimit rotate_ulimit attached_link">
-    <!-- Joint for twisting around long axis -->
-    <joint name="${name}_twist_joint" type="revolute">
-      <origin xyz="0 0 ${TYPE_1_FIXED_PART_JOINT_Z}" rpy="0 0 0"/>
+    <!-- crane_x7_joint_3 -->
+    <joint name="${NAME_JOINT_3}" type="revolute">
+      <origin xyz="0 0 0.065" rpy="0 0 0"/>
       <axis xyz="0 0 1"/>
-      <limit effort="0.5"
-          velocity="${twist_vlimit}"
-          lower="${twist_llimit}"
-          upper="${twist_ulimit}"/>
-      <parent link="${parent}"/>
-      <child link="${name}_link"/>
+      <limit effort="4.0"
+          velocity="${joints_vlimit}"
+          lower="-${M_PI/2}"
+          upper="${M_PI/2}"/>
+      <parent link="${NAME_LINK_2}"/>
+      <child link="${NAME_LINK_3}"/>
+      <dynamics damping="0.0" friction="0.0"/>
     </joint>
 
-    <link name="${name}_link">
+    <!-- For gazebo simulation -->
+    <transmission name="${NAME_JOINT_3}_trans">
+      <provideFeedback>true</provideFeedback>
+      <implicitSpringDamper>0</implicitSpringDamper>
+      <motorTorqueConstant>0.418</motorTorqueConstant>
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${NAME_JOINT_3}">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${NAME_JOINT_3}_motor">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <!-- crane_x7_link_3 -->
+    <link name="${NAME_LINK_3}">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/visual/rotating_link_type_1_revolute_part.stl"
               scale="1 1 1"/>
         </geometry>
-        <material name="${color}"/>
+        <material name="${upper_arm_lower_color}"/>
       </visual>
 
       <collision>
@@ -387,39 +294,51 @@
       </collision>
 
       <inertial>
-        <mass value="0.340878"/>
-        <origin xyz="-0.011533 0.000021 0.083707" rpy="${M_PI/2} 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
+        <mass value="0.321"/>
+        <origin xyz="-1.37E-02 -8.10E-05 9.52E-02" rpy="0 0 0"/>
+        <inertia ixx="1.82E-03" ixy="7.54E-07" ixz="-3.73E-05"
+          iyy="1.88E-03" iyz="4.15E-06"
+          izz="1.59E-04"/>
       </inertial>
     </link>
 
-    <!-- Joint for rotating the attached part -->
-    <joint name="${name}_rotate_joint" type="revolute">
-      <origin xyz="0 0 ${TYPE_1_REVOLUTE_PART_JOINT_Z}" rpy="0 0 0"/>
+    <!-- crane_x7_joint_4 -->
+    <joint name="${NAME_JOINT_4}" type="revolute">
+      <origin xyz="0 0 0.185" rpy="0 0 0"/>
       <axis xyz="0 -1 0"/>
-      <limit effort="0.5"
-          velocity="${rotate_vlimit}"
-          lower="${rotate_llimit}"
-          upper="${rotate_ulimit}"/>
-      <parent link="${name}_link"/>
-      <child link="${attached_link}"/>
+      <limit effort="4.0"
+          velocity="${joints_vlimit}"
+          lower="-2.80718"
+          upper="0.04141"/>
+      <parent link="${NAME_LINK_3}"/>
+      <child link="${NAME_LINK_4}"/>
+      <dynamics damping="0.0" friction="0.0"/>
     </joint>
-  </xacro:macro>
-  <xacro:property name="TYPE_1_REVOLUTE_PART_JOINT_Z" value="0.185"/>
 
-  <!-- "Fixed" part of arm-to-wrist twistable link -->
-  <xacro:macro name="crane_x7_rotating_link_2_fixed_part"
-      params="name color vlimit llimit ulimit joint_cover_color attached_link *origin">
-    <link name="${name}_link">
+    <!-- For gazebo simulation -->
+    <transmission name="${NAME_JOINT_4}_trans">
+      <provideFeedback>true</provideFeedback>
+      <implicitSpringDamper>0</implicitSpringDamper>
+      <motorTorqueConstant>0.418</motorTorqueConstant>
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${NAME_JOINT_4}">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${NAME_JOINT_4}_motor">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <!-- crane_x7_link_4 -->
+    <link name="${NAME_LINK_4}">
       <visual>
         <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/visual/rotating_link_type_2_fixed_part.stl"
               scale="1 1 1"/>
         </geometry>
-        <material name="${color}"/>
+        <material name="${lower_arm_upper_color}"/>
       </visual>
 
       <collision>
@@ -431,61 +350,56 @@
       </collision>
 
       <inertial>
-        <mass value="0.230634"/>
-        <origin xyz="-0.008641 0.083071 -0.000086" rpy="${M_PI} 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
+        <mass value="0.222"/>
+        <origin xyz="-9.39E-03 6.40E-05 8.04E-02" rpy="${M_PI/2} 0 0"/>
+        <inertia ixx="4.89E-04" ixy="-3.90E-06" ixz="8.29E-08"
+          iyy="1.14E-04" iyz="2.82E-06"
+          izz="5.03E-04"/>
       </inertial>
     </link>
 
-    <joint name="${name}_joint" type="revolute">
-      <origin xyz="0 0 ${TYPE_2_FIXED_PART_JOINT_Z}" rpy="0 0 0"/>
-      <axis xyz="0 0 1"/>
-      <limit effort="0.5" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
-      <parent link="${name}_link"/>
-      <child link="${attached_link}"/>
-    </joint>
-
-    <!-- Joint covers -->
-    <!-- TODO: Once rviz fixes its multi-material display bug, move these into the parent link -->
-    <link name="${name}_joint_cover_l_link">
-      <visual>
-        <origin xyz="0 0 0" rpy="-${M_PI/2} 0 0"/>
-        <geometry>
-          <mesh filename="package://crane_x7_description/meshes/visual/joint_cover.stl"
-              scale="1 1 1"/>
-        </geometry>
-        <material name="${joint_cover_color}"/>
-      </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="-${M_PI/2} 0 0"/>
-        <geometry>
-          <mesh filename="package://crane_x7_description/meshes/collision/joint_cover.stl"
-              scale="1 1 1"/>
-        </geometry>
-      </collision>
-      <inertial>
-        <mass value="0.005"/>
-        <origin xyz="0.000036 0.037855 -0.00018" rpy="${M_PI/2} 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
-      </inertial>
-    </link>
-    <joint name="${name}_joint_cover_l_joint" type="fixed">
-      <parent link="${name}_link"/>
-      <child link="${name}_joint_cover_l_link"/>
+    <!-- crane_x7_joint_cover_4_l -->
+    <joint name="${NAME_JOINT_COVER_4_L}" type="fixed">
+      <parent link="${NAME_LINK_4}"/>
+      <child link="${NAME_LINK_COVER_4_L}"/>
       <origin xyz="0 0.025 0" rpy="0 0 0"/>
     </joint>
-    <link name="${name}_joint_cover_r_link">
+
+    <!-- crane_x7_link_cover_4_l -->
+    <link name="${NAME_LINK_COVER_4_L}">
+      <visual>
+        <origin xyz="0 0 0" rpy="-${M_PI/2} 0 0"/>
+        <geometry>
+          <mesh filename="package://crane_x7_description/meshes/visual/joint_cover.stl"
+              scale="1 1 1"/>
+        </geometry>
+        <material name="${elbow_joint_cover_color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="-${M_PI/2} 0 0"/>
+        <geometry>
+          <mesh filename="package://crane_x7_description/meshes/collision/joint_cover.stl"
+              scale="1 1 1"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- crane_x7_joint_cover_4_r -->
+    <joint name="${NAME_JOINT_COVER_4_R}" type="fixed">
+      <parent link="${NAME_LINK_4}"/>
+      <child link="${NAME_LINK_COVER_4_R}"/>
+      <origin xyz="0 -0.025 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- crane_x7_link_cover_4_r -->
+    <link name="${NAME_LINK_COVER_4_R}">
       <visual>
         <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/visual/joint_cover.stl"
               scale="1 1 1"/>
         </geometry>
-        <material name="${joint_cover_color}"/>
+        <material name="${elbow_joint_cover_color}"/>
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
@@ -494,33 +408,42 @@
               scale="1 1 1"/>
         </geometry>
       </collision>
-      <inertial>
-        <mass value="0.005"/>
-        <origin xyz="0.000036 0.037855 -0.00018" rpy="${M_PI/2} 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
-      </inertial>
     </link>
-    <joint name="${name}_joint_cover_r_joint" type="fixed">
-      <parent link="${name}_link"/>
-      <child link="${name}_joint_cover_r_link"/>
-      <origin xyz="0 -0.025 0" rpy="0 0 0"/>
-    </joint>
-  </xacro:macro>
-  <xacro:property name="TYPE_2_FIXED_PART_JOINT_Z" value="0.121"/>
 
-  <!-- Rotating part of arm-to-wrist twistable link -->
-  <xacro:macro name="crane_x7_rotating_link_2_revolute_part"
-      params="name color vlimit llimit ulimit attached_link logos_definition *origin">
-    <link name="${name}_link">
+    <!-- crane_x7_joint_5 -->
+    <joint name="${NAME_JOINT_5}" type="revolute">
+      <origin xyz="0 0 0.121" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
+      <limit effort="4.0" velocity="${joints_vlimit}" lower="-2.77343" upper="1.51403"/>
+      <parent link="${NAME_LINK_4}"/>
+      <child link="${NAME_LINK_5}"/>
+      <dynamics damping="0.0" friction="0.0"/>
+    </joint>
+
+    <!-- For gazebo simulation -->
+    <transmission name="${NAME_JOINT_5}_trans">
+      <provideFeedback>true</provideFeedback>
+      <implicitSpringDamper>0</implicitSpringDamper>
+      <motorTorqueConstant>0.418</motorTorqueConstant>
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${NAME_JOINT_5}">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${NAME_JOINT_5}_motor">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <!-- crane_x7_link_5 -->
+    <link name="${NAME_LINK_5}">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/visual/rotating_link_type_2_revolute_part.stl"
               scale="1 1 1"/>
         </geometry>
-        <material name="${color}"/>
+        <material name="${lower_arm_lower_color}"/>
       </visual>
 
       <collision>
@@ -532,40 +455,54 @@
       </collision>
 
       <inertial>
-        <mass value="0.192709"/>
-        <origin xyz="-0.000024 0.001285 0.063837" rpy="0 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
+        <mass value="0.207"/>
+        <origin xyz="-8.40E-05 4.62E-04 6.37E-02" rpy="0 0 0"/>
+        <inertia ixx="2.90E-04" ixy="1.00E-07" ixz="-4.77E-07"
+          iyy="2.57E-04" iyz="-1.69E-05"
+          izz="8.75E-05"/>
       </inertial>
     </link>
 
-    <joint name="${name}_joint" type="revolute">
-      <origin xyz="0 0 ${TYPE_2_REVOLUTE_PART_JOINT_Z}" rpy="0 0 0"/>
+    <!-- logo -->
+    <xacro:include filename="${logos_definition}"/>
+    <crane_x7_logos 
+      parent="${NAME_LINK_5}"
+      name="${NAME_LOGO}"/>
+
+    <!-- crane_x7_joint_6 -->
+    <joint name="${NAME_JOINT_6}" type="revolute">
+      <origin xyz="0 0 0.129" rpy="0 0 0"/>
       <axis xyz="0 -1 0"/>
-      <limit effort="0.5" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
-      <parent link="${name}_link"/>
-      <child link="${attached_link}"/>
+      <limit effort="4.0" velocity="${joints_vlimit}" lower="-${M_PI/2}" upper="${M_PI/2}"/>
+      <parent link="${NAME_LINK_5}"/>
+      <child link="${NAME_LINK_6}"/>
+      <dynamics damping="0.0" friction="0.0"/>
     </joint>
 
-    <!-- Logos -->
-    <!-- TODO: Once rviz fixes its multi-material display bug, move these into the parent link -->
-    <xacro:include filename="${logos_definition}"/>
-    <crane_x7_logos parent="${name}_link"/>
-  </xacro:macro>
-  <xacro:property name="TYPE_2_REVOLUTE_PART_JOINT_Z" value="0.129"/>
+    <!-- For gazebo simulation -->
+    <transmission name="${NAME_JOINT_6}_trans">
+      <provideFeedback>true</provideFeedback>
+      <implicitSpringDamper>0</implicitSpringDamper>
+      <motorTorqueConstant>0.418</motorTorqueConstant>
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${NAME_JOINT_6}">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${NAME_JOINT_6}_motor">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
 
-  <!-- Wrist (end effector attachment link) -->
-  <xacro:macro name="crane_x7_wrist"
-      params="name color vlimit llimit ulimit attached_link *origin">
-    <link name="${name}_link">
+    <!-- crane_x7_link_6 -->
+    <link name="${NAME_LINK_6}">
       <visual>
         <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
         <geometry>
           <mesh filename="package://crane_x7_description/meshes/visual/wrist.stl"
               scale="1 1 1"/>
         </geometry>
-        <material name="${color}"/>
+        <material name="${wrist_color}"/>
       </visual>
 
       <collision>
@@ -577,21 +514,81 @@
       </collision>
 
       <inertial>
-        <mass value="0.130549"/>
-        <origin xyz="0.005713 -0.003707 0.000781" rpy="${M_PI/2} 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
+        <mass value="0.14"/>
+        <origin xyz="6.10E-03 8.26E-04 -3.55E-03" rpy="${M_PI/2} 0 0"/>
+        <inertia ixx="4.01E-05" ixy="-2.91E-06" ixz="6.39E-07"
+          iyy="6.13E-05" iyz="-4.90E-07"
+          izz="7.35E-05"/>
       </inertial>
     </link>
 
-    <joint name="${name}_joint" type="revolute">
-      <origin xyz="0 0 ${WRIST_JOINT_Z}" rpy="0 0 0"/>
+    <!-- crane_x7_joint_7 -->
+    <joint name="${NAME_JOINT_7}" type="revolute">
+      <origin xyz="0 0 0.019" rpy="0 0 0"/>
       <axis xyz="0 0 1"/>
-      <limit effort="0.5" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
-      <parent link="${name}_link"/>
-      <child link="${attached_link}"/>
+      <limit effort="4.0" velocity="${joints_vlimit}" lower="-2.96365" upper="2.97132"/>
+      <parent link="${NAME_LINK_6}"/>
+      <child link="${end_effector_base_link}"/>
+      <dynamics damping="0.0" friction="0.0"/>
     </joint>
+
+    <!-- For gazebo simulation -->
+    <transmission name="${NAME_JOINT_7}_trans">
+      <provideFeedback>true</provideFeedback>
+      <implicitSpringDamper>0</implicitSpringDamper>
+      <motorTorqueConstant>0.418</motorTorqueConstant>
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${NAME_JOINT_7}">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${NAME_JOINT_7}_motor">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <gazebo>
+      <plugin name='gazebo_ros_control' filename='libgazebo_ros_control.so'>
+        <robotNamespace>/crane_x7</robotNamespace>
+        <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+        <legacyModeNS>true</legacyModeNS>
+      </plugin>
+    </gazebo>
+
+    <gazebo reference="${NAME_LINK_BASE}">
+      <material>Gazebo/Red</material>
+    </gazebo>
+    <gazebo reference="${NAME_LINK_1}">
+      <material>Gazebo/White</material>
+    </gazebo>
+    <gazebo reference="${NAME_LINK_2}">
+      <material>Gazebo/White</material>
+    </gazebo>
+    <gazebo reference="${NAME_LINK_3}">
+      <material>Gazebo/White</material>
+    </gazebo>
+    <gazebo reference="${NAME_LINK_4}">
+      <material>Gazebo/White</material>
+    </gazebo>
+    <gazebo reference="${NAME_LINK_5}">
+      <material>Gazebo/White</material>
+    </gazebo>
+    <gazebo reference="${NAME_LINK_6}">
+      <material>Gazebo/White</material>
+    </gazebo>
+    <gazebo reference="${NAME_LINK_COVER_2_L}">
+      <material>Gazebo/Red</material>
+    </gazebo>
+    <gazebo reference="${NAME_LINK_COVER_2_R}">
+      <material>Gazebo/Red</material>
+    </gazebo>
+    <gazebo reference="${NAME_LINK_COVER_4_L}">
+      <material>Gazebo/Red</material>
+    </gazebo>
+    <gazebo reference="${NAME_LINK_COVER_4_R}">
+      <material>Gazebo/Red</material>
+    </gazebo>
+
   </xacro:macro>
-  <xacro:property name="WRIST_JOINT_Z" value="0.019"/>
+
 </robot>

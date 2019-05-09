@@ -13,6 +13,14 @@
   <!-- Link to provide the location reference for the arm -->
   <link name="base_link"/>
 
+  <!-- Used for fixing robot to Gazebo 'base_link' -->
+  <link name="world"/>
+
+  <joint name="base_link_to_world_joint" type="fixed">
+    <parent link="world"/>
+    <child link="base_link"/>
+  </joint>
+
   <!-- Use the crane_x7 macro to configure a Crane X7 arm with desired joint
        velocities limit and lower/upper limits for the first joint. This
        allows accessing different operational areas, e.g. left-handed vs.

@@ -1,0 +1,11 @@
+gazebo_ros_control:
+  pid_gains:
+    crane_x7_shoulder_fixed_part_pan_joint:         { p: 100.0,  d: 0.0, i: 0.0 }
+    crane_x7_shoulder_revolute_part_tilt_joint:     { p: 100.0,  d: 0.0, i: 0.0 }
+    crane_x7_upper_arm_revolute_part_twist_joint:   { p: 100.0,  d: 0.0, i: 0.0 }
+    crane_x7_upper_arm_revolute_part_rotate_joint:  { p: 100.0,  d: 0.0, i: 0.0 }
+    crane_x7_lower_arm_fixed_part_joint:            { p: 100.0,  d: 0.0, i: 0.0 }
+    crane_x7_lower_arm_revolute_part_joint:         { p: 100.0,  d: 0.0, i: 0.0 }
+    crane_x7_wrist_joint:                           { p: 100.0,  d: 0.0, i: 0.0 }
+    crane_x7_gripper_finger_a_joint:                { p: 100.0,  d: 0.0, i: 0.0 }
+    crane_x7_gripper_finger_b_joint:                { p: 100.0,  d: 0.0, i: 0.0 }

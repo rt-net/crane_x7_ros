@@ -1,0 +1,5 @@
+<launch>
+  <node name="preset_reconfigure" pkg="crane_x7_control" type="preset_reconfigure.py" required="true" />
+
+  <node name="teaching_example" pkg="crane_x7_examples" type="teaching_example.py" required="true" output="screen" />
+</launch>

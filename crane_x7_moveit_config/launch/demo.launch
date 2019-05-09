@@ -1,5 +1,8 @@
 <launch>
 
+  <arg name="use_gazebo" default="false" />
+  <arg name="load_robot_description" default="true" />
+
   <!-- By default, we do not start a database (it can be large) -->
   <arg name="db" default="false" />
   <!-- Allow user to specify database location -->
@@ -26,7 +29,7 @@
 
   <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
   <include file="$(find crane_x7_moveit_config)/launch/planning_context.launch">
-    <arg name="load_robot_description" value="true"/>
+    <arg name="load_robot_description" value="$(arg load_robot_description)"/>
   </include>
 
   <!-- If needed, broadcast static tf for robot root -->
@@ -41,6 +44,7 @@
   
   <!-- Given the published joint states, publish tf for the robot links -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" if="$(arg fake_execution)"/>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" if="$(arg use_gazebo)"/>
 
   <!-- Run the main MoveIt executable without trajectory execution (we do not have controllers configured by default) -->
   <include file="$(find crane_x7_moveit_config)/launch/move_group.launch">
@@ -49,6 +53,7 @@
     <arg name="info" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
     <arg name="port" value="$(arg port)" />
+    <arg name="use_gazebo" value="$(arg use_gazebo)"/>
   </include>
 
   <!-- Run Rviz and load the default config to see the state of the move_group node -->

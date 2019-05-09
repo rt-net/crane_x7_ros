@@ -1,5 +1,7 @@
 <launch>
 
+  <arg name="use_gazebo" default="false" />
+
   <include file="$(find crane_x7_moveit_config)/launch/planning_context.launch" />
 
   <!-- GDB Debug Option -->
@@ -37,10 +39,12 @@
     <arg name="moveit_controller_manager" value="fake" if="$(arg fake_execution)"/>
   </include>
 
-  <!-- If fake==false, launch X7 controller -->
-  <include file="$(find crane_x7_control)/launch/crane_x7_control.launch" unless="$(arg fake_execution)">
-    <arg name="port" value="$(arg port)" />
-  </include>
+  <group unless="$(arg use_gazebo)">
+    <!-- If fake==false, launch X7 controller -->
+    <include file="$(find crane_x7_control)/launch/crane_x7_control.launch" unless="$(arg fake_execution)">
+      <arg name="port" value="$(arg port)" />
+    </include>
+  </group>
 
   <!-- Sensors Functionality -->
   <include ns="move_group" file="$(find crane_x7_moveit_config)/launch/sensor_manager.launch.xml" if="$(arg allow_trajectory_execution)">
