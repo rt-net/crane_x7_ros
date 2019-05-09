@@ -36,6 +36,10 @@ ROS Wikiはこちらです。
 
   ```bash
   cd ~/catkin_ws/src
+  
+  # package for crane_x7_gazebo
+  git clone https://github.com/roboticsgroup/roboticsgroup_gazebo_plugins.git
+  
   rosdep install -r -y --from-paths crane_x7_ros
   ```
 
@@ -97,6 +101,17 @@ CRANE-X7の起動に必要なlaunchファイルをまとめたパッケージで
 
 `crane_x7_examples` の使い方については[./crane_x7_examples/README.md](./crane_x7_examples/README.md)を参照してください。
 
+### crane_x7_gazebo
+
+GazeboでCRANE-X7のシミュレーションを行うパッケージです。
+
+次のコマンドで起動します。実機との接続やcrane_x7_bringupの実行は必要ありません。
+
+`roslaunch crane_x7_gazebo crane_x7_with_table.launch`
+
+![crane_x7_gazebo](https://github.com/rt-net/crane_x7_ros/blob/images/images/crane_x7_gazebo.png "crane_x7_gazebo")
+
+---
 
 ### 知的財産権について
 
