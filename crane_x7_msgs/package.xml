@@ -4,8 +4,10 @@
   <version>0.0.1</version>
   <description>The crane_x7_msgs package</description>
 
-  <maintainer email="nomura@rt-net.jp">nomura</maintainer>
-  <license>BSD</license>
+  <maintainer email="shop@rt-net.jp">RT Corporation</maintainer>
+  <author email="nomura@rt-net.jp">Hiroyuki Nomura</author>
+
+  <license>NON-COMMERCIAL LICENSE AGREEMENT</license>
 
   <build_depend>message_generation</build_depend>
   <build_export_depend>message_generation</build_export_depend>

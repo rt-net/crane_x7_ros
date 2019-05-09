@@ -1,0 +1,28 @@
+<package>
+  <name>crane_x7</name>
+  <version>0.0.1</version>
+  <description>
+    ROS package suite of CRANE-X7
+  </description>
+  <maintainer email="shop@rt-net.jp">RT Corporation</maintainer>
+  <author email="nomura@rt-net.jp">Hiroyuki Nomura</author>
+  <author email="geoffrey.biggs@aist.go.jp">Geoffrey Biggs</author>
+  <author email="tiryoh@gmail.com">Daisuke Sato</author>
+
+  <license>NON-COMMERCIAL LICENSE AGREEMENT</license>
+
+  <url type="website">http://wiki.ros.org/crane_x7</url>
+  <url type="bugtracker">https://github.com/rt-net/crane_x7_ros/issues</url>
+  <url type="repository">https://github.com/rt-net/crane_x7_ros</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <run_depend>crane_x7_control</run_depend>
+  <run_depend>crane_x7_description</run_depend>
+  <run_depend>crane_x7_examples</run_depend>
+  <run_depend>crane_x7_moveit_config</run_depend>
+  <run_depend>crane_x7_msgs</run_depend>
+
+  <export>
+    <metapackage/>
+  </export>
+</package>

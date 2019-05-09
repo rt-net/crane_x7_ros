@@ -25,21 +25,37 @@
       </collision>
 
       <inertial>
-        <mass value="0.119807"/>
-        <origin xyz="0.000425 -0.000896 0.018691" rpy="0 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
+        <mass value="0.121"/>
+        <origin xyz="1.08E-04 -1.03E-03 2.08E-02" rpy="0 0 0"/>
+        <inertia ixx="3.20E-05" ixy="-9.45E-08" ixz="2.61E-07"
+          iyy="4.14E-05" iyz="3.88E-07"
+          izz="4.29E-05"/>
       </inertial>
     </link>
 
     <joint name="${name}_finger_a_joint" type="revolute">
       <origin xyz="-0.012 0.0 0.024" rpy="0 0 0"/>
       <axis xyz="0 -1 0"/>
-      <limit effort="0.5" velocity="${vlimit}" lower="0.0046" upper="1.62601"/>
+      <limit effort="4.0" velocity="${vlimit}" lower="0.0046" upper="1.62601"/>
       <parent link="${name}_base_link"/>
       <child link="${name}_finger_a_link"/>
+      <dynamics damping="0.0" friction="0.8"/>
     </joint>
+
+    <!-- for gazebo -->
+    <transmission name="${name}_finger_a_joint_trans">
+      <provideFeedback>true</provideFeedback>
+      <implicitSpringDamper>0</implicitSpringDamper>
+      <motorTorqueConstant>0.418</motorTorqueConstant>
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${name}_finger_a_joint">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${name}_finger_a_joint_motor">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
 
     <link name="${name}_finger_a_link">
       <visual>
@@ -60,21 +76,22 @@
       </collision>
 
       <inertial>
-        <mass value="0.015617"/>
-        <origin xyz="-0.002987 0.030318 0.003073" rpy="${M_PI/2} 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
+        <mass value="0.0158"/>
+        <origin xyz="-2.65E-03 3.54E-03 2.69E-02" rpy="${M_PI/2} 0 0"/>
+        <inertia ixx="1.01E-05" ixy="-1.97E-07" ixz="-9.89E-08"
+        iyy="4.95E-06" iyz="5.37E-07"
+        izz="6.24E-06"/>
       </inertial>
     </link>
 
     <joint name="${name}_finger_b_joint" type="revolute">
       <origin xyz="0.012 0.0 0.024" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
-      <limit effort="0.5" velocity="${vlimit}" lower="0.0046" upper="1.62601"/>
+      <limit effort="4.0" velocity="${vlimit}" lower="0.0046" upper="1.62601"/>
       <parent link="${name}_base_link"/>
       <child link="${name}_finger_b_link"/>
       <mimic joint="${name}_finger_a_joint"/>
+      <dynamics damping="0.0" friction="0.8"/>
     </joint>
 
     <link name="${name}_finger_b_link">
@@ -96,12 +113,32 @@
       </collision>
 
       <inertial>
-        <mass value="0.014417"/>
-        <origin xyz="0.003058 0.031215 0.002548" rpy="${M_PI/2} 0 0"/>
-        <inertia ixx="1" ixy="0.0" ixz="0.0"
-          iyy="1" iyz="0.0"
-          izz="1"/>
+        <mass value="0.0139"/>
+        <origin xyz="3.01E-03 2.85E-03 3.09E-02" rpy="${M_PI/2} 0 0"/>
+        <inertia ixx="7.48E-06" ixy="3.61E-07" ixz="6.34E-08"
+        iyy="4.09E-06" iyz="2.28E-07"
+        izz="4.37E-06"/>
       </inertial>
     </link>
+
+    <!-- For gazebo simulation -->
+    <gazebo>
+      <plugin name="crane_x7_gripper_mimic_joint" filename="libroboticsgroup_gazebo_mimic_joint_plugin.so">
+        <joint>${name}_finger_a_joint</joint>
+        <mimicJoint>${name}_finger_b_joint</mimicJoint>
+        <multiplier>1</multiplier>
+      </plugin>
+    </gazebo>
+
+    <gazebo reference="${name}_base_link">
+      <material>Gazebo/Red</material>
+    </gazebo>
+    <gazebo reference="${name}_finger_a_link">
+      <material>Gazebo/Red</material>
+    </gazebo>
+    <gazebo reference="${name}_finger_b_link">
+      <material>Gazebo/Red</material>
+    </gazebo>
+
   </xacro:macro>
 </robot>

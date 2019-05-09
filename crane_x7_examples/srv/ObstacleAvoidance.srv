@@ -1,0 +1,11 @@
+# target pose for the arm
+geometry_msgs/Pose          start_pose
+geometry_msgs/Pose          goal_pose
+
+# the obstacle shape is BOX
+bool                        obstacle_enable
+geometry_msgs/Vector3       obstacle_size
+geometry_msgs/PoseStamped   obstacle_pose_stamped
+string                      obstacle_name
+---
+bool                        result

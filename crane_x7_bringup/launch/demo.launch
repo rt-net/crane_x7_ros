@@ -1,0 +1,36 @@
+<launch>
+
+  <!-- By default, we do not start a database (it can be large) -->
+  <arg name="db" default="false" />
+  <!-- Allow user to specify database location -->
+  <arg name="db_path" default="$(find crane_x7_moveit_config)/default_warehouse_mongo_db" />
+
+  <!-- By default, we are not in debug mode -->
+  <arg name="debug" default="false" />
+
+  <!-- Allow user to turn fake_execution on and off -->
+  <arg name="fake_execution" default="true" />
+
+  <!-- USB port name for dynamixel_port -->
+  <arg name="port" default="/dev/ttyUSB0" />
+
+  <!--
+  By default, hide joint_state_publisher's GUI
+
+  MoveIt!'s "demo" mode replaces the real robot driver with the joint_state_publisher.
+  The latter one maintains and publishes the current joint configuration of the simulated robot.
+  It also provides a GUI to move the simulated robot around "manually".
+  This corresponds to moving around the real robot without the use of MoveIt.
+  -->
+  <arg name="use_gui" default="false" />
+
+  <include file="$(find crane_x7_moveit_config)/launch/demo.launch">
+    <arg name="db" default="$(arg db)" />
+    <arg name="db_path" default="$(arg db_path)" />
+    <arg name="debug" default="$(arg debug)" />
+    <arg name="fake_execution" default="$(arg fake_execution)" />
+    <arg name="use_gui" default="$(arg use_gui)" />
+    <arg name="port" value="$(arg port)"/>
+  </include>
+
+</launch>

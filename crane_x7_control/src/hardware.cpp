@@ -218,9 +218,12 @@ int main( int argc, char* argv[] )
     ros::init( argc, argv, ros::this_node::getName(), ros::init_options::NoSigintHandler );
     ros::NodeHandle nh;
     ros::NodeHandle nhPrivate("~");
+    std::string config_ns_str;
+    nhPrivate.getParam("config_ns", config_ns_str);
+    ros::NodeHandle nhConfig(config_ns_str);
     signal(SIGINT, SigintHandler);
 
-    CONTROL_SETTING setting( nhPrivate );
+    CONTROL_SETTING setting( nhConfig );
     if( !setting.load() ){
         return -1;
     }
@@ -281,7 +284,10 @@ int main( int argc, char* argv[] )
             crane_x7.set_gain( gain_data.dxl_id, gain_data.gain );
             set_gain_request.pop();
         }
-        while( set_joint_param_request.size() > 0 ){
+
+        // Dynamixelとの通信タイムアウトを防ぐため、
+        // write_joint_param()は1制御ループで1回のみ実行する
+        if( set_joint_param_request.size() > 0 ){
             write_joint_param( crane_x7, set_joint_param_request.front() );
             set_joint_param_request.pop();
         }

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package>
+  <name>crane_x7_bringup</name>
+  <version>0.0.0</version>
+  <description>The CRANE-X7 bringup package</description>
+
+  <maintainer email="shop@rt-net.jp">RT Corporation</maintainer>
+  <author email="tiryoh@gmail.com">Daisuke Sato</author>
+
+  <license>NON-COMMERCIAL LICENSE AGREEMENT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>crane_x7_moveit_config</build_depend>
+  <run_depend>crane_x7_moveit_config</run_depend>
+  <run_depend>moveit_commander</run_depend>
+
+   <export>
+
+  </export>
+</package>
