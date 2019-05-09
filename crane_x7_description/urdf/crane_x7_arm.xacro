@@ -125,10 +125,20 @@
       </visual>
 
       <collision>
-        <origin xyz="0 0 0" rpy="0 0 ${M_PI}"/>
+        <!--<origin xyz="0 0 0" rpy="0 0 ${M_PI}"/>-->
+        <!--<geometry>-->
+          <!--<mesh filename="package://crane_x7_description/meshes/collision/base_revolute_part.stl"-->
+              <!--scale="1 1 1"/>-->
+        <!--</geometry>-->
+        <origin xyz="0 0 0.0296" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://crane_x7_description/meshes/collision/base_revolute_part.stl"
-              scale="1 1 1"/>
+          <cylinder radius="0.0334" length="0.0295"/>
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="0 0 0.064" rpy="${M_PI/2} 0 0"/>
+        <geometry>
+          <cylinder radius="0.034" length="0.0491"/>
         </geometry>
       </collision>
 
@@ -211,13 +221,6 @@
         </geometry>
         <material name="${shoulder_joint_cover_color}"/>
       </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="-${M_PI/2} 0 0"/>
-        <geometry>
-          <mesh filename="package://crane_x7_description/meshes/collision/joint_cover.stl"
-              scale="1 1 1"/>
-        </geometry>
-      </collision>
     </link>
 
     <!-- crane_x7_joint_cover_2_r -->
@@ -237,13 +240,6 @@
         </geometry>
         <material name="${shoulder_joint_cover_color}"/>
       </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
-        <geometry>
-          <mesh filename="package://crane_x7_description/meshes/collision/joint_cover.stl"
-              scale="1 1 1"/>
-        </geometry>
-      </collision>
     </link>
 
     <!-- crane_x7_joint_3 -->
@@ -375,13 +371,6 @@
         </geometry>
         <material name="${elbow_joint_cover_color}"/>
       </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="-${M_PI/2} 0 0"/>
-        <geometry>
-          <mesh filename="package://crane_x7_description/meshes/collision/joint_cover.stl"
-              scale="1 1 1"/>
-        </geometry>
-      </collision>
     </link>
 
     <!-- crane_x7_joint_cover_4_r -->
@@ -401,13 +390,6 @@
         </geometry>
         <material name="${elbow_joint_cover_color}"/>
       </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
-        <geometry>
-          <mesh filename="package://crane_x7_description/meshes/collision/joint_cover.stl"
-              scale="1 1 1"/>
-        </geometry>
-      </collision>
     </link>
 
     <!-- crane_x7_joint_5 -->
