@@ -40,6 +40,7 @@
               shoulder_llimit
               shoulder_ulimit
               logos_definition
+              use_effort_gripper
               *origin">
 
     <!-- Mounting plate
@@ -75,6 +76,7 @@
     <crane_x7_wide_two_finger_gripper
         name="crane_x7_gripper"
         color="${hand_color}"
-        vlimit="${joints_vlimit}"/>
+        vlimit="${joints_vlimit}"
+        use_effort_gripper="${use_effort_gripper}"/>
   </xacro:macro>
 </robot>

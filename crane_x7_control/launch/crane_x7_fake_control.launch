@@ -1,6 +1,10 @@
 <launch>
+  <!-- Change the controller type of gripper from position to effort -->
+  <arg name="use_effort_gripper" default="false" />
+
   <group ns="/crane_x7">
     <rosparam file="$(find crane_x7_control)/config/crane_x7_fake_control.yaml" command="load"/>
+    <param if="$(arg use_effort_gripper)" name="gripper_controller/type" value="effort_controllers/GripperActionController" />
 
     <node name="controller_manager"
         pkg="controller_manager"
