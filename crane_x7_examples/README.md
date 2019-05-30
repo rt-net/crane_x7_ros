@@ -37,6 +37,13 @@ roslaunch crane_x7_bringup demo.launch fake_execution:=false
 roslaunch crane_x7_bringup demo.launch fake_execution:=false port:=/dev/ttyUSB1
 ```
 
+### Gazeboを使う場合
+
+次のコマンドで起動します。実機との接続やcrane_x7_bringupの実行は必要ありません。
+
+```sh
+roslaunch crane_x7_gazebo crane_x7_with_table.launch
+```
 
 ## サンプルの実行方法
 
@@ -306,3 +313,26 @@ rosrun crane_x7_examples servo_info_example.py
 これにより、手でグリッパーを開く（閉じる）ことができます。
 
 トピックの詳細については、[`crane_x7_control/README.md`](../crane_x7_control/README.md#ネームスペースとトピック)を確認してください。
+
+---
+
+### pick_and_place_in_gazebo_example.pyの実行
+
+![gazebo_pick_and_place](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_pick_and_place.png "gazebo_pick_and_place")
+
+Gazebo上のモノを掴む・持ち上げる・運ぶ・置くコード例です。
+
+gripperをEffortControllerで制御するため、オプションを追加してGazeboを起動します。
+
+```sh
+roslaunch crane_x7_gazebo crane_x7_with_table.launch use_effort_gripper:=true
+```
+
+Gazebo起動後、次のコマンドでサンプルを実行します。
+
+```sh
+rosrun crane_x7_examples pick_and_place_in_gazebo_example.py
+```
+
+動作させると[こちら](https://example.com)のような動きになります。
+
