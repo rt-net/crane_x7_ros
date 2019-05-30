@@ -334,5 +334,5 @@ Gazebo起動後、次のコマンドでサンプルを実行します。
 rosrun crane_x7_examples pick_and_place_in_gazebo_example.py
 ```
 
-動作させると[こちら](https://example.com)のような動きになります。
+動作させると[こちら](https://youtu.be/YUSIregHHnM)のような動きになります。
 
