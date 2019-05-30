@@ -31,6 +31,5 @@ gripper_controller:
 
   # for effort_controllers
   gains:
-    crane_x7_gripper_finger_a_joint: { p: 100.0,  d: 0.0, i: 0.0 }
-    crane_x7_gripper_finger_b_joint: { p: 100.0,  d: 0.0, i: 0.0 }
+    crane_x7_gripper_finger_a_joint: { p: 100.0, d: 0.0, i: 0.0 }
 
