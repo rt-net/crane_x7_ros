@@ -5,7 +5,7 @@
   <description>The crane_x7_gazebo package</description>
 
   <maintainer email="shop@rt-net.jp">RT Corporation</maintainer>
-  <maintainer email="macakasit@gmail.com">ShotaAk</maintainer>
+  <maintainer email="macakasit@gmail.com">Shota Aoki</maintainer>
 
   <license>NON-COMMERCIAL LICENSE AGREEMENT</license>
   <buildtool_depend>catkin</buildtool_depend>
@@ -21,5 +21,9 @@
   <exec_depend>roboticsgroup_gazebo_plugins</exec_depend>
   <exec_depend>roslang</exec_depend>
   <exec_depend>urdf_parser_plugin</exec_depend>
+
+  <exec_depend>crane_x7_moveit_config</exec_depend>
+  <exec_depend>crane_x7_control</exec_depend>
+  <exec_depend>crane_x7_description</exec_depend>
 
 </package>
