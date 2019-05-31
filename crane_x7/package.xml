@@ -8,6 +8,7 @@
   <author email="nomura@rt-net.jp">Hiroyuki Nomura</author>
   <author email="geoffrey.biggs@aist.go.jp">Geoffrey Biggs</author>
   <author email="tiryoh@gmail.com">Daisuke Sato</author>
+  <author email="macakasit@gmail.com">Shota Aoki</author>
 
   <license>NON-COMMERCIAL LICENSE AGREEMENT</license>
 
@@ -21,6 +22,7 @@
   <run_depend>crane_x7_examples</run_depend>
   <run_depend>crane_x7_moveit_config</run_depend>
   <run_depend>crane_x7_msgs</run_depend>
+  <run_depend>crane_x7_gazebo</run_depend>
 
   <export>
     <metapackage/>
