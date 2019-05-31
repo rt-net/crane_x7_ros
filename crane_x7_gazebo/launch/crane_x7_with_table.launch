@@ -17,7 +17,12 @@
   <arg name="use_sim_time" default="true"/>
   <arg name="headless" default="false"/>
 
-  <include file="$(find crane_x7_control)/launch/crane_x7_fake_control.launch"/>
+  <!-- Change the controller type of gripper from position to effort -->
+  <arg name="use_effort_gripper" default="false" />
+
+  <include file="$(find crane_x7_control)/launch/crane_x7_fake_control.launch">
+    <arg name="use_effort_gripper" value="$(arg use_effort_gripper)" />
+  </include>
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="$(find crane_x7_gazebo)/worlds/table.world"/>
@@ -30,7 +35,7 @@
 
   <!-- Load the URDF into the ROS Parameter Server -->
   <param name="robot_description"
-    command="$(find xacro)/xacro --inorder '$(find crane_x7_description)/urdf/crane_x7.urdf.xacro'"
+    command="$(find xacro)/xacro --inorder '$(find crane_x7_description)/urdf/crane_x7.urdf.xacro' use_effort_gripper:=$(arg use_effort_gripper)"
     />
  <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"

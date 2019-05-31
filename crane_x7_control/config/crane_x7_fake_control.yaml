@@ -28,3 +28,8 @@ gripper_controller:
   stalled_velocity_threshold: 0.01
   goal_tolerance: 0.2
   stall_timeout: 0.3
+
+  # for effort_controllers
+  gains:
+    crane_x7_gripper_finger_a_joint: { p: 100.0, d: 0.0, i: 0.0 }
+

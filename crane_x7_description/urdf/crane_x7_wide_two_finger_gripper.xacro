@@ -5,7 +5,7 @@
   <xacro:property name="SCALE_CM" value="0.01"/>
 
   <xacro:macro name="crane_x7_wide_two_finger_gripper"
-    params="name color vlimit">
+    params="name color vlimit use_effort_gripper:=false">
     <link name="${name}_base_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -49,10 +49,20 @@
       <motorTorqueConstant>0.418</motorTorqueConstant>
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="${name}_finger_a_joint">
-        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <xacro:if value="${use_effort_gripper}">
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </xacro:if>
+        <xacro:unless value="${use_effort_gripper}">
+          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </xacro:unless>
       </joint>
       <actuator name="${name}_finger_a_joint_motor">
-        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <xacro:if value="${use_effort_gripper}">
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </xacro:if>
+        <xacro:unless value="${use_effort_gripper}">
+          <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </xacro:unless>
         <mechanicalReduction>1</mechanicalReduction>
       </actuator>
     </transmission>
@@ -134,9 +144,13 @@
       <material>Gazebo/Red</material>
     </gazebo>
     <gazebo reference="${name}_finger_a_link">
+      <mu1>0.8</mu1>
+      <mu2>0.8</mu2>
       <material>Gazebo/Red</material>
     </gazebo>
     <gazebo reference="${name}_finger_b_link">
+      <mu1>0.8</mu1>
+      <mu2>0.8</mu2>
       <material>Gazebo/Red</material>
     </gazebo>
 

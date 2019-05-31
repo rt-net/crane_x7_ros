@@ -21,6 +21,8 @@
     <child link="base_link"/>
   </joint>
 
+  <xacro:arg name="use_effort_gripper" default="false" />
+
   <!-- Use the crane_x7 macro to configure a Crane X7 arm with desired joint
        velocities limit and lower/upper limits for the first joint. This
        allows accessing different operational areas, e.g. left-handed vs.
@@ -39,7 +41,8 @@
               joints_vlimit="4.81710873"
               shoulder_llimit="-2.97132"
               shoulder_ulimit="2.97132"
-              logos_definition="crane_x7_rt_logos.xacro">
+              logos_definition="crane_x7_rt_logos.xacro"
+              use_effort_gripper="$(arg use_effort_gripper)">
     <origin xyz="0 0 0"/>
   </crane_x7>
 </robot>
