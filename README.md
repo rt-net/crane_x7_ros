@@ -40,7 +40,7 @@ ROS Wikiはこちらです。
   # package for crane_x7_gazebo
   git clone https://github.com/roboticsgroup/roboticsgroup_gazebo_plugins.git
   
-  rosdep install -r -y --from-paths crane_x7_ros
+  rosdep install -r -y --from-paths --ignore-src crane_x7_ros
   ```
 
 - `catkin_make`を使用して本パッケージをビルドします。
