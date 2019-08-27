@@ -14,9 +14,9 @@
         args="joint_state_controller
               arm_controller
               gripper_controller"/>
+    <rosparam file="$(find crane_x7_control)/config/crane_x7_gazebo_control.yaml" command="load" />
   </group>
 
-  <rosparam file="$(find crane_x7_control)/config/crane_x7_gazebo_control.yaml" command="load" />
   <node name="controller_gazebo" 
     pkg="controller_manager" 
     type="spawner" 

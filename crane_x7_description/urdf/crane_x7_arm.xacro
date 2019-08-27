@@ -95,7 +95,7 @@
       <limit effort="10.0" velocity="${joints_vlimit}" lower="${shoulder_llimit}" upper="${shoulder_ulimit}"/>
       <parent link="${NAME_LINK_BASE}"/>
       <child link="${NAME_LINK_1}"/>
-      <dynamics damping="0.0" friction="0.0"/>
+      <dynamics damping="1.0e-6" friction="2.0e-1"/>
     </joint>
 
     <!-- For gazebo simulation -->
@@ -158,7 +158,7 @@
       <limit effort="10.0" velocity="${joints_vlimit}" lower="-${M_PI/2}" upper="${M_PI/2}"/>
       <parent link="${NAME_LINK_1}"/>
       <child link="${NAME_LINK_2}"/>
-      <dynamics damping="0.0" friction="0.0"/>
+      <dynamics damping="1.0e-6" friction="2.0e-1"/>
     </joint>
 
     <!-- For gazebo simulation -->
@@ -252,7 +252,7 @@
           upper="${M_PI/2}"/>
       <parent link="${NAME_LINK_2}"/>
       <child link="${NAME_LINK_3}"/>
-      <dynamics damping="0.0" friction="0.0"/>
+      <dynamics damping="1.0e-6" friction="2.0e-1"/>
     </joint>
 
     <!-- For gazebo simulation -->
@@ -308,7 +308,7 @@
           upper="0.04141"/>
       <parent link="${NAME_LINK_3}"/>
       <child link="${NAME_LINK_4}"/>
-      <dynamics damping="0.0" friction="0.0"/>
+      <dynamics damping="1.0e-6" friction="2.0e-1"/>
     </joint>
 
     <!-- For gazebo simulation -->
@@ -399,7 +399,7 @@
       <limit effort="4.0" velocity="${joints_vlimit}" lower="-2.77343" upper="1.51403"/>
       <parent link="${NAME_LINK_4}"/>
       <child link="${NAME_LINK_5}"/>
-      <dynamics damping="0.0" friction="0.0"/>
+      <dynamics damping="1.0e-6" friction="2.0e-1"/>
     </joint>
 
     <!-- For gazebo simulation -->
@@ -458,7 +458,7 @@
       <limit effort="4.0" velocity="${joints_vlimit}" lower="-${M_PI/2}" upper="${M_PI/2}"/>
       <parent link="${NAME_LINK_5}"/>
       <child link="${NAME_LINK_6}"/>
-      <dynamics damping="0.0" friction="0.0"/>
+      <dynamics damping="1.0e-6" friction="2.0e-1"/>
     </joint>
 
     <!-- For gazebo simulation -->
@@ -511,7 +511,7 @@
       <limit effort="4.0" velocity="${joints_vlimit}" lower="-2.96365" upper="2.97132"/>
       <parent link="${NAME_LINK_6}"/>
       <child link="${end_effector_base_link}"/>
-      <dynamics damping="0.0" friction="0.0"/>
+      <dynamics damping="1.0e-6" friction="2.0e-1"/>
     </joint>
 
     <!-- For gazebo simulation -->
@@ -533,7 +533,7 @@
       <plugin name='gazebo_ros_control' filename='libgazebo_ros_control.so'>
         <robotNamespace>/crane_x7</robotNamespace>
         <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
-        <legacyModeNS>true</legacyModeNS>
+        <legacyModeNS>false</legacyModeNS>
       </plugin>
     </gazebo>
 

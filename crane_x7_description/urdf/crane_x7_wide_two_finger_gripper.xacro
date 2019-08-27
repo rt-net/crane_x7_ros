@@ -39,7 +39,7 @@
       <limit effort="4.0" velocity="${vlimit}" lower="0.0046" upper="1.62601"/>
       <parent link="${name}_base_link"/>
       <child link="${name}_finger_a_link"/>
-      <dynamics damping="0.0" friction="0.8"/>
+      <dynamics damping="1.0e-6" friction="8.0e-1"/>
     </joint>
 
     <!-- for gazebo -->
@@ -101,7 +101,7 @@
       <parent link="${name}_base_link"/>
       <child link="${name}_finger_b_link"/>
       <mimic joint="${name}_finger_a_joint"/>
-      <dynamics damping="0.0" friction="0.8"/>
+      <dynamics damping="1.0e-6" friction="8.0e-1"/>
     </joint>
 
     <link name="${name}_finger_b_link">
