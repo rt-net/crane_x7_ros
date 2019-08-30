@@ -1,5 +1,7 @@
 # crane_x7_ros
 
+[![Build Status](https://travis-ci.org/rt-net/crane_x7_ros.svg?branch=master)](https://travis-ci.org/rt-net/crane_x7_ros)
+
 ![crane_x7_gazebo](https://github.com/rt-net/crane_x7_ros/blob/images/images/crane_x7_gazebo.png "crane_x7_gazebo")
 
 CRANE-X7のROSパッケージです。
