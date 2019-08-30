@@ -322,8 +322,6 @@ rosrun crane_x7_examples servo_info_example.py
 
 ### pick_and_place_in_gazebo_example.pyの実行
 
-![gazebo_pick_and_place](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_pick_and_place.png "gazebo_pick_and_place")
-
 Gazebo上のモノを掴む・持ち上げる・運ぶ・置くコード例です。
 
 gripperをEffortControllerで制御するため、オプションを追加してGazeboを起動します。
@@ -339,4 +337,6 @@ rosrun crane_x7_examples pick_and_place_in_gazebo_example.py
 ```
 
 動作させると[こちら](https://youtu.be/YUSIregHHnM)のような動きになります。
+
+![gazebo_pick_and_place](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_pick_and_place.gif)
 
