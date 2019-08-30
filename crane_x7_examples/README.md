@@ -78,6 +78,8 @@ SRDFファイル[crane_x7_moveit_config/config/crane_x7.srdf](../crane_x7_moveit
 rosrun crane_x7_examples pose_groupstate_example.py
 ```
 
+![pose_groupstate_example](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_pose_groupstate.gif)
+
 ---
 
 ### crane_x7_pick_and_place_demo.pyの実行
