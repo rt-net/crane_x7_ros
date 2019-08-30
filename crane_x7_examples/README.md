@@ -61,6 +61,8 @@ roslaunch crane_x7_gazebo crane_x7_with_table.launch
 rosrun crane_x7_examples gripper_action_example.py
 ```
 
+![gripper_action_example](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_gripper_example.gif)
+
 ---
 
 ### pose_groupstate_example.pyの実行
