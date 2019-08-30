@@ -102,7 +102,7 @@ CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 
 サンプルで使用しているこのオレンジ色のソフトボールはRT ROBOT SHOPの[こちらのページ](https://www.rt-shop.jp/index.php?main_page=product_info&cPath=1299_1307&products_id=3701)から入手することができます。
 
-動作させると[こちら](https://youtu.be/_8xBgpgMhk8)のような動きになります。
+動作させると[こちら **(YouTube Video)**](https://youtu.be/_8xBgpgMhk8)のような動きになります。
 
 ---
 
@@ -120,7 +120,7 @@ CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 roslaunch crane_x7_examples preset_pid_gain_example.launch
 ```
 
-動作させると[こちら](https://youtu.be/0rBbgNDwm6Y)のような動きになります。
+動作させると[こちら **(YouTube Video)**](https://youtu.be/0rBbgNDwm6Y)のような動きになります。
 
 ---
 
@@ -162,7 +162,7 @@ Teaching Modeから遷移します。トルクON*状態です。
 
 - トルクのON / OFFはサーボモータのPIDゲインに小さい値をプリセットすることで実現しています。
 
-動作させると[こちら](https://youtu.be/--5_l1DpQ-0)のような動きになります。
+動作させると[こちら **(YouTube Video)**](https://youtu.be/--5_l1DpQ-0)のような動きになります。
 
 ---
 
@@ -237,7 +237,7 @@ buttons: [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ---
 ```
 
-動作させると[こちら](https://youtu.be/IQci_vb3owM)のような動きになります。
+動作させると[こちら **(YouTube Video)**](https://youtu.be/IQci_vb3owM)のような動きになります。
 
 ---
 
@@ -336,7 +336,7 @@ Gazebo起動後、次のコマンドでサンプルを実行します。
 rosrun crane_x7_examples pick_and_place_in_gazebo_example.py
 ```
 
-動作させると[こちら](https://youtu.be/YUSIregHHnM)のような動きになります。
+動作させると[こちら **(YouTube Video)**](https://youtu.be/YUSIregHHnM)のような動きになります。
 
 ![gazebo_pick_and_place](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_pick_and_place.gif)
 
