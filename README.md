@@ -108,9 +108,8 @@ CRANE-X7の起動に必要なlaunchファイルをまとめたパッケージで
 
 ### crane_x7_examples
 
-初めて`crane_x7`を使うことを意識して作成されたbringupパッケージです。
-
-`crane_x7_examples` の使い方については[./crane_x7_examples/README.md](./crane_x7_examples/README.md)を参照してください。
+サンプルコード集です。
+使い方については[./crane_x7_examples/README.md](./crane_x7_examples/README.md)を参照してください。
 
 ### crane_x7_gazebo
 
