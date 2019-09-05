@@ -61,6 +61,8 @@ roslaunch crane_x7_gazebo crane_x7_with_table.launch
 rosrun crane_x7_examples gripper_action_example.py
 ```
 
+![gripper_action_example](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_gripper_example.gif)
+
 ---
 
 ### pose_groupstate_example.pyの実行
@@ -75,6 +77,8 @@ SRDFファイル[crane_x7_moveit_config/config/crane_x7.srdf](../crane_x7_moveit
 ```sh
 rosrun crane_x7_examples pose_groupstate_example.py
 ```
+
+![pose_groupstate_example](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_pose_groupstate.gif)
 
 ---
 
@@ -98,7 +102,7 @@ CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 
 サンプルで使用しているこのオレンジ色のソフトボールはRT ROBOT SHOPの[こちらのページ](https://www.rt-shop.jp/index.php?main_page=product_info&cPath=1299_1307&products_id=3701)から入手することができます。
 
-動作させると[こちら](https://youtu.be/_8xBgpgMhk8)のような動きになります。
+動作させると[こちら **(YouTube Video)**](https://youtu.be/_8xBgpgMhk8)のような動きになります。
 
 ---
 
@@ -116,7 +120,7 @@ CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 roslaunch crane_x7_examples preset_pid_gain_example.launch
 ```
 
-動作させると[こちら](https://youtu.be/0rBbgNDwm6Y)のような動きになります。
+動作させると[こちら **(YouTube Video)**](https://youtu.be/0rBbgNDwm6Y)のような動きになります。
 
 ---
 
@@ -158,7 +162,7 @@ Teaching Modeから遷移します。トルクON*状態です。
 
 - トルクのON / OFFはサーボモータのPIDゲインに小さい値をプリセットすることで実現しています。
 
-動作させると[こちら](https://youtu.be/--5_l1DpQ-0)のような動きになります。
+動作させると[こちら **(YouTube Video)**](https://youtu.be/--5_l1DpQ-0)のような動きになります。
 
 ---
 
@@ -233,7 +237,7 @@ buttons: [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ---
 ```
 
-動作させると[こちら](https://youtu.be/IQci_vb3owM)のような動きになります。
+動作させると[こちら **(YouTube Video)**](https://youtu.be/IQci_vb3owM)のような動きになります。
 
 ---
 
@@ -281,7 +285,7 @@ roslaunch crane_x7_examples obstacle_avoidance_example.launch
 moveitが障害物回避のパスを生成できない場合、X7は動作せず、次の目標位置に対するパスを計算します。
 この場合、サーバからの返答は`result=False`となります。
 
-<img src="https://github.com/rt-net/crane_x7_ros/blob/images/images/obstacle_avoidance_1.png" width="400"><img src="https://github.com/rt-net/crane_x7_ros/blob/images/images/obstacle_avoidance_2.png" width="400">
+![gazebo_obstacle_avoidance](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_obstacle_avoidance.gif)
 
 ---
 
@@ -318,8 +322,6 @@ rosrun crane_x7_examples servo_info_example.py
 
 ### pick_and_place_in_gazebo_example.pyの実行
 
-![gazebo_pick_and_place](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_pick_and_place.png "gazebo_pick_and_place")
-
 Gazebo上のモノを掴む・持ち上げる・運ぶ・置くコード例です。
 
 gripperをEffortControllerで制御するため、オプションを追加してGazeboを起動します。
@@ -334,5 +336,7 @@ Gazebo起動後、次のコマンドでサンプルを実行します。
 rosrun crane_x7_examples pick_and_place_in_gazebo_example.py
 ```
 
-動作させると[こちら](https://youtu.be/YUSIregHHnM)のような動きになります。
+動作させると[こちら **(YouTube Video)**](https://youtu.be/YUSIregHHnM)のような動きになります。
+
+![gazebo_pick_and_place](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_pick_and_place.gif)
 

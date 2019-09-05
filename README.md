@@ -12,6 +12,9 @@ CRANE-X7のROSパッケージです。
 ROS Wikiはこちらです。  
 [https://wiki.ros.org/crane_x7](https://wiki.ros.org/crane_x7)
 
+ROSのサンプルコード集はこちらです。  
+[crane_x7_examples](https://github.com/rt-net/crane_x7_ros/tree/master/crane_x7_examples)
+
 ## 動作環境
 
 以下の環境にて動作確認を行っています。
@@ -107,9 +110,8 @@ CRANE-X7の起動に必要なlaunchファイルをまとめたパッケージで
 
 ### crane_x7_examples
 
-初めて`crane_x7`を使うことを意識して作成されたbringupパッケージです。
-
-`crane_x7_examples` の使い方については[./crane_x7_examples/README.md](./crane_x7_examples/README.md)を参照してください。
+サンプルコード集です。
+使い方については[./crane_x7_examples/README.md](./crane_x7_examples/README.md)を参照してください。
 
 ### crane_x7_gazebo
 
