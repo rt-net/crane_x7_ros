@@ -219,7 +219,7 @@ public:
     void                set_eff_limiting( bool set_limiting ){ eff_limiting = set_limiting; }
     void                inc_eff_over( void ){ ++eff_over_cnt; }
     void                clear_eff_over( void ){ eff_over_cnt = 0; }
-    ST_JOINT_PARAM      set_joint_param( ST_JOINT_PARAM set_param){ param = set_param; }
+    void                set_joint_param( ST_JOINT_PARAM set_param){ param = set_param; }
     
     std::string         get_joint_name( void ) { return name; }
     uint8_t             get_dxl_id( void ){ return id; }

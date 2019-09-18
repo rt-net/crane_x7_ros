@@ -128,7 +128,7 @@ DXLPORT_CONTROL::~DXLPORT_CONTROL()
 {
     portHandler->closePort();
 	delete( portHandler );
-	/* packetHandlerはdeleteしないほうが良さそう*/
+	/* packetHandlerはdeleteしないほうが良さそう */
     if(readTempGroup!=NULL)    delete( readTempGroup );
     if(writeGoalGroup!=NULL)    delete( writeGoalGroup );
     if(readMovementGroup!=NULL)     delete( readMovementGroup );
