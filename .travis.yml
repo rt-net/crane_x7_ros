@@ -16,7 +16,6 @@ env:
 matrix:
   allow_failures:
     - env: ROS_DISTRO=kinetic ROS_REPO=ros-shadow-fixed UPSTREAM_WORKSPACE=debian OS_NAME=ubuntu OS_CODE_NAME=xenial
-    - env: ROS_DISTRO=melodic ROS_REPO=ros UPSTREAM_WORKSPACE=debian OS_NAME=ubuntu OS_CODE_NAME=bionic
     - env: ROS_DISTRO=melodic ROS_REPO=ros-shadow-fixed UPSTREAM_WORKSPACE=debian OS_NAME=ubuntu OS_CODE_NAME=bionic
 before_install:
     - git clone https://github.com/roboticsgroup/roboticsgroup_gazebo_plugins.git
