@@ -92,6 +92,8 @@ moveit_commanderを使用して、アームのジョイント角度を１つず�
 rosrun crane_x7_examples joint_values_example.py
 ```
 
+![joint_values_example](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_joint_values_example.gif)
+
 ---
 
 ### crane_x7_pick_and_place_demo.pyの実行
