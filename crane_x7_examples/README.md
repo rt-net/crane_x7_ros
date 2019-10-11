@@ -82,6 +82,20 @@ rosrun crane_x7_examples pose_groupstate_example.py
 
 ---
 
+### joint_values_example.pyの実行
+
+moveit_commanderを使用して、アームのジョイント角度を１つずつ変更させるコード例です。
+
+次のコマンドを実行します。
+
+```sh
+rosrun crane_x7_examples joint_values_example.py
+```
+
+![joint_values_example](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_joint_values_example.gif)
+
+---
+
 ### crane_x7_pick_and_place_demo.pyの実行
 
 モノを掴む・持ち上げる・運ぶ・置くコード例です。
