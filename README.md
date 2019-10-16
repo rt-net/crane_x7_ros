@@ -19,7 +19,7 @@ Examples:
 
 ## System Requirements
 
-This package has been developed and tested on ROS Kinectic & Melodic.
+This packages has been developed and tested on ROS Kinectic & Melodic.
 Please see below for details.
 
 - ROS Kinetic
@@ -41,7 +41,7 @@ Please see below for details.
 
 - Install ROS environments. Please see [ROS Wiki](http://wiki.ros.org/melodic/Installation/Ubuntu).
 
-- Install this package from source using `git`.
+- Install `crane_x7_ros` packages from source using `git`.
 
   ```bash
   cd ~/catkin_ws/src
@@ -59,7 +59,7 @@ Please see below for details.
   rosdep install -r -y --from-paths --ignore-src crane_x7_ros
   ```
 
-- Build package using `catkin_make`.
+- Build packages using `catkin_make`.
 
   ```bash
   cd ~/catkin_ws && catkin_make
