@@ -112,7 +112,7 @@ This package includes launch files for startup of CRANE-X7.
 ### crane_x7_examples
 
 This package includes example codes for CRANE-X7.
-Please refere to [./crane_x7_examples/README.md](./crane_x7_examples/README.md).
+Please refer to [./crane_x7_examples/README.md](./crane_x7_examples/README.md).
 
 ### crane_x7_gazebo
 
