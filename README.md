@@ -69,7 +69,7 @@ Please see below for details.
 ## Setup Serial Connection
 
 The `crane_x7_control` node communicates with CRANE-X7 via serial port over USB.
-Logged user should have read and write access `/dev/ttyUSB0`.
+Logged-in user should have read and write access to `/dev/ttyUSB0`.
 
 Change permissions on `/dev/ttyUSB0` with command:
 
@@ -81,23 +81,23 @@ sudo chmod 666 /dev/ttyUSB0
 
 ### crane_x7_description
 
-This package defines CRANE-X7 model data includes links and joints.
-The MoveIt! package and Gazebo require this package.
+This package defines CRANE-X7 model data including links and joints.
+The MoveIt! packages and Gazebo require this package.
 
 ### crane_x7_control
 
 This package controls CRANE-X7 using `Dynamixel SDK C++ Libary`.
 (The command `rosdep install` installs this library.)
 Read and write permissions on `/dev/ttyUSB0` 
-are required for communication between the package and X7.
+are required for communication between the package and CRANE-X7.
 
 The device name of serial port and parameters of Dynamixel servo motors are listed in `config/crane_x7_control.yaml`.
-If this package did not find the serial port, the package switches its control mode to Dummy Joint Mode from Normal Mode,
-and republishes taget joint values as servo angle values.
-This is useful for debugging of motion control without X7 hardware.
+If this package did not find the serial port, the package switches its control mode to Dummy Joint Mode from Normal Mode
+and republishes target joint values as servo angle values.
+This is useful for debugging of motion control without CRANE-X7 hardware.
 
 At startup, this package moves the CRANE-X7 to Home Position in 5 seconds.
-At shutdown, this package decrease P gains of the servo motors to stop motion safely.
+At shutdown, this package decreases P gains of the servo motors to stop motion safely.
 
 ### crane_x7_moveit_config
 
