@@ -19,7 +19,7 @@ Examples:
 
 ## System Requirements
 
-This packages has been developed and tested on ROS Kinectic & Melodic.
+These packages have been developed and tested on ROS Kinectic & Melodic.
 Please see below for details.
 
 - ROS Kinetic
@@ -41,7 +41,7 @@ Please see below for details.
 
 - Install ROS environments. Please see [ROS Wiki](http://wiki.ros.org/melodic/Installation/Ubuntu).
 
-- Install `crane_x7_ros` packages from source using `git`.
+- Download the packages for CRANE-X7 using `git`.
 
   ```bash
   cd ~/catkin_ws/src
@@ -101,7 +101,9 @@ At shutdown, this package decreases P gains of the servo motors to stop motion s
 
 ### crane_x7_moveit_config
 
-This MoveIt! packages launch with:
+This package includes configuration files for MoveIt!.
+
+To launch the MoveIt! demonstration with Rviz:
 
 `roslaunch crane_x7_moveit_config demo.launch`
 
@@ -118,7 +120,7 @@ Please refer to [./crane_x7_examples/README.md](./crane_x7_examples/README.md).
 
 This package includes Gazebo simulation environments for CRANE-X7.
 
-This package launch with:
+To simulate CRANE-X7 on the table:
 
 `roslaunch crane_x7_gazebo crane_x7_with_table.launch`
 
