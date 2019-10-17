@@ -40,7 +40,7 @@ roslaunch crane_x7_bringup demo.launch fake_execution:=false port:=/dev/ttyUSB1
 
 ### Use Gazebo simulator
 
-Launch the pakcages with command:
+Launch the packages with command:
 
 ```sh
 roslaunch crane_x7_gazebo crane_x7_with_table.launch
@@ -106,7 +106,7 @@ rosrun crane_x7_examples crane_x7_pick_and_place_demo.py
 
 ![bringup_rviz](https://github.com/rt-net/crane_x7_ros/blob/images/images/bringup_rviz.gif "bringup_rviz")
 
-**Real environments setup**
+**Real environment setup**
 
 Place the small object at a distance of 20 cm from CRANE-X7.
 
@@ -311,7 +311,7 @@ rosrun crane_x7_examples servo_info_example.py
 ```
 
 This example subscribes topics of gripper joint `crane_x7_gripper_finger_a_joint`
-and displays the servo motor current, position and temperture to a terminal.
+and displays the servo motor current, position and temperature to a terminal.
 
 ```sh
  current [mA]: 0.0     dxl_position: 2634    temp [deg C]: 42.0  
