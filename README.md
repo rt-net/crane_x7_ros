@@ -19,7 +19,7 @@ Examples:
 
 ## System Requirements
 
-These packages have been developed and tested on ROS Kinectic & Melodic.
+These packages have been developed and tested on ROS Kinetic & Melodic.
 Please see below for details.
 
 - ROS Kinetic
