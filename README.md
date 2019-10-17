@@ -86,7 +86,7 @@ The MoveIt! packages and Gazebo require this package.
 
 ### crane_x7_control
 
-This package controls CRANE-X7 using `Dynamixel SDK C++ Libary`.
+This package controls CRANE-X7 using `Dynamixel SDK C++ Library`.
 (The command `rosdep install` installs this library.)
 Read and write permissions on `/dev/ttyUSB0` 
 are required for communication between the package and CRANE-X7.
