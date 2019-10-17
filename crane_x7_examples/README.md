@@ -52,7 +52,7 @@ Below examples will be executable after launch CRANE-X7 base packages.
 
 ### gripper_action_example.py
 
-This is simple example code to open/close the gripper.
+This is an example code to open/close the gripper.
 
 Run a node with command:
 
@@ -162,7 +162,7 @@ This is a mode at startup and the PID gains will be small values.
 
 **Action Mode**
 
-This is a mode transitioned from Teaching Mood and the PID gains will return to normal values.
+This is a mode transitioned from Teaching Mode and the PID gains will return to normal values.
 
 | Key | Function |
 ----|----
@@ -181,8 +181,8 @@ Demo Video is [here **(YouTube Video)**](https://youtu.be/--5_l1DpQ-0).
 
 This is an example code to use joystick controller to change the hand position and posture, 
 or to open and close of the gripper,
-or to preset PID gains 
-or to generate position trajectory with direct teaching.
+or to preset the PID gains 
+or to generate a position trajectory with direct teaching.
 
 Connect a joystick controller to a PC and check the device `/dev/input/js0` existence
 then launch nodes with command:
@@ -251,7 +251,7 @@ Demo Video is [here **(YouTube Video)**](https://youtu.be/IQci_vb3owM).
 
 ### obstacle_avoidance_example.py
 
-This is an example code to use `rosservice` to add dummy obstacles and avoid the obstacles.
+This is an example code to use `rosservice` to add dummy obstacles and to avoid the obstacles.
 
 Launch nodes with command:
 
@@ -310,8 +310,8 @@ Run a node with command:
 rosrun crane_x7_examples servo_info_example.py
 ```
 
-This example subscribes a topic of gripper joint `crane_x7_gripper_finger_a_joint`
-and displays the servo motor current, position and temperture.
+This example subscribes topics of gripper joint `crane_x7_gripper_finger_a_joint`
+and displays the servo motor current, position and temperture to a terminal.
 
 ```sh
  current [mA]: 0.0     dxl_position: 2634    temp [deg C]: 42.0  
