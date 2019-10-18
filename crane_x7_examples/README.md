@@ -2,9 +2,9 @@
 
 # crane_x7_examples
 
-This package includes example codes for CRANE-X7.
+This package includes examples to control CRANE-X7 using `crane_x7_ros`.
 
-## Launch CRANE-X7 base packages
+## How to launch CRANE-X7 base packages
 
 1. Connect a communication cable from CRANE-X7 to a PC.
 1. Open terminal and launch `demo.launch` of `crane_x7_bringup` package.
@@ -14,16 +14,16 @@ This launch file has an argument to select CRANE-X7 or dummy CRANE-X7:
 - fake_execution (default: true)
 
 
-### Use dummy CRANE-X7
+### Using virtual CRANE-X7
 
 
-Launch dummy CRANE-X7 base packages with command:
+Launch virtual CRANE-X7 base packages with command:
 
 ```sh
 roslaunch crane_x7_bringup demo.launch fake_execution:=true
 ```
 
-### Use real CRANE-X7
+### Using real CRANE-X7
 
 Launch the base packages with command:
 
@@ -38,7 +38,7 @@ To change port name (e.g. `/dev/ttyUSB1`), launch the packages with arguments:
 roslaunch crane_x7_bringup demo.launch fake_execution:=false port:=/dev/ttyUSB1
 ```
 
-### Use Gazebo simulator
+### Using Gazebo simulator
 
 Launch the packages with command:
 
@@ -52,7 +52,7 @@ Below examples will be executable after launch CRANE-X7 base packages.
 
 ### gripper_action_example.py
 
-This is an example code to open/close the gripper.
+This is an example to open/close the gripper.
 
 Run a node with command:
 
@@ -66,7 +66,7 @@ rosrun crane_x7_examples gripper_action_example.py
 
 ### pose_groupstate_example.py
 
-This is an example code using `group_state` of SRDF.
+This is an example using `group_state` of SRDF.
 
 CRANE-X7 changes its posture to `home` and `vertical` listed in SRDF file [crane_x7_moveit_config/config/crane_x7.srdf](../crane_x7_moveit_config/config/crane_x7.srdf).
 
@@ -82,7 +82,7 @@ rosrun crane_x7_examples pose_groupstate_example.py
 
 ### joint_values_example.py
 
-This is an example code to change each joint values of arm one by one using `moveit_commander`.
+This is an example to change each joint values of arm one by one using `moveit_commander`.
 
 Run a node with command:
 
@@ -96,7 +96,7 @@ rosrun crane_x7_examples joint_values_example.py
 
 ### crane_x7_pick_and_place_demo.py
 
-This is an example code to grasp, pick up, carry and place an small object.
+This is an example to grasp, pick up, carry and place an small object.
 
 Run a node with command:
 
@@ -120,7 +120,7 @@ Demo Video is [here **(YouTube Video)**](https://youtu.be/_8xBgpgMhk8).
 
 ### preset_pid_gain_example.py
 
-This is an example code to change PID gains of servo motors in bulk using `preset_reconfigure` of `crane_x7_control`.
+This is an example to change PID gains of servo motors in bulk using `preset_reconfigure` of `crane_x7_control`.
 
 Lists of PID gain preset values can be edited in [crane_x7_control/scripts/preset_reconfigure.py](../crane_x7_control/scripts/preset_reconfigure.py).
 
@@ -136,7 +136,7 @@ Demo Video is [here **(YouTube Video)**](https://youtu.be/0rBbgNDwm6Y).
 
 ### teaching_example.py
 
-This is an example code to generate an motion trajectory with direct teaching.
+This is an example to generate an motion trajectory with direct teaching.
 
 User can operate CRANE-X7 directly because the PID gains of servo motors will be small values.
 
@@ -179,7 +179,7 @@ Demo Video is [here **(YouTube Video)**](https://youtu.be/--5_l1DpQ-0).
 
 ### joystick_example.py
 
-This is an example code to use joystick controller to change the hand position and posture, 
+This is an example to use joystick controller to change the hand position and posture, 
 or to open and close of the gripper,
 or to preset the PID gains 
 or to generate a position trajectory with direct teaching.
@@ -251,7 +251,7 @@ Demo Video is [here **(YouTube Video)**](https://youtu.be/IQci_vb3owM).
 
 ### obstacle_avoidance_example.py
 
-This is an example code to use `rosservice` to add dummy obstacles and to avoid the obstacles.
+This is an example to use `rosservice` to add dummy obstacles and to avoid the obstacles.
 
 Launch nodes with command:
 
@@ -302,7 +302,7 @@ then MoveIt! will calculate a trajectory to next target position.
 
 ### servo_info_example.py
 
-This is an example code to subscribe the servo motor status.
+This is an example to subscribe the servo motor status.
 
 Run a node with command:
 
@@ -331,7 +331,7 @@ Please refere [`crane_x7_control/README.md`](../crane_x7_control/README.md#„Éç„É
 
 ### pick_and_place_in_gazebo_example.py
 
-This is an example code to grasp, pick up, carry and place an small object
+This is an example to grasp, pick up, carry and place an small object
 on **Gazebo** environments.
 
 Launch nodes with below command with arguments to control the gripper by EffortController.
