@@ -48,7 +48,7 @@ roslaunch crane_x7_gazebo crane_x7_with_table.launch
 
 ## Run Examples
 
-Below examples will be executable after launch CRANE-X7 base packages.
+Following examples will be executable after launch CRANE-X7 base packages.
 
 ### gripper_action_example.py
 
@@ -112,7 +112,7 @@ Place the small object at a distance of 20 cm from CRANE-X7.
 
 ![bringup](https://github.com/rt-net/crane_x7_ros/blob/images/images/bringup.jpg "bringup")
 
-This orange ball can be purchased at [this page](https://www.rt-shop.jp/index.php?main_page=product_info&cPath=1299_1307&products_id=3701) in RT ROBOT SHOP.
+This orange ball can be purchased at [this page](https://www.rt-shop.jp/index.php?main_page=product_info&cPath=1299_1307&products_id=3701&language=en) in RT ROBOT SHOP.
 
 Demo Video is [here **(YouTube Video)**](https://youtu.be/_8xBgpgMhk8).
 
@@ -334,7 +334,7 @@ Please refere [`crane_x7_control/README.md`](../crane_x7_control/README.md#„Éç„É
 This is an example to grasp, pick up, carry and place an small object
 on **Gazebo** environments.
 
-Launch nodes with below command with arguments to control the gripper by EffortController.
+Launch nodes with following command with arguments to control the gripper by EffortController.
 
 ```sh
 roslaunch crane_x7_gazebo crane_x7_with_table.launch use_effort_gripper:=true
