@@ -71,7 +71,7 @@ Please see below for details.
 The `crane_x7_control` node communicates with CRANE-X7 via serial port over USB.
 Logged-in user should have read and write access to `/dev/ttyUSB0`.
 
-Change permissions on `/dev/ttyUSB0` with command:
+Change permissions on `/dev/ttyUSB0` with the following command:
 
 ```bash
 sudo chmod 666 /dev/ttyUSB0

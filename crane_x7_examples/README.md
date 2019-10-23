@@ -17,7 +17,7 @@ This launch file has an argument to select CRANE-X7 or virtual CRANE-X7:
 ### Using virtual CRANE-X7
 
 
-Launch virtual CRANE-X7 base packages with command:
+Launch virtual CRANE-X7 base packages with the following command:
 
 ```sh
 roslaunch crane_x7_bringup demo.launch fake_execution:=true
@@ -25,7 +25,7 @@ roslaunch crane_x7_bringup demo.launch fake_execution:=true
 
 ### Using real CRANE-X7
 
-Launch the base packages with command:
+Launch the base packages with the following command:
 
 ```sh
 roslaunch crane_x7_bringup demo.launch fake_execution:=false
@@ -40,7 +40,7 @@ roslaunch crane_x7_bringup demo.launch fake_execution:=false port:=/dev/ttyUSB1
 
 ### Using Gazebo simulator
 
-Launch the packages with command:
+Launch the packages with the following command:
 
 ```sh
 roslaunch crane_x7_gazebo crane_x7_with_table.launch
@@ -54,7 +54,7 @@ Following examples will be executable after launch CRANE-X7 base packages.
 
 This is an example to open/close the gripper.
 
-Run a node with command:
+Run a node with the following command:
 
 ```sh
 rosrun crane_x7_examples gripper_action_example.py
@@ -70,7 +70,7 @@ This is an example using `group_state` of SRDF.
 
 CRANE-X7 changes its posture to `home` and `vertical` listed in SRDF file [crane_x7_moveit_config/config/crane_x7.srdf](../crane_x7_moveit_config/config/crane_x7.srdf).
 
-Run a node with command:
+Run a node with the following command:
 
 ```sh
 rosrun crane_x7_examples pose_groupstate_example.py
@@ -84,7 +84,7 @@ rosrun crane_x7_examples pose_groupstate_example.py
 
 This is an example to change each joint values of arm one by one using `moveit_commander`.
 
-Run a node with command:
+Run a node with the following command:
 
 ```sh
 rosrun crane_x7_examples joint_values_example.py
@@ -98,7 +98,7 @@ rosrun crane_x7_examples joint_values_example.py
 
 This is an example to grasp, pick up, carry and place an small object.
 
-Run a node with command:
+Run a node with the following command:
 
 ```sh
 rosrun crane_x7_examples crane_x7_pick_and_place_demo.py
@@ -124,7 +124,7 @@ This is an example to change PID gains of servo motors in bulk using `preset_rec
 
 Lists of PID gain preset values can be edited in [crane_x7_control/scripts/preset_reconfigure.py](../crane_x7_control/scripts/preset_reconfigure.py).
 
-Launch nodes `preset_reconfigure.py` and `preset_pid_gain_example.py` with command:
+Launch nodes `preset_reconfigure.py` and `preset_pid_gain_example.py` with the following command:
 
 ```sh
 roslaunch crane_x7_examples preset_pid_gain_example.launch
@@ -140,7 +140,7 @@ This is an example to generate an motion trajectory with direct teaching.
 
 User can operate CRANE-X7 directly because the PID gains of servo motors will be small values.
 
-Launch nodes with command:
+Launch nodes with the following command:
 
 ```sh
 roslaunch crane_x7_examples teaching_example.launch
@@ -185,7 +185,7 @@ or to preset the PID gains
 or to generate a position trajectory with direct teaching.
 
 Connect a joystick controller to a PC and check the device `/dev/input/js0` existence
-then launch nodes with command:
+then launch nodes with the following command:
 
 #### for control CRANE-X7
 
@@ -225,12 +225,12 @@ Key assignments can be edited with key numbers in [crane_x7_example/launch/joyst
 This picture shows the default key numbers.
 ![key_numbers](https://github.com/rt-net/crane_x7_ros/blob/images/images/joystick_example_key_numbers.png "key_numbers")
 
-Please display `/joy` topic with command `rostopic echo /joy` to check the default key numbers.
+Please display `/joy` topic with the command `rostopic echo /joy` to check the default key numbers.
 
 ```sh
 roslaunch crane_x7_examples joystick_example.launch sim:=true
 
-# Enter command in another terminal 
+# Enter the command in another terminal 
 rostopic echo /joy
 
 # Press buttons of a joystick controller
@@ -253,7 +253,7 @@ Demo Video is [here **(YouTube Video)**](https://youtu.be/IQci_vb3owM).
 
 This is an example to use `rosservice` to add dummy obstacles and to avoid the obstacles.
 
-Launch nodes with command:
+Launch nodes with the following command:
 
 ```sh
 roslaunch crane_x7_examples obstacle_avoidance_example.launch
@@ -304,7 +304,7 @@ then MoveIt! will calculate a trajectory to next target position.
 
 This is an example to subscribe the servo motor status.
 
-Run a node with command:
+Run a node with the following command:
 
 ```sh
 rosrun crane_x7_examples servo_info_example.py
@@ -334,13 +334,13 @@ Please refere [`crane_x7_control/README.md`](../crane_x7_control/README.md#„Éç„É
 This is an example to grasp, pick up, carry and place an small object
 on **Gazebo** environments.
 
-Launch nodes with following command with arguments to control the gripper by EffortController.
+Launch nodes with the following command with arguments to control the gripper by EffortController.
 
 ```sh
 roslaunch crane_x7_gazebo crane_x7_with_table.launch use_effort_gripper:=true
 ```
 
-After Gazebo launch, run a node with command:
+After Gazebo launch, run a node with the following command:
 
 ```sh
 rosrun crane_x7_examples pick_and_place_in_gazebo_example.py
