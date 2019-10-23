@@ -9,7 +9,7 @@ This package includes examples to control CRANE-X7 using `crane_x7_ros`.
 1. Connect a communication cable from CRANE-X7 to a PC.
 1. Open terminal and launch `demo.launch` of `crane_x7_bringup` package.
 
-This launch file has an argument to select CRANE-X7 or dummy CRANE-X7:
+This launch file has an argument to select CRANE-X7 or virtual CRANE-X7:
 
 - fake_execution (default: true)
 
@@ -193,7 +193,7 @@ then launch nodes with command:
 roslaunch crane_x7_examples joystick_example.launch
 ```
 
-#### for control dummy CRANE-X7
+#### for control virtual CRANE-X7
 
 Please add an argument `sim` to avoid an error.
 
