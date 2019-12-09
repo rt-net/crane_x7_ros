@@ -1,60 +1,63 @@
-[English](README.md) | [日本語](README.ja.md)
+[English](README.en.md) | [日本語](README.md)
 
 # crane_x7_examples
 
-This package includes examples to control CRANE-X7 using `crane_x7_ros`.
+CRANE-X7のためのパッケージ、 `crane_x7` で用いるサンプルをまとめたパッケージです。
 
-## How to launch CRANE-X7 base packages
+## システムの起動方法
 
-1. Connect a communication cable from CRANE-X7 to a PC.
-1. Open terminal and launch `demo.launch` of `crane_x7_bringup` package.
-
-This launch file has an argument to select CRANE-X7 or virtual CRANE-X7:
+CRANE-X7の制御信号ケーブルを制御用パソコンへ接続します。
+Terminalを開き、`crane_x7_bringup`の`demo.launch`を起動します。
+このlaunchファイルには次のオプションが用意されています。
 
 - fake_execution (default: true)
 
+実機を使用する/使用しない
 
-### Using virtual CRANE-X7
+### シミュレータを使う場合
 
-
-Launch virtual CRANE-X7 base packages with the following command:
+実機無しで動作を確認する場合、
+制御信号ケーブルを接続しない状態で次のコマンドを実行します。
 
 ```sh
 roslaunch crane_x7_bringup demo.launch fake_execution:=true
 ```
 
-### Using real CRANE-X7
+### 実機を使う場合
 
-Launch the base packages with the following command:
+実機で動作を確認する場合、
+制御信号ケーブルを接続した状態で次のコマンドを実行します。
 
 ```sh
 roslaunch crane_x7_bringup demo.launch fake_execution:=false
 ```
 
-Default serial port name is `/dev/ttyUSB0`.
-To change port name (e.g. `/dev/ttyUSB1`), launch the packages with arguments:
+ケーブルの接続ポート名はデフォルトで`/dev/ttyUSB0`です。
+別のポート名(例: /dev/ttyUSB1)を使う場合は次のコマンドを実行します。
 
 ```sh
 roslaunch crane_x7_bringup demo.launch fake_execution:=false port:=/dev/ttyUSB1
 ```
 
-### Using Gazebo simulator
+### Gazeboを使う場合
 
-Launch the packages with the following command:
+次のコマンドで起動します。実機との接続やcrane_x7_bringupの実行は必要ありません。
 
 ```sh
 roslaunch crane_x7_gazebo crane_x7_with_table.launch
 ```
 
-## Run Examples
+## サンプルの実行方法
 
-Following examples will be executable after launch CRANE-X7 base packages.
+`demo.launch`を実行している状態で各サンプルを実行することができます。
 
-### gripper_action_example.py
 
-This is an example to open/close the gripper.
+### gripper_action_example.pyの実行
 
-Run a node with the following command:
+ハンドを開閉させるコード例です。
+このサンプルは実機動作のみに対応しています。
+
+次のコマンドで45度まで開いて閉じる動作を実行します。
 
 ```sh
 rosrun crane_x7_examples gripper_action_example.py
@@ -64,13 +67,14 @@ rosrun crane_x7_examples gripper_action_example.py
 
 ---
 
-### pose_groupstate_example.py
+### pose_groupstate_example.pyの実行
 
-This is an example using `group_state` of SRDF.
+group_stateを使うコード例です。
 
-CRANE-X7 changes its posture to `home` and `vertical` listed in SRDF file [crane_x7_moveit_config/config/crane_x7.srdf](../crane_x7_moveit_config/config/crane_x7.srdf).
+SRDFファイル[crane_x7_moveit_config/config/crane_x7.srdf](../crane_x7_moveit_config/config/crane_x7.srdf)
+に記載されている`home`と`vertical`の姿勢に移行します。
 
-Run a node with the following command:
+次のコマンドを実行します。
 
 ```sh
 rosrun crane_x7_examples pose_groupstate_example.py
@@ -80,11 +84,11 @@ rosrun crane_x7_examples pose_groupstate_example.py
 
 ---
 
-### joint_values_example.py
+### joint_values_example.pyの実行
 
-This is an example to change each joint values of arm one by one using `moveit_commander`.
+moveit_commanderを使用して、アームのジョイント角度を１つずつ変更させるコード例です。
 
-Run a node with the following command:
+次のコマンドを実行します。
 
 ```sh
 rosrun crane_x7_examples joint_values_example.py
@@ -94,11 +98,11 @@ rosrun crane_x7_examples joint_values_example.py
 
 ---
 
-### crane_x7_pick_and_place_demo.py
+### crane_x7_pick_and_place_demo.pyの実行
 
-This is an example to grasp, pick up, carry and place an small object.
+モノを掴む・持ち上げる・運ぶ・置くコード例です。
 
-Run a node with the following command:
+次のコマンドを実行します。
 
 ```sh
 rosrun crane_x7_examples crane_x7_pick_and_place_demo.py
@@ -106,112 +110,115 @@ rosrun crane_x7_examples crane_x7_pick_and_place_demo.py
 
 ![bringup_rviz](https://github.com/rt-net/crane_x7_ros/blob/images/images/bringup_rviz.gif "bringup_rviz")
 
-**Real environment setup**
+**実機を使う場合**
 
-Place the small object at a distance of 20 cm from CRANE-X7.
+CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 
 ![bringup](https://github.com/rt-net/crane_x7_ros/blob/images/images/bringup.jpg "bringup")
 
-This orange ball can be purchased at [this page](https://www.rt-shop.jp/index.php?main_page=product_info&cPath=1299_1307&products_id=3701&language=en) in RT ROBOT SHOP.
+サンプルで使用しているこのオレンジ色のソフトボールはRT ROBOT SHOPの[こちらのページ](https://www.rt-shop.jp/index.php?main_page=product_info&cPath=1299_1307&products_id=3701)から入手することができます。
 
-Demo Video is [here **(YouTube Video)**](https://youtu.be/_8xBgpgMhk8).
+動作させると[こちら **(YouTube Video)**](https://youtu.be/_8xBgpgMhk8)のような動きになります。
 
 ---
 
-### preset_pid_gain_example.py
+### preset_pid_gain_example.pyの実行
 
-This is an example to change PID gains of servo motors in bulk using `preset_reconfigure` of `crane_x7_control`.
+`crane_x7_control`の`preset_reconfigure`を使うコード例です。
+サーボモータのPIDゲインを一斉に変更できます。
 
-Lists of PID gain preset values can be edited in [crane_x7_control/scripts/preset_reconfigure.py](../crane_x7_control/scripts/preset_reconfigure.py).
+プリセットは[crane_x7_control/scripts/preset_reconfigure.py](../crane_x7_control/scripts/preset_reconfigure.py)
+にて編集できます。
 
-Launch nodes `preset_reconfigure.py` and `preset_pid_gain_example.py` with the following command:
+次のコマンドを実行すると、`preset_reconfigure.py`と`preset_pid_gain_example.py`のノードを起動します。
 
 ```sh
 roslaunch crane_x7_examples preset_pid_gain_example.launch
 ```
 
-Demo Video is [here **(YouTube Video)**](https://youtu.be/0rBbgNDwm6Y).
+動作させると[こちら **(YouTube Video)**](https://youtu.be/0rBbgNDwm6Y)のような動きになります。
 
 ---
 
-### teaching_example.py
+### teaching_example.pyの実行
 
-This is an example to generate an motion trajectory with direct teaching.
+ティーチングのコード例です。X7のPIDゲインを小さくすることでダイレクトティーチングができます。
 
-User can operate CRANE-X7 directly because the PID gains of servo motors will be small values.
-
-Launch nodes with the following command:
+次のコマンドでノードを起動します。
 
 ```sh
 roslaunch crane_x7_examples teaching_example.launch
 ```
 
-Please see below for keyboard operation.
+以下のキー割当を参考に、キーボードから操作してください。
 
 **Teaching Mode**
 
-This is a mode at startup and the PID gains will be small values.
+起動時のモードです。トルクOFF*状態です。
 
-| Key | Function |
+| キー | 機能 |
 ----|----
-| s / S | **S**ave current posture |
-| d / D | **D**elete all posture data |
-| m / M | Transition to *Action **M**ode* |
-| q / Q | **Q**uit application |
+| s / S | 現在の姿勢を保存 |
+| d / D | これまでに保存した姿勢を削除 |
+| m / M | **Action Mode**へ遷移 |
+| q / Q | シャットダウン |
 
 
 **Action Mode**
 
-This is a mode transitioned from Teaching Mode and the PID gains will return to normal values.
+Teaching Modeから遷移します。トルクON*状態です。
 
-| Key | Function |
+| キー | 機能 |
 ----|----
-| p / P | **P**layback a posture data |
-| a / A | Playback **a**ll posture data consecutively |
-| l / L | Toggle **l**oop playback (ON/OFF) |
-| m / M | Transition to *Teaching **M**ode* |
-| q / Q | **Q**uit application |
+| p / P | 保存した姿勢を１つずつ再生 |
+| a / A | 保存した姿勢のすべてを連続再生 |
+| l / L | ループ再生 ON / OFF |
+| m / M | **Teaching Mode**へ遷移 |
+| q / Q | シャットダウン |
 
+- トルクのON / OFFはサーボモータのPIDゲインに小さい値をプリセットすることで実現しています。
 
-Demo Video is [here **(YouTube Video)**](https://youtu.be/--5_l1DpQ-0).
+動作させると[こちら **(YouTube Video)**](https://youtu.be/--5_l1DpQ-0)のような動きになります。
 
 ---
 
-### joystick_example.py
+### joystick_example.pyの実行
 
-This is an example to use joystick controller to change the hand position and posture, 
-or to open and close of the gripper,
-or to preset the PID gains 
-or to generate a position trajectory with direct teaching.
+ジョイスティックでX7を動かすコード例です。
+手先の位置・姿勢の変更、グリッパーの開閉、PIDゲインのプリセット、ティーチングができます。
 
-Connect a joystick controller to a PC and check the device `/dev/input/js0` existence
-then launch nodes with the following command:
+ジョイスティックをPCに接続し、`/dev/input/js0`が存在することを確認してください。
 
-#### for control CRANE-X7
+次のコマンドでノードを起動します。
+
+#### 実機を使う場合
 
 ```sh
 roslaunch crane_x7_examples joystick_example.launch
 ```
 
-#### for control virtual CRANE-X7
+#### シミュレータを使う場合
 
-Please add an argument `sim` to avoid an error.
+シミュレータを使う場合は、エラーを防ぐため`sim`オプションを追加してください。
 
 ```sh
 roslaunch crane_x7_examples joystick_example.launch sim:=true
 ```
 
-#### Key configuration
+#### キー割り当ての変更
 
-This picture shows the default key configuration. The joystick controller is 
-[Logicool Wireless Gamepad F710](https://support.logicool.co.jp/ja_jp/product/wireless-gamepad-f710).
-
+デフォルトのキー割り当てはこちらです。ジョイスティックは
+[Logicool Wireless Gamepad F710](https://support.logicool.co.jp/ja_jp/product/wireless-gamepad-f710)
+を使っています。
 ![key_config](https://github.com/rt-net/crane_x7_ros/blob/images/images/joystick_example_key_config.png "key_config")
 
-Key assignments can be edited with key numbers in [crane_x7_example/launch/joystick_example.launch](./launch/joystick_example.launch).
+[crane_x7_example/launch/joystick_example.launch](./launch/joystick_example.launch)
+のキー番号を編集することで、キー割り当てを変更できます。
 
 ```xml
  <node name="joystick_example" pkg="crane_x7_examples" type="joystick_example.py" required="true" output="screen">
+    <!-- 使用するジョイスティックコントローラに合わせてvalueを変更してください -->
+    <!-- ひとつのボタンに複数の機能を割り当てています -->
     <param name="button_shutdown_1" value="8" type="int" />
     <param name="button_shutdown_2" value="9" type="int" />
 
@@ -222,18 +229,19 @@ Key assignments can be edited with key numbers in [crane_x7_example/launch/joyst
     <param name="button_preset_no1" value="9" type="int" />
 ```
 
-This picture shows the default key numbers.
+デフォルトのキー番号はこちらです。
 ![key_numbers](https://github.com/rt-net/crane_x7_ros/blob/images/images/joystick_example_key_numbers.png "key_numbers")
 
-Please display `/joy` topic with the command `rostopic echo /joy` to check the default key numbers.
+ジョイスティックのキー番号はトピック`/joy`で確認できます。
 
 ```sh
+# ノードを起動する
 roslaunch crane_x7_examples joystick_example.launch sim:=true
 
-# Enter the command in another terminal 
+# 別のターミナルでコマンドを入力
 rostopic echo /joy
 
-# Press buttons of a joystick controller
+# ジョイスティックのボタンを押す
 header: 
   seq: 1
   stamp: 
@@ -245,29 +253,28 @@ buttons: [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ---
 ```
 
-Demo Video is [here **(YouTube Video)**](https://youtu.be/IQci_vb3owM).
+動作させると[こちら **(YouTube Video)**](https://youtu.be/IQci_vb3owM)のような動きになります。
 
 ---
 
-### obstacle_avoidance_example.py
+### obstacle_avoidance_example.pyの実行
 
-This is an example to use `rosservice` to add dummy obstacles and to avoid the obstacles.
+ROSのServiceを使って、障害物の追加と障害物回避をするコード例です。
 
-Launch nodes with the following command:
+次のコマンドでノードを起動します。
 
 ```sh
 roslaunch crane_x7_examples obstacle_avoidance_example.launch
 ```
 
-This example uses a [service file](./srv/ObstacleAvoidance.srv) 
-including target posture of CRANE-X7 and size and posture of an obstacle.
+このサンプルでは目標姿勢と障害物の大きさ・姿勢を定義した[サービスファイル](./srv/ObstacleAvoidance.srv)を使用します。
 
-These values can be edited in [`crane_x7_examples/scripts/obstacle_client.py`](./scripts/obstacle_client.py).
-
-The default obstacle shape is rectangular.
+目標姿勢と障害物の大きさ・姿勢は
+[`crane_x7_examples/scripts/obstacle_client.py`](./scripts/obstacle_client.py)を編集することで変更できます。
+デフォルトでは、直方体の箱を障害物として設定しています。
 
 ```python
-    # Define obstacle shape and pose
+    # 障害物を設定
     obstacle_name = "box"
     obstacle_size = Vector3(0.28, 0.16, 0.14)
     obstacle_pose_stamped = PoseStamped()
@@ -276,12 +283,12 @@ The default obstacle shape is rectangular.
     obstacle_pose_stamped.pose.position.z = obstacle_size.z/2.0
 ```
 
-This example generates a dummy floor as an obstacle to move safely.
-
-If this floor is unnecessary, please comment out some lines from [`crane_x7_examples/scripts/obstacle_avoidance_example.py`](./scripts/obstacle_avoidance_example.py).
+安全のため障害物として床を設置しています。
+不要であれば[`crane_x7_examples/scripts/obstacle_avoidance_example.py`](./scripts/obstacle_avoidance_example.py)
+を編集してください。
 
 ```python
-    # Generate dummy floor
+    # 安全のため床を障害物として生成する
     floor_name = "floor"
     floor_size = (2.0, 2.0, 0.01)
     floor_pose = PoseStamped()
@@ -291,29 +298,29 @@ If this floor is unnecessary, please comment out some lines from [`crane_x7_exam
     rospy.sleep(SLEEP_TIME)
 ```
 
-If MoveIt! did not generate trajectory to avoid an obstacle, 
-CRANE-X7 will not move,
-the example server will return value `result=False`,
-then MoveIt! will calculate a trajectory to next target position.
+moveitが障害物回避のパスを生成できない場合、X7は動作せず、次の目標位置に対するパスを計算します。
+この場合、サーバからの返答は`result=False`となります。
 
 ![gazebo_obstacle_avoidance](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_obstacle_avoidance.gif)
 
 ---
 
-### servo_info_example.py
+### servo_info_example.pyの実行
 
-This is an example to subscribe the servo motor status.
+サーボモータ（joint）の情報を取得するコード例です。
 
-Run a node with the following command:
+次のコマンドでノードを起動します。
 
 ```sh
 rosrun crane_x7_examples servo_info_example.py
 ```
 
-This example subscribes topics of gripper joint `crane_x7_gripper_finger_a_joint`
-and displays the servo motor current, position and temperature to a terminal.
+このサンプルではグリッパーのモータ`crane_x7_gripper_finger_a_joint`のトピックを取得しています。
+
+実行するとターミナル画面にモータの電流・位置・温度が表示されます。
 
 ```sh
+# 表示例
  current [mA]: 0.0     dxl_position: 2634    temp [deg C]: 42.0  
  current [mA]: 2.69    dxl_position: 2634    temp [deg C]: 42.0  
  current [mA]: 0.0     dxl_position: 2634    temp [deg C]: 42.0  
@@ -322,31 +329,30 @@ and displays the servo motor current, position and temperature to a terminal.
  ...
 ```
 
-If the motor current exceed thresholds, the gripper will open/close.
-This function enables user to open/close the gripper by hand.
+また、電流が一定値を超えるとグリッパーを開く（閉じる）処理を入れてます。
+これにより、手でグリッパーを開く（閉じる）ことができます。
 
-Please refere [`crane_x7_control/README.md`](../crane_x7_control/README.md#ネームスペースとトピック) for details of the topics.
+トピックの詳細については、[`crane_x7_control/README.md`](../crane_x7_control/README.md#ネームスペースとトピック)を確認してください。
 
 ---
 
-### pick_and_place_in_gazebo_example.py
+### pick_and_place_in_gazebo_example.pyの実行
 
-This is an example to grasp, pick up, carry and place an small object
-on **Gazebo** environments.
+Gazebo上のモノを掴む・持ち上げる・運ぶ・置くコード例です。
 
-Launch nodes with the following command with arguments to control the gripper by EffortController.
+gripperをEffortControllerで制御するため、オプションを追加してGazeboを起動します。
 
 ```sh
 roslaunch crane_x7_gazebo crane_x7_with_table.launch use_effort_gripper:=true
 ```
 
-After Gazebo launch, run a node with the following command:
+Gazebo起動後、次のコマンドでサンプルを実行します。
 
 ```sh
 rosrun crane_x7_examples pick_and_place_in_gazebo_example.py
 ```
 
-Demo Video is [here **(YouTube Video)**](https://youtu.be/YUSIregHHnM).
+動作させると[こちら **(YouTube Video)**](https://youtu.be/YUSIregHHnM)のような動きになります。
 
 ![gazebo_pick_and_place](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_pick_and_place.gif)
 
