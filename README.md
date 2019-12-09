@@ -1,4 +1,4 @@
-[English](README.md) | [日本語](README.ja.md)
+[English](README.en.md) | [日本語](README.md)
 
 # crane_x7_ros
 
@@ -6,21 +6,20 @@
 
 ![crane_x7_gazebo](https://github.com/rt-net/crane_x7_ros/blob/images/images/crane_x7_gazebo.png "crane_x7_gazebo")
 
-ROS Packages for CRANE-X7.
+CRANE-X7のROSパッケージです。
 
-Product page:  
-[https://www.rt-net.jp/products/crane-x7](https://www.rt-net.jp/products/crane-x7?lang=en)
+製品ページはこちらです。  
+[https://www.rt-net.jp/products/crane-x7](https://www.rt-net.jp/products/crane-x7)
 
-ROS Wiki:  
+ROS Wikiはこちらです。  
 [https://wiki.ros.org/crane_x7](https://wiki.ros.org/crane_x7)
 
-Examples:  
+ROSのサンプルコード集はこちらです。  
 [crane_x7_examples](https://github.com/rt-net/crane_x7_ros/tree/master/crane_x7_examples)
 
-## System Requirements
+## 動作環境
 
-These packages have been developed and tested on ROS Kinetic & Melodic.
-Please see below for details.
+以下の環境にて動作確認を行っています。
 
 - ROS Kinetic
   - OS: Ubuntu 16.04.5 LTS
@@ -35,20 +34,20 @@ Please see below for details.
   - MoveIt! 1.13.3
   - Gazebo 9.0.0
 
-## Installation
+## インストール方法
 
-### Build from source
+### ソースからビルドする方法
 
-- Install ROS environments. Please see [ROS Wiki](http://wiki.ros.org/melodic/Installation/Ubuntu).
+- [ROS Wiki](http://wiki.ros.org/ja/kinetic/Installation/Ubuntu)を参照しROSをインストールします。
 
-- Download the packages for CRANE-X7 using `git`.
+- `git`を使用して本パッケージをダウンロードします。
 
   ```bash
   cd ~/catkin_ws/src
   git clone https://github.com/rt-net/crane_x7_ros.git
   ```
 
-- Install package dependencies.
+- 依存関係にあるパッケージをインストールします。
 
   ```bash
   cd ~/catkin_ws/src
@@ -59,72 +58,83 @@ Please see below for details.
   rosdep install -r -y --from-paths --ignore-src crane_x7_ros
   ```
 
-- Build packages using `catkin_make`.
+- `catkin_make`を使用して本パッケージをビルドします。
 
   ```bash
   cd ~/catkin_ws && catkin_make
   source ~/catkin_ws/devel/setup.bash
   ```
 
-## Setup Serial Connection
+### `apt`を使用してインストールする方法
 
-The `crane_x7_control` node communicates with CRANE-X7 via serial port over USB.
-Logged-in user should have read and write access to `/dev/ttyUSB0`.
+後日提供予定です。
 
-Change permissions on `/dev/ttyUSB0` with the following command:
+## セットアップ方法
+
+`crane_x7_control`が実機と通信する際には`/dev/ttyUSB0`へのアクセス権が必要です。
+`/dev/ttyUSB0`へのアクセス権を変更するには下記のコマンドを実行します。
 
 ```bash
 sudo chmod 666 /dev/ttyUSB0
 ```
 
-## About CRANE-X7 packages
+## パッケージ概要
+
+CRANE-X7の各パッケージはcrane_x7_rosにまとめています。  
 
 ### crane_x7_description
 
-This package defines CRANE-X7 model data including links and joints.
-The MoveIt! packages and Gazebo require this package.
+CRANE-X7のモデルデータやリンクとジョイントの構成を定義するパッケージです。  
+MoveIt!やGazeboから呼び出されます。
 
 ### crane_x7_control
 
-This package controls CRANE-X7 using `Dynamixel SDK C++ Library`
-which can install by `rosdep install` command.
-Read and write permissions on `/dev/ttyUSB0` 
-are required for communication between the package and CRANE-X7.
+CRANE-X7の制御を行うパッケージです。  
+dynamixel_sdkのC++ライブラリが必要です。  
+実機との通信には`/dev/ttyUSB0`へのアクセス権が必要です。
 
-The device name of serial port and parameters of Dynamixel servo motors are listed in `config/crane_x7_control.yaml`.
-If this package did not find the serial port, the package switches its control mode to Dummy Joint Mode from Normal Mode
-and republishes target joint values as servo angle values.
-This is useful for debugging of motion control without CRANE-X7 hardware.
+通信に使用するポートの名前やサーボ情報は`config/crane_x7_control.yaml`に記載します。  
+設定されたUSBポートが無い場合、コントローラからの指示通りの値を返すダミージョイントモードで動作します。  
+ハードウェアを使用しなくてもデバッグが出来るので便利に使って下さい。  
 
-At startup, this package moves the CRANE-X7 to Home Position in 5 seconds.
-At shutdown, this package decreases P gains of the servo motors to stop motion safely.
+起動時は設定されたホームポジションへ5秒かけて移動します。  
+ノードを停止するとサーボをブレーキモードに変更してから終了するので安全に停止することができます。  
 
 ### crane_x7_moveit_config
 
-This package includes configuration files for MoveIt!.
-
-To launch the MoveIt! demonstration with Rviz:
+MoveIt!のパッケージです。下記のコマンドで起動します。  
 
 `roslaunch crane_x7_moveit_config demo.launch`
 
 ### crane_x7_bringup
 
-This package includes launch files for startup of CRANE-X7.
+CRANE-X7の起動に必要なlaunchファイルをまとめたパッケージです。
 
 ### crane_x7_examples
 
-This package includes example codes for CRANE-X7.
-Please refer to [./crane_x7_examples/README.md](./crane_x7_examples/README.md).
+サンプルコード集です。
+使い方については[./crane_x7_examples/README.md](./crane_x7_examples/README.md)を参照してください。
 
 ### crane_x7_gazebo
 
-This package includes Gazebo simulation environments for CRANE-X7.
+GazeboでCRANE-X7のシミュレーションを行うパッケージです。
 
-To simulate CRANE-X7 on the table:
+次のコマンドで起動します。実機との接続やcrane_x7_bringupの実行は必要ありません。
 
 `roslaunch crane_x7_gazebo crane_x7_with_table.launch`
 
 ---
+
+### 知的財産権について
+
+CRANE-X7は、アールティが開発した研究用アームロボットです。
+このリポジトリのデータ等に関するライセンスについては、LICENSEファイルをご参照ください。
+企業による使用については、自社内において研究開発をする目的に限り、本データの使用を許諾します。 
+本データを使って自作されたい方は、義務ではありませんが弊社ロボットショップで部品をお買い求めいただければ、励みになります。
+商業目的をもって本データを使用する場合は、商業用使用許諾の条件等について弊社までお問合せください。
+
+サーボモータのXM540やXM430に関するCADモデルの使用については、ROBOTIS社より使用許諾を受けています。 
+CRANE-X7に使用されているROBOTIS社の部品類にかかる著作権、商標権、その他の知的財産権は、ROBOTIS社に帰属します。
 
 ### Proprietary Rights
 
