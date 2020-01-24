@@ -40,12 +40,24 @@ def main():
     arm.go()
 
     # SRDFに定義されている"vertical"の姿勢にする
+    print("vertical2")
+    arm.set_named_target("vertical2")
+    arm.go()
+
     print("vertical")
     arm.set_named_target("vertical")
     arm.go()
 
-    # ハンドを少し閉じる
-    gripper.set_joint_value_target([0.7, 0.7])
+    print("vertical3")
+    arm.set_named_target("vertical3")
+    arm.go()
+
+    print("vertical")
+    arm.set_named_target("vertical")
+    arm.go()
+
+    # ハンドを閉じる
+    gripper.set_joint_value_target([0.1, 0.1])
     gripper.go()
 
     # 手動で姿勢を指定するには以下のように指定
