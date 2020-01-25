@@ -14,7 +14,7 @@
       <!-- X7を机の端に配置するため、机を移動、回転する -->
       <pose>0.29 0 0 0 0 1.5708</pose>
     </model>
-
+<!--
     <model name="wood_cube_5cm">
       <include>
         <uri>model://wood_cube_5cm</uri>
@@ -22,7 +22,7 @@
 
       <pose>0.20 0 1.0 0 0 0</pose>
     </model>
-
+-->
     <model name="ground_plane">
       <include>
         <uri>model://ground_plane</uri>
@@ -33,5 +33,76 @@
         <child>table::link</child>
       </joint>
     </model>
-  </world>
+
+    <model name="domino1">
+      <pose>0.30 -0.20 1.2 0 0 0</pose>
+        <link name="domino1">
+          <material name="red">
+            <color rgba="1.0 0.3 0.3 1.0"/>
+          </material>
+          <inertial>
+            <mass>0.01</mass>
+            <inertia>
+              <ixx>0.0003350833</ixx>
+              <ixy>0.0</ixy>
+              <ixz>0.0</ixz>
+              <iyy>0.000560417</iyy>
+              <iyz>0.0</iyz>
+              <izz>0.000478833</izz>
+            </inertia>
+          </inertial>
+          <collision name="collision">
+            <geometry>
+              <box>
+                <size>0.035 0.019 0.007</size>
+              </box>
+            </geometry>
+          </collision>
+          <visual name="visual">
+            <material name="red"/>
+            <geometry>
+              <box>
+                <size>0.035 0.019 0.007</size>
+              </box>
+            </geometry>
+          </visual>
+        </link>
+      </model>
+
+    <model name="domino2">
+      <pose>0.30 -0.20 1.6 0 0 0</pose>
+        <link name="domino2">
+          <material name="red">
+            <color rgba="1.0 0.3 0.3 1.0"/>
+          </material>
+          <inertial>
+            <mass>0.01</mass>
+            <inertia>
+              <ixx>0.0003350833</ixx>
+              <ixy>0.0</ixy>
+              <ixz>0.0</ixz>
+              <iyy>0.000560417</iyy>
+              <iyz>0.0</iyz>
+              <izz>0.000478833</izz>
+            </inertia>
+          </inertial>
+          <collision name="collision">
+            <geometry>
+              <box>
+                <size>0.035 0.019 0.007</size>
+              </box>
+            </geometry>
+          </collision>
+          <visual name="visual">
+            <material name="red"/>
+            <geometry>
+              <box>
+                <size>0.035 0.019 0.007</size>
+              </box>
+            </geometry>
+          </visual>
+        </link>
+      </model>
+
+   </world>
 </sdf>
