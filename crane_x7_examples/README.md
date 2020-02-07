@@ -56,5 +56,6 @@ rosrun crane_x7_examples domino2.py
 ```
 ## 成功率について
 今回使用したドミノでは、４つ全て立つ確率は三割ほどでした。成功率を上げるにはドミノを大きくする(太くする)、またそれに応じたプログラムの調整が必要になります。
+
 ## デモムービー
 [![](https://img.youtube.com/vi/ObdJRx4v56U&feature=youtu.be/0.jpg)](https://www.youtube.com/watch?v=ObdJRx4v56U&feature=youtu.be)
