@@ -45,7 +45,7 @@ roslaunch crane_x7_bringup demo.launch fake_execution:=false
 ```
 
 ## 実行方法
-次のコマンドを実行することで動きます。
+show_center_depth_pub.pyが動いている状態で次のコマンドを実行することで動きます。
 ```
 rosrun crane_x7_examples domino2.py 
 ```
