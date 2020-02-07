@@ -9,14 +9,19 @@
 違う大きさのドミノを使う場合は適宜プログラムの値を変更する必要があります(グリッパーの値やheight、width等)。
 
 ## インストール
-本プログラムのインストール
-
+crane_x7_rosのインストール
 ```
-git clone 
+git clone https://github.com/habu94/crane_x7_ros.git
 ```
-
-realsense-rosのインストールは[こちらのサイト](https://demura.net/misc/14263.html)の手順に従いました。
-
+realsense-rosのインストール
+```
+git clone https://github.com/habu94/realsense-ros.git
+```
+インストールし終わったら
+```
+cd ~/catkin_wsa/
+catkin_make
+```
 ### REALSENSEの準備
 
 REALSENSEをPCと接続し、以下のコマンドを実行します。
@@ -51,3 +56,5 @@ rosrun crane_x7_examples domino2.py
 ```
 ## 成功率について
 今回使用したドミノでは、４つ全て立つ確率は三割ほどでした。成功率を上げるにはドミノを大きくする(太くする)、またそれに応じたプログラムの調整が必要になります。
+## デモムービー
+[https://www.youtube.com/watch?v=ObdJRx4v56U&feature=youtu.be](https://www.youtube.com/watch?v=ObdJRx4v56U&feature=youtu.be)
