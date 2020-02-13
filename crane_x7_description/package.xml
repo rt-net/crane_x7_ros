@@ -17,4 +17,5 @@
 
   <run_depend>rospy</run_depend>
   <run_depend>std_msgs</run_depend>
+  <run_depend>joint_state_publisher_gui</run_depend>
 </package>
