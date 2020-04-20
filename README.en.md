@@ -2,7 +2,7 @@
 
 # crane_x7_ros
 
-[![Build Status](https://travis-ci.org/rt-net/crane_x7_ros.svg?branch=master)](https://travis-ci.org/rt-net/crane_x7_ros)
+![industrial_ci](https://github.com/rt-net/crane_x7_ros/workflows/industrial_ci/badge.svg)
 
 ![crane_x7_gazebo](https://github.com/rt-net/crane_x7_ros/blob/images/images/crane_x7_gazebo.png "crane_x7_gazebo")
 
