@@ -14,11 +14,13 @@ jobs:
   industrial_ci:
     strategy:
       matrix:
-        env:
-          - { ROS_DISTRO: kinetic, ROS_REPO: ros, UPSTREAM_WORKSPACE: "github:roboticsgroup/roboticsgroup_gazebo_plugins.git#master" }
-          - { ROS_DISTRO: melodic, ROS_REPO: ros }
+        distro: [ kinetic, melodic ]
+    env:
+      ROS_REPO: ros
+      ROSDEP_SKIP_KEYS: roboticsgroup_gazebo_plugins
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: "ros-industrial/industrial_ci@master"
-        env: ${{ matrix.env }}
+        env:
+          ROS_DISTRO: ${{ matrix.distro }}
