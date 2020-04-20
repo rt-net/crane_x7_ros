@@ -21,4 +21,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: "ros-industrial/industrial_ci@master"
-        env: ${{ matrix.env }}
+        env: 
+          - UPSTREAM_WORKSPACE: "github:roboticsgroup/roboticsgroup_gazebo_plugins.git#master"
+          - ${{ matrix.env }}
