@@ -2,7 +2,7 @@
 
 # crane_x7_ros
 
-![industrial_ci](https://github.com/rt-net/crane_x7_ros/workflows/industrial_ci/badge.svg)
+[![industrial_ci](https://github.com/rt-net/crane_x7_ros/workflows/industrial_ci/badge.svg?branch=master)](https://github.com/rt-net/crane_x7_ros/actions?query=workflow%3Aindustrial_ci+branch%3Amaster)
 
 ![crane_x7_gazebo](https://github.com/rt-net/crane_x7_ros/blob/images/images/crane_x7_gazebo.png "crane_x7_gazebo")
 
