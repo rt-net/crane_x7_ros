@@ -12,15 +12,21 @@ on:
 
 jobs:
   industrial_ci:
+    continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
         distro: [ kinetic, melodic ]
+        repo: [ main, testing ]
+        experimental: false
+        include:
+          - repo: testing
+            experimental: true
     env:
-      ROS_REPO: ros
-      ROSDEP_SKIP_KEYS: roboticsgroup_gazebo_plugins
+      UPSTREAM_WORKSPACE: .ci.rosinstall
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: "ros-industrial/industrial_ci@master"
         env:
           ROS_DISTRO: ${{ matrix.distro }}
+          ROS_REPO: ${{ matrix.repo }}
