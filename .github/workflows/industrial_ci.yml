@@ -15,11 +15,14 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
-        distro: [ kinetic, melodic ]
-        repo: [ main, testing ]
+        env:
+          - { ROS_DISTRO: kinetic, ROS_REPO: main }
+          - { ROS_DISTRO: melodic, ROS_REPO: main }
         experimental: [false]
         include:
-          - repo: testing
+          - env: { ROS_DISTRO: kinetic, ROS_REPO: testing }
+            experimental: true
+          - env: { ROS_DISTRO: melodic, ROS_REPO: testing }
             experimental: true
     env:
       UPSTREAM_WORKSPACE: .ci.rosinstall
