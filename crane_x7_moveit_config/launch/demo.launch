@@ -36,8 +36,11 @@
   
 
   <!-- We do not have a robot connected, so publish fake joint states -->
-  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-    <param name="/use_gui" value="$(arg use_gui)"/>
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" unless="$(arg use_gui)">
+    <rosparam param="/source_list" unless="$(arg fake_execution)">[/crane_x7/joint_states]</rosparam>
+    <rosparam param="/source_list" if="$(arg fake_execution)">[/move_group/fake_controller_joint_states]</rosparam>
+  </node>
+  <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" if="$(arg use_gui)">
     <rosparam param="/source_list" unless="$(arg fake_execution)">[/crane_x7/joint_states]</rosparam>
     <rosparam param="/source_list" if="$(arg fake_execution)">[/move_group/fake_controller_joint_states]</rosparam>
   </node>
