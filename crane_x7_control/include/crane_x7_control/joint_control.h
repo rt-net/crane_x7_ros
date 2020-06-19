@@ -288,3 +288,4 @@ private:
     ST_JOINT_PARAM      param;
 };
 #endif /*DXL_JOINT_CONTROL_H */
+
