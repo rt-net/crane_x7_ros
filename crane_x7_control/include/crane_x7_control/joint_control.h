@@ -77,7 +77,7 @@ static const ST_DYNAMIXEL_REG_TABLE RegTable[] ={
     { "POSITION_P_GAIN",    84,     REG_LENGTH_WORD,  800,    enDXL_RAM,  false },
     { "BUS_WATCHDOG",       98,     REG_LENGTH_BYTE,  0,      enDXL_RAM,  false },
     { "GOAL_CURRENT",       102,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },
-    { "GOAL_VELOCITY",      104,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },
+    { "GOAL_VELOCITY",      104,    REG_LENGTH_DWORD, 0,      enDXL_RAM,  false },
     { "GOAL_POSITION",      116,    REG_LENGTH_DWORD, 0,      enDXL_RAM,  false },
     { "PRESENT_CURRENT",    126,    REG_LENGTH_WORD,  0,      enDXL_RAM,  false },
     { "PRESENT_VELOCITY",   128,    REG_LENGTH_DWORD, 0,      enDXL_RAM,  false },
