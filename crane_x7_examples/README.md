@@ -63,7 +63,7 @@ roslaunch crane_x7_gazebo crane_x7_with_table.launch
 rosrun crane_x7_examples gripper_action_example.py
 ```
 
-![gripper_action_example](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_gripper_example.gif)
+<img src=https://rt-net.github.io/images/crane-x7/gazebo_gripper_example.gif width=500px />
 
 ---
 
@@ -80,7 +80,7 @@ SRDFファイル[crane_x7_moveit_config/config/crane_x7.srdf](../crane_x7_moveit
 rosrun crane_x7_examples pose_groupstate_example.py
 ```
 
-![pose_groupstate_example](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_pose_groupstate.gif)
+<img src=https://rt-net.github.io/images/crane-x7/gazebo_pose_groupstate.gif width=500px />
 
 ---
 
@@ -93,8 +93,7 @@ moveit_commanderを使用して、アームのジョイント角度を１つず�
 ```sh
 rosrun crane_x7_examples joint_values_example.py
 ```
-
-![joint_values_example](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_joint_values_example.gif)
+<img src= https://rt-net.github.io/images/crane-x7/gazebo_joint_values_example.gif width = 500px />
 
 ---
 
@@ -107,14 +106,13 @@ rosrun crane_x7_examples joint_values_example.py
 ```sh
 rosrun crane_x7_examples crane_x7_pick_and_place_demo.py
 ```
-
-![bringup_rviz](https://github.com/rt-net/crane_x7_ros/blob/images/images/bringup_rviz.gif "bringup_rviz")
+<img src = https://rt-net.github.io/images/crane-x7/bringup_rviz.gif width = 500px />
 
 **実機を使う場合**
 
 CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 
-![bringup](https://github.com/rt-net/crane_x7_ros/blob/images/images/bringup.jpg "bringup")
+<img src = https://rt-net.github.io/images/crane-x7/bringup.jpg width = 500px />
 
 サンプルで使用しているこのオレンジ色のソフトボールはRT ROBOT SHOPの[こちらのページ](https://www.rt-shop.jp/index.php?main_page=product_info&cPath=1299_1307&products_id=3701)から入手することができます。
 
@@ -210,7 +208,8 @@ roslaunch crane_x7_examples joystick_example.launch sim:=true
 デフォルトのキー割り当てはこちらです。ジョイスティックは
 [Logicool Wireless Gamepad F710](https://support.logicool.co.jp/ja_jp/product/wireless-gamepad-f710)
 を使っています。
-![key_config](https://github.com/rt-net/crane_x7_ros/blob/images/images/joystick_example_key_config.png "key_config")
+
+<img src= https://rt-net.github.io/images/crane-x7/joystick_example_key_config.png width = 900px />
 
 [crane_x7_example/launch/joystick_example.launch](./launch/joystick_example.launch)
 のキー番号を編集することで、キー割り当てを変更できます。
@@ -230,7 +229,8 @@ roslaunch crane_x7_examples joystick_example.launch sim:=true
 ```
 
 デフォルトのキー番号はこちらです。
-![key_numbers](https://github.com/rt-net/crane_x7_ros/blob/images/images/joystick_example_key_numbers.png "key_numbers")
+
+<img src = https://rt-net.github.io/images/crane-x7/joystick_example_key_numbers.png width = 900px />
 
 ジョイスティックのキー番号はトピック`/joy`で確認できます。
 
@@ -301,7 +301,7 @@ roslaunch crane_x7_examples obstacle_avoidance_example.launch
 moveitが障害物回避のパスを生成できない場合、X7は動作せず、次の目標位置に対するパスを計算します。
 この場合、サーバからの返答は`result=False`となります。
 
-![gazebo_obstacle_avoidance](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_obstacle_avoidance.gif)
+<img src = https://rt-net.github.io/images/crane-x7/gazebo_obstacle_avoidance.gif width = 500px />
 
 ---
 
@@ -354,5 +354,5 @@ rosrun crane_x7_examples pick_and_place_in_gazebo_example.py
 
 動作させると[こちら **(YouTube Video)**](https://youtu.be/YUSIregHHnM)のような動きになります。
 
-![gazebo_pick_and_place](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_pick_and_place.gif)
+<img src = https://rt-net.github.io/images/crane-x7/gazebo_pick_and_place.gif width = 500px />
 
