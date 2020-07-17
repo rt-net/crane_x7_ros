@@ -50,7 +50,20 @@ roslaunch crane_x7_gazebo crane_x7_with_table.launch
 
 Following examples will be executable after launch CRANE-X7 base packages.
 
-### gripper_action_example.py
+- [gripper_action_example](#gripper_action_example)
+- [pose_groupstate_example](#pose_groupstate_example)
+- [joint_values_example](#joint_values_example)
+- [crane_x7_pick_and_place_demo](#crane_x7_pick_and_place_demo)
+- [preset_pid_gain_example](#preset_pid_gain_example)
+- [teaching_example](#teaching_example)
+- [joystick_example](#joystick_example)
+- [obstacle_avoidance_example](#obstacle_avoidance_example)
+- [servo_info_example](#servo_info_example)
+- [pick_and_place_in_gazebo_example](#pick_and_place_in_gazebo_example)
+
+---
+
+### gripper_action_example
 
 This is an example to open/close the gripper.
 
@@ -60,11 +73,13 @@ Run a node with the following command:
 rosrun crane_x7_examples gripper_action_example.py
 ```
 
-![gripper_action_example](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_gripper_example.gif)
+<img src=https://rt-net.github.io/images/crane-x7/gazebo_gripper_example.gif width=500px />
+
+[back to example list](#run-examples)
 
 ---
 
-### pose_groupstate_example.py
+### pose_groupstate_example
 
 This is an example using `group_state` of SRDF.
 
@@ -76,11 +91,13 @@ Run a node with the following command:
 rosrun crane_x7_examples pose_groupstate_example.py
 ```
 
-![pose_groupstate_example](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_pose_groupstate.gif)
+<img src=https://rt-net.github.io/images/crane-x7/gazebo_pose_groupstate.gif width=500px />
+
+[back to example list](#run-examples)
 
 ---
 
-### joint_values_example.py
+### joint_values_example
 
 This is an example to change each joint values of arm one by one using `moveit_commander`.
 
@@ -90,11 +107,13 @@ Run a node with the following command:
 rosrun crane_x7_examples joint_values_example.py
 ```
 
-![joint_values_example](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_joint_values_example.gif)
+<img src= https://rt-net.github.io/images/crane-x7/gazebo_joint_values_example.gif width = 500px />
+
+[back to example list](#run-examples)
 
 ---
 
-### crane_x7_pick_and_place_demo.py
+### crane_x7_pick_and_place_demo
 
 This is an example to grasp, pick up, carry and place an small object.
 
@@ -104,21 +123,25 @@ Run a node with the following command:
 rosrun crane_x7_examples crane_x7_pick_and_place_demo.py
 ```
 
-![bringup_rviz](https://github.com/rt-net/crane_x7_ros/blob/images/images/bringup_rviz.gif "bringup_rviz")
+<img src = https://rt-net.github.io/images/crane-x7/bringup_rviz.gif width = 500px />
 
 **Real environment setup**
 
 Place the small object at a distance of 20 cm from CRANE-X7.
 
-![bringup](https://github.com/rt-net/crane_x7_ros/blob/images/images/bringup.jpg "bringup")
+<img src = https://rt-net.github.io/images/crane-x7/bringup.jpg width = 500px />
 
 This orange ball can be purchased at [this page](https://www.rt-shop.jp/index.php?main_page=product_info&cPath=1299_1307&products_id=3701&language=en) in RT ROBOT SHOP.
 
-Demo Video is [here **(YouTube Video)**](https://youtu.be/_8xBgpgMhk8).
+#### Videos
+
+[![crane_x7_pick_and_place_demo](http://img.youtube.com/vi/_8xBgpgMhk8/hqdefault.jpg)](https://youtu.be/_8xBgpgMhk8)
+
+[back to example list](#run-examples)
 
 ---
 
-### preset_pid_gain_example.py
+### preset_pid_gain_example
 
 This is an example to change PID gains of servo motors in bulk using `preset_reconfigure` of `crane_x7_control`.
 
@@ -130,11 +153,15 @@ Launch nodes `preset_reconfigure.py` and `preset_pid_gain_example.py` with the f
 roslaunch crane_x7_examples preset_pid_gain_example.launch
 ```
 
-Demo Video is [here **(YouTube Video)**](https://youtu.be/0rBbgNDwm6Y).
+#### Videos
+
+[![preset_pid_gain_example](http://img.youtube.com/vi/0rBbgNDwm6Y/sddefault.jpg)](https://youtu.be/0rBbgNDwm6Y)
+
+[back to example list](#run-examples)
 
 ---
 
-### teaching_example.py
+### teaching_example
 
 This is an example to generate an motion trajectory with direct teaching.
 
@@ -173,11 +200,15 @@ This is a mode transitioned from Teaching Mode and the PID gains will return to 
 | q / Q | **Q**uit application |
 
 
-Demo Video is [here **(YouTube Video)**](https://youtu.be/--5_l1DpQ-0).
+#### Videos
+
+[![teaching_example](http://img.youtube.com/vi/--5_l1DpQ-0/hqdefault.jpg)](https://youtu.be/--5_l1DpQ-0)
+
+[back to example list](#run-examples)
 
 ---
 
-### joystick_example.py
+### joystick_example
 
 This is an example to use joystick controller to change the hand position and posture, 
 or to open and close of the gripper,
@@ -206,7 +237,7 @@ roslaunch crane_x7_examples joystick_example.launch sim:=true
 This picture shows the default key configuration. The joystick controller is 
 [Logicool Wireless Gamepad F710](https://support.logicool.co.jp/ja_jp/product/wireless-gamepad-f710).
 
-![key_config](https://github.com/rt-net/crane_x7_ros/blob/images/images/joystick_example_key_config.png "key_config")
+<img src= https://rt-net.github.io/images/crane-x7/joystick_example_key_config.png width = 900px />
 
 Key assignments can be edited with key numbers in [crane_x7_example/launch/joystick_example.launch](./launch/joystick_example.launch).
 
@@ -223,7 +254,8 @@ Key assignments can be edited with key numbers in [crane_x7_example/launch/joyst
 ```
 
 This picture shows the default key numbers.
-![key_numbers](https://github.com/rt-net/crane_x7_ros/blob/images/images/joystick_example_key_numbers.png "key_numbers")
+
+<img src = https://rt-net.github.io/images/crane-x7/joystick_example_key_numbers.png width = 900px />
 
 Please display `/joy` topic with the command `rostopic echo /joy` to check the default key numbers.
 
@@ -245,11 +277,15 @@ buttons: [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ---
 ```
 
-Demo Video is [here **(YouTube Video)**](https://youtu.be/IQci_vb3owM).
+#### Videos
+
+[![joystick_example](http://img.youtube.com/vi/IQci_vb3owM/sddefault.jpg)](https://youtu.be/IQci_vb3owM)
+
+[back to example list](#run-examples)
 
 ---
 
-### obstacle_avoidance_example.py
+### obstacle_avoidance_example
 
 This is an example to use `rosservice` to add dummy obstacles and to avoid the obstacles.
 
@@ -296,11 +332,13 @@ CRANE-X7 will not move,
 the example server will return value `result=False`,
 then MoveIt! will calculate a trajectory to next target position.
 
-![gazebo_obstacle_avoidance](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_obstacle_avoidance.gif)
+<img src = https://rt-net.github.io/images/crane-x7/gazebo_obstacle_avoidance.gif width = 500px />
+
+[back to example list](#run-examples)
 
 ---
 
-### servo_info_example.py
+### servo_info_example
 
 This is an example to subscribe the servo motor status.
 
@@ -327,9 +365,11 @@ This function enables user to open/close the gripper by hand.
 
 Please refere [`crane_x7_control/README.md`](../crane_x7_control/README.md#ネームスペースとトピック) for details of the topics.
 
+[back to example list](#run-examples)
+
 ---
 
-### pick_and_place_in_gazebo_example.py
+### pick_and_place_in_gazebo_example
 
 This is an example to grasp, pick up, carry and place an small object
 on **Gazebo** environments.
@@ -346,7 +386,11 @@ After Gazebo launch, run a node with the following command:
 rosrun crane_x7_examples pick_and_place_in_gazebo_example.py
 ```
 
-Demo Video is [here **(YouTube Video)**](https://youtu.be/YUSIregHHnM).
+<img src = https://rt-net.github.io/images/crane-x7/gazebo_pick_and_place.gif width = 500px />
 
-![gazebo_pick_and_place](https://github.com/rt-net/crane_x7_ros/blob/images/images/gazebo_pick_and_place.gif)
+#### Videos
+
+[![pick_and_place_in_gazebo](http://img.youtube.com/vi/YUSIregHHnM/sddefault.jpg)](https://youtu.be/YUSIregHHnM)
+
+[back to example list](#run-examples)
 
