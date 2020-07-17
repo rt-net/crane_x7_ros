@@ -47,12 +47,24 @@ roslaunch crane_x7_bringup demo.launch fake_execution:=false port:=/dev/ttyUSB1
 roslaunch crane_x7_gazebo crane_x7_with_table.launch
 ```
 
-## サンプルの実行方法
+## Run Examples
 
-`demo.launch`を実行している状態で各サンプルを実行することができます。
+`demo.launch`を実行している状態で各サンプルを実行できます。
 
+- [gripper_action_example](#gripper_action_example)
+- [pose_groupstate_example](#pose_groupstate_example)
+- [joint_values_example](#joint_values_example)
+- [crane_x7_pick_and_place_demo](#crane_x7_pick_and_place_demo)
+- [preset_pid_gain_example](#preset_pid_gain_example)
+- [teaching_example](#teaching_example)
+- [joystick_example](#joystick_example)
+- [obstacle_avoidance_example](#obstacle_avoidance_example)
+- [servo_info_example](#servo_info_example)
+- [pick_and_place_in_gazebo_example](#pick_and_place_in_gazebo_example)
 
-### gripper_action_example.pyの実行
+---
+
+### gripper_action_example
 
 ハンドを開閉させるコード例です。
 このサンプルは実機動作のみに対応しています。
@@ -65,9 +77,11 @@ rosrun crane_x7_examples gripper_action_example.py
 
 <img src=https://rt-net.github.io/images/crane-x7/gazebo_gripper_example.gif width=500px />
 
+[back to example list](#run-examples)
+
 ---
 
-### pose_groupstate_example.pyの実行
+### pose_groupstate_example
 
 group_stateを使うコード例です。
 
@@ -82,9 +96,11 @@ rosrun crane_x7_examples pose_groupstate_example.py
 
 <img src=https://rt-net.github.io/images/crane-x7/gazebo_pose_groupstate.gif width=500px />
 
+[back to example list](#run-examples)
+
 ---
 
-### joint_values_example.pyの実行
+### joint_values_example
 
 moveit_commanderを使用して、アームのジョイント角度を１つずつ変更させるコード例です。
 
@@ -95,9 +111,11 @@ rosrun crane_x7_examples joint_values_example.py
 ```
 <img src= https://rt-net.github.io/images/crane-x7/gazebo_joint_values_example.gif width = 500px />
 
+[back to example list](#run-examples)
+
 ---
 
-### crane_x7_pick_and_place_demo.pyの実行
+### crane_x7_pick_and_place_demo
 
 モノを掴む・持ち上げる・運ぶ・置くコード例です。
 
@@ -116,11 +134,15 @@ CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 
 サンプルで使用しているこのオレンジ色のソフトボールはRT ROBOT SHOPの[こちらのページ](https://www.rt-shop.jp/index.php?main_page=product_info&cPath=1299_1307&products_id=3701)から入手することができます。
 
-動作させると[こちら **(YouTube Video)**](https://youtu.be/_8xBgpgMhk8)のような動きになります。
+#### Videos
+
+[![crane_x7_pick_and_place_demo](http://img.youtube.com/vi/_8xBgpgMhk8/hqdefault.jpg)](https://youtu.be/_8xBgpgMhk8)
+
+[back to example list](#run-examples)
 
 ---
 
-### preset_pid_gain_example.pyの実行
+### preset_pid_gain_example
 
 `crane_x7_control`の`preset_reconfigure`を使うコード例です。
 サーボモータのPIDゲインを一斉に変更できます。
@@ -133,12 +155,15 @@ CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 ```sh
 roslaunch crane_x7_examples preset_pid_gain_example.launch
 ```
+#### Videos
 
-動作させると[こちら **(YouTube Video)**](https://youtu.be/0rBbgNDwm6Y)のような動きになります。
+[![preset_pid_gain_example](http://img.youtube.com/vi/0rBbgNDwm6Y/sddefault.jpg)](https://youtu.be/0rBbgNDwm6Y)
+
+[back to example list](#run-examples)
 
 ---
 
-### teaching_example.pyの実行
+### teaching_example
 
 ティーチングのコード例です。X7のPIDゲインを小さくすることでダイレクトティーチングができます。
 
@@ -176,11 +201,15 @@ Teaching Modeから遷移します。トルクON*状態です。
 
 - トルクのON / OFFはサーボモータのPIDゲインに小さい値をプリセットすることで実現しています。
 
-動作させると[こちら **(YouTube Video)**](https://youtu.be/--5_l1DpQ-0)のような動きになります。
+#### Videos
+
+[![teaching_example](http://img.youtube.com/vi/--5_l1DpQ-0/hqdefault.jpg)](https://youtu.be/--5_l1DpQ-0)
+
+[back to example list](#run-examples)
 
 ---
 
-### joystick_example.pyの実行
+### joystick_example
 
 ジョイスティックでX7を動かすコード例です。
 手先の位置・姿勢の変更、グリッパーの開閉、PIDゲインのプリセット、ティーチングができます。
@@ -253,11 +282,15 @@ buttons: [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ---
 ```
 
-動作させると[こちら **(YouTube Video)**](https://youtu.be/IQci_vb3owM)のような動きになります。
+#### Videos
+
+[![joystick_example](http://img.youtube.com/vi/IQci_vb3owM/sddefault.jpg)](https://youtu.be/IQci_vb3owM)
+
+[back to example list](#run-examples)
 
 ---
 
-### obstacle_avoidance_example.pyの実行
+### obstacle_avoidance_example
 
 ROSのServiceを使って、障害物の追加と障害物回避をするコード例です。
 
@@ -303,9 +336,11 @@ moveitが障害物回避のパスを生成できない場合、X7は動作せず
 
 <img src = https://rt-net.github.io/images/crane-x7/gazebo_obstacle_avoidance.gif width = 500px />
 
+[back to example list](#run-examples)
+
 ---
 
-### servo_info_example.pyの実行
+### servo_info_example
 
 サーボモータ（joint）の情報を取得するコード例です。
 
@@ -334,9 +369,11 @@ rosrun crane_x7_examples servo_info_example.py
 
 トピックの詳細については、[`crane_x7_control/README.md`](../crane_x7_control/README.md#ネームスペースとトピック)を確認してください。
 
+[back to example list](#run-examples)
+
 ---
 
-### pick_and_place_in_gazebo_example.pyの実行
+### pick_and_place_in_gazebo_example
 
 Gazebo上のモノを掴む・持ち上げる・運ぶ・置くコード例です。
 
@@ -352,7 +389,10 @@ Gazebo起動後、次のコマンドでサンプルを実行します。
 rosrun crane_x7_examples pick_and_place_in_gazebo_example.py
 ```
 
-動作させると[こちら **(YouTube Video)**](https://youtu.be/YUSIregHHnM)のような動きになります。
-
 <img src = https://rt-net.github.io/images/crane-x7/gazebo_pick_and_place.gif width = 500px />
 
+#### Videos
+
+[![pick_and_place_in_gazebo](http://img.youtube.com/vi/YUSIregHHnM/sddefault.jpg)](https://youtu.be/YUSIregHHnM)
+
+[back to example list](#run-examples)
