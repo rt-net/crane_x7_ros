@@ -54,6 +54,7 @@ roslaunch crane_x7_gazebo crane_x7_with_table.launch
 - [gripper_action_example](#gripper_action_example)
 - [pose_groupstate_example](#pose_groupstate_example)
 - [joint_values_example](#joint_values_example)
+- [cartesian_path_example](#cartesian_path_example)
 - [crane_x7_pick_and_place_demo](#crane_x7_pick_and_place_demo)
 - [preset_pid_gain_example](#preset_pid_gain_example)
 - [teaching_example](#teaching_example)
@@ -110,6 +111,25 @@ moveit_commanderを使用して、アームのジョイント角度を１つず�
 rosrun crane_x7_examples joint_values_example.py
 ```
 <img src= https://rt-net.github.io/images/crane-x7/gazebo_joint_values_example.gif width = 500px />
+
+[back to example list](#run-examples)
+
+---
+
+### cartesian_path_example
+
+moveit_commanderで[Cartesian Path](http://docs.ros.org/melodic/api/moveit_tutorials/html/doc/move_group_python_interface/move_group_python_interface_tutorial.html#cartesian-paths)
+を生成するコード例です。
+
+次のコマンドを実行します。
+
+```sh
+rosrun crane_x7_examples cartesian_path_example.py
+```
+
+#### Videos
+
+[![](http://img.youtube.com/vi/-Rt3zc3UXMM/sddefault.jpg)](https://youtu.be/-Rt3zc3UXMM)
 
 [back to example list](#run-examples)
 
