@@ -16,7 +16,7 @@ from geometry_msgs.msg import Quaternion
 import rosnode
 from tf.transformations import quaternion_from_euler
 
-def move_on_circular_path(
+def follow_circular_path(
     center_position=Point(0.3, 0.0, 0.1), radius=0.1,
     num_of_waypoints=30, repeat=1,
     eef_step=0.01, jump_threshold=0.0, avoid_collisions=True):
@@ -44,7 +44,8 @@ def main():
     arm.set_named_target("home")
     arm.go()
 
-    move_on_circular_path(center_position=Point(0.3, 0.0, 0.1), radius=0.1, repeat=3)
+    # 座標(x=0.3, y=0.0, z=0.1)を中心に、XY平面上に半径0.1 mの円を3回描くように手先を動かす
+    follow_circular_path(center_position=Point(0.3, 0.0, 0.1), radius=0.1, repeat=3)
 
     arm.set_named_target("vertical")
     arm.go()
