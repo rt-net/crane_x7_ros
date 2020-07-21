@@ -119,7 +119,7 @@ rosrun crane_x7_examples joint_values_example.py
 ### cartesian_path_example
 
 moveit_commanderで[Cartesian Path](http://docs.ros.org/melodic/api/moveit_tutorials/html/doc/move_group_python_interface/move_group_python_interface_tutorial.html#cartesian-paths)
-を生成するコード例です。
+を生成し、手先で円を描くコード例です。
 
 次のコマンドを実行します。
 

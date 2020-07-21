@@ -116,8 +116,8 @@ rosrun crane_x7_examples joint_values_example.py
 
 ### cartesian_path_example
 
-This is an example to plan a [Cartesian Path](http://docs.ros.org/melodic/api/moveit_tutorials/html/doc/move_group_python_interface/move_group_python_interface_tutorial.html#cartesian-paths)
-using `moveit_commander`.
+This is an example to plan a circular path that the hand follows using `moveit_commander` and 
+[Cartesian Path](http://docs.ros.org/melodic/api/moveit_tutorials/html/doc/move_group_python_interface/move_group_python_interface_tutorial.html#cartesian-paths).
 
 Run a node with the following command:
 
