@@ -44,7 +44,7 @@ def main():
     # X7を手で動かせることを確認するため、数秒間待つ
     sleep_seconds = 10
     for i in range(sleep_seconds):
-        rospy.loginfo(str(sleep_seconds-i) + " seconds left.")
+        rospy.loginfo(str(sleep_seconds-i) + " counts left.")
         rospy.sleep(1)
         # 安全のため、現在のアームの姿勢を目標姿勢に変更する
         arm.set_pose_target(arm.get_current_pose())
