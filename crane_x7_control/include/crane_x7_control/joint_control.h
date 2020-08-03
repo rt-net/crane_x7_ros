@@ -166,6 +166,8 @@ typedef struct ST_JOINT_PARAM
 #define     DXL_PGAIN_MAX                   (16383)
 #define     DXL_DEFAULT_PGAIN               (800)
 #define     DXL_FREE_PGAIN                  (0)
+#define     DXL_FREE_IGAIN                  (0)
+#define     DXL_FREE_DGAIN                  (0)
 
 #define     DXL_OFFSET_DEFAULT              (2048)
 

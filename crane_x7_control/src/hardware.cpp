@@ -309,7 +309,8 @@ int main( int argc, char* argv[] )
         rate.sleep();
 #endif
     }
-    crane_x7.set_gain_all( DXL_FREE_PGAIN );
+
+    crane_x7.set_param_pos_gain_all( DXL_FREE_PGAIN, DXL_FREE_IGAIN, DXL_FREE_DGAIN );
     crane_x7.set_goal_current_all( 0 );
     spinner.stop();
 
