@@ -999,6 +999,14 @@ void DXLPORT_CONTROL::set_param_vel_gain( uint8_t dxl_id, int p, int i )
         }
     }
 }
+
+void DXLPORT_CONTROL::set_param_pos_gain_all( int p, int i, int d )
+{
+    for( int jj=0 ; jj<joint_num ; ++jj ){
+        set_param_pos_gain( joints[jj].get_dxl_id(), p, i, d);
+    }
+}
+
 void DXLPORT_CONTROL::set_param_pos_gain( uint8_t dxl_id, int p, int i, int d )
 {
     uint16_t set_p_param = (uint16_t)p;
