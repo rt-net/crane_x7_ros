@@ -18,6 +18,39 @@ dynamixel_port:
   port_name: "/dev/ttyUSB0"
 ```
 
+## 制御周期の変更
+
+`crane_x7_control`はデフォルト200Hz周期で制御しています。
+制御周期を変更する場合は`crane_x7_control/src/hardware.cpp`を編集してください。
+
+```cpp
+#define     CONTROL_HZ   (200)
+```
+
+実際に動作している制御周期は次のようにトピックから確認できます。
+
+```sh
+$ rostopic hz /crane_x7/crane_x7_control/crane_x7_gripper_finger_a_joint/current
+
+subscribed to [/crane_x7/crane_x7_control/crane_x7_gripper_finger_a_joint/current]
+average rate: 199.928
+	min: 0.002s max: 0.008s std dev: 0.00055s window: 190
+average rate: 198.470
+	min: 0.001s max: 0.014s std dev: 0.00099s window: 387
+```
+
+実際の制御周期が200Hzに達せず、100Hz程度に低くなってしまう場合、USB通信ポートの`latency_timer`を変更してください。
+
+```sh
+# cat /sys/bus/usb-serial/devices/ttyUSB0/latency_timer
+16
+# echo 1 > /sys/bus/usb-serial/devices/ttyUSB0/latency_timer
+# cat /sys/bus/usb-serial/devices/ttyUSB0/latency_timer
+1
+```
+
+参考資料：https://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_wizard2/#usb-latency-setting
+
 ## ネームスペースとトピック
 
 `crane_x7_control`は`/crane_x7`をルートとするネームスペースにパラメータやトピックを定義します。   
