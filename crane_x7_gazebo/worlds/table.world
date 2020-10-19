@@ -15,13 +15,13 @@
       <pose>0.29 0 0 0 0 1.5708</pose>
     </model>
 
-    <model name="wood_cube_5cm">
-      <include>
-        <uri>model://wood_cube_5cm</uri>
-      </include>
-
-      <pose>0.20 0 1.0 0 0 0</pose>
-    </model>
+    <model name="seal_model">
+       <include>
+				 <uri>model://seal_model</uri>
+       </include>
+      
+       <pose>0.20 -0.30 1.005 1.5708 1.5708 -1.5708</pose>
+     </model>
 
     <model name="ground_plane">
       <include>
