@@ -17,11 +17,20 @@
 
     <model name="seal_model">
        <include>
-				 <uri>model://seal_model</uri>
+         <uri>model://seal_model</uri>
        </include>
       
        <pose>0.20 -0.30 1.005 1.5708 1.5708 -1.5708</pose>
      </model>
+
+    <model name="sealmat_model">
+       <include>
+         <uri>model://sealmat_model</uri>
+       </include>
+
+       <pose>0.20 0 1.0 0 0 1.5708</pose>
+     </model>
+
 
     <model name="ground_plane">
       <include>
