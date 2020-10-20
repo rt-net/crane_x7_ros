@@ -20,7 +20,7 @@
          <uri>model://seal_model</uri>
        </include>
       
-       <pose>0.20 -0.20 1.005 1.5708 1.5708 -1.5708</pose>
+       <pose>0.23 -0.25 1.005 1.5708 1.5708 -1.5708</pose>
      </model>
 
     <model name="sealmat_model">
@@ -29,6 +29,14 @@
        </include>
 
        <pose>0.20 0 1.0 0 0 1.5708</pose>
+     </model>
+
+    <model name="inkpad_model">
+       <include>
+         <uri>model://inkpad_model</uri>
+       </include>
+
+       <pose>0.20 -0.15 1.0 0 0 0</pose>
      </model>
 
 
