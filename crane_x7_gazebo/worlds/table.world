@@ -14,7 +14,8 @@
       <!-- X7を机の端に配置するため、机を移動、回転する -->
       <pose>0.29 0 0 0 0 1.5708</pose>
     </model>
-
+    
+    <!-- はんこモデル -->
     <model name="seal_model">
        <include>
          <uri>model://seal_model</uri>
@@ -23,6 +24,7 @@
        <pose>0.23 -0.25 1.005 1.5708 1.5708 -1.5708</pose>
      </model>
 
+    <!-- はんこマットモデル -->
     <model name="sealmat_model">
        <include>
          <uri>model://sealmat_model</uri>
@@ -31,6 +33,7 @@
        <pose>0.20 0 1.0 0 0 1.5708</pose>
      </model>
 
+    <!-- 朱肉モデル -->
     <model name="inkpad_model">
        <include>
          <uri>model://inkpad_model</uri>
@@ -39,7 +42,7 @@
        <pose>0.20 -0.15 1.0 0 0 0</pose>
      </model>
 
-
+    
     <model name="ground_plane">
       <include>
         <uri>model://ground_plane</uri>
