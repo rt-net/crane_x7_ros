@@ -9,6 +9,7 @@ import math
 from tf.transformations import quaternion_from_euler
 
 def arm_move(x,y,z,a,b,c):
+    arm = moveit_commander.MoveGroupCommander("arm")
     target_pose = geometry_msgs.msg.Pose()
     target_pose.position.x = x
     target_pose.position.y = y
@@ -22,27 +23,29 @@ def arm_move(x,y,z,a,b,c):
     arm.go()  # 実行
     rospy.sleep(1.0)
 
+def hand_move(deg):
+    gripper = moveit_commander.MoveGroupCommander("gripper")
+    gripper.set_joint_value_target([deg, deg])
+    gripper.go()
 
-def main():    
+
+def main():
+    # --------------------
     # はんこ
     seal_x = 0.20
     seal_y = -0.25
-
-    seal_before_z = 0.20
-    seal_z = 0.08
-    seal_after_z = 0.20
-
-    # 掴む
-    grab_seal = 0.07
-
+    seal_before_z = 0.30
+    seal_z = 0.12
+    seal_after_z = 0.30
+    seal_close = 0.2
+    # --------------------
+    # 朱肉
     inkpad_x = 0.20
     inkpad_y = -0.15
-    inkpad_before_z = 0.20
-    inkpad_z = 0.10
-
-    a = math.pi/2.0
-    b = 0
-    c = 0
+    inkpad_before_z = 0.30
+    inkpad_z = 0.12
+    inkpad_after_z = 0.30
+    # --------------------
     
     rospy.init_node("crane_x7_pick_and_place_controller")
     robot = moveit_commander.RobotCommander()
@@ -70,79 +73,34 @@ def main():
     arm.go()
     gripper.set_joint_value_target([0.7, 0.7])
     gripper.go()
+		
 
-    #はんこの手前まで
-    target_pose = geometry_msgs.msg.Pose()
-    target_pose.position.x = seal_x
-    target_pose.position.y = seal_y
-    target_pose.position.z = seal_before_z
-    q = quaternion_from_euler(-3.14, 0.0, -3.14/2.0)  # 上方から掴みに行く場合
-    target_pose.orientation.x = q[0]
-    target_pose.orientation.y = q[1]
-    target_pose.orientation.z = q[2]
-    target_pose.orientation.w = q[3]
-    arm.set_pose_target(target_pose)  # 目標ポーズ設定
-    arm.go()  # 実行
+    print("はんこ上まで移動")
+    arm_move(seal_x, seal_y, seal_before_z, -3.1415, 0.0, -1.5708)
 
-    # ハンドを開く
-    gripper.set_joint_value_target([0.2, 0.2])
-    gripper.go()
 
-    # はんこを掴む位置まで
-    target_pose = geometry_msgs.msg.Pose()
-    target_pose.position.x = seal_x
-    target_pose.position.y = seal_y
-    target_pose.position.z = seal_z
-    q = quaternion_from_euler(-3.14, 0.0, -3.14/2.0)  # 上方から掴みに行く場合
-    target_pose.orientation.x = q[0]
-    target_pose.orientation.y = q[1]
-    target_pose.orientation.z = q[2]
-    target_pose.orientation.w = q[3]
-    arm.set_pose_target(target_pose)  # 目標ポーズ設定
-    arm.go()  # 実行
-    rospy.sleep(1.0)
+    print("はんこを掴む位置まで移動")
+    arm_move(seal_x, seal_y, seal_z, -3.1415, 0.0, -1.5708)
 
-    gripper.set_joint_value_target([0.1, 0.1])
-    gripper.go()
-    gripper.set_joint_value_target([0.09, 0.09])
-    gripper.go()
-    gripper.set_joint_value_target([0.08, 0.08])
-    gripper.go()
 
-    # はんこを掴む
-    gripper.set_joint_value_target([grab_seal, grab_seal])
-    gripper.go()
-    rospy.sleep(1.0)
+    print("はんこを掴む")
+    hand_move(seal_close)
 
-    # 持ち上げる
-    print("持ち上げる")
-    target_pose = geometry_msgs.msg.Pose()
-    target_pose.position.x = seal_x
-    target_pose.position.y = seal_y
-    target_pose.position.z = seal_after_z
-    q = quaternion_from_euler(-3.14, 0.0, -3.14/2.0)  # 上方から掴みに行く場合
-    target_pose.orientation.x = q[0]
-    target_pose.orientation.y = q[1]
-    target_pose.orientation.z = q[2]
-    target_pose.orientation.w = q[3]
-    arm.set_pose_target(target_pose)  # 目標ポーズ設定
-    arm.go()  # 実行
-    rospy.sleep(1.0)
 
-    # 朱肉まで移動
-    print("移動")
-    target_pose = geometry_msgs.msg.Pose()
-    target_pose.position.x = inkpad_x
-    target_pose.position.y = inkpad_y
-    target_pose.position.z = inkpad_before_z
-    q = quaternion_from_euler(a,b,c)  # 上方から掴みに行く場合
-    target_pose.orientation.x = q[0]
-    target_pose.orientation.y = q[1]
-    target_pose.orientation.z = q[2]
-    target_pose.orientation.w = q[3]
-    arm.set_pose_target(target_pose)  # 目標ポーズ設定
-    arm.go()  # 実行
-    rospy.sleep(1.0)
+    print("はんこを持ち上げる")
+    arm_move(seal_x, seal_y, seal_after_z, -3.1415, 0.0, -1.5708)
+
+   
+    print("朱肉上まで移動")
+    arm_move(inkpad_x, inkpad_y, inkpad_before_z, -3.1415, 0.0, -1.5708)
+
+   
+    print("朱肉に押す")
+    arm_move(inkpad_x, inkpad_y, inkpad_z, -3.1415, 0.0, -1.5708)
+
+
+    print("はんこを持ち上げる")
+    arm_move(inkpad_x, inkpad_y, inkpad_after_z, -3.1415, 0.0, -1.5708)
 
 if __name__ == '__main__':
 
