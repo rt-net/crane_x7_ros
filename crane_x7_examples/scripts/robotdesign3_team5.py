@@ -8,6 +8,20 @@ import rosnode
 import math
 from tf.transformations import quaternion_from_euler
 
+def arm_move(x,y,z,a,b,c):
+    target_pose = geometry_msgs.msg.Pose()
+    target_pose.position.x = x
+    target_pose.position.y = y
+    target_pose.position.z = z
+    q = quaternion_from_euler(a,b,c)
+    target_pose.orientation.x = q[0]
+    target_pose.orientation.y = q[1]
+    target_pose.orientation.z = q[2]
+    target_pose.orientation.w = q[3]
+    arm.set_pose_target(target_pose)  # 目標ポーズ設定
+    arm.go()  # 実行
+    rospy.sleep(1.0)
+
 
 def main():    
     # はんこ
