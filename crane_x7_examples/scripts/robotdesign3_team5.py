@@ -32,21 +32,28 @@ def hand_move(deg):
 def main():
     # --------------------
     # はんこ
-    seal_x = 0.20
-    seal_y = -0.25
+    seal_x = 0.30
+    seal_y = -0.15
     seal_before_z = 0.30
-    seal_z = 0.12
+    seal_z = 0.125
     seal_after_z = 0.30
-    seal_close = 0.2
+    seal_close = 0.22
     # --------------------
     # 朱肉
     inkpad_x = 0.20
     inkpad_y = -0.15
     inkpad_before_z = 0.30
-    inkpad_z = 0.12
+    inkpad_z = 0.13
     inkpad_after_z = 0.30
     # --------------------
-    
+    # 捺印
+    put_x = 0.20
+    put_y = 0.15
+    put_before_z = 0.20
+    put_z = 0.10
+    put_after_z = 0.20
+    # --------------------
+
     rospy.init_node("crane_x7_pick_and_place_controller")
     robot = moveit_commander.RobotCommander()
     arm = moveit_commander.MoveGroupCommander("arm")
@@ -101,6 +108,19 @@ def main():
 
     print("はんこを持ち上げる")
     arm_move(inkpad_x, inkpad_y, inkpad_after_z, -3.1415, 0.0, -1.5708)
+
+
+    print("はんこを押す位置まで移動")
+    arm_move(put_x, put_y, put_before_z, -3.1415, 0.0, -1.5708)
+
+
+    print("はんこを押す")
+    arm_move(put_x, put_y, put_z, -3.1415, 0.0, -1.5708)
+
+
+    print("はんこを上げる")
+    arm_move(put_x, put_y, put_after_z, -3.1415, 0.0, -1.5708)
+
 
 if __name__ == '__main__':
 
