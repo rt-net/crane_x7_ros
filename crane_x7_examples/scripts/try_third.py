@@ -71,7 +71,7 @@ def main():
     arm.go()  # 実行
 
     # ハンドを閉じる
-    gripper.set_joint_value_target([0.4, 0.4])
+    gripper.set_joint_value_target([0.2, 0.2])
     gripper.go()
 
     # 持ち上げる
