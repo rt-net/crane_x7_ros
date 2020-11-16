@@ -68,9 +68,9 @@ def main():
         # 一定時間待機する
         # この間に、ユーザがgazebo上のオブジェクト姿勢を変更しても良い
         sleep_time = 3.0
-        print "Wait " + str(sleep_time) + " secs."
+        print("Wait " + str(sleep_time) + " secs.")
         rospy.sleep(sleep_time)
-        print "Start"
+        print("Start")
 
         # オブジェクトがgazebo上に存在すれば、pick_and_placeを実行する
         if OBJECT_NAME in gazebo_model_states.name:
@@ -92,7 +92,7 @@ def main():
             target_pose.orientation.w = q[3]
             arm.set_pose_target(target_pose)
             if arm.go() is False:
-                print "Failed to approach an object."
+                print("Failed to approach an object.")
                 continue
             rospy.sleep(1.0)
 
@@ -100,7 +100,7 @@ def main():
             target_pose.position.z = PICK_Z
             arm.set_pose_target(target_pose)
             if arm.go() is False:
-                print "Failed to grip an object."
+                print("Failed to grip an object.")
                 continue
             rospy.sleep(1.0)
             gripper_goal.command.position = GRIPPER_CLOSE
@@ -108,10 +108,10 @@ def main():
             gripper.wait_for_result(rospy.Duration(1.0))
 
             # 持ち上げる
-            target_pose.position.z = LEAVE_Z;
+            target_pose.position.z = LEAVE_Z
             arm.set_pose_target(target_pose)
             if arm.go() is False:
-                print "Failed to pick up an object."
+                print("Failed to pick up an object.")
                 continue
             rospy.sleep(1.0)
             
@@ -126,7 +126,7 @@ def main():
             target_pose.orientation.w = q[3]
             arm.set_pose_target(target_pose)
             if arm.go() is False:
-                print "Failed to approach target position."
+                print("Failed to approach target position.")
                 continue
             rospy.sleep(1.0)
 
@@ -134,7 +134,7 @@ def main():
             target_pose.position.z = PICK_Z
             arm.set_pose_target(target_pose)
             if arm.go() is False:
-                print "Failed to place an object."
+                print("Failed to place an object.")
                 continue
             rospy.sleep(1.0)
             gripper_goal.command.position = GRIPPER_OPEN
@@ -145,21 +145,21 @@ def main():
             target_pose.position.z = LEAVE_Z
             arm.set_pose_target(target_pose)
             if arm.go() is False:
-                print "Failed to leave from an object."
+                print("Failed to leave from an object.")
                 continue
             rospy.sleep(1.0)
 
             # SRDFに定義されている"home"の姿勢にする
             arm.set_named_target("home")
             if arm.go() is False:
-                print "Failed to go back to home pose."
+                print("Failed to go back to home pose.")
                 continue
             rospy.sleep(1.0)
 
             print("Done")
 
         else:
-            print "No objects"
+            print("No objects")
 
 
 if __name__ == '__main__':

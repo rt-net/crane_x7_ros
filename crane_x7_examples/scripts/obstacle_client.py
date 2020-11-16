@@ -21,7 +21,7 @@ def main():
     # サービスの起動を待つ
     try:
         rospy.wait_for_service(SERVICE_NAME, 10.0)
-    except (rospy.ServiceException, rospy.ROSException), e:
+    except (rospy.ServiceException, rospy.ROSException) as e:
         rospy.logwarn('Service call failed: %s'%e)
         rospy.signal_shutdown('SERVICE CALL FAILED')
         return
@@ -43,9 +43,9 @@ def main():
     request.start_pose = start_pose
     request.goal_pose = goal_pose
     request.obstacle_enable = False
-    print 'Request ...'
+    print('Request ...')
     result = handler(request)
-    print result
+    print(result)
 
     # 障害物を設定
     obstacle_name = "box"
@@ -60,9 +60,9 @@ def main():
     request.obstacle_size = obstacle_size
     request.obstacle_pose_stamped = obstacle_pose_stamped
     request.obstacle_name = obstacle_name
-    print 'Request ...'
+    print('Request ...')
     result = handler(request)
-    print result
+    print(result)
 
     # 障害物の姿勢を変更
     obstacle_pose_stamped.pose.orientation = euler_to_quaternion(0.0, math.pi/2.0, math.pi/2.0)
@@ -70,9 +70,9 @@ def main():
 
     # 障害物有りでアームを動かす
     request.obstacle_pose_stamped = obstacle_pose_stamped
-    print 'Request ...'
+    print('Request ...')
     result = handler(request)
-    print result
+    print(result)
 
 
 if __name__ == '__main__':

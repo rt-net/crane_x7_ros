@@ -52,20 +52,20 @@ def main():
     gc = GripperClient()
 
     # Open grippers(45degrees)
-    print "Open Gripper."
+    print("Open Gripper.")
     gripper = 45.0
     gc.command(math.radians(gripper),1.0)
     result = gc.wait(2.0)
-    print result
+    print(result)
     time.sleep(1)
-    print ""
+    print("")
 
     # Close grippers
-    print "Close Gripper."
+    print("Close Gripper.")
     gripper = 0.0 # 0.0
     gc.command(math.radians(gripper),1.0)
     result = gc.wait(2.0)
-    print result
+    print(result)
     time.sleep(1)
 
 if __name__ == "__main__":

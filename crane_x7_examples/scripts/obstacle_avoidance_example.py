@@ -17,7 +17,7 @@ def hook_shutdown():
     server.shutdown('rospy shutdown')
 
     # shutdown時にvertical姿勢へ移行する
-    print 'shutdown'
+    print('shutdown')
     arm = moveit_commander.MoveGroupCommander("arm")
     arm.set_max_velocity_scaling_factor(0.1)
     arm.set_named_target("vertical")
@@ -86,7 +86,7 @@ def main():
     rospy.on_shutdown(hook_shutdown)
 
     server = rospy.Service('~obstacle_avoidance', ObstacleAvoidance, callback)
-    print 'Ready to avoid obstacles'
+    print('Ready to avoid obstacles')
 
     rospy.spin()
 
