@@ -292,7 +292,7 @@ def main():
                 gripper.set_joint_value_target(gripper_joint_values)
                 joy_wrapper.save_joint_values(arm_joint_values, gripper_joint_values)
             except moveit_commander.exception.MoveItCommanderException:
-                print "Error setting joint target. Is the target within bounds?"
+                print("Error setting joint target. Is the target within bounds?")
         elif teaching_flag == joy_wrapper.TEACHING_LOAD:
             # 保存したアーム、グリッパー角度を取り出す
             joint_values = joy_wrapper.load_joint_values()
