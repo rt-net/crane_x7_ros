@@ -45,15 +45,15 @@
 
     <!-- Mounting plate
          (Root of the manipulator's TF tree) -->
-    <crane_x7_mounting_plate
+    <xacro:crane_x7_mounting_plate
         parent="${parent}"
         name="crane_x7_mounting_plate"
         color="silver">
       <xacro:insert_block name="origin"/>
-    </crane_x7_mounting_plate>
+    </xacro:crane_x7_mounting_plate>
 
     <!-- Arm -->
-    <crane_x7_arm
+    <xacro:crane_x7_arm
         parent="crane_x7_mounting_plate_link"
         end_effector_base_link="crane_x7_gripper_base_link"
         base_color="${base_color}"
@@ -70,10 +70,10 @@
         shoulder_ulimit="${shoulder_ulimit}"
         logos_definition="${logos_definition}">
       <origin xyz="0 0 ${MOUNTING_PLATE_THICKNESS}" rpy="0 0 0"/>
-    </crane_x7_arm>
+    </xacro:crane_x7_arm>
 
     <!-- End effector -->
-    <crane_x7_wide_two_finger_gripper
+    <xacro:crane_x7_wide_two_finger_gripper
         name="crane_x7_gripper"
         color="${hand_color}"
         vlimit="${joints_vlimit}"

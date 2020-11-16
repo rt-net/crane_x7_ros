@@ -447,7 +447,7 @@
 
     <!-- logo -->
     <xacro:include filename="${logos_definition}"/>
-    <crane_x7_logos 
+    <xacro:crane_x7_logos 
       parent="${NAME_LINK_5}"
       name="${NAME_LOGO}"/>
 
