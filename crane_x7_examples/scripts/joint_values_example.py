@@ -17,10 +17,10 @@ def main():
     arm.go()
 
     # 目標角度と実際の角度を確認
-    print "joint_value_target (radians):"
-    print arm.get_joint_value_target()
-    print "current_joint_values (radians):"
-    print arm.get_current_joint_values()
+    print("joint_value_target (radians):")
+    print(arm.get_joint_value_target())
+    print("current_joint_values (radians):")
+    print(arm.get_current_joint_values())
 
     # 現在角度をベースに、目標角度を作成する
     target_joint_values = arm.get_current_joint_values()
@@ -30,10 +30,11 @@ def main():
         target_joint_values[i] = joint_angle
         arm.set_joint_value_target(target_joint_values)
         arm.go()
-        print str(i) + "-> joint_value_target (degrees):",
-        print math.degrees( arm.get_joint_value_target()[i] ),
-        print ", current_joint_values (degrees):",
-        print math.degrees( arm.get_current_joint_values()[i] )
+        print(str(i) + "-> joint_value_target (degrees):"
+              + str(math.degrees(arm.get_joint_value_target()[i]))
+              + ", current_joint_values (degrees):"
+              + str(math.degrees(arm.get_current_joint_values()[i]))
+        )
 
     rospy.sleep(3)
     # 垂直に戻す

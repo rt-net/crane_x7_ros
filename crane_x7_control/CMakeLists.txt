@@ -66,6 +66,11 @@ foreach(dir config launch)
   )
 endforeach(dir)
 
+catkin_install_python(PROGRAMS
+  scripts/preset_reconfigure.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
 #############
 ## Testing ##
 #############

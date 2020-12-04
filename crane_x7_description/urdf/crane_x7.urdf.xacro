@@ -27,7 +27,7 @@
        velocities limit and lower/upper limits for the first joint. This
        allows accessing different operational areas, e.g. left-handed vs.
        right-handed robots. -->
-  <crane_x7 parent="base_link"
+  <xacro:crane_x7 parent="base_link"
               base_color="red"
               shoulder_color="white"
               shoulder_joint_cover_color="red"
@@ -44,5 +44,5 @@
               logos_definition="crane_x7_rt_logos.xacro"
               use_effort_gripper="$(arg use_effort_gripper)">
     <origin xyz="0 0 0"/>
-  </crane_x7>
+  </xacro:crane_x7>
 </robot>

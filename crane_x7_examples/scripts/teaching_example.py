@@ -109,7 +109,7 @@ def main():
 
     # トルクをオフにする
     preset_pid_gain(TORQUE_OFF_PID)
-    print "Torque OFF"
+    print("Torque OFF")
 
     while do_shutdown is False:
         poses_num = data_base.get_num_of_poses()
@@ -117,33 +117,33 @@ def main():
 
         # リスタート時はキーボード入力の説明を表示
         if do_restart:
-            print ""
+            print("")
             if is_teaching_mode:
-                print "[Teaching Mode]",
-                print "[Next Pose:" + str(pose_index) + " of " + str(poses_num) + "]"
-                print "[q]: Quit, [m]: switch to action Mode, [s]: Save, [d]: Delete"
+                print("[Teaching Mode]"
+                      + "[Next Pose:" + str(pose_index) + " of " + str(poses_num) + "]")
+                print("[q]: Quit, [m]: switch to action Mode, [s]: Save, [d]: Delete")
             else:
-                print "[Action Mode]",
-                print "[Next Pose:" + str(pose_index) + " of " + str(poses_num) + "]"
-                print "[q]: Quit, [m]: switch to teaching Mode, [p]: Play 1 pose, [a]: play All pose, [l]: Loop play on/off"
+                print("[Action Mode]"
+                      + "[Next Pose:" + str(pose_index) + " of " + str(poses_num) + "]")
+                print("[q]: Quit, [m]: switch to teaching Mode, [p]: Play 1 pose, [a]: play All pose, [l]: Loop play on/off")
 
-            print "Keyboard input >>>"
+            print("Keyboard input >>>")
             do_restart = False
             
         # 文字入力
         input_key = getch(0.1) # 一定時間入力がなければFalseを返す
         input_code = ""
         if input_key is not False:
-            print input_key,
+            print(input_key)
             input_code = ord(input_key)
 
         # シャットダウン
         if input_code == CTRL_C or input_code == ord('q') or input_code == ord('Q'):
-            print "\nShutdown..."
+            print("Shutdown...")
 
             # トルクをONにしてから終了する
             if is_teaching_mode:
-                print "Torque ON"
+                print("Torque ON")
                 # PIDゲインをdefaultに戻すと、目標姿勢に向かって急に動き出す
                 # 安全のため、現在のアームの姿勢を目標姿勢に変更する
                 rospy.sleep(1)
@@ -158,14 +158,14 @@ def main():
 
         # モード切替
         if input_code == ord('m') or input_code == ord('M'):
-            print "\nMode switch"
+            print("Mode switch")
             is_teaching_mode = not is_teaching_mode
 
             if is_teaching_mode:
-                print "Torque OFF"
+                print("Torque OFF")
                 preset_pid_gain(TORQUE_OFF_PID)
             else:
-                print "Torque ON"
+                print("Torque ON")
                 # PIDゲインをdefaultに戻すと、目標姿勢に向かって急に動き出す
                 # 安全のため、現在のアームの姿勢を目標姿勢に変更する
                 rospy.sleep(1)
@@ -182,7 +182,7 @@ def main():
         if is_teaching_mode:
             # 現在のアーム姿勢、グリッパー角度を保存する
             if input_code == ord('s') or input_code == ord('S'):
-                print "\nSave joint values"
+                print("Save joint values")
                 # アームの角度が制御範囲内にない場合、例外が発生する
                 try:
                     arm_joint_values = arm.get_current_joint_values()
@@ -192,14 +192,14 @@ def main():
                     gripper.set_joint_value_target(gripper_joint_values)
                     data_base.save_joint_values(arm_joint_values, gripper_joint_values)
                 except moveit_commander.exception.MoveItCommanderException:
-                    print "Error setting joint target. Is the target within bounds?"
+                    print("Error setting joint target. Is the target within bounds?")
 
                 do_restart = True
                 continue
 
             # 保存したアーム姿勢、グリッパー角度を削除する
             if input_code == ord('d') or input_code == ord('D'):
-                print "\nDelete joint values"
+                print("\nDelete joint values")
                 data_base.delete_joint_values()
                 do_restart = True
                 continue
@@ -207,7 +207,7 @@ def main():
         else:
             # 保存したアーム、グリッパー角度を取り出す
             if input_code == ord('p') or input_code == ord('P'):
-                print "\nPlay 1 pose"
+                print("Play 1 pose")
                 joint_values = data_base.load_joint_values()
                 if joint_values:
                     arm.set_joint_value_target(joint_values[0])
@@ -219,11 +219,11 @@ def main():
 
             # 保存したアーム、グリッパー角度を連続再生する
             if input_code == ord('a') or input_code == ord('A'):
-                print "\nplay All poses"
+                print("play All poses")
                 all_joint_values = data_base.load_all_joint_values()
                 if all_joint_values:
                     for i, joint_values in enumerate(all_joint_values):
-                        print "Play: " + str(i+1) + " of " + str(poses_num)
+                        print("Play: " + str(i+1) + " of " + str(poses_num))
                         arm.set_joint_value_target(joint_values[0])
                         arm.go()
                         gripper.set_joint_value_target(joint_values[1])
@@ -233,14 +233,14 @@ def main():
 
             # 保存したアーム、グリッパー角度をループ再生する
             if input_code == ord('l') or input_code == ord('L'):
-                print "\nLoop play",
+                print("Loop play")
 
                 do_loop_playing = not do_loop_playing
                 
                 if do_loop_playing:
-                    print "ON"
+                    print("ON")
                 else:
-                    print "OFF"
+                    print("OFF")
                     # 再び再生しないようにsleepを設ける
                     rospy.sleep(1)
                     do_restart = True
@@ -250,7 +250,7 @@ def main():
             if do_loop_playing:
                 joint_values = data_base.load_joint_values()
                 if joint_values:
-                    print "Play " + str(pose_index) + " of " + str(poses_num)
+                    print("Play " + str(pose_index) + " of " + str(poses_num))
 
                     arm.set_joint_value_target(joint_values[0])
                     arm.go()
@@ -258,7 +258,7 @@ def main():
                     gripper.go()
                 else:
                     # 姿勢が保存されていなかったらループ再生を終了する
-                    print "Loop play OFF"
+                    print("Loop play OFF")
                     do_loop_playing = False
                     do_restart = True
                     continue

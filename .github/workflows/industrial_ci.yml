@@ -18,11 +18,14 @@ jobs:
         env:
           - { ROS_DISTRO: kinetic, ROS_REPO: main }
           - { ROS_DISTRO: melodic, ROS_REPO: main }
+          - { ROS_DISTRO: noetic, ROS_REPO: main }
         experimental: [false]
         include:
           - env: { ROS_DISTRO: kinetic, ROS_REPO: testing }
             experimental: true
           - env: { ROS_DISTRO: melodic, ROS_REPO: testing }
+            experimental: true
+          - env: { ROS_DISTRO: noetic, ROS_REPO: testing }
             experimental: true
     env:
       UPSTREAM_WORKSPACE: .ci.rosinstall
