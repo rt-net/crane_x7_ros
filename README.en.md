@@ -30,16 +30,22 @@ Please see below for details.
   - Gazebo 7.0.0
 - ROS Melodic
   - OS: Ubuntu 18.04.3 LTS
-  - ROS Distribution: Melodic Morenia 1.14.3
-  - Rviz 1.12.16
-  - MoveIt! 1.13.3
+  - ROS Distribution: Melodic Morenia 1.14.9
+  - Rviz 1.13.14
+  - MoveIt! 1.0.6
   - Gazebo 9.0.0
+- ROS Noetic
+  - OS: Ubuntu 18.04.1 LTS
+  - ROS Distribution: Noetic Ninjemys 1.15.7
+  - Rviz 1.14.1
+  - MoveIt! 1.1.0
+  - Gazebo 11.2.0
 
 ## Installation
 
 ### Build from source
 
-- Install ROS environments. Please see [ROS Wiki](http://wiki.ros.org/melodic/Installation/Ubuntu).
+- Install ROS environments. Please see [ROS Wiki](http://wiki.ros.org/noetic/Installation/Ubuntu).
 
 - Download the packages for CRANE-X7 using `git`.
 
