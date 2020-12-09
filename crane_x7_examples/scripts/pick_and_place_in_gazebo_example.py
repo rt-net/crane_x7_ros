@@ -47,6 +47,7 @@ def main():
 
     arm = moveit_commander.MoveGroupCommander("arm")
     arm.set_max_velocity_scaling_factor(0.4)
+    arm.set_max_acceleration_scaling_factor(1.0)
     gripper = actionlib.SimpleActionClient("crane_x7/gripper_controller/gripper_cmd", GripperCommandAction)
     gripper.wait_for_server()
     gripper_goal = GripperCommandGoal()

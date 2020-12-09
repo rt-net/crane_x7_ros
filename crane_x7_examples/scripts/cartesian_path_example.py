@@ -55,6 +55,7 @@ if __name__ == '__main__':
     robot = moveit_commander.RobotCommander()
     arm = moveit_commander.MoveGroupCommander("arm")
     arm.set_max_velocity_scaling_factor(0.1)
+    arm.set_max_acceleration_scaling_factor(1.0)
     gripper = moveit_commander.MoveGroupCommander("gripper")
 
     try:

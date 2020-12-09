@@ -20,6 +20,7 @@ def hook_shutdown():
     print('shutdown')
     arm = moveit_commander.MoveGroupCommander("arm")
     arm.set_max_velocity_scaling_factor(0.1)
+    arm.set_max_acceleration_scaling_factor(1.0)
     arm.set_named_target("vertical")
     arm.go()
 
@@ -29,6 +30,7 @@ def callback(req):
 
     arm = moveit_commander.MoveGroupCommander("arm")
     arm.set_max_velocity_scaling_factor(0.1)
+    arm.set_max_acceleration_scaling_factor(1.0)
     scene = moveit_commander.PlanningSceneInterface()
     rospy.sleep(SLEEP_TIME)
 
