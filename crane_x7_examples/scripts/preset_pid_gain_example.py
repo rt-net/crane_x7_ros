@@ -23,6 +23,7 @@ def main():
     rospy.init_node("preset_pid_gain_example")
     arm = moveit_commander.MoveGroupCommander("arm")
     arm.set_max_velocity_scaling_factor(0.3)
+    arm.set_max_acceleration_scaling_factor(1.0)
 
     while len([s for s in rosnode.get_node_names() if 'rviz' in s]) == 0:
         rospy.sleep(1.0)

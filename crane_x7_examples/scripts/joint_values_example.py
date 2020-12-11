@@ -10,6 +10,7 @@ def main():
     arm = moveit_commander.MoveGroupCommander("arm")
     # 駆動速度を調整する
     arm.set_max_velocity_scaling_factor(0.5)
+    arm.set_max_acceleration_scaling_factor(1.0)
 
     # SRDFに定義されている"vertical"の姿勢にする
     # すべてのジョイントの目標角度が0度になる

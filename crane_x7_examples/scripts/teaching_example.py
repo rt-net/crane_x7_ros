@@ -83,6 +83,7 @@ def preset_pid_gain(pid_gain_no):
 def main():
     arm = moveit_commander.MoveGroupCommander("arm")
     arm.set_max_velocity_scaling_factor(0.5)
+    arm.set_max_acceleration_scaling_factor(1.0)
     gripper = moveit_commander.MoveGroupCommander("gripper")
 
     TORQUE_ON_PID = 0
