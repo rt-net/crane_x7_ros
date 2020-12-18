@@ -35,7 +35,7 @@ Please see below for details.
   - MoveIt! 1.0.6
   - Gazebo 9.0.0
 - ROS Noetic
-  - OS: Ubuntu 18.04.1 LTS
+  - OS: Ubuntu 20.04.1 LTS
   - ROS Distribution: Noetic Ninjemys 1.15.7
   - Rviz 1.14.1
   - MoveIt! 1.1.0
