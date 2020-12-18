@@ -14,6 +14,14 @@
           <color rgba="1.0 0.3 0.3 1.0"/>
         </material>
       </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="-${M_PI/2} ${M_PI/2} 0"/>
+        <geometry>
+          <mesh filename="package://crane_x7_description/meshes/visual/rtcorp_logo_name.stl"
+              scale="1 1 1"/>
+        </geometry>
+      </collision>
     </link>
     <joint name="${name}_logo_text_l_joint" type="fixed">
       <parent link="${parent}"/>
@@ -31,6 +39,14 @@
         </geometry>
         <material name="logo_red"/>
       </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="-${M_PI/2} ${M_PI/2} 0"/>
+        <geometry>
+          <mesh filename="package://crane_x7_description/meshes/visual/rtcorp_logo_rabbit.stl"
+              scale="1 1 1"/>
+        </geometry>
+      </collision>
     </link>
     <joint name="${name}_logo_symbol_l_joint" type="fixed">
       <parent link="${parent}"/>
@@ -48,6 +64,14 @@
         </geometry>
         <material name="logo_red"/>
       </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="${M_PI/2} -${M_PI/2} 0"/>
+        <geometry>
+          <mesh filename="package://crane_x7_description/meshes/visual/rtcorp_logo_name.stl"
+              scale="1 1 1"/>
+        </geometry>
+      </collision>
     </link>
     <joint name="${name}_logo_text_r_joint" type="fixed">
       <parent link="${parent}"/>
@@ -65,6 +89,13 @@
         </geometry>
         <material name="logo_red"/>
       </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="${M_PI/2} -${M_PI/2} 0"/>
+        <geometry>
+          <mesh filename="package://crane_x7_description/meshes/visual/rtcorp_logo_rabbit.stl"
+              scale="1 1 1"/>
+        </geometry>
+      </collision>
     </link>
     <joint name="${name}_logo_symbol_r_joint" type="fixed">
       <parent link="${parent}"/>
