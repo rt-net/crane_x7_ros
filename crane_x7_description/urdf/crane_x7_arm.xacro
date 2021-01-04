@@ -221,6 +221,14 @@
         </geometry>
         <material name="${shoulder_joint_cover_color}"/>
       </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="-${M_PI/2} 0 0"/>
+        <geometry>
+          <mesh filename="package://crane_x7_description/meshes/visual/joint_cover.stl"
+              scale="1 1 1"/>
+        </geometry>
+      </collision>
     </link>
 
     <!-- crane_x7_joint_cover_2_r -->
@@ -240,6 +248,14 @@
         </geometry>
         <material name="${shoulder_joint_cover_color}"/>
       </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
+        <geometry>
+          <mesh filename="package://crane_x7_description/meshes/visual/joint_cover.stl"
+              scale="1 1 1"/>
+        </geometry>
+      </collision>
     </link>
 
     <!-- crane_x7_joint_3 -->
@@ -371,6 +387,14 @@
         </geometry>
         <material name="${elbow_joint_cover_color}"/>
       </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="-${M_PI/2} 0 0"/>
+        <geometry>
+          <mesh filename="package://crane_x7_description/meshes/visual/joint_cover.stl"
+              scale="1 1 1"/>
+        </geometry>
+      </collision>
     </link>
 
     <!-- crane_x7_joint_cover_4_r -->
@@ -390,6 +414,14 @@
         </geometry>
         <material name="${elbow_joint_cover_color}"/>
       </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="${M_PI/2} 0 0"/>
+        <geometry>
+          <mesh filename="package://crane_x7_description/meshes/visual/joint_cover.stl"
+              scale="1 1 1"/>
+        </geometry>
+      </collision>
     </link>
 
     <!-- crane_x7_joint_5 -->
