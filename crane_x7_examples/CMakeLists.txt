@@ -41,18 +41,12 @@ include_directories(
 ## Install ##
 #############
 
-catkin_install_python(PROGRAMS
-  scripts/cartesian_path_example.py
-  scripts/crane_x7_pick_and_place_demo.py
-  scripts/gripper_action_example.py
-  scripts/joint_values_example.py
-  scripts/joystick_example.py
-  scripts/obstacle_avoidance_example.py
-  scripts/obstacle_client.py
-  scripts/pick_and_place_in_gazebo_example.py
-  scripts/pose_groupstate_example.py
-  scripts/preset_pid_gain_example.py
-  scripts/servo_info_example.py
-  scripts/teaching_example.py
+install(DIRECTORY launch 
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+file(GLOB python_scripts scripts/*.py)
+catkin_install_python(
+  PROGRAMS ${python_scripts}
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
