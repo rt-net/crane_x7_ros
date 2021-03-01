@@ -11,11 +11,10 @@ U2D2はLinuxに接続すると`/dev/ttyUSB0`として認識されるので、次
 sudo chmod 666 /dev/ttyUSB0
 ```
 
-CRANE-X7との接続に`/dev/ttyUSB0`以外を使用したい場合は、`crane_x7_control/config/crane_x7_control.yaml`に定義されているパラメータを変更することで設定することができます。
+CRANE-X7との接続に`/dev/ttyUSB0`以外（例：`/dev/ttyUSB1`）を使用したい場合は、次のようにコマンドを実行しします。
 
-```
-dynamixel_port:
-  port_name: "/dev/ttyUSB0"
+```bash
+roslaunch crane_x7_control crane_x7_control.launch port:=/dev/ttyUSB1
 ```
 
 ## 制御周期の変更
