@@ -11,8 +11,7 @@ U2D2はLinuxに接続すると`/dev/ttyUSB0`として認識されるので、次
 sudo chmod 666 /dev/ttyUSB0
 ```
 
-CRANE-X7との接続に`/dev/ttyUSB0`以外（例：`/dev/ttyUSB1`）を使用したい場合は、次のようにコマンドを実行しします。
-
+ケーブルの接続ポート名はデフォルトで`/dev/ttyUSB0`です。 別のポート名(例: `/dev/ttyUSB1`)を使う場合は次のコマンドを実行します。
 ```bash
 roslaunch crane_x7_control crane_x7_control.launch port:=/dev/ttyUSB1
 ```
