@@ -83,7 +83,9 @@ CRANE-X7は位置制御モードと電流制御モードに対応しています
 		- [Dynamixel Wizard 2.0](https://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_wizard2/)を使用するとモードを変更できます。
 
 2. **`crane_x7_control`の設定変更**   
-`crane_x7_control/config/crane_x7_control.yaml`のハンド部分について次のように変更する   
+
+	- `crane_x7_control/config/crane_x7_control.yaml`のハンド部分について次のように変更する   
+
 ```diff
 gripper_controller:
 -  type: "position_controllers/GripperActionController"
