@@ -78,7 +78,9 @@ CRANE-X7は位置制御モードと電流制御モードに対応しています
 ハンドの設定を位置制御モードから電流制御モードへ変更する手順を紹介します。
 
 1. **サーボの設定変更**   
-サーボモータの`Operating Mode`（Address：11）を`3：位置制御モード`から`0：電流制御モード`へ設定変更する
+
+	- サーボモータの`Operating Mode`（Address：11）を`3：位置制御モード`から`0：電流制御モード`へ設定変更する
+		- [Dynamixel Wizard 2.0](https://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_wizard2/)を使用するとモードを変更できます。
 
 2. **`crane_x7_control`の設定変更**   
 `crane_x7_control/config/crane_x7_control.yaml`のハンド部分について次のように変更する   
