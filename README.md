@@ -25,13 +25,13 @@ ROSのサンプルコード集はこちらです。
   - OS: Ubuntu 18.04.3 LTS
   - ROS Distribution: Melodic Morenia 1.14.9
   - Rviz 1.13.14
-  - MoveIt! 1.0.6
+  - MoveIt 1.0.6
   - Gazebo 9.0.0
 - ROS Noetic
   - OS: Ubuntu 20.04.1 LTS
   - ROS Distribution: Noetic Ninjemys 1.15.7
   - Rviz 1.14.1
-  - MoveIt! 1.1.0
+  - MoveIt 1.1.0
   - Gazebo 11.2.0
 
 ## インストール方法
@@ -85,7 +85,7 @@ CRANE-X7の各パッケージはcrane_x7_rosにまとめています。
 ### crane_x7_description
 
 CRANE-X7のモデルデータやリンクとジョイントの構成を定義するパッケージです。  
-MoveIt!やGazeboから呼び出されます。
+MoveItやGazeboから呼び出されます。
 
 ### crane_x7_control
 
@@ -102,7 +102,7 @@ dynamixel_sdkのC++ライブラリが必要です。
 
 ### crane_x7_moveit_config
 
-MoveIt!のパッケージです。下記のコマンドで起動します。  
+MoveItのパッケージです。下記のコマンドで起動します。
 
 `roslaunch crane_x7_moveit_config demo.launch`
 

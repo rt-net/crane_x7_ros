@@ -26,13 +26,13 @@ Please see below for details.
   - OS: Ubuntu 18.04.3 LTS
   - ROS Distribution: Melodic Morenia 1.14.9
   - Rviz 1.13.14
-  - MoveIt! 1.0.6
+  - MoveIt 1.0.6
   - Gazebo 9.0.0
 - ROS Noetic
   - OS: Ubuntu 20.04.1 LTS
   - ROS Distribution: Noetic Ninjemys 1.15.7
   - Rviz 1.14.1
-  - MoveIt! 1.1.0
+  - MoveIt 1.1.0
   - Gazebo 11.2.0
 
 ## Installation
@@ -82,7 +82,7 @@ sudo chmod 666 /dev/ttyUSB0
 ### crane_x7_description
 
 This package defines CRANE-X7 model data including links and joints.
-The MoveIt! packages and Gazebo require this package.
+The MoveIt packages and Gazebo require this package.
 
 ### crane_x7_control
 
@@ -101,9 +101,9 @@ At shutdown, this package decreases P gains of the servo motors to stop motion s
 
 ### crane_x7_moveit_config
 
-This package includes configuration files for MoveIt!.
+This package includes configuration files for MoveIt.
 
-To launch the MoveIt! demonstration with Rviz:
+To launch the MoveIt demonstration with Rviz:
 
 `roslaunch crane_x7_moveit_config demo.launch`
 

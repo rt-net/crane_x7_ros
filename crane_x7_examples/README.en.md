@@ -347,10 +347,10 @@ If this floor is unnecessary, please comment out some lines from [`crane_x7_exam
     rospy.sleep(SLEEP_TIME)
 ```
 
-If MoveIt! did not generate trajectory to avoid an obstacle, 
+If MoveIt did not generate trajectory to avoid an obstacle,
 CRANE-X7 will not move,
 the example server will return value `result=False`,
-then MoveIt! will calculate a trajectory to next target position.
+then MoveIt will calculate a trajectory to next target position.
 
 <img src = https://rt-net.github.io/images/crane-x7/gazebo_obstacle_avoidance.gif width = 500px />
 
