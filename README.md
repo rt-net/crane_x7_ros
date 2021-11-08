@@ -21,12 +21,6 @@ ROSのサンプルコード集はこちらです。
 
 以下の環境にて動作確認を行っています。
 
-- ROS Kinetic
-  - OS: Ubuntu 16.04.5 LTS
-  - ROS Distribution: Kinetic Kame 1.12.14
-  - Rviz 1.12.17
-  - MoveIt! 0.9.17
-  - Gazebo 7.0.0
 - ROS Melodic
   - OS: Ubuntu 18.04.3 LTS
   - ROS Distribution: Melodic Morenia 1.14.9
