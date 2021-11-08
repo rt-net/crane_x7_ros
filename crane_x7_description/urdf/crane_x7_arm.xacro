@@ -428,7 +428,7 @@
     <joint name="${NAME_JOINT_5}" type="revolute">
       <origin xyz="0 0 0.121" rpy="0 0 0"/>
       <axis xyz="0 0 1"/>
-      <limit effort="4.0" velocity="${joints_vlimit}" lower="-2.77343" upper="1.51403"/>
+      <limit effort="4.0" velocity="${joints_vlimit}" lower="-2.77343" upper="2.77343"/>
       <parent link="${NAME_LINK_4}"/>
       <child link="${NAME_LINK_5}"/>
       <dynamics damping="1.0e-6" friction="2.0e-1"/>
