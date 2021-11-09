@@ -96,7 +96,7 @@ gripper_controller:
 +    crane_x7_gripper_finger_a_joint: { p: 1.0, i: 0.01, d: 0.1 }
   action_monitor_rate: 10
   state_publish_rate:  100
-  stalled_velocity_threshold: 0.01
+  stall_velocity_threshold: 0.01
   goal_tolerance: 0.2
   stall_timeout: 0.3
 
