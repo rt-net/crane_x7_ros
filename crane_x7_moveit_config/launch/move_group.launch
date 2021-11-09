@@ -28,9 +28,11 @@
   <arg name="port" default="/dev/ttyUSB0" />
 
   <!-- Planning Functionality -->
-  <include ns="move_group" file="$(find crane_x7_moveit_config)/launch/planning_pipeline.launch.xml">
-    <arg name="pipeline" value="ompl" />
-  </include>
+  <group ns="move_group/planning_pipelines">
+    <include ns="ompl" file="$(find crane_x7_moveit_config)/launch/planning_pipeline.launch.xml">
+      <arg name="pipeline" value="ompl" />
+    </include>
+  </group>
 
   <!-- Trajectory Execution Functionality -->
   <include ns="move_group" file="$(find crane_x7_moveit_config)/launch/trajectory_execution.launch.xml" if="$(arg allow_trajectory_execution)">
@@ -60,6 +62,7 @@
     <param name="max_safe_path_cost" value="$(arg max_safe_path_cost)"/>
     <param name="jiggle_fraction" value="$(arg jiggle_fraction)" />
 
+    <param name="default_planning_pipeline" value="ompl" />
     <!-- load these non-default MoveGroup capabilities -->
     <!--
     <param name="capabilities" value="
