@@ -53,9 +53,6 @@ Please see below for details.
   ```bash
   cd ~/catkin_ws/src
   
-  # package for crane_x7_gazebo
-  git clone https://github.com/roboticsgroup/roboticsgroup_gazebo_plugins.git
-  
   rosdep install -r -y --from-paths --ignore-src crane_x7_ros
   ```
 

@@ -133,7 +133,7 @@
 
     <!-- For gazebo simulation -->
     <gazebo>
-      <plugin name="crane_x7_gripper_mimic_joint" filename="libroboticsgroup_gazebo_mimic_joint_plugin.so">
+      <plugin name="crane_x7_gripper_mimic_joint" filename="libroboticsgroup_upatras_gazebo_mimic_joint_plugin.so">
         <joint>${name}_finger_a_joint</joint>
         <mimicJoint>${name}_finger_b_joint</mimicJoint>
         <multiplier>1</multiplier>

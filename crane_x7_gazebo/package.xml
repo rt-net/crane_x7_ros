@@ -18,7 +18,7 @@
   <exec_depend>gazebo</exec_depend>
   <exec_depend>gazebo_plugins</exec_depend>
   <exec_depend>gazebo_ros_control</exec_depend>
-  <exec_depend>roboticsgroup_gazebo_plugins</exec_depend>
+  <exec_depend>roboticsgroup_upatras_gazebo_plugins</exec_depend>
   <exec_depend>roslang</exec_depend>
   <exec_depend>urdf_parser_plugin</exec_depend>
 
