@@ -40,7 +40,6 @@
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="end_effector" parent_link="crane_x7_gripper_base_link" group="gripper" />
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
-    <virtual_joint name="table" type="fixed" parent_frame="world" child_link="base_link" />
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="crane_x7_gripper_base_link" link2="crane_x7_gripper_finger_a_link" reason="Adjacent" />
     <disable_collisions link1="crane_x7_gripper_base_link" link2="crane_x7_gripper_finger_b_link" reason="Adjacent" />
