@@ -1,8 +1,9 @@
 <launch>
   <!-- USB port name for dynamixel_port -->
   <arg name="port" default="/dev/ttyUSB0" />
+  <arg name="load_robot_description" default="true" />
 
-  <param name="robot_description"
+  <param if="$(arg load_robot_description)" name="robot_description"
     command="$(find xacro)/xacro --inorder '$(find crane_x7_description)/urdf/crane_x7.urdf.xacro'"
     />
   <group ns="crane_x7">
