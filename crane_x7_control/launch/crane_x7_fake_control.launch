@@ -17,11 +17,4 @@
     <rosparam file="$(find crane_x7_control)/config/crane_x7_gazebo_control.yaml" command="load" />
   </group>
 
-  <node name="controller_gazebo" 
-    pkg="controller_manager" 
-    type="spawner" 
-    respawn="false" 
-    output="screen"
-    args="gazebo_ros_control" />
-
 </launch>
