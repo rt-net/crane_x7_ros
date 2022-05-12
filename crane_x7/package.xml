@@ -1,6 +1,6 @@
 <package>
   <name>crane_x7</name>
-  <version>0.0.1</version>
+  <version>1.0.0</version>
   <description>
     ROS package suite of CRANE-X7
   </description>
@@ -8,7 +8,7 @@
   <author email="nomura@rt-net.jp">Hiroyuki Nomura</author>
   <author email="geoffrey.biggs@aist.go.jp">Geoffrey Biggs</author>
   <author email="tiryoh@gmail.com">Daisuke Sato</author>
-  <author email="macakasit@gmail.com">Shota Aoki</author>
+  <author email="s.aoki@rt-net.jp">Shota Aoki</author>
 
   <license>NON-COMMERCIAL LICENSE AGREEMENT</license>
 

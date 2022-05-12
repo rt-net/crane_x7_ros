@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>crane_x7_examples</name>
-  <version>0.0.0</version>
+  <version>1.0.0</version>
   <description>examples of CRANE-X7 ROS package</description>
 
   <maintainer email="shop@rt-net.jp">RT Corporation</maintainer>

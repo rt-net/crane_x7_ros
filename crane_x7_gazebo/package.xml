@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>crane_x7_gazebo</name>
-  <version>0.0.0</version>
+  <version>1.0.0</version>
   <description>The crane_x7_gazebo package</description>
 
   <maintainer email="shop@rt-net.jp">RT Corporation</maintainer>
-  <maintainer email="macakasit@gmail.com">Shota Aoki</maintainer>
+  <author email="s.aoki@rt-net.jp">Shota Aoki</author>
 
   <license>NON-COMMERCIAL LICENSE AGREEMENT</license>
   <buildtool_depend>catkin</buildtool_depend>
