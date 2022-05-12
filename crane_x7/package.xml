@@ -1,6 +1,6 @@
 <package>
   <name>crane_x7</name>
-  <version>0.0.1</version>
+  <version>1.0.0</version>
   <description>
     ROS package suite of CRANE-X7
   </description>

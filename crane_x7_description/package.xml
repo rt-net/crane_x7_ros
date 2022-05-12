@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>crane_x7_description</name>
-  <version>0.0.1</version>
+  <version>1.0.0</version>
   <description>The CRANE-X7 description package</description>
 
   <maintainer email="shop@rt-net.jp">RT Corporation</maintainer>

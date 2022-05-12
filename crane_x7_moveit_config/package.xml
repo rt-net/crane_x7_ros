@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>crane_x7_moveit_config</name>
-  <version>0.3.0</version>
+  <version>1.0.0</version>
   <description>
      An automatically generated package with all the configuration and launch files for using the crane_x7 with the MoveIt! Motion Planning Framework
   </description>
