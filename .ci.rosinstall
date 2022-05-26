@@ -1,0 +1,4 @@
+- git:
+    uri: https://github.com/rt-net/crane_x7_description.git
+    local-name: crane_x7_description
+    version: master
