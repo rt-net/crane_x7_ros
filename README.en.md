@@ -44,16 +44,24 @@ Please see below for details.
 - Download the packages for CRANE-X7 using `git`.
 
   ```bash
+  mkdir -p ~/catkin_ws/src
   cd ~/catkin_ws/src
   git clone https://github.com/rt-net/crane_x7_ros.git
+  ```
+
+- Download [crane_x7_description](https://github.com/rt-net/crane_x7_description) package.
+The RT Corporation's [NON-COMMERCIAL LICENSE](https://github.com/rt-net/crane_x7_description/blob/master/LICENSE) applies to the package.
+
+  ```bash
+  cd ~/catkin_ws/src
+  git clone https://github.com/rt-net/crane_x7_description.git
   ```
 
 - Install package dependencies.
 
   ```bash
   cd ~/catkin_ws/src
-  
-  rosdep install -r -y --from-paths --ignore-src crane_x7_ros
+  rosdep install -r -y --from-paths . --ignore-src
   ```
 
 - Build packages using `catkin_make`.
@@ -62,6 +70,28 @@ Please see below for details.
   cd ~/catkin_ws && catkin_make
   source ~/catkin_ws/devel/setup.bash
   ```
+
+### Update from v1.0.0 or earlier to v2.x.x
+
+Please see https://github.com/rt-net/crane_x7_ros/issues/154 for details of differences in the versions.
+
+Update the package with the following commands:
+
+```bash
+# Update crane_x7_ros
+cd ~/catkin_ws/src/crane_x7_ros
+git pull origin master
+
+# Download crane_x7_description package
+cd ~/catkin_ws/src
+git clone https://github.com/rt-net/crane_x7_description.git
+rosdep install -r -y --from-paths . --ignore-src
+
+# Clean up the workspace and rebuild packages
+cd ~/catkin_ws
+rm -r build devel
+catkin_make
+```
 
 ## Setup Serial Connection
 
@@ -75,11 +105,6 @@ sudo chmod 666 /dev/ttyUSB0
 ```
 
 ## About CRANE-X7 packages
-
-### crane_x7_description
-
-This package defines CRANE-X7 model data including links and joints.
-The MoveIt packages and Gazebo require this package.
 
 ### crane_x7_control
 
