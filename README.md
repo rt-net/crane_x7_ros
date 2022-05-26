@@ -43,8 +43,17 @@ ROSのサンプルコード集はこちらです。
 - `git`を使用して本パッケージをダウンロードします。
 
   ```bash
+  mkdir -p ~/catkin_ws/src
   cd ~/catkin_ws/src
   git clone https://github.com/rt-net/crane_x7_ros.git
+  ```
+
+- [crane_x7_description](https://github.com/rt-net/crane_x7_description)パッケージをダウンロードします。
+このパッケージには[非商用ライセンス](https://github.com/rt-net/crane_x7_description/blob/master/LICENSE)が適用されています。
+
+  ```bash
+  cd ~/catkin_ws/src
+  git clone https://github.com/rt-net/crane_x7_description.git
   ```
 
 - 依存関係にあるパッケージをインストールします。
@@ -52,7 +61,7 @@ ROSのサンプルコード集はこちらです。
   ```bash
   cd ~/catkin_ws/src
   
-  rosdep install -r -y --from-paths --ignore-src crane_x7_ros
+  rosdep install -r -y --from-paths . --ignore-src
   ```
 
 - `catkin_make`を使用して本パッケージをビルドします。
@@ -62,9 +71,28 @@ ROSのサンプルコード集はこちらです。
   source ~/catkin_ws/devel/setup.bash
   ```
 
-### `apt`を使用してインストールする方法
+### v1.0.0以前のバージョンからv2.0.0以降へ更新する場合
 
-後日提供予定です。
+https://github.com/rt-net/crane_x7_ros/issues/154
+にてcrane_x7_descriptionをcrane_x7_rosリポジトリを移動する変更を実施しました。
+
+v1.0.0以前のバージョンを使用している場合は次の手順でパッケージを更新してください。
+
+```bash
+# crane_x7_rosを更新
+cd ~/catkin_ws/src/crane_x7_ros
+git pull origin master
+
+# crane_x7_descriptionをダウンロード
+cd ~/catkin_ws/src
+git clone https://github.com/rt-net/crane_x7_description.git
+rosdep install -r -y --from-paths . --ignore-src
+
+# ビルド環境を初期化し、パッケージを再ビルド
+cd ~/catkin_ws
+rm -r build devel
+catkin_make
+```
 
 ## セットアップ方法
 
@@ -78,11 +106,6 @@ sudo chmod 666 /dev/ttyUSB0
 ## パッケージ概要
 
 CRANE-X7の各パッケージはcrane_x7_rosにまとめています。  
-
-### crane_x7_description
-
-CRANE-X7のモデルデータやリンクとジョイントの構成を定義するパッケージです。  
-MoveItやGazeboから呼び出されます。
 
 ### crane_x7_control
 
