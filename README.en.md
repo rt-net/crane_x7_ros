@@ -88,6 +88,7 @@ git clone https://github.com/rt-net/crane_x7_description.git
 rosdep install -r -y --from-paths . --ignore-src
 
 # Clean up the workspace and rebuild packages
+# Note that other ROS packages in the workspace will also be rebuilt.
 cd ~/catkin_ws
 rm -r build devel
 catkin_make
