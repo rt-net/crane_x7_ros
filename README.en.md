@@ -71,7 +71,7 @@ The RT Corporation's [NON-COMMERCIAL LICENSE](https://github.com/rt-net/crane_x7
   source ~/catkin_ws/devel/setup.bash
   ```
 
-### Update from v1.0.0 or earlier to v2.x.x
+### Upgrading to v2.x.x from v1.0.0 or earlier
 
 Please see https://github.com/rt-net/crane_x7_ros/issues/154 for details of differences in the versions.
 
