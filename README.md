@@ -89,6 +89,7 @@ git clone https://github.com/rt-net/crane_x7_description.git
 rosdep install -r -y --from-paths . --ignore-src
 
 # ビルド環境を初期化し、パッケージを再ビルド
+# 同じワークスペースにある、CRANE-X7以外の他のROSパッケージについても再ビルドを行います
 cd ~/catkin_ws
 rm -r build devel
 catkin_make
