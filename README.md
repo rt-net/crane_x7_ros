@@ -49,7 +49,7 @@ ROSのサンプルコード集はこちらです。
   ```
 
 - [crane_x7_description](https://github.com/rt-net/crane_x7_description)パッケージをダウンロードします。
-このパッケージには[非商用ライセンス](https://github.com/rt-net/crane_x7_description/blob/master/LICENSE)が適用されています。
+このパッケージには株式会社アールティの[非商用ライセンス](https://github.com/rt-net/crane_x7_description/blob/master/LICENSE)が適用されています。
 
   ```bash
   cd ~/catkin_ws/src
@@ -60,7 +60,6 @@ ROSのサンプルコード集はこちらです。
 
   ```bash
   cd ~/catkin_ws/src
-  
   rosdep install -r -y --from-paths . --ignore-src
   ```
 
@@ -71,12 +70,12 @@ ROSのサンプルコード集はこちらです。
   source ~/catkin_ws/devel/setup.bash
   ```
 
-### v1.0.0以前のバージョンからv2.0.0以降へ更新する場合
+### v1.0.0以前のバージョンからv2.x.xへ更新する場合
 
+次の手順でパッケージを更新してください。
+バージョンの違いについては
 https://github.com/rt-net/crane_x7_ros/issues/154
-にてcrane_x7_descriptionをcrane_x7_rosリポジトリを移動する変更を実施しました。
-
-v1.0.0以前のバージョンを使用している場合は次の手順でパッケージを更新してください。
+を参照してください。
 
 ```bash
 # crane_x7_rosを更新
