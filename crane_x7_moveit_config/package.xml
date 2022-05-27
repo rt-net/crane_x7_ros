@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>crane_x7_moveit_config</name>
-  <version>1.0.0</version>
+  <version>2.0.0</version>
   <description>
      An automatically generated package with all the configuration and launch files for using the crane_x7 with the MoveIt! Motion Planning Framework
   </description>
@@ -10,7 +10,7 @@
   <author email="nomura@rt-net.jp">Hiroyuki Nomura</author>
   <author email="geoffrey.biggs@aist.go.jp">Geoffrey Biggs</author>
 
-  <license>NON-COMMERCIAL LICENSE AGREEMENT</license>
+  <license>Apache License 2.0</license>
 
   <buildtool_depend>catkin</buildtool_depend>
 

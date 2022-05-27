@@ -1,13 +1,14 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>crane_x7_gazebo</name>
-  <version>1.0.0</version>
+  <version>2.0.0</version>
   <description>The crane_x7_gazebo package</description>
 
   <maintainer email="shop@rt-net.jp">RT Corporation</maintainer>
   <author email="s.aoki@rt-net.jp">Shota Aoki</author>
 
-  <license>NON-COMMERCIAL LICENSE AGREEMENT</license>
+  <license>Apache License 2.0</license>
+
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>gazebo</build_depend>
   <build_depend>gazebo_plugins</build_depend>
