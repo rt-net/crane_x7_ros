@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <package>
   <name>crane_x7_examples</name>
-  <version>1.0.0</version>
+  <version>2.0.0</version>
   <description>examples of CRANE-X7 ROS package</description>
 
   <maintainer email="shop@rt-net.jp">RT Corporation</maintainer>
   <author email="tiryoh@gmail.com">Daisuke Sato</author>
   <author email="nomura@rt-net.jp">Hiroyuki Nomura</author>
 
-  <license>NON-COMMERCIAL LICENSE AGREEMENT</license>
+  <license>Apache License 2.0</license>
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>crane_x7_moveit_config</build_depend>

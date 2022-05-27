@@ -146,19 +146,22 @@ GazeboでCRANE-X7のシミュレーションを行うパッケージです。
 
 ---
 
-### 知的財産権について
+## ライセンス
 
-CRANE-X7は、アールティが開発した研究用アームロボットです。
-このリポジトリのデータ等に関するライセンスについては、LICENSEファイルをご参照ください。
-企業による使用については、自社内において研究開発をする目的に限り、本データの使用を許諾します。 
-本データを使って自作されたい方は、義務ではありませんが弊社ロボットショップで部品をお買い求めいただければ、励みになります。
-商業目的をもって本データを使用する場合は、商業用使用許諾の条件等について弊社までお問合せください。
+(C) 2018 RT Corporation \<support@rt-net.jp\>
 
-サーボモータのXM540やXM430に関するCADモデルの使用については、ROBOTIS社より使用許諾を受けています。 
-CRANE-X7に使用されているROBOTIS社の部品類にかかる著作権、商標権、その他の知的財産権は、ROBOTIS社に帰属します。
+各ファイルはライセンスがファイル中に明記されている場合、そのライセンスに従います。
+特に明記されていない場合は、Apache License, Version 2.0に基づき公開されています。  
+ライセンスの全文は[LICENSE](./LICENSE)または[https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0)から確認できます。
 
-### Proprietary Rights
+本パッケージが依存する[crane_x7_description](https://github.com/rt-net/crane_x7_description)には株式会社アールティの非商用ライセンスが適用されています。
+詳細は[crane_x7_description/LICENSE](https://github.com/rt-net/crane_x7_description/blob/master/LICENSE)を参照してください。
 
-CRANE-X7 is an arm robot developed by RT Corporation for research purposes. Please read the license information contained in this repository to find out more about licensing. Companies are permitted to use CRANE-X7 and the materials made available here for internal, research and development purposes only. If you are interested in building your own robot for your personal use by utilizing the information made available here, take your time to visit our website and purchase relevant components and parts – that will certainly help us keep going! Otherwise, if you are interested in manufacturing and commercializing products based on the information herein, please contact us to arrange a license and collaboration agreement with us. 
+## 開発について
 
-We have obtained permission from ROBOTIS Co., Ltd. to use CAD models relating to servo motors XM540 and XM430. The proprietary rights relating to any components or parts manufactured by ROBOTIS and used in this product, including but not limited to copyrights, trademarks, and other intellectual property rights, shall remain vested in ROBOTIS. 
+- 本ソフトウェアはオープンソースですが、開発はオープンではありません。
+- 本ソフトウェアは基本的にオープンソースソフトウェアとして「AS IS」（現状有姿のまま）で提供しています。
+- 本ソフトウェアに関する無償サポートはありません。
+- バグの修正や誤字脱字の修正に関するリクエストは常に受け付けていますが、
+それ以外の機能追加等のリクエストについては社内のガイドラインを優先します。
+詳しくは[コントリビューションガイドライン](./CONTRIBUTING.md)に従ってください。
