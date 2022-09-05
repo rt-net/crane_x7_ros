@@ -50,8 +50,8 @@ $ source /opt/ros/foxy/setup.bash
 # Download crane_x7 repositories
 $ mkdir -p ~/ros2_ws/src
 $ cd ~/ros2_ws/src
-$ git clone -b foxy-devel https://github.com/rt-net/crane_x7_ros.git
-$ git clone -b foxy-devel https://github.com/rt-net/crane_x7_description.git
+$ git clone -b ros2 https://github.com/rt-net/crane_x7_ros.git
+$ git clone -b ros2 https://github.com/rt-net/crane_x7_description.git
 
 # Install dependencies
 $ rosdep install -r -y -i --from-paths .
@@ -94,7 +94,7 @@ $ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
   - [README](./crane_x7_moveit_config/README.md)
   - CRANE-X7の`moveit2`設定ファイルです
 - crane_x7_description (外部パッケージ)
-  - [README](https://github.com/rt-net/crane_x7_description/blob/master/README.md)
+  - [README](https://github.com/rt-net/crane_x7_description/blob/ros2/README.md)
   - CRANE-X7のモデルデータ（xacro）を定義するパッケージです
 
 ## ライセンス
@@ -105,8 +105,8 @@ $ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
 特に明記されていない場合は、Apache License, Version 2.0に基づき公開されています。  
 ライセンスの全文は[LICENSE](./LICENSE)または[https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0)から確認できます。
 
-本パッケージが依存する[crane_x7_description](https://github.com/rt-net/crane_x7_description)には株式会社アールティの非商用ライセンスが適用されています。
-詳細は[crane_x7_description/LICENSE](https://github.com/rt-net/crane_x7_description/blob/master/LICENSE)を参照してください。
+本パッケージが依存する[crane_x7_description](https://github.com/rt-net/crane_x7_description/tree/ros2)には株式会社アールティの非商用ライセンスが適用されています。
+詳細は[crane_x7_description/LICENSE](https://github.com/rt-net/crane_x7_description/blob/ros2/LICENSE)を参照してください。
 
 ## 開発について
 

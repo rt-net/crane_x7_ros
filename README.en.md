@@ -48,8 +48,8 @@ $ source /opt/ros/foxy/setup.bash
 # Download crane_x7 repositories
 $ mkdir -p ~/ros2_ws/src
 $ cd ~/ros2_ws/src
-$ git clone -b foxy-devel https://github.com/rt-net/crane_x7_ros.git
-$ git clone -b foxy-devel https://github.com/rt-net/crane_x7_description.git
+$ git clone -b ros2 https://github.com/rt-net/crane_x7_ros.git
+$ git clone -b ros2 https://github.com/rt-net/crane_x7_description.git
 
 # Install dependencies
 $ rosdep install -r -y -i --from-paths .
@@ -91,7 +91,7 @@ Please refer to [crane_x7_examples](./crane_x7_examples/README.md) for details.
   - [README](./crane_x7_moveit_config/README.md)
   - This package includes configuration files for `moveit2`.
 - crane_x7_description (external package)
-  - [README](https://github.com/rt-net/crane_x7_description/blob/master/README.en.md)
+  - [README](https://github.com/rt-net/crane_x7_description/blob/ros2/README.en.md)
   - This package includes a model data (xacro) of CRANE-X7.
 
 ---
@@ -103,5 +103,5 @@ Please refer to [crane_x7_examples](./crane_x7_examples/README.md) for details.
 This repository is licensed under the Apache License, Version 2.0, see [LICENSE](./LICENSE).  
 Unless attributed otherwise, everything in this repository is under the Apache License, Version 2.0.
 
-The crane_x7_ros depends on [crane_x7_description](https://github.com/rt-net/crane_x7_description) package.
-The RT Corporation's [NON-COMMERCIAL LICENSE](https://github.com/rt-net/crane_x7_description/blob/master/LICENSE) applies to the package.
+The crane_x7_ros depends on [crane_x7_description](https://github.com/rt-net/crane_x7_description/tree/ros2) package.
+The RT Corporation's [NON-COMMERCIAL LICENSE](https://github.com/rt-net/crane_x7_description/blob/ros2/LICENSE) applies to the package.
