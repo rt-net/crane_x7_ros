@@ -1,133 +1,158 @@
 # crane_x7_control
 
-CRANE-X7のためのパッケージ、 `crane_x7_ros` のcontrolパッケージです。
+このパッケージは[ros2_control](https://github.com/ros-controls/ros2_control)
+をベースにした、CRANE-X7 のコントローラパッケージです。
 
-## 通信ポートの設定
+## ros2_control関連ファイル
 
-`crane_x7_control`は[U2D2](https://www.rt-shop.jp/index.php?main_page=product_info&products_id=3618)(USB-RS485変換ケーブル)を使用してCRANE-X7のモータ制御を行います。   
-U2D2はLinuxに接続すると`/dev/ttyUSB0`として認識されるので、次のコマンドでアクセス権限を変更します。
+- `crane_x7_control::CraneX7Hardware (crane_x7_hardware)`
+  - 本パッケージがエクスポートする[Hardware Components](https://control.ros.org/master/doc/getting_started/getting_started.html#hardware-components)です
+  - CRANE-X7実機と通信します
+  - crane_x7_descriptionから読み込まれます
+- [launch/crane_x7_control.launch.py](./launch/crane_x7_control.launch.py)
+  - [Controller Manager](https://control.ros.org/master/doc/getting_started/getting_started.html#controller-manager)とコントローラを起動するlaunchファイルです
+- [config/crane_x7_controllers.yaml](./config/crane_x7_controllers.yaml)
+  - Controller Managerのパラメータファイルです
 
-```bash
-sudo chmod 666 /dev/ttyUSB0
-```
+## 実機のセットアップ
 
-ケーブルの接続ポート名はデフォルトで`/dev/ttyUSB0`です。 別のポート名(例: `/dev/ttyUSB1`)を使う場合は次のコマンドを実行します。
-```bash
-roslaunch crane_x7_control crane_x7_control.launch port:=/dev/ttyUSB1
-```
+`crane_x7_hardware`がCRANE-X7実機と通信するために、
+PCとCRANE-X7の設定が必要です。
 
-## 制御周期の変更
+### USB通信ポートの設定
 
-`crane_x7_control`はデフォルト200Hz周期で制御しています。
-制御周期を変更する場合は`crane_x7_control/src/hardware.cpp`を編集してください。
+`crane_x7_hardware`はUSB通信ポート（`/dev/ttyUSB*`）を経由してCRANE-X7と通信します。
 
-```cpp
-#define     CONTROL_HZ   (200)
-```
-
-実際に動作している制御周期は次のようにトピックから確認できます。
+次のコマンドでアクセス権限を変更します。
 
 ```sh
-$ rostopic hz /crane_x7/crane_x7_control/crane_x7_gripper_finger_a_joint/current
-
-subscribed to [/crane_x7/crane_x7_control/crane_x7_gripper_finger_a_joint/current]
-average rate: 199.928
-	min: 0.002s max: 0.008s std dev: 0.00055s window: 190
-average rate: 198.470
-	min: 0.001s max: 0.014s std dev: 0.00099s window: 387
+# /dev/ttyUSB0を使用する場合
+$ sudo chmod 666 /dev/ttyUSB0
 ```
 
-実際の制御周期が200Hzに達せず、100Hz程度に低くなってしまう場合、USB通信ポートの`latency_timer`を変更してください。
+永続的なアクセス権限を付与する場合は次のコマンドを実行します。
+
 
 ```sh
-# cat /sys/bus/usb-serial/devices/ttyUSB0/latency_timer
-16
-# echo 1 > /sys/bus/usb-serial/devices/ttyUSB0/latency_timer
-# cat /sys/bus/usb-serial/devices/ttyUSB0/latency_timer
-1
+$ sudo usermod -aG dialout $USER
+$ reboot
 ```
+
+### latency_timerの設定
+
+CRANE-X7を200 Hz周期で制御するためには、
+USB通信ポートとサーボモータの設定を変更します。
+
+下記のコマンドを実行してUSB通信ポートの`latency_timer`を変更します。
 
 参考資料：https://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_wizard2/#usb-latency-setting
 
-## ネームスペースとトピック
-
-`crane_x7_control`は`/crane_x7`をルートとするネームスペースにパラメータやトピックを定義します。   
-各jointについて次のトピックを配信します。
-
-current：電流値[mA]   
-dxl_position：現在角度[360/4096度]   
-temp：温度[度]   
-
-## dynamic_reconfigure
-
-`crane_x7_control`は`dynamic_reconfigure`に対応しています。次のコマンドで`rqt_reconfigure`を起動してアクセスすると各Jointのサーボパラメータを変更することができます。
-
-```bash
-rosrun rqt_reconfigure rqt_reconfigure
+```sh
+# /dev/ttyUSB0を使用する場合
+$ sudo chmod a+rw /sys/bus/usb-serial/devices/ttyUSB0/latency_timer
+$ sudo echo 1 > /sys/bus/usb-serial/devices/ttyUSB0/latency_timer
 ```
 
-![rqt_reconfigure](https://rt-net.github.io/images/crane-x7/readme_rqt_reconfigure.png)
+### Return Delay Timeの設定
 
-各パラメータの詳細についてはROBOTIS公式のXM430およびXM540のサーボマニュアルを参照して下さい。   
-- [XM430-W350](http://emanual.robotis.com/docs/en/dxl/x/xm430-w350/)
-- [XM540-W270](http://emanual.robotis.com/docs/en/dxl/x/xm540-w270/)
+CRANE-X7に搭載されているサーボモータ[Dynamixel](https://emanual.robotis.com/docs/en/dxl/x/xm430-w350/)
+には`Return Delay Time`というパラメータがあります。
 
-## 制御モード設定
+デフォルトは250がセットされており、
+サーボモータが`Instruction Packet`を受信してから`Status Packet`を送信するまでに`500 usec`の遅れがあります。
 
-CRANE-X7は位置制御モードと電流制御モードに対応しています。基本設定は位置制御モードになっていますが、複数箇所の設定変更を行うことで電流制御モードへ切り替えることが可能です。   
-ハンドの設定を位置制御モードから電流制御モードへ変更する手順を紹介します。
+[Dynamixel Wizard 2](https://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_wizard2/)
+を使用して`Retrun Delay Time`を小さくすると、制御周期が早くなります。
 
-1. **サーボの設定変更**   
+![Setting Return Delay Time](https://rt-net.github.io/images/crane-x7/setting_return_delay_time.png)
 
-	- サーボモータの`Operating Mode`（Address：11）を`3：位置制御モード`から`0：電流制御モード`へ設定変更する
-		- [Dynamixel Wizard 2.0](https://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_wizard2/)を使用するとモードを変更できます。
+## ノードの起動
 
-2. **`crane_x7_control`の設定変更**   
+`crane_x7_control.launch.py`を実行すると、`Controller Manager`ノードが起動し、
+以下のコントローラが読み込まれます。
 
-	- `crane_x7_control/config/crane_x7_control.yaml`のハンド部分について次のように変更する   
+- joint_state_controller (`joint_state_controller/JointStateController`)
+- crane_x7_arm_controller (`joint_trajectory_controller/JointTrajectoryController`)
+- crane_x7_gripper_controller (`position_controllers/GripperActionController`)
 
-```diff
-gripper_controller:
--  type: "position_controllers/GripperActionController"
-+  type: "effort_controllers/GripperActionController"
-  publish_rate: 250
-  joint: crane_x7_gripper_finger_a_joint
-+  gains:
-+    crane_x7_gripper_finger_a_joint: { p: 1.0, i: 0.01, d: 0.1 }
-  action_monitor_rate: 10
-  state_publish_rate:  100
-  stall_velocity_threshold: 0.01
-  goal_tolerance: 0.2
-  stall_timeout: 0.3
+ノードが起動した後、
+次のコマンドでジョイント角度情報（`joint_states`）を表示できます
 
-dynamixel_port:
-  port_name: "/dev/ttyUSB0"
-  baud_rate: 3000000
-  joints:
-    - crane_x7_shoulder_fixed_part_pan_joint
-    - crane_x7_shoulder_revolute_part_tilt_joint
-    - crane_x7_upper_arm_revolute_part_twist_joint
-    - crane_x7_upper_arm_revolute_part_rotate_joint
-    - crane_x7_lower_arm_fixed_part_joint
-    - crane_x7_lower_arm_revolute_part_joint
-    - crane_x7_wrist_joint
-    - crane_x7_gripper_finger_a_joint
-  crane_x7_shoulder_fixed_part_pan_joint: {id: 2, center: 2048, home: 2048, effort_const: 1.79, mode: 3 }
-  crane_x7_shoulder_revolute_part_tilt_joint: {id: 3, center: 2048, home: 2048, effort_const: 2.79, mode: 3 }
-  crane_x7_upper_arm_revolute_part_twist_joint: {id: 4, center: 2048, home: 2048, effort_const: 1.79, mode: 3 }
-  crane_x7_upper_arm_revolute_part_rotate_joint: {id: 5, center: 2048, home: 2048, effort_const: 1.79, mode: 3 }
-  crane_x7_lower_arm_fixed_part_joint: {id: 6, center: 2048, home: 2048, effort_const: 1.79, mode: 3 }
-  crane_x7_lower_arm_revolute_part_joint: {id: 7, center: 2048, home: 2048, effort_const: 1.79, mode: 3 }
-  crane_x7_wrist_joint: {id: 8, center: 2048, home: 2048, effort_const: 1.79, mode: 3 }
--  crane_x7_gripper_finger_a_joint: {id: 9, center: 2048, home: 2048, effort_const: 1.79, mode: 3 }
-+  crane_x7_gripper_finger_a_joint: {id: 9, center: 2048, home: 2048, effort_const: 1.79, mode: 0 }
+```sh
+$ ros2 topic echo /joint_states
 ```
 
-PIDの設定値はCRANE-X7を制御するROS環境によって特性が異なる可能性があります。   
+## Controller Managerのパラメータ
+
+`Controller Manager`のパラメータは
+[config/crane_x7_controllers.yaml](./config/crane_x7_controllers.yaml)
+で設定しています。
+
+```yaml
+controller_manager:
+  ros__parameters:
+    update_rate: 200  # Hz
+
+    crane_x7_arm_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+    crane_x7_gripper_controller:
+      type: position_controllers/GripperActionController
+    joint_state_controller:
+      type: joint_state_controller/JointStateController
+```
+
+### 制御周期
+
+`update_rate`は制御周期を設定します。
+
+### コントローラ
+
+CRANE-X7の腕の制御用に`crane_x7_arm_controller`を、
+グリッパの制御用に`crane_x7_gripper_controller`を設定しています。
+
+## crane_x7_hardwareのパラメータ
+
+`crane_x7_hardware`のパラメータは
+`crane_x7_description/urdf/crane_x7.urdf.xacro`
+で設定しています。
+
+```xml
+  <xacro:arg name="port_name" default="/dev/ttyUSB0" />
+  <xacro:arg name="baudrate" default="3000000" />
+  <xacro:arg name="timeout_seconds" default="1.0" />
+  <xacro:arg name="manipulator_config_file_path" default="" />
+  <xacro:arg name="manipulator_links_file_path" default="" />
+```
+
+### USB通信ポート
+
+`port_name`はCRANE-X7との通信に使用するUSB通信ポートを設定します。
+
+### ボーレート
+
+`baudrate`はCRANE-X7に搭載したDynamixelとの通信ボーレートを設定します。
+
+デフォルト値には`3000000` (3 Mbps)を設定しています。
+
+### 通信タイムアウト
+
+`timeout_seconds`は通信タイムアウト時間（秒）を設定します。
+
+`crane_x7_hardware`は、一定時間（デフォルト1秒間）通信に失敗し続けると、
+read/write動作を停止します。
+USBケーブルや電源ケーブルが抜けた場合等に有効です。
+
+### RTマニピュレータC++ライブラリ用の設定ファイルパス
+
+`crane_x7_hardware`は、CRANE-X7と通信するために
+[RTマニピュレータC++ライブラリ](https://github.com/rt-net/rt_manipulators_cpp)
+を使用しています。
 
 
-【電流モードに関する注意】   
-電流制御モードは、位置制御モードと異なり、サーボに設定された角度リミットが**無効**になります。   
-ユーザー自身で作成されたプログラムに適切な制限動作が備わっていない場合、**本体の損傷や、本体が周囲や作業者に接触、あるいは衝突し、失明や打撲による死亡といった思わぬ重大事故が発生する危険があります。**   
-ユーザーの責任において十分に安全に注意した上でご使用下さい。   
-当該製品および当ソフトウェアの使用中に生じたいかなる損害も株式会社アールティでは一切の責任を負いかねます。
+`manipulatcor_config_file_path`と`manipulator_links_file_path`には、
+ライブラリが読み込むサーボ設定ファイルと
+リンク情報ファイルへのパスを設定します。
+
+---
+
+[back to top](#crane_x7_control)

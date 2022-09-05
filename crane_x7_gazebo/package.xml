@@ -1,30 +1,27 @@
 <?xml version="1.0"?>
-<package format="2">
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>crane_x7_gazebo</name>
-  <version>2.0.0</version>
+  <version>1.0.0</version>
   <description>The crane_x7_gazebo package</description>
-
   <maintainer email="shop@rt-net.jp">RT Corporation</maintainer>
-  <author email="s.aoki@rt-net.jp">Shota Aoki</author>
-
   <license>Apache License 2.0</license>
 
-  <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>gazebo</build_depend>
-  <build_depend>gazebo_plugins</build_depend>
-  <build_depend>gazebo_ros_control</build_depend>
-  <build_export_depend>gazebo</build_export_depend>
-  <build_export_depend>gazebo_plugins</build_export_depend>
-  <build_export_depend>gazebo_ros_control</build_export_depend>
-  <exec_depend>gazebo</exec_depend>
-  <exec_depend>gazebo_plugins</exec_depend>
-  <exec_depend>gazebo_ros_control</exec_depend>
-  <exec_depend>roboticsgroup_upatras_gazebo_plugins</exec_depend>
-  <exec_depend>roslang</exec_depend>
-  <exec_depend>urdf_parser_plugin</exec_depend>
+  <author email="s.aoki@rt-net.jp">Shota Aoki</author>
+  <author email="kuwagata@rt-net.jp">Atsushi Kuwagata</author>
 
-  <exec_depend>crane_x7_moveit_config</exec_depend>
-  <exec_depend>crane_x7_control</exec_depend>
-  <exec_depend>crane_x7_description</exec_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <depend>controller_manager</depend>
+  <depend>gripper_controllers</depend>
+  <depend>ros2_controllers</depend>
+  <depend>ros_ign</depend>
+  <depend>robot_state_publisher</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
 </package>

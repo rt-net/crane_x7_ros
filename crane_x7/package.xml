@@ -1,30 +1,30 @@
-<package>
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>crane_x7</name>
-  <version>2.0.0</version>
-  <description>
-    ROS package suite of CRANE-X7
-  </description>
+  <version>1.0.0</version>
+  <description>ROS 2 package suite of CRANE-X7</description>
   <maintainer email="shop@rt-net.jp">RT Corporation</maintainer>
-  <author email="nomura@rt-net.jp">Hiroyuki Nomura</author>
-  <author email="geoffrey.biggs@aist.go.jp">Geoffrey Biggs</author>
-  <author email="tiryoh@gmail.com">Daisuke Sato</author>
-  <author email="s.aoki@rt-net.jp">Shota Aoki</author>
-
   <license>Apache License 2.0</license>
 
-  <url type="website">http://wiki.ros.org/crane_x7</url>
+  <author email="s.aoki@rt-net.jp">Shota Aoki</author>
+
+  <url type="website">https://rt-net.jp/products/crane-x7/</url>
   <url type="bugtracker">https://github.com/rt-net/crane_x7_ros/issues</url>
   <url type="repository">https://github.com/rt-net/crane_x7_ros</url>
 
-  <buildtool_depend>catkin</buildtool_depend>
-  <run_depend>crane_x7_control</run_depend>
-  <run_depend>crane_x7_description</run_depend>
-  <run_depend>crane_x7_examples</run_depend>
-  <run_depend>crane_x7_moveit_config</run_depend>
-  <run_depend>crane_x7_msgs</run_depend>
-  <run_depend>crane_x7_gazebo</run_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>crane_x7_control</exec_depend>
+  <exec_depend>crane_x7_description</exec_depend>
+  <exec_depend>crane_x7_examples</exec_depend>
+  <exec_depend>crane_x7_moveit_config</exec_depend>
+  <exec_depend>crane_x7_gazebo</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
 
   <export>
-    <metapackage/>
+    <build_type>ament_cmake</build_type>
   </export>
 </package>

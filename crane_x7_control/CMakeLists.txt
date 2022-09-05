@@ -1,76 +1,78 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
 project(crane_x7_control)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+# Default to C99
+if(NOT CMAKE_C_STANDARD)
+  set(CMAKE_C_STANDARD 99)
+endif()
 
-## Find catkin macros and libraries
-find_package(catkin REQUIRED COMPONENTS
-  controller_manager
-  dynamixel_sdk
-  roscpp
-  rospy
-  hardware_interface
-  transmission_interface
-  crane_x7_msgs
-  dynamic_reconfigure
+# Default to C++17
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+find_package(ament_cmake REQUIRED)
+find_package(hardware_interface REQUIRED)
+find_package(pluginlib REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rt_manipulators_cpp REQUIRED)
+
+set(LIBRARY_NAME "crane_x7_hardware")
+add_library(
+  ${LIBRARY_NAME}
+  SHARED
+  src/crane_x7_hardware.cpp
 )
-
-###################################
-## catkin specific configuration ##
-###################################
-
-catkin_package(
-  INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp hardware_interface transmission_interface controller_manager dynamixel_sdk
-)
-
-###########
-## Build ##
-###########
-
-include_directories(
+target_include_directories(
+  ${LIBRARY_NAME}
+  PRIVATE
   include
-  ${catkin_INCLUDE_DIRS}
-  ${Boost_INCLUDE_DIR}
+)
+ament_target_dependencies(
+  ${LIBRARY_NAME}
+  hardware_interface
+  pluginlib
+  rclcpp
+  rt_manipulators_cpp
 )
 
-find_library( dxl_x64_cpp NAME libdxl_x64_cpp.so PATHS src/dynamixel_sdk/build/linux64 )
+pluginlib_export_plugin_description_file(hardware_interface crane_x7_hardware.xml)
 
-add_executable(crane_x7_control src/hardware.cpp src/joint_control.cpp src/dxlport_control.cpp src/control_setting.cpp)
-
-target_link_libraries( crane_x7_control
-  ${catkin_LIBRARIES}
+install(
+  TARGETS ${LIBRARY_NAME}
+  DESTINATION lib
+)
+install(
+  DIRECTORY include/
+  DESTINATION include
 )
 
-#############
-## Install ##
-#############
-
-# all install targets should use catkin DESTINATION variables
-# See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
-
-install(TARGETS crane_x7_control
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+install(DIRECTORY
+  launch
+  config
+  DESTINATION share/${PROJECT_NAME}/
 )
 
-install(DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-  FILES_MATCHING PATTERN "*.h"
-  PATTERN ".svn" EXCLUDE
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+endif()
+
+ament_export_include_directories(
+  include
+)
+ament_export_libraries(
+  ${LIBRARY_NAME}
+)
+ament_export_dependencies(
+  hardware_interface
+  pluginlib
+  rclcpp
+  rt_manipulators_cpp
 )
 
-foreach(dir config launch)
-  install(DIRECTORY ${dir}/ 
-    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/${dir}
-  )
-endforeach(dir)
-
-catkin_install_python(PROGRAMS
-  scripts/preset_reconfigure.py
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
-
-#############
-## Testing ##
-#############
+ament_package()
