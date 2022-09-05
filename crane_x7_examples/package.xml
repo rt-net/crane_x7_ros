@@ -2,12 +2,13 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>crane_x7_examples</name>
-  <version>1.0.0</version>
+  <version>3.0.0</version>
   <description>CRANE-X7 examples package</description>
   <maintainer email="shop@rt-net.jp">RT Corporation</maintainer>
   <license>Apache License 2.0</license>
 
   <author email="s.aoki@rt-net.jp">Shota Aoki</author>
+  <author email="kuwagata@rt-net.jp">Atsushi Kuwagata</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
