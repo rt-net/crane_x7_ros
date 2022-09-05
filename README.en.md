@@ -2,18 +2,31 @@
 
 # crane_x7_ros
 
+[![industrial_ci](https://github.com/rt-net/crane_x7_ros/actions/workflows/industrial_ci.yml/badge.svg?branch=ros2)](https://github.com/rt-net/crane_x7_ros/actions/workflows/industrial_ci.yml)
+
 ROS 2 package suite of CRANE-X7.
 
 <img src=https://rt-net.github.io/images/crane-x7/CRANE-X7-500x500.png width=400px/><img src=https://rt-net.github.io/images/crane-x7/crane_x7_gazebo_ros2.png width=400px />
 
 ## Table of Contents
 
+- [Supported ROS 2 distributions](#supported-ros-2-distributions)
+  - [ROS](#ros)
 - [Requirements](#requirements)
 - [Installation](#installation)
   - [Build from source](#build-from-source)
 - [Quick Start](#quick-start)
 - [Packages](#packages)
 - [License](#license)
+
+## Supported ROS 2 distributions
+
+- Foxy
+
+### ROS
+
+- [Melodic](https://github.com/rt-net/crane_x7_ros/tree/master)
+- [Noetic](https://github.com/rt-net/crane_x7_ros/tree/master)
 ## Requirements
 
 - CRANE-X7
