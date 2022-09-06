@@ -17,23 +17,14 @@ ROS Wiki:
 Examples:  
 [crane_x7_examples](https://github.com/rt-net/crane_x7_ros/tree/master/crane_x7_examples)
 
-## System Requirements
+## Supported ROS distributions
 
-These packages have been developed and tested on ROS Melodic & Noetic.
-Please see below for details.
+- Melodic
+- Noetic
 
-- ROS Melodic
-  - OS: Ubuntu 18.04.3 LTS
-  - ROS Distribution: Melodic Morenia 1.14.9
-  - Rviz 1.13.14
-  - MoveIt 1.0.6
-  - Gazebo 9.0.0
-- ROS Noetic
-  - OS: Ubuntu 20.04.1 LTS
-  - ROS Distribution: Noetic Ninjemys 1.15.7
-  - Rviz 1.14.1
-  - MoveIt 1.1.0
-  - Gazebo 11.2.0
+### ROS 2
+
+- [Foxy](https://github.com/rt-net/crane_x7_ros/tree/ros2)
 
 ## Installation
 
