@@ -2,149 +2,100 @@
 
 # crane_x7_ros
 
-[![industrial_ci](https://github.com/rt-net/crane_x7_ros/workflows/industrial_ci/badge.svg?branch=master)](https://github.com/rt-net/crane_x7_ros/actions?query=workflow%3Aindustrial_ci+branch%3Amaster)
+[![industrial_ci](https://github.com/rt-net/crane_x7_ros/actions/workflows/industrial_ci.yml/badge.svg?branch=ros2)](https://github.com/rt-net/crane_x7_ros/actions/workflows/industrial_ci.yml)
 
-![crane_x7_gazebo](https://rt-net.github.io/images/crane-x7/crane_x7_gazebo.png "crane_x7_gazebo")
+ROS 2 package suite of CRANE-X7.
 
-CRANE-X7のROSパッケージです。
+<img src=https://rt-net.github.io/images/crane-x7/CRANE-X7-500x500.png width=400px/><img src=https://rt-net.github.io/images/crane-x7/crane_x7_gazebo_ros2.png width=400px />
 
-製品ページはこちらです。  
-[https://www.rt-net.jp/products/crane-x7](https://www.rt-net.jp/products/crane-x7)
+## Table of Contents
 
-ROS Wikiはこちらです。  
-[https://wiki.ros.org/crane_x7](https://wiki.ros.org/crane_x7)
+- [Supported ROS 2 distributions](#supported-ros-2-distributions)
+  - [ROS](#ros)
+- [Requirements](#requirements)
+- [Installation](#installation)
+  - [Build from source](#build-from-source)
+- [Quick Start](#quick-start)
+- [Packages](#packages)
+- [ライセンス](#ライセンス)
+- [開発について](#開発について)
 
-ROSのサンプルコード集はこちらです。  
-[crane_x7_examples](https://github.com/rt-net/crane_x7_ros/tree/master/crane_x7_examples)
+## Supported ROS 2 distributions
 
-## 動作環境
+- Foxy
 
-以下の環境にて動作確認を行っています。
+### ROS
 
-- ROS Melodic
-  - OS: Ubuntu 18.04.3 LTS
-  - ROS Distribution: Melodic Morenia 1.14.9
-  - Rviz 1.13.14
-  - MoveIt 1.0.6
-  - Gazebo 9.0.0
-- ROS Noetic
-  - OS: Ubuntu 20.04.1 LTS
-  - ROS Distribution: Noetic Ninjemys 1.15.7
-  - Rviz 1.14.1
-  - MoveIt 1.1.0
-  - Gazebo 11.2.0
+- [Melodic](https://github.com/rt-net/crane_x7_ros/tree/master)
+- [Noetic](https://github.com/rt-net/crane_x7_ros/tree/master)
 
-## インストール方法
+## Requirements
 
-### ソースからビルドする方法
+- CRANE-X7
+  - [製品ページ](https://rt-net.jp/products/crane-x7/)
+  - [ウェブショップ](https://www.rt-shop.jp/index.php?main_page=product_info&products_id=3660)
+- Linux OS
+  - Ubuntu 20.04
+- ROS
+  - [Foxy Fitzroy](https://docs.ros.org/en/foxy/Installation.html)
 
-- [ROS Wiki](http://wiki.ros.org/noetic/Installation/Ubuntu)を参照しROSをインストールします。
+## Installation
 
-- `git`を使用して本パッケージをダウンロードします。
+### Build from source
 
-  ```bash
-  mkdir -p ~/catkin_ws/src
-  cd ~/catkin_ws/src
-  git clone https://github.com/rt-net/crane_x7_ros.git
-  ```
+```sh
+# Setup ROS environment
+$ source /opt/ros/foxy/setup.bash
 
-- [crane_x7_description](https://github.com/rt-net/crane_x7_description)パッケージをダウンロードします。
-このパッケージには株式会社アールティの[非商用ライセンス](https://github.com/rt-net/crane_x7_description/blob/master/LICENSE)が適用されています。
+# Download crane_x7 repositories
+$ mkdir -p ~/ros2_ws/src
+$ cd ~/ros2_ws/src
+$ git clone -b ros2 https://github.com/rt-net/crane_x7_ros.git
+$ git clone -b ros2 https://github.com/rt-net/crane_x7_description.git
 
-  ```bash
-  cd ~/catkin_ws/src
-  git clone https://github.com/rt-net/crane_x7_description.git
-  ```
+# Install dependencies
+$ rosdep install -r -y -i --from-paths .
 
-- 依存関係にあるパッケージをインストールします。
-
-  ```bash
-  cd ~/catkin_ws/src
-  rosdep install -r -y --from-paths . --ignore-src
-  ```
-
-- `catkin_make`を使用して本パッケージをビルドします。
-
-  ```bash
-  cd ~/catkin_ws && catkin_make
-  source ~/catkin_ws/devel/setup.bash
-  ```
-
-### v1.0.0以前のバージョンからv2.x.xへ更新する場合
-
-バージョンの違いについては
-https://github.com/rt-net/crane_x7_ros/issues/154
-を参照してください。
-
-次の手順でパッケージを更新してください。
-
-```bash
-# crane_x7_rosを更新
-cd ~/catkin_ws/src/crane_x7_ros
-git pull origin master
-
-# crane_x7_descriptionをダウンロード
-cd ~/catkin_ws/src
-git clone https://github.com/rt-net/crane_x7_description.git
-rosdep install -r -y --from-paths . --ignore-src
-
-# ビルド環境を初期化し、パッケージを再ビルド
-# 同じワークスペースにある、CRANE-X7以外の他のROSパッケージについても再ビルドを行います
-cd ~/catkin_ws
-rm -r build devel
-catkin_make
+# Build & Install
+$ cd ~/ros2_ws
+$ colcon build --symlink-install
+$ source ~/ros2_ws/install/setup.bash
 ```
 
-## セットアップ方法
+## Quick Start
 
-`crane_x7_control`が実機と通信する際には`/dev/ttyUSB0`へのアクセス権が必要です。
-`/dev/ttyUSB0`へのアクセス権を変更するには下記のコマンドを実行します。
+```sh
+# Connect CRANE-X7 to PC, then
+$ source ~/ros2_ws/install/setup.bash
+$ ros2 launch crane_x7_examples demo.launch.py port_name:=/dev/ttyUSB0
 
-```bash
-sudo chmod 666 /dev/ttyUSB0
+# Terminal 2
+$ source ~/ros2_ws/install/setup.bash
+$ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
+
+# Press [Ctrl-c] to terminate.
 ```
 
-## パッケージ概要
+詳細は[crane_x7_examples](./crane_x7_examples/README.md)を参照してください。
 
-CRANE-X7の各パッケージはcrane_x7_rosにまとめています。  
+## Packages
 
-### crane_x7_control
-
-CRANE-X7の制御を行うパッケージです。  
-dynamixel_sdkのC++ライブラリが必要です。  
-実機との通信には`/dev/ttyUSB0`へのアクセス権が必要です。
-
-通信に使用するポートの名前やサーボ情報は`config/crane_x7_control.yaml`に記載します。  
-設定されたUSBポートが無い場合、コントローラからの指示通りの値を返すダミージョイントモードで動作します。  
-ハードウェアを使用しなくてもデバッグが出来るので便利に使って下さい。  
-
-起動時は設定されたホームポジションへ5秒かけて移動します。  
-ノードを停止するとサーボをブレーキモードに変更してから終了するので安全に停止することができます。  
-
-### crane_x7_moveit_config
-
-MoveItのパッケージです。下記のコマンドで起動します。
-
-`roslaunch crane_x7_moveit_config demo.launch`
-
-### crane_x7_bringup
-
-CRANE-X7の起動に必要なlaunchファイルをまとめたパッケージです。
-
-### crane_x7_examples
-
-サンプルコード集です。
-使い方については[./crane_x7_examples/README.md](./crane_x7_examples/README.md)を参照してください。
-
-### crane_x7_gazebo
-
-GazeboでCRANE-X7のシミュレーションを行うパッケージです。
-
-次のコマンドで起動します。実機との接続やcrane_x7_bringupの実行は必要ありません。
-
-`roslaunch crane_x7_gazebo crane_x7_with_table.launch`
-
----
+- crane_x7_control
+  - [README](./crane_x7_control/README.md)
+  - CRANE-X7を制御するパッケージです
+  - USB通信ポートの設定方法をREAMDEに記載してます
+- crane_x7_examples
+  - [README](./crane_x7_examples/README.md)
+  - CRANE-X7のサンプルコード集です
+- crane_x7_gazebo
+  - [README](./crane_x7_gazebo/README.md)
+  - CRANE-X7のGazeboシミュレーションパッケージです
+- crane_x7_moveit_config
+  - [README](./crane_x7_moveit_config/README.md)
+  - CRANE-X7の`moveit2`設定ファイルです
+- crane_x7_description (外部パッケージ)
+  - [README](https://github.com/rt-net/crane_x7_description/blob/ros2/README.md)
+  - CRANE-X7のモデルデータ（xacro）を定義するパッケージです
 
 ## ライセンス
 
@@ -154,8 +105,8 @@ GazeboでCRANE-X7のシミュレーションを行うパッケージです。
 特に明記されていない場合は、Apache License, Version 2.0に基づき公開されています。  
 ライセンスの全文は[LICENSE](./LICENSE)または[https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0)から確認できます。
 
-本パッケージが依存する[crane_x7_description](https://github.com/rt-net/crane_x7_description)には株式会社アールティの非商用ライセンスが適用されています。
-詳細は[crane_x7_description/LICENSE](https://github.com/rt-net/crane_x7_description/blob/master/LICENSE)を参照してください。
+本パッケージが依存する[crane_x7_description](https://github.com/rt-net/crane_x7_description/tree/ros2)には株式会社アールティの非商用ライセンスが適用されています。
+詳細は[crane_x7_description/LICENSE](https://github.com/rt-net/crane_x7_description/blob/ros2/LICENSE)を参照してください。
 
 ## 開発について
 

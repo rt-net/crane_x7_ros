@@ -7,28 +7,19 @@ on:
   pull_request:
     paths-ignore:
     - '**.md'
-  schedule:
-    - cron: "0 2 * * 0" # Weekly on Sundays at 02:00
+  workflow_dispatch:
 
 env:
   UPSTREAM_WORKSPACE: .ci.rosinstall
 
 jobs:
   industrial_ci:
-    continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
         env:
-          - { ROS_DISTRO: melodic, ROS_REPO: main }
-          - { ROS_DISTRO: noetic, ROS_REPO: main }
-        experimental: [false]
-        include:
-          - env: { ROS_DISTRO: melodic, ROS_REPO: testing }
-            experimental: true
-          - env: { ROS_DISTRO: noetic, ROS_REPO: testing }
-            experimental: true
+          - { ROS_DISTRO: foxy, ROS_REPO: ros }
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: "ros-industrial/industrial_ci@master"
         env: ${{ matrix.env }}

@@ -1,18 +1,27 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
 project(crane_x7_gazebo)
 
-find_package(catkin REQUIRED COMPONENTS
+find_package(ament_cmake REQUIRED COMPONENTS
   gazebo_ros
   gazebo_plugins
   gazebo_ros_control
 )
 
-catkin_package()
+install(DIRECTORY
+  launch
+  worlds
+  gui
+  config
+  DESTINATION share/${PROJECT_NAME}/
+)
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-install(DIRECTORY launch worlds
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+endif()
+
+ament_package()

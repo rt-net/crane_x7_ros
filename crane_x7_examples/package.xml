@@ -1,26 +1,30 @@
 <?xml version="1.0"?>
-<package>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>crane_x7_examples</name>
-  <version>2.0.0</version>
-  <description>examples of CRANE-X7 ROS package</description>
-
+  <version>3.0.0</version>
+  <description>CRANE-X7 examples package</description>
   <maintainer email="shop@rt-net.jp">RT Corporation</maintainer>
-  <author email="tiryoh@gmail.com">Daisuke Sato</author>
-  <author email="nomura@rt-net.jp">Hiroyuki Nomura</author>
-
   <license>Apache License 2.0</license>
 
-  <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>crane_x7_moveit_config</build_depend>
-  <build_depend>std_msgs</build_depend>
-  <build_depend>geometry_msgs</build_depend>
-  <build_depend>message_generation</build_depend>
-  <run_depend>crane_x7_moveit_config</run_depend>
-  <run_depend>moveit_commander</run_depend>
-  <run_depend>message_runtime</run_depend>
-  <run_depend>joy</run_depend>
+  <author email="s.aoki@rt-net.jp">Shota Aoki</author>
+  <author email="kuwagata@rt-net.jp">Atsushi Kuwagata</author>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>angles</depend>
+  <depend>crane_x7_control</depend>
+  <depend>crane_x7_description</depend>
+  <depend>crane_x7_moveit_config</depend>
+  <depend>geometry_msgs</depend>
+  <depend>moveit_ros_planning_interface</depend>
+  <depend>rclcpp</depend>
+  <depend>tf2_geometry_msgs</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
 
   <export>
-
+    <build_type>ament_cmake</build_type>
   </export>
 </package>

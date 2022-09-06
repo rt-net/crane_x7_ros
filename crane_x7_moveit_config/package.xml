@@ -1,33 +1,27 @@
 <?xml version="1.0"?>
-<package>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>crane_x7_moveit_config</name>
-  <version>2.0.0</version>
-  <description>
-     An automatically generated package with all the configuration and launch files for using the crane_x7 with the MoveIt! Motion Planning Framework
-  </description>
-
+  <version>3.0.0</version>
+  <description>CRANE-X7 move_group config package</description>
   <maintainer email="shop@rt-net.jp">RT Corporation</maintainer>
-  <author email="nomura@rt-net.jp">Hiroyuki Nomura</author>
-  <author email="geoffrey.biggs@aist.go.jp">Geoffrey Biggs</author>
-
   <license>Apache License 2.0</license>
 
-  <buildtool_depend>catkin</buildtool_depend>
+  <author email="s.aoki@rt-net.jp">Shota Aoki</author>
+  <author email="kuwagata@rt-net.jp">Atsushi Kuwagata</author>
 
-  <run_depend>moveit_ros_move_group</run_depend>
-  <run_depend>moveit_fake_controller_manager</run_depend>
-  <run_depend>moveit_kinematics</run_depend>
-  <run_depend>moveit_planners_ompl</run_depend>
-  <run_depend>moveit_ros_visualization</run_depend>
-  <run_depend>moveit_simple_controller_manager</run_depend>
-  <run_depend>joint_state_publisher</run_depend>
-  <run_depend>joint_state_publisher_gui</run_depend>
-  <run_depend>robot_state_publisher</run_depend>
-  <run_depend>xacro</run_depend>
-  <!-- This package is referenced in the warehouse launch files, but does not build out of the box at the moment. Commented the dependency until this works. -->
-  <!-- <run_depend>warehouse_ros_mongo</run_depend> -->
-  <build_depend>crane_x7_description</build_depend>
-  <run_depend>crane_x7_description</run_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <depend>crane_x7_description</depend>
+  <depend>moveit</depend>
+  <depend>robot_state_publisher</depend>
+  <depend>rviz2</depend>
+  <depend>tf2_ros</depend>
 
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
 </package>

@@ -1,0 +1,9 @@
+<library path="crane_x7_hardware">
+  <class name="crane_x7_hardware/CraneX7Hardware"
+         type="crane_x7_control::CraneX7Hardware"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      A CRANE-X7 hardware plugin for the ros2_control.
+    </description>
+  </class>
+</library>

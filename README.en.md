@@ -2,150 +2,97 @@
 
 # crane_x7_ros
 
-[![industrial_ci](https://github.com/rt-net/crane_x7_ros/workflows/industrial_ci/badge.svg?branch=master)](https://github.com/rt-net/crane_x7_ros/actions?query=workflow%3Aindustrial_ci+branch%3Amaster)
+[![industrial_ci](https://github.com/rt-net/crane_x7_ros/actions/workflows/industrial_ci.yml/badge.svg?branch=ros2)](https://github.com/rt-net/crane_x7_ros/actions/workflows/industrial_ci.yml)
 
-![crane_x7_gazebo](https://rt-net.github.io/images/crane-x7/crane_x7_gazebo.png "crane_x7_gazebo")
+ROS 2 package suite of CRANE-X7.
 
-ROS Packages for CRANE-X7.
+<img src=https://rt-net.github.io/images/crane-x7/CRANE-X7-500x500.png width=400px/><img src=https://rt-net.github.io/images/crane-x7/crane_x7_gazebo_ros2.png width=400px />
 
-Product page:  
-[https://www.rt-net.jp/products/crane-x7](https://www.rt-net.jp/products/crane-x7?lang=en)
+## Table of Contents
 
-ROS Wiki:  
-[https://wiki.ros.org/crane_x7](https://wiki.ros.org/crane_x7)
+- [Supported ROS 2 distributions](#supported-ros-2-distributions)
+  - [ROS](#ros)
+- [Requirements](#requirements)
+- [Installation](#installation)
+  - [Build from source](#build-from-source)
+- [Quick Start](#quick-start)
+- [Packages](#packages)
+- [License](#license)
 
-Examples:  
-[crane_x7_examples](https://github.com/rt-net/crane_x7_ros/tree/master/crane_x7_examples)
+## Supported ROS 2 distributions
 
-## System Requirements
+- Foxy
 
-These packages have been developed and tested on ROS Melodic & Noetic.
-Please see below for details.
+### ROS
 
-- ROS Melodic
-  - OS: Ubuntu 18.04.3 LTS
-  - ROS Distribution: Melodic Morenia 1.14.9
-  - Rviz 1.13.14
-  - MoveIt 1.0.6
-  - Gazebo 9.0.0
-- ROS Noetic
-  - OS: Ubuntu 20.04.1 LTS
-  - ROS Distribution: Noetic Ninjemys 1.15.7
-  - Rviz 1.14.1
-  - MoveIt 1.1.0
-  - Gazebo 11.2.0
+- [Melodic](https://github.com/rt-net/crane_x7_ros/tree/master)
+- [Noetic](https://github.com/rt-net/crane_x7_ros/tree/master)
+## Requirements
+
+- CRANE-X7
+  - [Product Introduction](https://rt-net.jp/products/crane-x7/)
+  - [Web Shop](https://www.rt-shop.jp/index.php?main_page=product_info&products_id=3660&language=en)
+- Linux OS
+  - Ubuntu 20.04
+- ROS
+  - [Foxy Fitzroy](https://docs.ros.org/en/foxy/Installation.html)
 
 ## Installation
 
 ### Build from source
 
-- Install ROS environments. Please see [ROS Wiki](http://wiki.ros.org/noetic/Installation/Ubuntu).
+```sh
+# Setup ROS environment
+$ source /opt/ros/foxy/setup.bash
 
-- Download the packages for CRANE-X7 using `git`.
+# Download crane_x7 repositories
+$ mkdir -p ~/ros2_ws/src
+$ cd ~/ros2_ws/src
+$ git clone -b ros2 https://github.com/rt-net/crane_x7_ros.git
+$ git clone -b ros2 https://github.com/rt-net/crane_x7_description.git
 
-  ```bash
-  mkdir -p ~/catkin_ws/src
-  cd ~/catkin_ws/src
-  git clone https://github.com/rt-net/crane_x7_ros.git
-  ```
+# Install dependencies
+$ rosdep install -r -y -i --from-paths .
 
-- Download [crane_x7_description](https://github.com/rt-net/crane_x7_description) package.
-The RT Corporation's [NON-COMMERCIAL LICENSE](https://github.com/rt-net/crane_x7_description/blob/master/LICENSE) applies to the package.
-
-  ```bash
-  cd ~/catkin_ws/src
-  git clone https://github.com/rt-net/crane_x7_description.git
-  ```
-
-- Install package dependencies.
-
-  ```bash
-  cd ~/catkin_ws/src
-  rosdep install -r -y --from-paths . --ignore-src
-  ```
-
-- Build packages using `catkin_make`.
-
-  ```bash
-  cd ~/catkin_ws && catkin_make
-  source ~/catkin_ws/devel/setup.bash
-  ```
-
-### Upgrading to v2.x.x from v1.0.0 or earlier
-
-Please see https://github.com/rt-net/crane_x7_ros/issues/154 for details of differences in the versions.
-
-Update the package with the following commands:
-
-```bash
-# Update crane_x7_ros
-cd ~/catkin_ws/src/crane_x7_ros
-git pull origin master
-
-# Download crane_x7_description package
-cd ~/catkin_ws/src
-git clone https://github.com/rt-net/crane_x7_description.git
-rosdep install -r -y --from-paths . --ignore-src
-
-# Clean up the workspace and rebuild packages
-# Note that other ROS packages in the workspace will also be rebuilt.
-cd ~/catkin_ws
-rm -r build devel
-catkin_make
+# Build & Install
+$ cd ~/ros2_ws
+$ colcon build --symlink-install
+$ source ~/ros2_ws/install/setup.bash
 ```
 
-## Setup Serial Connection
+## Quick Start
 
-The `crane_x7_control` node communicates with CRANE-X7 via serial port over USB.
-Logged-in user should have read and write access to `/dev/ttyUSB0`.
+```sh
+# Connect CRANE-X7 to PC, then
+$ source ~/ros2_ws/install/setup.bash
+$ ros2 launch crane_x7_examples demo.launch.py port_name:=/dev/ttyUSB0
 
-Change permissions on `/dev/ttyUSB0` with the following command:
+# Terminal 2
+$ source ~/ros2_ws/install/setup.bash
+$ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
 
-```bash
-sudo chmod 666 /dev/ttyUSB0
+# Press [Ctrl-c] to terminate.
 ```
 
-## About CRANE-X7 packages
+Please refer to [crane_x7_examples](./crane_x7_examples/README.md) for details.
 
-### crane_x7_control
+## Packages
 
-This package controls CRANE-X7 using `Dynamixel SDK C++ Library`
-which can install by `rosdep install` command.
-Read and write permissions on `/dev/ttyUSB0` 
-are required for communication between the package and CRANE-X7.
-
-The device name of serial port and parameters of Dynamixel servo motors are listed in `config/crane_x7_control.yaml`.
-If this package did not find the serial port, the package switches its control mode to Dummy Joint Mode from Normal Mode
-and republishes target joint values as servo angle values.
-This is useful for debugging of motion control without CRANE-X7 hardware.
-
-At startup, this package moves the CRANE-X7 to Home Position in 5 seconds.
-At shutdown, this package decreases P gains of the servo motors to stop motion safely.
-
-### crane_x7_moveit_config
-
-This package includes configuration files for MoveIt.
-
-To launch the MoveIt demonstration with Rviz:
-
-`roslaunch crane_x7_moveit_config demo.launch`
-
-### crane_x7_bringup
-
-This package includes launch files for startup of CRANE-X7.
-
-### crane_x7_examples
-
-This package includes example codes for CRANE-X7.
-Please refer to [./crane_x7_examples/README.md](./crane_x7_examples/README.md).
-
-### crane_x7_gazebo
-
-This package includes Gazebo simulation environments for CRANE-X7.
-
-To simulate CRANE-X7 on the table:
-
-`roslaunch crane_x7_gazebo crane_x7_with_table.launch`
+- crane_x7_control
+  - [README](./crane_x7_control/README.md)
+  - This package includes a hardware driver for CRANE-X7.
+- crane_x7_examples
+  - [README](./crane_x7_examples/README.md)
+  - This package includes example codes for CRANE-X7.
+- crane_x7_gazebo
+  - [README](./crane_x7_gazebo/README.md)
+  - This package includes Gazebo simulation environments for CRANE-X7.
+- crane_x7_moveit_config
+  - [README](./crane_x7_moveit_config/README.md)
+  - This package includes configuration files for `moveit2`.
+- crane_x7_description (external package)
+  - [README](https://github.com/rt-net/crane_x7_description/blob/ros2/README.en.md)
+  - This package includes a model data (xacro) of CRANE-X7.
 
 ---
 
@@ -156,5 +103,5 @@ To simulate CRANE-X7 on the table:
 This repository is licensed under the Apache License, Version 2.0, see [LICENSE](./LICENSE).  
 Unless attributed otherwise, everything in this repository is under the Apache License, Version 2.0.
 
-The crane_x7_ros depends on [crane_x7_description](https://github.com/rt-net/crane_x7_description) package.
-The RT Corporation's [NON-COMMERCIAL LICENSE](https://github.com/rt-net/crane_x7_description/blob/master/LICENSE) applies to the package.
+The crane_x7_ros depends on [crane_x7_description](https://github.com/rt-net/crane_x7_description/tree/ros2) package.
+The RT Corporation's [NON-COMMERCIAL LICENSE](https://github.com/rt-net/crane_x7_description/blob/ros2/LICENSE) applies to the package.
