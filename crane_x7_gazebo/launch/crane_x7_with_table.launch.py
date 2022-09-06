@@ -52,8 +52,8 @@ def generate_launch_description():
 
     description_loader = RobotDescriptionLoader()
     description_loader.use_gazebo = 'true'
-    description_loader.gz_control_config_package = 'crane_x7_gazebo'
-    description_loader.gz_control_config_file_path = 'config/controllers.yaml'
+    description_loader.gz_control_config_package = 'crane_x7_control'
+    description_loader.gz_control_config_file_path = 'config/crane_x7_controllers.yaml'
     description = description_loader.load()
 
     move_group = IncludeLaunchDescription(
