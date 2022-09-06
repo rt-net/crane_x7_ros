@@ -11,7 +11,6 @@ install(DIRECTORY
   launch
   worlds
   gui
-  config
   DESTINATION share/${PROJECT_NAME}/
 )
 
