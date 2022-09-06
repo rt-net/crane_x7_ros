@@ -55,14 +55,14 @@ int main(int argc, char ** argv)
   double GRIPPER_OPEN = angles::from_degrees(60.0);
   double GRIPPER_CLOSE = angles::from_degrees(20);
 
+  // SRDFに定義されている"home"の姿勢にする
+  move_group_arm.setNamedTarget("home");
+  move_group_arm.move();
+
   // 何かを掴んでいた時のためにハンドを開く
   gripper_joint_values[0] = GRIPPER_OPEN;
   move_group_gripper.setJointValueTarget(gripper_joint_values);
   move_group_gripper.move();
-
-  // SRDFに定義されている"home"の姿勢にする
-  move_group_arm.setNamedTarget("home");
-  move_group_arm.move();
 
   // 可動範囲を制限する
   moveit_msgs::msg::Constraints constraints;
@@ -95,11 +95,6 @@ int main(int argc, char ** argv)
   target_pose.orientation = tf2::toMsg(q);
   move_group_arm.setPoseTarget(target_pose);
   move_group_arm.move();
-
-  // ハンドを開く
-  gripper_joint_values[0] = GRIPPER_OPEN;
-  move_group_gripper.setJointValueTarget(gripper_joint_values);
-  move_group_gripper.move();
 
   // 掴みに行く
   target_pose.position.x = 0.2;
