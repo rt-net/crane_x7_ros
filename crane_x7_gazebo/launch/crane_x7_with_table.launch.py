@@ -21,6 +21,7 @@ from launch.actions import ExecuteProcess
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
+from launch_ros.actions import SetParameter
 
 
 def generate_launch_description():
@@ -52,7 +53,7 @@ def generate_launch_description():
 
     description_loader = RobotDescriptionLoader()
     description_loader.use_gazebo = 'true'
-    description_loader.gz_control_config_package = 'crane_x7_control'
+    description_loader.gz_control_config_package = 'crane_x7_gazebo'
     description_loader.gz_control_config_file_path = 'config/crane_x7_controllers.yaml'
     description = description_loader.load()
 
@@ -64,24 +65,25 @@ def generate_launch_description():
         )
 
     spawn_joint_state_controller = ExecuteProcess(
-                cmd=['ros2 run controller_manager spawner.py joint_state_controller'],
+                cmd=['ros2 run controller_manager spawner joint_state_controller'],
                 shell=True,
                 output='screen',
             )
 
     spawn_arm_controller = ExecuteProcess(
-                cmd=['ros2 run controller_manager spawner.py crane_x7_arm_controller'],
+                cmd=['ros2 run controller_manager spawner crane_x7_arm_controller'],
                 shell=True,
                 output='screen',
             )
 
     spawn_gripper_controller = ExecuteProcess(
-                cmd=['ros2 run controller_manager spawner.py crane_x7_gripper_controller'],
+                cmd=['ros2 run controller_manager spawner crane_x7_gripper_controller'],
                 shell=True,
                 output='screen',
             )
 
     return LaunchDescription([
+        SetParameter(name='use_sim_time', value=True),
         ign_gazebo,
         ignition_spawn_entity,
         move_group,
