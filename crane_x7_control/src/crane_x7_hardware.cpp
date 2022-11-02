@@ -49,8 +49,7 @@ CraneX7Hardware::~CraneX7Hardware()
 CallbackReturn CraneX7Hardware::on_init(
   const hardware_interface::HardwareInfo & info)
 {
-  if (hardware_interface::SystemInterface::on_init(info) != CallbackReturn::SUCCESS)
-  {
+  if (hardware_interface::SystemInterface::on_init(info) != CallbackReturn::SUCCESS) {
     return CallbackReturn::ERROR;
   }
 
@@ -218,7 +217,8 @@ CallbackReturn CraneX7Hardware::on_deactivate(const rclcpp_lifecycle::State & /*
   return CallbackReturn::SUCCESS;
 }
 
-return_type CraneX7Hardware::read(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
+return_type CraneX7Hardware::read(
+  const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
   if (communication_timeout()) {
     if (!timeout_has_printed_) {
@@ -267,7 +267,8 @@ return_type CraneX7Hardware::read(const rclcpp::Time & /*time*/, const rclcpp::D
   return return_type::OK;
 }
 
-return_type CraneX7Hardware::write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
+return_type CraneX7Hardware::write(
+  const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
   if (communication_timeout()) {
     if (!timeout_has_printed_) {
