@@ -19,6 +19,7 @@ from crane_x7_description.robot_description_loader import RobotDescriptionLoader
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.actions import IncludeLaunchDescription
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 
@@ -36,6 +37,12 @@ def generate_launch_description():
         description='Set baudrate.'
     )
 
+    declare_use_d435 = DeclareLaunchArgument(
+        'use_d435',
+        default_value='false',
+        description='Use d435.'
+    )
+
     config_file_path = os.path.join(
         get_package_share_directory('crane_x7_control'),
         'config',
@@ -51,6 +58,7 @@ def generate_launch_description():
     description_loader = RobotDescriptionLoader()
     description_loader.port_name = LaunchConfiguration('port_name')
     description_loader.baudrate = LaunchConfiguration('baudrate')
+    description_loader.use_d435 = LaunchConfiguration('use_d435')
     description_loader.timeout_seconds = '1.0'
     description_loader.manipulator_config_file_path = config_file_path
     description_loader.manipulator_links_file_path = links_file_path
@@ -70,10 +78,23 @@ def generate_launch_description():
                 '/launch/crane_x7_control.launch.py']),
             launch_arguments={'loaded_description': description}.items()
         )
+    
+    realsense_node = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                get_package_share_directory('realsense2_camera'),
+                '/launch/rs_launch.py']),
+            condition=IfCondition(LaunchConfiguration('use_d435')),
+            launch_arguments={
+                'device_type': 'd435',
+                'pointcloud.enable' : 'true',
+            }.items()
+        )
 
     return LaunchDescription([
         declare_port_name,
         declare_baudrate,
+        declare_use_d435,
         move_group,
-        control_node
+        control_node,
+        realsense_node
     ])
