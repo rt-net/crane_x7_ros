@@ -86,7 +86,7 @@ def generate_launch_description():
             condition=IfCondition(LaunchConfiguration('use_d435')),
             launch_arguments={
                 'device_type': 'd435',
-                'pointcloud.enable' : 'true',
+                'pointcloud.enable': 'true',
             }.items()
         )
 
