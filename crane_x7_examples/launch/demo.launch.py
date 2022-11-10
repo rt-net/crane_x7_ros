@@ -78,7 +78,7 @@ def generate_launch_description():
                 '/launch/crane_x7_control.launch.py']),
             launch_arguments={'loaded_description': description}.items()
         )
-    
+
     realsense_node = IncludeLaunchDescription(
             PythonLaunchDescriptionSource([
                 get_package_share_directory('realsense2_camera'),
