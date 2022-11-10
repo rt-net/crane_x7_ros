@@ -17,13 +17,21 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from crane_x7_description.robot_description_loader import RobotDescriptionLoader
 from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
 from launch.actions import ExecuteProcess
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 
 def generate_launch_description():
+    declare_use_d435 = DeclareLaunchArgument(
+        'use_d435',
+        default_value='false',
+        description='Use d435.'
+    )
+
     # PATHを追加で通さないとSTLファイルが読み込まれない
     env = {'IGN_GAZEBO_SYSTEM_PLUGIN_PATH': os.environ['LD_LIBRARY_PATH'],
            'IGN_GAZEBO_RESOURCE_PATH': os.path.dirname(
@@ -52,6 +60,7 @@ def generate_launch_description():
 
     description_loader = RobotDescriptionLoader()
     description_loader.use_gazebo = 'true'
+    description_loader.use_d435 = LaunchConfiguration('use_d435')
     description_loader.gz_control_config_package = 'crane_x7_control'
     description_loader.gz_control_config_file_path = 'config/crane_x7_controllers.yaml'
     description = description_loader.load()
@@ -82,6 +91,7 @@ def generate_launch_description():
             )
 
     return LaunchDescription([
+        declare_use_d435,
         ign_gazebo,
         ignition_spawn_entity,
         move_group,
