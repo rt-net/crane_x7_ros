@@ -10,19 +10,21 @@ ROS 2 package suite of CRANE-X7.
 
 ## Table of Contents
 
-- [Supported ROS 2 distributions](#supported-ros-2-distributions)
-  - [ROS](#ros)
-- [Requirements](#requirements)
-- [Installation](#installation)
-  - [Build from source](#build-from-source)
-- [Quick Start](#quick-start)
-- [Packages](#packages)
-- [ライセンス](#ライセンス)
-- [開発について](#開発について)
+- [crane_x7_ros](#crane_x7_ros)
+  - [Table of Contents](#table-of-contents)
+  - [Supported ROS 2 distributions](#supported-ros-2-distributions)
+    - [ROS](#ros)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
+    - [Build from source](#build-from-source)
+  - [Quick Start](#quick-start)
+  - [Packages](#packages)
+  - [ライセンス](#ライセンス)
+  - [開発について](#開発について)
 
 ## Supported ROS 2 distributions
 
-- Foxy
+- [Foxy](https://github.com/rt-net/crane_x7_ros/tree/foxy-devel)
 - Humble
 
 ### ROS
