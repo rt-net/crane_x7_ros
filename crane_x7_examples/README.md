@@ -2,6 +2,25 @@
 
 このパッケージはCRANE-X7 ROS 2パッケージのサンプルコード集です。
 
+- [crane_x7_examples](#crane_x7_examples)
+  - [準備（実機を使う場合）](#準備実機を使う場合)
+    - [1. CRANE-X7本体をPCに接続する](#1-crane-x7本体をpcに接続する)
+    - [2. USB通信ポートの接続を確認する](#2-usb通信ポートの接続を確認する)
+    - [3. move_groupとcontrollerを起動する](#3-move_groupとcontrollerを起動する)
+      - [標準モデルを使用する場合](#標準モデルを使用する場合)
+      - [RealSense D435マウンタ搭載モデルを使用する場合](#realsense-d435マウンタ搭載モデルを使用する場合)
+  - [準備 (Gazeboを使う場合)](#準備-gazeboを使う場合)
+    - [1. move_groupとGazeboを起動する](#1-move_groupとgazeboを起動する)
+  - [サンプルプログラムを実行する](#サンプルプログラムを実行する)
+  - [Examples](#examples)
+    - [gripper_control](#gripper_control)
+    - [pose_groupstate](#pose_groupstate)
+    - [joint_values](#joint_values)
+    - [cartesian_path](#cartesian_path)
+      - [Videos](#videos)
+    - [pick_and_place](#pick_and_place)
+      - [Videos](#videos-1)
+
 ## 準備（実機を使う場合）
 
 ![crane_x7](https://rt-net.github.io/images/crane-x7/CRANE-X7-500x500.png)
@@ -22,11 +41,19 @@ USB通信ポートの設定については`crane_x7_control`の
 
 ### 3. move_groupとcontrollerを起動する
 
+#### 標準モデルを使用する場合
 次のコマンドでmove_group (`crane_x7_moveit_config`)と
 controller (`crane_x7_control`)を起動します。
 
 ```sh
 ros2 launch crane_x7_examples demo.launch.py port_name:=/dev/ttyUSB0
+```
+
+#### RealSense D435マウンタ搭載モデルを使用する場合
+[RealSense D435マウンタ](https://github.com/rt-net/crane_x7_Hardware/blob/master/3d_print_parts/v1.0/CRANE-X7_HandA_RealSenseD435マウンタ.stl)を搭載している場合は次のコマンドを実行します。RealSense D435が起動し、camera_linkがロボットモデルに追加されます。
+
+```sh
+ros2 launch crane_x7_examples demo.launch.py port_name:=/dev/ttyUSB0 use_d435:=true
 ```
 
 ## 準備 (Gazeboを使う場合)
