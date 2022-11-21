@@ -8,7 +8,6 @@ find_package(ament_cmake REQUIRED COMPONENTS
 )
 
 install(DIRECTORY
-  config
   launch
   worlds
   gui
