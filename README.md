@@ -57,7 +57,7 @@ $ git clone -b ros2 https://github.com/rt-net/crane_x7_ros.git
 $ git clone -b ros2 https://github.com/rt-net/crane_x7_description.git
 
 # Install dependencies
-$ git clone -b humble https://github.com/ros-controls/gz_ros2_control.git
+$ git clone https://github.com/ros-controls/gz_ros2_control.git
 $ rosdep install -r -y -i --from-paths .
 
 # Build & Install
