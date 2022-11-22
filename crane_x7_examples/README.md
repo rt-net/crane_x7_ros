@@ -12,6 +12,7 @@
   - [準備 (Gazeboを使う場合)](#準備-gazeboを使う場合)
     - [1. move_groupとGazeboを起動する](#1-move_groupとgazeboを起動する)
   - [サンプルプログラムを実行する](#サンプルプログラムを実行する)
+    - [Gazeboでサンプルプログラムを実行する場合](#gazeboでサンプルプログラムを実行する場合)
   - [Examples](#examples)
     - [gripper_control](#gripper_control)
     - [pose_groupstate](#pose_groupstate)
@@ -79,6 +80,14 @@ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
 ```
 
 終了するときは`Ctrl+c`を入力します。
+
+### Gazeboでサンプルプログラムを実行する場合
+
+Gazeboでサンプルプログラムを実行する場合は`use_sim_time`オプションを付けます。
+
+```sh
+ros2 launch crane_x7_examples example.launch.py example:='gripper_control' use_sim_time:='true'
+```
 
 ## Examples
 
