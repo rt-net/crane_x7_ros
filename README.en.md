@@ -10,18 +10,21 @@ ROS 2 package suite of CRANE-X7.
 
 ## Table of Contents
 
-- [Supported ROS 2 distributions](#supported-ros-2-distributions)
-  - [ROS](#ros)
-- [Requirements](#requirements)
-- [Installation](#installation)
-  - [Build from source](#build-from-source)
-- [Quick Start](#quick-start)
-- [Packages](#packages)
-- [License](#license)
+- [crane_x7_ros](#crane_x7_ros)
+  - [Table of Contents](#table-of-contents)
+  - [Supported ROS 2 distributions](#supported-ros-2-distributions)
+    - [ROS](#ros)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
+    - [Build from source](#build-from-source)
+  - [Quick Start](#quick-start)
+  - [Packages](#packages)
+  - [License](#license)
 
 ## Supported ROS 2 distributions
 
-- Foxy
+- [Foxy](https://github.com/rt-net/crane_x7_ros/tree/foxy-devel)
+- Humble
 
 ### ROS
 
@@ -35,7 +38,7 @@ ROS 2 package suite of CRANE-X7.
 - Linux OS
   - Ubuntu 20.04
 - ROS
-  - [Foxy Fitzroy](https://docs.ros.org/en/foxy/Installation.html)
+  - [Humble Hawksbill](https://docs.ros.org/en/humble/Installation.html)
 
 ## Installation
 
@@ -43,7 +46,7 @@ ROS 2 package suite of CRANE-X7.
 
 ```sh
 # Setup ROS environment
-$ source /opt/ros/foxy/setup.bash
+$ source /opt/ros/humble/setup.bash
 
 # Download crane_x7 repositories
 $ mkdir -p ~/ros2_ws/src
@@ -52,6 +55,7 @@ $ git clone -b ros2 https://github.com/rt-net/crane_x7_ros.git
 $ git clone -b ros2 https://github.com/rt-net/crane_x7_description.git
 
 # Install dependencies
+$ git clone https://github.com/ros-controls/gz_ros2_control.git
 $ rosdep install -r -y -i --from-paths .
 
 # Build & Install

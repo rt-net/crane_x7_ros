@@ -22,8 +22,8 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 import yaml
 
-# Reference: https://github.com/ros-planning/moveit2/blob/foxy/moveit_demo_nodes/
-# run_move_group/launch/run_move_group.launch.py
+# Reference: https://github.com/ros-planning/moveit2_tutorials/blob/humble/doc/
+# examples/move_group_interface/launch/move_group.launch.py
 
 
 def load_file(package_name, file_path):

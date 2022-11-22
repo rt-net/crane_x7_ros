@@ -38,8 +38,8 @@ int main(int argc, char ** argv)
 
   MoveGroupInterface move_group_arm(move_group_node, "arm");
   // 駆動速度を調整する
-  move_group_arm.setMaxVelocityScalingFactor(1.0);  // Set 0.0 ~ 1.0
-  move_group_arm.setMaxAccelerationScalingFactor(1.0);  // Set 0.0 ~ 1.0
+  move_group_arm.setMaxVelocityScalingFactor(0.5);  // Set 0.0 ~ 1.0
+  move_group_arm.setMaxAccelerationScalingFactor(0.5);  // Set 0.0 ~ 1.0
 
   // SRDFに定義されている"vertical"の姿勢にする
   // すべてのジョイントの目標角度が0度になる

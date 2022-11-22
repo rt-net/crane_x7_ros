@@ -155,7 +155,7 @@ ros2 launch crane_x7_examples example.launch.py example:='joint_values'
 
 ### cartesian_path
 
-[Cartesian Path](https://moveit.picknik.ai/foxy/doc/move_group_interface/move_group_interface_tutorial.html#cartesian-paths)
+[Cartesian Path](https://moveit.picknik.ai/humble/doc/examples/move_group_interface/move_group_interface_tutorial.html#cartesian-paths)
 を生成し、手先で円を描くコード例です。
 
 次のコマンドを実行します。

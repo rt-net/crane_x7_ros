@@ -61,26 +61,23 @@ def generate_launch_description():
         executable='ros2_control_node',
         parameters=[{'robot_description': LaunchConfiguration('loaded_description')},
                     crane_x7_controllers],
-        output={
-          'stdout': 'screen',
-          'stderr': 'screen',
-          },
+        output='screen',
         )
 
     spawn_joint_state_controller = ExecuteProcess(
-                cmd=['ros2 run controller_manager spawner.py joint_state_controller'],
+                cmd=['ros2 run controller_manager spawner joint_state_controller'],
                 shell=True,
                 output='screen',
             )
 
     spawn_arm_controller = ExecuteProcess(
-                cmd=['ros2 run controller_manager spawner.py crane_x7_arm_controller'],
+                cmd=['ros2 run controller_manager spawner crane_x7_arm_controller'],
                 shell=True,
                 output='screen',
             )
 
     spawn_gripper_controller = ExecuteProcess(
-                cmd=['ros2 run controller_manager spawner.py crane_x7_gripper_controller'],
+                cmd=['ros2 run controller_manager spawner crane_x7_gripper_controller'],
                 shell=True,
                 output='screen',
             )

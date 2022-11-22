@@ -46,11 +46,11 @@ CraneX7Hardware::~CraneX7Hardware()
   }
 }
 
-return_type CraneX7Hardware::configure(
+CallbackReturn CraneX7Hardware::on_init(
   const hardware_interface::HardwareInfo & info)
 {
-  if (configure_default(info) != return_type::OK) {
-    return return_type::ERROR;
+  if (hardware_interface::SystemInterface::on_init(info) != CallbackReturn::SUCCESS) {
+    return CallbackReturn::ERROR;
   }
 
   hw_position_commands_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
@@ -66,7 +66,7 @@ return_type CraneX7Hardware::configure(
       RCLCPP_ERROR(
         LOGGER, "Joint '%s' does not have 'current_to_effort' parameter.",
         joint.name.c_str());
-      return return_type::ERROR;
+      return CallbackReturn::ERROR;
     }
   }
 
@@ -74,9 +74,9 @@ return_type CraneX7Hardware::configure(
     if (joint.command_interfaces.size() != 1) {
       RCLCPP_FATAL(
         LOGGER,
-        "Joint '%s' has %d command interfaces. 1 expected.",
+        "Joint '%s' has %ld command interfaces. 1 expected.",
         joint.name.c_str(), joint.command_interfaces.size());
-      return return_type::ERROR;
+      return CallbackReturn::ERROR;
     }
 
     if (!(joint.command_interfaces[0].name == hardware_interface::HW_IF_POSITION)) {
@@ -85,15 +85,15 @@ return_type CraneX7Hardware::configure(
         "Joint '%s' has %s command interface. Expected %s, %s, or %s.", joint.name.c_str(),
         joint.command_interfaces[0].name.c_str(), hardware_interface::HW_IF_POSITION,
         hardware_interface::HW_IF_VELOCITY, hardware_interface::HW_IF_ACCELERATION);
-      return return_type::ERROR;
+      return CallbackReturn::ERROR;
     }
 
     if (joint.state_interfaces.size() < 1) {
       RCLCPP_FATAL(
         LOGGER,
-        "Joint '%s'has %d state interfaces. At least 1 expected.",
+        "Joint '%s'has %ld state interfaces. At least 1 expected.",
         joint.name.c_str(), joint.state_interfaces.size());
-      return return_type::ERROR;
+      return CallbackReturn::ERROR;
     }
 
     for (auto state_interface : joint.state_interfaces) {
@@ -106,7 +106,7 @@ return_type CraneX7Hardware::configure(
           "Joint '%s' has %s state interface. Expected %s, %s, or %s.", joint.name.c_str(),
           joint.state_interfaces[0].name.c_str(), hardware_interface::HW_IF_POSITION,
           hardware_interface::HW_IF_VELOCITY, hardware_interface::HW_IF_EFFORT);
-        return return_type::ERROR;
+        return CallbackReturn::ERROR;
       }
     }
   }
@@ -119,19 +119,18 @@ return_type CraneX7Hardware::configure(
 
   if (!hardware_->connect(baudrate)) {
     RCLCPP_ERROR(LOGGER, "Failed to connect a robot.");
-    return return_type::ERROR;
+    return CallbackReturn::ERROR;
   }
 
   if (!hardware_->load_config_file(config_file_path)) {
     RCLCPP_ERROR(LOGGER, "Failed to read a config file.");
-    return return_type::ERROR;
+    return CallbackReturn::ERROR;
   }
 
   timeout_seconds_ = std::stod(info_.hardware_parameters["timeout_seconds"]);
   steady_clock_ = rclcpp::Clock(RCL_STEADY_TIME);
 
-  status_ = hardware_interface::status::CONFIGURED;
-  return return_type::OK;
+  return CallbackReturn::SUCCESS;
 }
 
 std::vector<hardware_interface::StateInterface>
@@ -168,14 +167,14 @@ CraneX7Hardware::export_command_interfaces()
   return command_interfaces;
 }
 
-return_type CraneX7Hardware::start()
+CallbackReturn CraneX7Hardware::on_activate(const rclcpp_lifecycle::State & /*previous_state*/)
 {
   // Set current timestamp to disable the communication timeout.
   prev_comm_timestamp_ = steady_clock_.now();
   timeout_has_printed_ = false;
 
   // Set present joint positions to hw_position_commands for safe start-up.
-  read();
+  read(prev_comm_timestamp_, rclcpp::Duration::from_seconds(0));
   for (std::size_t i = 0; i < hw_position_commands_.size(); i++) {
     double present_position = hw_position_states_[i];
     double limit_min = present_position;
@@ -188,39 +187,38 @@ return_type CraneX7Hardware::start()
     }
     hw_position_commands_[i] = std::clamp(present_position, limit_min, limit_max);
   }
-  write();
+  write(prev_comm_timestamp_, rclcpp::Duration::from_seconds(0));
 
   if (!hardware_->write_position_pid_gain_to_group(
       GROUP_NAME, START_P_GAIN, START_I_GAIN, START_D_GAIN))
   {
     RCLCPP_ERROR(LOGGER, "Failed to set PID gains.");
-    return return_type::ERROR;
+    return CallbackReturn::ERROR;
   }
 
   if (!hardware_->torque_on(GROUP_NAME)) {
     RCLCPP_ERROR(LOGGER, "Failed to set torque on.");
-    return return_type::ERROR;
+    return CallbackReturn::ERROR;
   }
 
-  status_ = hardware_interface::status::STARTED;
-  return return_type::OK;
+  return CallbackReturn::SUCCESS;
 }
 
-return_type CraneX7Hardware::stop()
+CallbackReturn CraneX7Hardware::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/)
 {
   // Set low PID gains for safe stopping.
   if (!hardware_->write_position_pid_gain_to_group(
       GROUP_NAME, STOP_P_GAIN, STOP_I_GAIN, STOP_D_GAIN))
   {
     RCLCPP_ERROR(LOGGER, "Failed to set PID gains.");
-    return return_type::ERROR;
+    return CallbackReturn::ERROR;
   }
 
-  status_ = hardware_interface::status::STOPPED;
-  return return_type::OK;
+  return CallbackReturn::SUCCESS;
 }
 
-return_type CraneX7Hardware::read()
+return_type CraneX7Hardware::read(
+  const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
   if (communication_timeout()) {
     if (!timeout_has_printed_) {
@@ -269,7 +267,8 @@ return_type CraneX7Hardware::read()
   return return_type::OK;
 }
 
-return_type CraneX7Hardware::write()
+return_type CraneX7Hardware::write(
+  const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
   if (communication_timeout()) {
     if (!timeout_has_printed_) {
