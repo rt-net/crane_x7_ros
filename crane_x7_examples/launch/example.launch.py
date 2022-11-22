@@ -18,6 +18,7 @@ from ament_index_python.packages import get_package_share_directory
 from crane_x7_description.robot_description_loader import RobotDescriptionLoader
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
+from launch_ros.actions import SetParameter
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 import yaml
@@ -62,6 +63,11 @@ def generate_launch_description():
                      'pick_and_place, cartesian_path]')
     )
 
+    declare_use_sim_time = DeclareLaunchArgument(
+        'use_sim_time', default_value='false',
+        description=('Set true when using the gazebo simulator.')
+    )
+
     example_node = Node(name=[LaunchConfiguration('example'), '_node'],
                         package='crane_x7_examples',
                         executable=LaunchConfiguration('example'),
@@ -70,4 +76,9 @@ def generate_launch_description():
                                     robot_description_semantic,
                                     kinematics_yaml])
 
-    return LaunchDescription([declare_example_name, example_node])
+    return LaunchDescription([
+        declare_use_sim_time,
+        SetParameter(name='use_sim_time', value=LaunchConfiguration('use_sim_time')),
+        declare_example_name,
+        example_node
+    ])
