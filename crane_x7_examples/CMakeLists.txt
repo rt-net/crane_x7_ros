@@ -17,8 +17,10 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(cv_bridge REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
+find_package(OpenCV REQUIRED COMPONENTS core highgui)
 find_package(rclcpp REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 
@@ -29,12 +31,15 @@ set(executable_list
   pose_groupstate
   joint_values
   pick_and_place
+  aruco_detection
 )
 foreach(loop_var IN LISTS executable_list)
   add_executable(${loop_var} src/${loop_var}.cpp)
   ament_target_dependencies(${loop_var}
+    cv_bridge
     geometry_msgs
     moveit_ros_planning_interface
+    OpenCV
     rclcpp
     tf2_geometry_msgs
   )
