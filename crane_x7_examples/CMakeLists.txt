@@ -31,6 +31,7 @@ set(executable_list
   pose_groupstate
   joint_values
   pick_and_place
+  pick_and_place_tf
   aruco_detection
 )
 foreach(loop_var IN LISTS executable_list)
