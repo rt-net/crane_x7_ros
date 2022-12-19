@@ -41,7 +41,6 @@ class PickAndPlaceTf: public rclcpp::Node
 {
   public:
     PickAndPlaceTf(rclcpp::Node::SharedPtr move_group_arm_node, rclcpp::Node::SharedPtr move_group_gripper_node)
-    //PickAndPlaceTf()
     : Node("pick_and_place_tf")
     {
       using namespace std::placeholders;
@@ -79,7 +78,7 @@ class PickAndPlaceTf: public rclcpp::Node
       tf_listener_ =
         std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
-      // Call on_timer function every second
+      wait_count_ = 0;
       timer_ = this->create_wall_timer(
         500ms, std::bind(&PickAndPlaceTf::on_timer, this));
     }
@@ -91,7 +90,7 @@ class PickAndPlaceTf: public rclcpp::Node
 
       try {
         tf_msg = tf_buffer_->lookupTransform(
-          "target", "base_link",
+          "base_link", "target",
           tf2::TimePointZero);
       } catch (const tf2::TransformException & ex) {
         RCLCPP_INFO(
@@ -99,6 +98,29 @@ class PickAndPlaceTf: public rclcpp::Node
           ex.what());
         return;
       }
+
+      tf2::Stamped<tf2::Transform> tf;
+      tf2::convert(tf_msg, tf);
+      double tf_diff = (tf_past_.getOrigin() - tf.getOrigin()).length();
+      tf_past_ = tf;
+      RCLCPP_INFO_STREAM(this->get_logger(), "yes=" << tf_diff);
+      if(tf_diff < 0.01)
+      {
+        wait_count_++;
+      }
+      else
+      {
+        wait_count_ = 0;
+      }
+      if (wait_count_ > 5)
+      {
+        picking();
+        wait_count_ = 0;
+      }
+    }
+
+    void picking()
+    {
     }
 
     std::shared_ptr<MoveGroupInterface> move_group_arm_;
@@ -106,6 +128,8 @@ class PickAndPlaceTf: public rclcpp::Node
     std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
     std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
     rclcpp::TimerBase::SharedPtr timer_{nullptr};
+    tf2::Stamped<tf2::Transform> tf_past_;
+    int wait_count_;
 };
 
 int main(int argc, char ** argv)
