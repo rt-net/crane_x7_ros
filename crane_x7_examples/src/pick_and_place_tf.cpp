@@ -122,7 +122,6 @@ private:
 
       // 把持物体の位置が止まっていることを判定
       if (tf_diff < 0.01) {
-
         // 3秒以上停止している場合ピッキング動作開始
         if ((now.nanoseconds() - tf_past_.stamp_.time_since_epoch().count()) > rest_time.count()) {
           picking(tf.getOrigin());
