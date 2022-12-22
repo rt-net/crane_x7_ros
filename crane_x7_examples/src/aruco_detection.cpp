@@ -108,8 +108,6 @@ private:
         tf_broadcaster_->sendTransform(t);
       }
     }
-    cv::imshow("out", imageCopy);
-    cv::waitKey(1);
   }
 
   void camera_info_callback(const sensor_msgs::msg::CameraInfo::SharedPtr msg)
