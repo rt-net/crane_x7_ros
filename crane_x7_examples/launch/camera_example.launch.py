@@ -18,12 +18,11 @@ from ament_index_python.packages import get_package_share_directory
 from crane_x7_description.robot_description_loader import RobotDescriptionLoader
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import SetParameter
 from launch_ros.actions import Node
-from launch.actions import IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
 import yaml
-from launch.substitutions import LaunchConfiguration
+
 
 def load_file(package_name, file_path):
     package_path = get_package_share_directory(package_name)
@@ -60,8 +59,7 @@ def generate_launch_description():
     declare_example_name = DeclareLaunchArgument(
         'example', default_value='pose_groupstate',
         description=('Set an example executable name: '
-                     '[gripper_control, pose_groupstate, joint_values,'
-                     'pick_and_place, cartesian_path]')
+                     '[aruco_detection]')
     )
 
     declare_use_sim_time = DeclareLaunchArgument(
@@ -69,35 +67,24 @@ def generate_launch_description():
         description=('Set true when using the gazebo simulator.')
     )
 
-    example_node = Node(name=["pick_and_place_tf", '_node'],
+    picking_node = Node(name="pick_and_place_tf",
                         package='crane_x7_examples',
                         executable='pick_and_place_tf',
                         output='screen',
                         parameters=[{'robot_description': description_loader.load()},
                                     robot_description_semantic,
                                     kinematics_yaml])
-    example_node2 = Node(name=[LaunchConfiguration('example'), '_node'],
-                        package='crane_x7_examples',
-                        executable=LaunchConfiguration('example'),
-                        output='screen'
-    )
 
-    realsense_node = IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([
-                get_package_share_directory('realsense2_camera'),
-                '/launch/rs_launch.py']),
-            launch_arguments={
-                'device_type': 'd435',
-                'pointcloud.enable': 'true',
-            }.items()
-        )
+    detection_node = Node(name=[LaunchConfiguration('example'), '_node'],
+                          package='crane_x7_examples',
+                          executable=LaunchConfiguration('example'),
+                          output='screen')
 
-    # RViz
     rviz_config_file = get_package_share_directory(
-        'crane_x7_moveit_config') + '/launch/camera_test.rviz'
+        'crane_x7_examples') + '/launch/camera_example.rviz'
     rviz_node = Node(package='rviz2',
                      executable='rviz2',
-                     name='rviz2',
+                     name='rviz2_camera_example',
                      output='log',
                      arguments=['-d', rviz_config_file])
 
@@ -105,8 +92,7 @@ def generate_launch_description():
         declare_use_sim_time,
         SetParameter(name='use_sim_time', value=LaunchConfiguration('use_sim_time')),
         rviz_node,
-        example_node,
-        example_node2,
-        realsense_node,
+        picking_node,
+        detection_node,
         declare_example_name
     ])
