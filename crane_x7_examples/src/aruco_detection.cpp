@@ -84,7 +84,7 @@ private:
         t.header.stamp = this->get_clock()->now();
         t.header.frame_id = "camera_color_optical_frame";
         t.child_frame_id = "target";
-        t.transform.translation.x = tvecs[0][0];
+        t.transform.translation.x = tvecs[0][0] - 0.03;
         t.transform.translation.y = tvecs[0][1];
         t.transform.translation.z = tvecs[0][2];
         tf2::Quaternion q;
