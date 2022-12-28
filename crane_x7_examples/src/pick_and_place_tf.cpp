@@ -81,7 +81,7 @@ public:
     move_group_arm_->setPathConstraints(constraints);
 
     // 待機姿勢
-    control_arm(0.2, 0.0, 0.3, -180, 0, -90);
+    control_arm(0.15, 0.0, 0.3, -180, 0, 90);
 
     tf_buffer_ =
       std::make_unique<tf2_ros::Buffer>(this->get_clock());
@@ -119,7 +119,6 @@ private:
     // 現在時刻から1秒以内に受け取ったtfを使用
     if ((now.nanoseconds() - tf.stamp_.time_since_epoch().count()) < filtering_time.count()) {
       double tf_diff = (tf_past_.getOrigin() - tf.getOrigin()).length();
-
       // 把持物体の位置が止まっていることを判定
       if (tf_diff < 0.01) {
         // 3秒以上停止している場合ピッキング動作開始
@@ -143,34 +142,34 @@ private:
     control_gripper(GRIPPER_DEFAULT_);
 
     // 掴む準備をする
-    control_arm(target_position.x(), target_position.y(), 0.3, -180, 0, -90);
+    control_arm(target_position.x(), target_position.y(), 0.2, -180, 0, 90);
 
     // ハンドを開く
     control_gripper(GRIPPER_OPEN_);
 
     // 掴みに行く
-    control_arm(target_position.x(), target_position.y(), 0.1, -180, 0, -90);
+    control_arm(target_position.x(), target_position.y(), 0.13, -180, 0, 90);
 
     // ハンドを閉じる
     control_gripper(GRIPPER_CLOSE_);
 
     // 持ち上げる
-    control_arm(target_position.x(), target_position.y(), 0.3, -180, 0, -90);
+    control_arm(target_position.x(), target_position.y(), 0.2, -180, 0, 90);
 
     // 移動する
-    control_arm(0.2, 0.2, 0.3, -180, 0, -90);
+    control_arm(0.2, 0.2, 0.2, -180, 0, 90);
 
     // 下ろす
-    control_arm(0.2, 0.2, 0.13, -180, 0, -90);
+    control_arm(0.2, 0.2, 0.13, -180, 0, 90);
 
     // ハンドを開く
     control_gripper(GRIPPER_OPEN_);
 
     // 少しだけハンドを持ち上げる
-    control_arm(0.2, 0.2, 0.2, -180, 0, -90);
+    control_arm(0.2, 0.2, 0.2, -180, 0, 90);
 
     // 待機姿勢に戻る
-    control_arm(0.2, 0.0, 0.3, -180, 0, -90);
+    control_arm(0.15, 0.0, 0.3, -180, 0, 90);
 
     // ハンドを閉じる
     control_gripper(GRIPPER_DEFAULT_);
