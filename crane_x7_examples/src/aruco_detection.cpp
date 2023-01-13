@@ -51,7 +51,7 @@ public:
 private:
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_subscription_;
   rclcpp::Subscription<sensor_msgs::msg::CameraInfo>::SharedPtr camera_info_subscription_;
-  sensor_msgs::msg::CameraInfo::SharedPtr camera_info;
+  sensor_msgs::msg::CameraInfo::SharedPtr camera_info_;
   std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
 
   void image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
@@ -61,7 +61,7 @@ private:
     cv::Mat imageCopy;
     cv_img->image.copyTo(imageCopy);
 
-    if (camera_info) {
+    if (camera_info_) {
       std::vector<int> ids;
       std::vector<std::vector<cv::Point2f>> corners;
       // ArUcoマーカの辞書データを読み込む
@@ -69,8 +69,8 @@ private:
       const auto MARKER_DICT = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_50);
       cv::aruco::detectMarkers(imageCopy, MARKER_DICT, corners, ids);
       cv::Mat cameraMatrix, distCoeffs;
-      cameraMatrix = cv::Mat(3, 3, CV_64F, camera_info->k.data());
-      distCoeffs = cv::Mat(1, 5, CV_64F, camera_info->d.data());
+      cameraMatrix = cv::Mat(3, 3, CV_64F, camera_info_->k.data());
+      distCoeffs = cv::Mat(1, 5, CV_64F, camera_info_->d.data());
 
       if (ids.size() > 0) {
         cv::aruco::drawDetectedMarkers(imageCopy, corners, ids);
@@ -113,7 +113,7 @@ private:
 
   void camera_info_callback(const sensor_msgs::msg::CameraInfo::SharedPtr msg)
   {
-    camera_info = msg;
+    camera_info_ = msg;
   }
 };
 
