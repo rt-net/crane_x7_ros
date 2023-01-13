@@ -57,7 +57,7 @@ def generate_launch_description():
     kinematics_yaml = load_yaml('crane_x7_moveit_config', 'config/kinematics.yaml')
 
     declare_example_name = DeclareLaunchArgument(
-        'example', default_value='pose_groupstate',
+        'example', default_value='aruco_detection',
         description=('Set an example executable name: '
                      '[aruco_detection]')
     )
