@@ -51,8 +51,6 @@ public:
 private:
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_subscription_;
   rclcpp::Subscription<sensor_msgs::msg::CameraInfo>::SharedPtr camera_info_subscription_;
-  cv::Ptr<cv::aruco::Dictionary> dictionary =
-    cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_50);
   sensor_msgs::msg::CameraInfo::SharedPtr camera_info;
   std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
 
@@ -66,7 +64,10 @@ private:
     if (camera_info) {
       std::vector<int> ids;
       std::vector<std::vector<cv::Point2f>> corners;
-      cv::aruco::detectMarkers(imageCopy, dictionary, corners, ids);
+      // ArUcoマーカの辞書データを読み込む
+      // DICT_6x6_50は6x6ビットのマーカが50個収録されたもの
+      const auto MARKER_DICT = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_50);
+      cv::aruco::detectMarkers(imageCopy, MARKER_DICT, corners, ids);
       cv::Mat cameraMatrix, distCoeffs;
       cameraMatrix = cv::Mat(3, 3, CV_64F, camera_info->k.data());
       distCoeffs = cv::Mat(1, 5, CV_64F, camera_info->d.data());
