@@ -62,18 +62,19 @@ private:
     if (camera_info_) {
       std::vector<int> ids;
       std::vector<std::vector<cv::Point2f>> corners;
-      // ArUcoマーカの辞書データを読み込む
+      // ArUcoマーカのデータセットを読み込む
       // DICT_6x6_50は6x6ビットのマーカが50個収録されたもの
       const auto MARKER_DICT = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_50);
+      // マーカの検出
       cv::aruco::detectMarkers(cv_img->image, MARKER_DICT, corners, ids);
-      cv::Mat cameraMatrix, distCoeffs;
-      cameraMatrix = cv::Mat(3, 3, CV_64F, camera_info_->k.data());
-      distCoeffs = cv::Mat(1, 5, CV_64F, camera_info_->d.data());
+      const auto CAMERA_MATRIX = cv::Mat(3, 3, CV_64F, camera_info_->k.data());
+      const auto DIST_COEFFS = cv::Mat(1, 5, CV_64F, camera_info_->d.data());
 
+      // マーカが一つ以上検出された場合、一つ目に検出されたマーカの位置姿勢をtfで配信
       if (ids.size() > 0) {
         std::vector<cv::Vec3d> rvecs, tvecs;
         cv::aruco::estimatePoseSingleMarkers(
-          corners, 0.04, cameraMatrix, distCoeffs, rvecs, tvecs);
+          corners, 0.04, CAMERA_MATRIX, DIST_COEFFS, rvecs, tvecs);
 
         geometry_msgs::msg::TransformStamped t;
         t.header.stamp = this->get_clock()->now();
@@ -83,19 +84,19 @@ private:
         t.transform.translation.y = tvecs[0][1];
         t.transform.translation.z = tvecs[0][2];
         tf2::Quaternion q;
-        cv::Mat cameraOri;
-        cv::Rodrigues(rvecs[0], cameraOri);
-        tf2::Matrix3x3 mattt = tf2::Matrix3x3(
-          cameraOri.at<double>(0, 0),
-          cameraOri.at<double>(0, 1),
-          cameraOri.at<double>(0, 2),
-          cameraOri.at<double>(1, 0),
-          cameraOri.at<double>(1, 1),
-          cameraOri.at<double>(1, 2),
-          cameraOri.at<double>(2, 0),
-          cameraOri.at<double>(2, 1),
-          cameraOri.at<double>(2, 2));
-        mattt.getRotation(q);
+        cv::Mat cv_rotation_matrix;
+        cv::Rodrigues(rvecs[0], cv_rotation_matrix);
+        tf2::Matrix3x3 tf2_rotation_matrix = tf2::Matrix3x3(
+          cv_rotation_matrix.at<double>(0, 0),
+          cv_rotation_matrix.at<double>(0, 1),
+          cv_rotation_matrix.at<double>(0, 2),
+          cv_rotation_matrix.at<double>(1, 0),
+          cv_rotation_matrix.at<double>(1, 1),
+          cv_rotation_matrix.at<double>(1, 2),
+          cv_rotation_matrix.at<double>(2, 0),
+          cv_rotation_matrix.at<double>(2, 1),
+          cv_rotation_matrix.at<double>(2, 2));
+        tf2_rotation_matrix.getRotation(q);
         t.transform.rotation.x = q.x();
         t.transform.rotation.y = q.y();
         t.transform.rotation.z = q.z();

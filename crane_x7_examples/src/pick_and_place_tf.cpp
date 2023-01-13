@@ -111,18 +111,18 @@ private:
 
     rclcpp::Clock system_clock(RCL_SYSTEM_TIME);
     rclcpp::Time now = system_clock.now();
-    std::chrono::nanoseconds filtering_time = 1s;
-    std::chrono::nanoseconds rest_time = 3s;
+    const std::chrono::nanoseconds FILTERING_TIME = 1s;
+    const std::chrono::nanoseconds REST_TIME = 3s;
     tf2::Stamped<tf2::Transform> tf;
     tf2::convert(tf_msg, tf);
 
     // 現在時刻から1秒以内に受け取ったtfを使用
-    if ((now.nanoseconds() - tf.stamp_.time_since_epoch().count()) < filtering_time.count()) {
+    if ((now.nanoseconds() - tf.stamp_.time_since_epoch().count()) < FILTERING_TIME.count()) {
       double tf_diff = (tf_past_.getOrigin() - tf.getOrigin()).length();
       // 把持物体の位置が止まっていることを判定
       if (tf_diff < 0.01) {
         // 3秒以上停止している場合ピッキング動作開始
-        if ((now.nanoseconds() - tf_past_.stamp_.time_since_epoch().count()) > rest_time.count()) {
+        if ((now.nanoseconds() - tf_past_.stamp_.time_since_epoch().count()) > REST_TIME.count()) {
           picking(tf.getOrigin());
         }
       } else {
@@ -133,25 +133,25 @@ private:
 
   void picking(tf2::Vector3 target_position)
   {
-    const double GRIPPER_DEFAULT_ = 0.0;
-    const double GRIPPER_OPEN_ = angles::from_degrees(60.0);
-    const double GRIPPER_CLOSE_ = angles::from_degrees(15.0);
+    const double GRIPPER_DEFAULT = 0.0;
+    const double GRIPPER_OPEN = angles::from_degrees(60.0);
+    const double GRIPPER_CLOSE = angles::from_degrees(15.0);
 
     // 何かを掴んでいた時のためにハンドを開閉
-    control_gripper(GRIPPER_OPEN_);
-    control_gripper(GRIPPER_DEFAULT_);
+    control_gripper(GRIPPER_OPEN);
+    control_gripper(GRIPPER_DEFAULT);
 
     // 掴む準備をする
     control_arm(target_position.x(), target_position.y(), 0.2, -180, 0, 90);
 
     // ハンドを開く
-    control_gripper(GRIPPER_OPEN_);
+    control_gripper(GRIPPER_OPEN);
 
     // 掴みに行く
     control_arm(target_position.x(), target_position.y(), 0.13, -180, 0, 90);
 
     // ハンドを閉じる
-    control_gripper(GRIPPER_CLOSE_);
+    control_gripper(GRIPPER_CLOSE);
 
     // 持ち上げる
     control_arm(target_position.x(), target_position.y(), 0.2, -180, 0, 90);
@@ -163,7 +163,7 @@ private:
     control_arm(0.2, 0.2, 0.13, -180, 0, 90);
 
     // ハンドを開く
-    control_gripper(GRIPPER_OPEN_);
+    control_gripper(GRIPPER_OPEN);
 
     // 少しだけハンドを持ち上げる
     control_arm(0.2, 0.2, 0.2, -180, 0, 90);
@@ -172,7 +172,7 @@ private:
     control_arm(0.15, 0.0, 0.3, -180, 0, 90);
 
     // ハンドを閉じる
-    control_gripper(GRIPPER_DEFAULT_);
+    control_gripper(GRIPPER_DEFAULT);
   }
 
   void control_gripper(const double angle)
