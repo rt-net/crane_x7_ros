@@ -6,12 +6,9 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /TF1
-        - /TF1/Frames1
-        - /RobotModel1
-        - /RobotModel1/Description Topic1
+        - /PointCloud21
       Splitter Ratio: 0.5
-    Tree Height: 787
+    Tree Height: 143
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
@@ -46,6 +43,313 @@ Visualization Manager:
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
       Value: true
+    - Acceleration_Scaling_Factor: 0.1
+      Class: moveit_rviz_plugin/MotionPlanning
+      Enabled: true
+      Move Group Namespace: ""
+      MoveIt_Allow_Approximate_IK: false
+      MoveIt_Allow_External_Program: false
+      MoveIt_Allow_Replanning: false
+      MoveIt_Allow_Sensor_Positioning: false
+      MoveIt_Planning_Attempts: 10
+      MoveIt_Planning_Time: 5
+      MoveIt_Use_Cartesian_Path: false
+      MoveIt_Use_Constraint_Aware_IK: false
+      MoveIt_Warehouse_Host: 127.0.0.1
+      MoveIt_Warehouse_Port: 33829
+      MoveIt_Workspace:
+        Center:
+          X: 0
+          Y: 0
+          Z: 0
+        Size:
+          X: 2
+          Y: 2
+          Z: 2
+      Name: MotionPlanning
+      Planned Path:
+        Color Enabled: false
+        Interrupt Display: false
+        Links:
+          All Links Enabled: true
+          Expand Joint Details: false
+          Expand Link Details: false
+          Expand Tree: false
+          Link Tree Style: Links in Alphabetic Order
+          base_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          camera_bottom_screw_frame:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          camera_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_gripper_base_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_gripper_finger_a_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_gripper_finger_b_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_lower_arm_fixed_part_joint_cover_l_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_lower_arm_fixed_part_joint_cover_r_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_lower_arm_fixed_part_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_lower_arm_revolute_part_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_lower_arm_revolute_part_logo_symbol_l_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_lower_arm_revolute_part_logo_symbol_r_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_lower_arm_revolute_part_logo_text_l_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_lower_arm_revolute_part_logo_text_r_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_mounting_plate_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_shoulder_fixed_part_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_shoulder_revolute_part_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_upper_arm_fixed_part_joint_cover_l_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_upper_arm_fixed_part_joint_cover_r_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_upper_arm_fixed_part_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_upper_arm_revolute_part_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_wrist_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          world:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+        Loop Animation: false
+        Robot Alpha: 0.5
+        Robot Color: 150; 50; 150
+        Show Robot Collision: false
+        Show Robot Visual: true
+        Show Trail: false
+        State Display Time: 0.05 s
+        Trail Step Size: 1
+        Trajectory Topic: /display_planned_path
+      Planning Metrics:
+        Payload: 1
+        Show Joint Torques: false
+        Show Manipulability: false
+        Show Manipulability Index: false
+        Show Weight Limit: false
+        TextHeight: 0.07999999821186066
+      Planning Request:
+        Colliding Link Color: 255; 0; 0
+        Goal State Alpha: 1
+        Goal State Color: 250; 128; 0
+        Interactive Marker Size: 0
+        Joint Violation Color: 255; 0; 255
+        Planning Group: arm
+        Query Goal State: true
+        Query Start State: false
+        Show Workspace: false
+        Start State Alpha: 1
+        Start State Color: 0; 255; 0
+      Planning Scene Topic: /monitored_planning_scene
+      Robot Description: robot_description
+      Scene Geometry:
+        Scene Alpha: 0.8999999761581421
+        Scene Color: 50; 230; 50
+        Scene Display Time: 0.009999999776482582
+        Show Scene Geometry: true
+        Voxel Coloring: Z-Axis
+        Voxel Rendering: Occupied Voxels
+      Scene Robot:
+        Attached Body Color: 150; 50; 150
+        Links:
+          All Links Enabled: true
+          Expand Joint Details: false
+          Expand Link Details: false
+          Expand Tree: false
+          Link Tree Style: Links in Alphabetic Order
+          base_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          camera_bottom_screw_frame:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          camera_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_gripper_base_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_gripper_finger_a_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_gripper_finger_b_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_lower_arm_fixed_part_joint_cover_l_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_lower_arm_fixed_part_joint_cover_r_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_lower_arm_fixed_part_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_lower_arm_revolute_part_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_lower_arm_revolute_part_logo_symbol_l_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_lower_arm_revolute_part_logo_symbol_r_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_lower_arm_revolute_part_logo_text_l_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_lower_arm_revolute_part_logo_text_r_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_mounting_plate_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_shoulder_fixed_part_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_shoulder_revolute_part_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_upper_arm_fixed_part_joint_cover_l_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_upper_arm_fixed_part_joint_cover_r_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_upper_arm_fixed_part_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_upper_arm_revolute_part_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          crane_x7_wrist_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          world:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+        Robot Alpha: 1
+        Show Robot Collision: false
+        Show Robot Visual: true
+      Value: true
+      Velocity_Scaling_Factor: 0.1
     - Class: rviz_default_plugins/TF
       Enabled: true
       Frame Timeout: 15
@@ -156,140 +460,57 @@ Visualization Manager:
       Update Interval: 0
       Value: true
     - Alpha: 1
-      Class: rviz_default_plugins/RobotModel
-      Collision Enabled: false
-      Description File: ""
-      Description Source: Topic
-      Description Topic:
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz_default_plugins/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: RGB8
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 4096
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.0010000000474974513
+      Style: Flat Squares
+      Topic:
         Depth: 5
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /robot_description
-      Enabled: true
-      Links:
-        All Links Enabled: true
-        Expand Joint Details: false
-        Expand Link Details: false
-        Expand Tree: false
-        Link Tree Style: Links in Alphabetic Order
-        base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        camera_bottom_screw_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        camera_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        crane_x7_gripper_base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        crane_x7_gripper_finger_a_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        crane_x7_gripper_finger_b_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        crane_x7_lower_arm_fixed_part_joint_cover_l_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        crane_x7_lower_arm_fixed_part_joint_cover_r_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        crane_x7_lower_arm_fixed_part_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        crane_x7_lower_arm_revolute_part_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        crane_x7_lower_arm_revolute_part_logo_symbol_l_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        crane_x7_lower_arm_revolute_part_logo_symbol_r_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        crane_x7_lower_arm_revolute_part_logo_text_l_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        crane_x7_lower_arm_revolute_part_logo_text_r_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        crane_x7_mounting_plate_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        crane_x7_shoulder_fixed_part_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        crane_x7_shoulder_revolute_part_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        crane_x7_upper_arm_fixed_part_joint_cover_l_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        crane_x7_upper_arm_fixed_part_joint_cover_r_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        crane_x7_upper_arm_fixed_part_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        crane_x7_upper_arm_revolute_part_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        crane_x7_wrist_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        world:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-      Name: RobotModel
-      TF Prefix: ""
-      Update Interval: 0
+        Value: /camera/depth/color/points
+      Use Fixed Frame: true
+      Use rainbow: true
       Value: true
-      Visual Enabled: true
+    - Class: rviz_default_plugins/Camera
+      Enabled: true
+      Image Rendering: background and overlay
+      Name: Camera
+      Overlay Alpha: 0.5
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /camera/color/image_raw
+      Value: true
+      Visibility:
+        Grid: false
+        MotionPlanning: false
+        PointCloud2: false
+        TF: true
+        Value: true
+      Zoom Factor: 1
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -333,7 +554,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 1.1341134309768677
+      Distance: 1.0760003328323364
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -348,18 +569,24 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5853978395462036
+      Pitch: 0.6203981637954712
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.5353989005088806
+      Yaw: 0.5204035043716431
     Saved: ~
 Window Geometry:
+  Camera:
+    collapsed: false
   Displays:
     collapsed: false
   Height: 1016
   Hide Left Dock: false
   Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd0000000400000000000002310000039efc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d0000039e000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000010f0000039efc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000003d0000039e000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004420000003efc0100000002fb0000000800540069006d00650100000000000004420000000000000000fb0000000800540069006d00650100000000000004500000000000000000000003ec0000039e00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  MotionPlanning:
+    collapsed: false
+  MotionPlanning - Trajectory Slider:
+    collapsed: false
+  QMainWindow State: 000000ff00000000fd0000000400000000000002660000039efc020000000cfb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d0000011a000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb000000280020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000004100fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067010000015d000001880000017d00fffffffb0000000c00430061006d00650072006101000002eb000000f00000002800ffffff000000010000010f0000039efc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000003d0000039e000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004420000003efc0100000002fb0000000800540069006d00650100000000000004420000000000000000fb0000000800540069006d00650100000000000004500000000000000000000003b70000039e00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Tool Properties:

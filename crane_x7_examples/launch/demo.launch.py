@@ -22,6 +22,7 @@ from launch.actions import IncludeLaunchDescription
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
+from launch.substitutions import PythonExpression
 
 
 def generate_launch_description():
@@ -69,7 +70,24 @@ def generate_launch_description():
             PythonLaunchDescriptionSource([
                 get_package_share_directory('crane_x7_moveit_config'),
                 '/launch/run_move_group.launch.py']),
-            launch_arguments={'loaded_description': description}.items()
+            condition=IfCondition(PythonExpression(
+                ["'", LaunchConfiguration('use_d435'), "' == 'false'"])),
+            launch_arguments={
+                'loaded_description': description
+            }.items()
+        )
+
+    rviz_config_file = get_package_share_directory(
+        'crane_x7_examples') + '/launch/camera_example.rviz'
+    move_group_camera = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                get_package_share_directory('crane_x7_moveit_config'),
+                '/launch/run_move_group.launch.py']),
+            condition=IfCondition(LaunchConfiguration('use_d435')),
+            launch_arguments={
+                'loaded_description': description,
+                'rviz_config_file': rviz_config_file
+            }.items()
         )
 
     control_node = IncludeLaunchDescription(
@@ -95,6 +113,7 @@ def generate_launch_description():
         declare_baudrate,
         declare_use_d435,
         move_group,
+        move_group_camera,
         control_node,
         realsense_node
     ])
