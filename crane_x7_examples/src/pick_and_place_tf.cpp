@@ -109,8 +109,7 @@ private:
       return;
     }
 
-    rclcpp::Clock system_clock(RCL_SYSTEM_TIME);
-    rclcpp::Time now = system_clock.now();
+    rclcpp::Time now = this->get_clock()->now();
     const std::chrono::nanoseconds FILTERING_TIME = 1s;
     const std::chrono::nanoseconds STOP_TIME_THRESHOLD = 3s;
     const float DISTANCE_THRESHOLD = 0.01;
