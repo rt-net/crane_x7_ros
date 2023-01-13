@@ -58,8 +58,6 @@ private:
   {
     auto cv_img = cv_bridge::toCvShare(msg, msg->encoding);
     cv::cvtColor(cv_img->image, cv_img->image, cv::COLOR_RGB2BGR);
-    cv::Mat imageCopy;
-    cv_img->image.copyTo(imageCopy);
 
     if (camera_info_) {
       std::vector<int> ids;
@@ -67,19 +65,15 @@ private:
       // ArUcoマーカの辞書データを読み込む
       // DICT_6x6_50は6x6ビットのマーカが50個収録されたもの
       const auto MARKER_DICT = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_50);
-      cv::aruco::detectMarkers(imageCopy, MARKER_DICT, corners, ids);
+      cv::aruco::detectMarkers(cv_img->image, MARKER_DICT, corners, ids);
       cv::Mat cameraMatrix, distCoeffs;
       cameraMatrix = cv::Mat(3, 3, CV_64F, camera_info_->k.data());
       distCoeffs = cv::Mat(1, 5, CV_64F, camera_info_->d.data());
 
       if (ids.size() > 0) {
-        cv::aruco::drawDetectedMarkers(imageCopy, corners, ids);
         std::vector<cv::Vec3d> rvecs, tvecs;
         cv::aruco::estimatePoseSingleMarkers(
           corners, 0.04, cameraMatrix, distCoeffs, rvecs, tvecs);
-        for (int i = 0; i < static_cast<int>(ids.size()); i++) {
-          cv::aruco::drawAxis(imageCopy, cameraMatrix, distCoeffs, rvecs[i], tvecs[i], 0.1);
-        }
 
         geometry_msgs::msg::TransformStamped t;
         t.header.stamp = this->get_clock()->now();
