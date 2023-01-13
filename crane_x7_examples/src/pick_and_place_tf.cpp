@@ -113,15 +113,16 @@ private:
     rclcpp::Time now = system_clock.now();
     const std::chrono::nanoseconds FILTERING_TIME = 1s;
     const std::chrono::nanoseconds REST_TIME = 3s;
+    const float DISTANCE_THRESHOLD = 0.01;
     tf2::Stamped<tf2::Transform> tf;
     tf2::convert(tf_msg, tf);
 
     // 現在時刻から1秒以内に受け取ったtfを使用
     if ((now.nanoseconds() - tf.stamp_.time_since_epoch().count()) < FILTERING_TIME.count()) {
       double tf_diff = (tf_past_.getOrigin() - tf.getOrigin()).length();
-      // 把持物体の位置が止まっていることを判定
-      if (tf_diff < 0.01) {
-        // 3秒以上停止している場合ピッキング動作開始
+      // 把持対象の位置が停止していることを判定
+      if (tf_diff < DISTANCE_THRESHOLD) {
+        // 把持対象が3秒以上停止している場合ピッキング動作開始
         if ((now.nanoseconds() - tf_past_.stamp_.time_since_epoch().count()) > REST_TIME.count()) {
           picking(tf.getOrigin());
         }
