@@ -7,7 +7,7 @@
     - [1. CRANE-X7本体をPCに接続する](#1-crane-x7本体をpcに接続する)
     - [2. USB通信ポートの接続を確認する](#2-usb通信ポートの接続を確認する)
     - [3. move_groupとcontrollerを起動する](#3-move_groupとcontrollerを起動する)
-      - [標準のX7を使用する場合](#標準のx7を使用する場合)
+      - [標準のCRANE-X7を使用する場合](#標準のcrane-x7を使用する場合)
       - [RealSense D435マウンタ搭載モデルを使用する場合](#realsense-d435マウンタ搭載モデルを使用する場合)
   - [準備 (Gazeboを使う場合)](#準備-gazeboを使う場合)
     - [1. move_groupとGazeboを起動する](#1-move_groupとgazeboを起動する)
@@ -43,7 +43,7 @@ USB通信ポートの設定については`crane_x7_control`の
 
 ### 3. move_groupとcontrollerを起動する
 
-#### 標準のX7を使用する場合
+#### 標準のCRANE-X7を使用する場合
 次のコマンドでmove_group (`crane_x7_moveit_config`)と
 controller (`crane_x7_control`)を起動します。
 
