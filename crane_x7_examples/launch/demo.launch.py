@@ -20,9 +20,9 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.actions import IncludeLaunchDescription
 from launch.conditions import IfCondition
+from launch.conditions import UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
-from launch.substitutions import PythonExpression
 
 
 def generate_launch_description():
@@ -70,8 +70,7 @@ def generate_launch_description():
             PythonLaunchDescriptionSource([
                 get_package_share_directory('crane_x7_moveit_config'),
                 '/launch/run_move_group.launch.py']),
-            condition=IfCondition(PythonExpression(
-                ["'", LaunchConfiguration('use_d435'), "' == 'false'"])),
+            condition=UnlessCondition(LaunchConfiguration('use_d435')),
             launch_arguments={
                 'loaded_description': description
             }.items()
