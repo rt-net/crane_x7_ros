@@ -19,6 +19,7 @@
 #include <cmath>
 #include <memory>
 #include <vector>
+#include <string>
 
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
@@ -70,6 +71,8 @@ private:
       // マーカの検出
       cv::aruco::detectMarkers(cv_img->image, MARKER_DICT, corners, ids);
 
+      int n_markers = ids.size();
+
       // カメラパラメータ
       const auto CAMERA_MATRIX = cv::Mat(3, 3, CV_64F, camera_info_->k.data());
       const auto DIST_COEFFS = cv::Mat(1, 5, CV_64F, camera_info_->d.data());
@@ -77,38 +80,41 @@ private:
       const float MARKER_LENGTH = 0.04;
 
       // マーカが一つ以上検出された場合、一つ目に検出されたマーカの位置姿勢をtfで配信
-      if (ids.size() > 0) {
-        std::vector<cv::Vec3d> rvecs, tvecs;
-        // 画像座標系上のマーカ位置を三次元のカメラ座標系に変換
-        cv::aruco::estimatePoseSingleMarkers(
-          corners, MARKER_LENGTH, CAMERA_MATRIX, DIST_COEFFS, rvecs, tvecs);
+      if (n_markers > 0) {
+        for (int i = 0; i < n_markers; i++)
+        {
+          std::vector<cv::Vec3d> rvecs, tvecs;
+          // 画像座標系上のマーカ位置を三次元のカメラ座標系に変換
+          cv::aruco::estimatePoseSingleMarkers(
+            corners, MARKER_LENGTH, CAMERA_MATRIX, DIST_COEFFS, rvecs, tvecs);
 
-        geometry_msgs::msg::TransformStamped t;
-        t.header.stamp = this->get_clock()->now();
-        t.header.frame_id = "camera_color_optical_frame";
-        t.child_frame_id = "target";
-        t.transform.translation.x = tvecs[0][0];
-        t.transform.translation.y = tvecs[0][1];
-        t.transform.translation.z = tvecs[0][2];
-        tf2::Quaternion q;
-        cv::Mat cv_rotation_matrix;
-        cv::Rodrigues(rvecs[0], cv_rotation_matrix);
-        tf2::Matrix3x3 tf2_rotation_matrix = tf2::Matrix3x3(
-          cv_rotation_matrix.at<double>(0, 0),
-          cv_rotation_matrix.at<double>(0, 1),
-          cv_rotation_matrix.at<double>(0, 2),
-          cv_rotation_matrix.at<double>(1, 0),
-          cv_rotation_matrix.at<double>(1, 1),
-          cv_rotation_matrix.at<double>(1, 2),
-          cv_rotation_matrix.at<double>(2, 0),
-          cv_rotation_matrix.at<double>(2, 1),
-          cv_rotation_matrix.at<double>(2, 2));
-        tf2_rotation_matrix.getRotation(q);
-        t.transform.rotation.x = q.x();
-        t.transform.rotation.y = q.y();
-        t.transform.rotation.z = q.z();
-        t.transform.rotation.w = q.w();
-        tf_broadcaster_->sendTransform(t);
+          geometry_msgs::msg::TransformStamped t;
+          t.header.stamp = this->get_clock()->now();
+          t.header.frame_id = "camera_color_optical_frame";
+          t.child_frame_id = "target" + std::to_string(ids[i]);
+          t.transform.translation.x = tvecs[i][0];
+          t.transform.translation.y = tvecs[i][1];
+          t.transform.translation.z = tvecs[i][2];
+          tf2::Quaternion q;
+          cv::Mat cv_rotation_matrix;
+          cv::Rodrigues(rvecs[i], cv_rotation_matrix);
+          tf2::Matrix3x3 tf2_rotation_matrix = tf2::Matrix3x3(
+            cv_rotation_matrix.at<double>(0, 0),
+            cv_rotation_matrix.at<double>(0, 1),
+            cv_rotation_matrix.at<double>(0, 2),
+            cv_rotation_matrix.at<double>(1, 0),
+            cv_rotation_matrix.at<double>(1, 1),
+            cv_rotation_matrix.at<double>(1, 2),
+            cv_rotation_matrix.at<double>(2, 0),
+            cv_rotation_matrix.at<double>(2, 1),
+            cv_rotation_matrix.at<double>(2, 2));
+          tf2_rotation_matrix.getRotation(q);
+          t.transform.rotation.x = q.x();
+          t.transform.rotation.y = q.y();
+          t.transform.rotation.z = q.z();
+          t.transform.rotation.w = q.w();
+          tf_broadcaster_->sendTransform(t);
+        }
       }
     }
   }
