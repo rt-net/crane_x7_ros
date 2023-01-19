@@ -95,12 +95,12 @@ public:
 private:
   void on_timer()
   {
-    // 把持物体の位置を取得
+    // ID 0のマーカ位置姿勢を取得
     geometry_msgs::msg::TransformStamped tf_msg;
 
     try {
       tf_msg = tf_buffer_->lookupTransform(
-        "base_link", "target",
+        "base_link", "target_0",
         tf2::TimePointZero);
     } catch (const tf2::TransformException & ex) {
       RCLCPP_INFO(
@@ -177,6 +177,7 @@ private:
     control_gripper(GRIPPER_DEFAULT);
   }
 
+  // グリッパ制御
   void control_gripper(const double angle)
   {
     auto joint_values = move_group_gripper_->getCurrentJointValues();
@@ -185,6 +186,7 @@ private:
     move_group_gripper_->move();
   }
 
+  // アーム制御
   void control_arm(
     const double x, const double y, const double z,
     const double roll, const double pitch, const double yaw)
