@@ -80,8 +80,7 @@ private:
 
       // マーカが一つ以上検出された場合、マーカの位置姿勢をtfで配信
       if (n_markers > 0) {
-        for (int i = 0; i < n_markers; i++)
-        {
+        for (int i = 0; i < n_markers; i++) {
           // マーカの回転ベクトルと位置ベクトル
           std::vector<cv::Vec3d> rvecs, tvecs;
           // 画像座標系上のマーカ位置を三次元のカメラ座標系に変換
