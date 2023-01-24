@@ -48,8 +48,8 @@ public:
   {
     using namespace std::placeholders;
     move_group_arm_ = std::make_shared<MoveGroupInterface>(move_group_arm_node, "arm");
-    move_group_arm_->setMaxVelocityScalingFactor(1.0);
-    move_group_arm_->setMaxAccelerationScalingFactor(1.0);
+    move_group_arm_->setMaxVelocityScalingFactor(0.7);
+    move_group_arm_->setMaxAccelerationScalingFactor(0.7);
 
     move_group_gripper_ = std::make_shared<MoveGroupInterface>(move_group_gripper_node, "gripper");
     move_group_gripper_->setMaxVelocityScalingFactor(1.0);
@@ -80,8 +80,14 @@ public:
 
     move_group_arm_->setPathConstraints(constraints);
 
-    // 待機姿勢
-    control_arm(0.15, 0.0, 0.3, -180, 0, 90);
+    // 把持対象を撮影するためカメラを下に向ける
+
+    // 真上から見下ろす撮影姿勢
+    // crane_x7_upper_arm_revolute_part_rotate_jointにかかる負荷が高いため長時間の使用に向いておりません
+    // control_arm(0.15, 0.0, 0.3, -180, 0, 90);
+    
+    // 関節への負荷が低い撮影姿勢
+    init_pose();
 
     tf_buffer_ =
       std::make_unique<tf2_ros::Buffer>(this->get_clock());
@@ -133,6 +139,20 @@ private:
     }
   }
 
+  void init_pose()
+  {
+    std::vector<double> joint_values;
+    joint_values.push_back(angles::from_degrees(0.0));
+    joint_values.push_back(angles::from_degrees(90));
+    joint_values.push_back(angles::from_degrees(0.0));
+    joint_values.push_back(angles::from_degrees(-160));
+    joint_values.push_back(angles::from_degrees(0.0));
+    joint_values.push_back(angles::from_degrees(-50));
+    joint_values.push_back(angles::from_degrees(90));
+    move_group_arm_->setJointValueTarget(joint_values);
+    move_group_arm_->move();
+  }
+
   void picking(tf2::Vector3 target_position)
   {
     const double GRIPPER_DEFAULT = 0.0;
@@ -170,8 +190,9 @@ private:
     // 少しだけハンドを持ち上げる
     control_arm(0.2, 0.2, 0.2, -180, 0, 90);
 
-    // 待機姿勢に戻る
-    control_arm(0.15, 0.0, 0.3, -180, 0, 90);
+    // 初期姿勢に戻る
+    // control_arm(0.15, 0.0, 0.3, -180, 0, 90);
+    init_pose();
 
     // ハンドを閉じる
     control_gripper(GRIPPER_DEFAULT);
