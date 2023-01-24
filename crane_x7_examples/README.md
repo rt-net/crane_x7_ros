@@ -207,7 +207,7 @@ CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 モノに取り付けたArUcoマーカをカメラで認識し、マーカ位置に合わせて掴むコード例です。[RealSense D435マウンタ](https://github.com/rt-net/crane_x7_Hardware/blob/master/3d_print_parts/v1.0/CRANE-X7_HandA_RealSenseD435マウンタ.stl)搭載モデルで実行することを想定しています。
 
 認識されたマーカの位置姿勢はtfのフレームとして配信されます。
-tfの`frame_id`はマーカIDごとに異なりID0のマーカの`frame_id`は`target_0`になります。掴む対象は`target_0`に設定されています。
+tfの`frame_id`はマーカIDごとに異なりID0のマーカの`frame_id`は`target_0`になります。掴む対象は`target_0`に設定されています。マーカ認識には[OpenCV](https://docs.opencv.org/4.x/d5/dae/tutorial_aruco_detection.html)を使用しています。
 
 #### 実行手順
 1. [aruco_markers.pdf](./aruco_markers.pdf)をA4紙に印刷し、一辺50mmの立方体に取り付けます
