@@ -25,7 +25,7 @@
 #include "geometry_msgs/msg/quaternion.hpp"
 #include "moveit/move_group_interface/move_group_interface.h"
 #include "rclcpp/rclcpp.hpp"
-#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 
 
 using MoveGroupInterface = moveit::planning_interface::MoveGroupInterface;
