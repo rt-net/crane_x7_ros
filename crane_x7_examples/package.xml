@@ -16,7 +16,9 @@
   <depend>crane_x7_control</depend>
   <depend>crane_x7_description</depend>
   <depend>crane_x7_moveit_config</depend>
+  <depend>cv_bridge</depend>
   <depend>geometry_msgs</depend>
+  <depend>libopencv-dev</depend>
   <depend>moveit_ros_planning_interface</depend>
   <depend>rclcpp</depend>
   <depend>realsense2_camera</depend>
