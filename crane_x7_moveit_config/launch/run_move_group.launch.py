@@ -58,6 +58,13 @@ def generate_launch_description():
                      It is recommended to use RobotDescriptionLoader() in crane_x7_description.'
     )
 
+    declare_rviz_config_file = DeclareLaunchArgument(
+        'rviz_config_file',
+        default_value=get_package_share_directory(
+            'crane_x7_moveit_config') + '/launch/run_move_group.rviz',
+        description='Set the path to rviz configuration file.'
+    )
+
     robot_description = {'robot_description': LaunchConfiguration('loaded_description')}
 
     robot_description_semantic_config = load_file(
@@ -116,8 +123,7 @@ def generate_launch_description():
                                            planning_scene_monitor_parameters])
 
     # RViz
-    rviz_config_file = get_package_share_directory(
-        'crane_x7_moveit_config') + '/launch/run_move_group.rviz'
+    rviz_config_file = LaunchConfiguration('rviz_config_file')
     rviz_node = Node(package='rviz2',
                      executable='rviz2',
                      name='rviz2',
@@ -143,6 +149,7 @@ def generate_launch_description():
                                  parameters=[robot_description])
 
     return LaunchDescription([declare_loaded_description,
+                              declare_rviz_config_file,
                               run_move_group_node,
                               rviz_node,
                               static_tf,
