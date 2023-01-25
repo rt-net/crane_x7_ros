@@ -21,6 +21,7 @@
 #include <chrono>
 #include <cmath>
 #include <memory>
+#include <vector>
 
 #include "angles/angles.h"
 #include "geometry_msgs/msg/pose.hpp"
@@ -85,7 +86,7 @@ public:
     // 真上から見下ろす撮影姿勢
     // crane_x7_upper_arm_revolute_part_rotate_jointにかかる負荷が高いため長時間の使用に向いておりません
     // control_arm(0.15, 0.0, 0.3, -180, 0, 90);
-    
+
     // 関節への負荷が低い撮影姿勢
     init_pose();
 
