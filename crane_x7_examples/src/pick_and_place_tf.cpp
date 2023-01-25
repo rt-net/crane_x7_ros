@@ -21,6 +21,7 @@
 #include <chrono>
 #include <cmath>
 #include <memory>
+#include <vector>
 
 #include "angles/angles.h"
 #include "geometry_msgs/msg/pose.hpp"
@@ -48,8 +49,8 @@ public:
   {
     using namespace std::placeholders;
     move_group_arm_ = std::make_shared<MoveGroupInterface>(move_group_arm_node, "arm");
-    move_group_arm_->setMaxVelocityScalingFactor(1.0);
-    move_group_arm_->setMaxAccelerationScalingFactor(1.0);
+    move_group_arm_->setMaxVelocityScalingFactor(0.7);
+    move_group_arm_->setMaxAccelerationScalingFactor(0.7);
 
     move_group_gripper_ = std::make_shared<MoveGroupInterface>(move_group_gripper_node, "gripper");
     move_group_gripper_->setMaxVelocityScalingFactor(1.0);
@@ -80,8 +81,14 @@ public:
 
     move_group_arm_->setPathConstraints(constraints);
 
-    // 待機姿勢
-    control_arm(0.2, 0.0, 0.3, -180, 0, -90);
+    // 把持対象を撮影するためカメラを下に向ける
+
+    // 真上から見下ろす撮影姿勢
+    // crane_x7_upper_arm_revolute_part_rotate_jointにかかる負荷が高いため長時間の使用に向いておりません
+    // control_arm(0.15, 0.0, 0.3, -180, 0, 90);
+
+    // 関節への負荷が低い撮影姿勢
+    init_pose();
 
     tf_buffer_ =
       std::make_unique<tf2_ros::Buffer>(this->get_clock());
@@ -95,12 +102,12 @@ public:
 private:
   void on_timer()
   {
-    // 把持物体の位置を取得
+    // ID 0のマーカ位置姿勢を取得
     geometry_msgs::msg::TransformStamped tf_msg;
 
     try {
       tf_msg = tf_buffer_->lookupTransform(
-        "base_link", "target",
+        "base_link", "target_0",
         tf2::TimePointZero);
     } catch (const tf2::TransformException & ex) {
       RCLCPP_INFO(
@@ -109,21 +116,22 @@ private:
       return;
     }
 
-    rclcpp::Clock system_clock(RCL_SYSTEM_TIME);
-    rclcpp::Time now = system_clock.now();
-    std::chrono::nanoseconds filtering_time = 1s;
-    std::chrono::nanoseconds rest_time = 3s;
+    rclcpp::Time now = this->get_clock()->now();
+    const std::chrono::nanoseconds FILTERING_TIME = 1s;
+    const std::chrono::nanoseconds STOP_TIME_THRESHOLD = 3s;
+    const float DISTANCE_THRESHOLD = 0.01;
     tf2::Stamped<tf2::Transform> tf;
     tf2::convert(tf_msg, tf);
+    const auto TF_ELAPSED_TIME = now.nanoseconds() - tf.stamp_.time_since_epoch().count();
+    const auto TF_STOP_TIME = now.nanoseconds() - tf_past_.stamp_.time_since_epoch().count();
 
     // 現在時刻から1秒以内に受け取ったtfを使用
-    if ((now.nanoseconds() - tf.stamp_.time_since_epoch().count()) < filtering_time.count()) {
+    if (TF_ELAPSED_TIME < FILTERING_TIME.count()) {
       double tf_diff = (tf_past_.getOrigin() - tf.getOrigin()).length();
-
-      // 把持物体の位置が止まっていることを判定
-      if (tf_diff < 0.01) {
-        // 3秒以上停止している場合ピッキング動作開始
-        if ((now.nanoseconds() - tf_past_.stamp_.time_since_epoch().count()) > rest_time.count()) {
+      // 把持対象の位置が停止していることを判定
+      if (tf_diff < DISTANCE_THRESHOLD) {
+        // 把持対象が3秒以上停止している場合ピッキング動作開始
+        if (TF_STOP_TIME > STOP_TIME_THRESHOLD.count()) {
           picking(tf.getOrigin());
         }
       } else {
@@ -132,50 +140,66 @@ private:
     }
   }
 
-  void picking(tf2::Vector3 target_position)
+  void init_pose()
   {
-    const double GRIPPER_DEFAULT_ = 0.0;
-    const double GRIPPER_OPEN_ = angles::from_degrees(60.0);
-    const double GRIPPER_CLOSE_ = angles::from_degrees(15.0);
-
-    // 何かを掴んでいた時のためにハンドを開閉
-    control_gripper(GRIPPER_OPEN_);
-    control_gripper(GRIPPER_DEFAULT_);
-
-    // 掴む準備をする
-    control_arm(target_position.x(), target_position.y(), 0.3, -180, 0, -90);
-
-    // ハンドを開く
-    control_gripper(GRIPPER_OPEN_);
-
-    // 掴みに行く
-    control_arm(target_position.x(), target_position.y(), 0.1, -180, 0, -90);
-
-    // ハンドを閉じる
-    control_gripper(GRIPPER_CLOSE_);
-
-    // 持ち上げる
-    control_arm(target_position.x(), target_position.y(), 0.3, -180, 0, -90);
-
-    // 移動する
-    control_arm(0.2, 0.2, 0.3, -180, 0, -90);
-
-    // 下ろす
-    control_arm(0.2, 0.2, 0.13, -180, 0, -90);
-
-    // ハンドを開く
-    control_gripper(GRIPPER_OPEN_);
-
-    // 少しだけハンドを持ち上げる
-    control_arm(0.2, 0.2, 0.2, -180, 0, -90);
-
-    // 待機姿勢に戻る
-    control_arm(0.2, 0.0, 0.3, -180, 0, -90);
-
-    // ハンドを閉じる
-    control_gripper(GRIPPER_DEFAULT_);
+    std::vector<double> joint_values;
+    joint_values.push_back(angles::from_degrees(0.0));
+    joint_values.push_back(angles::from_degrees(90));
+    joint_values.push_back(angles::from_degrees(0.0));
+    joint_values.push_back(angles::from_degrees(-160));
+    joint_values.push_back(angles::from_degrees(0.0));
+    joint_values.push_back(angles::from_degrees(-50));
+    joint_values.push_back(angles::from_degrees(90));
+    move_group_arm_->setJointValueTarget(joint_values);
+    move_group_arm_->move();
   }
 
+  void picking(tf2::Vector3 target_position)
+  {
+    const double GRIPPER_DEFAULT = 0.0;
+    const double GRIPPER_OPEN = angles::from_degrees(60.0);
+    const double GRIPPER_CLOSE = angles::from_degrees(15.0);
+
+    // 何かを掴んでいた時のためにハンドを開閉
+    control_gripper(GRIPPER_OPEN);
+    control_gripper(GRIPPER_DEFAULT);
+
+    // 掴む準備をする
+    control_arm(target_position.x(), target_position.y(), 0.2, -180, 0, 90);
+
+    // ハンドを開く
+    control_gripper(GRIPPER_OPEN);
+
+    // 掴みに行く
+    control_arm(target_position.x(), target_position.y(), 0.13, -180, 0, 90);
+
+    // ハンドを閉じる
+    control_gripper(GRIPPER_CLOSE);
+
+    // 持ち上げる
+    control_arm(target_position.x(), target_position.y(), 0.2, -180, 0, 90);
+
+    // 移動する
+    control_arm(0.2, 0.2, 0.2, -180, 0, 90);
+
+    // 下ろす
+    control_arm(0.2, 0.2, 0.13, -180, 0, 90);
+
+    // ハンドを開く
+    control_gripper(GRIPPER_OPEN);
+
+    // 少しだけハンドを持ち上げる
+    control_arm(0.2, 0.2, 0.2, -180, 0, 90);
+
+    // 初期姿勢に戻る
+    // control_arm(0.15, 0.0, 0.3, -180, 0, 90);
+    init_pose();
+
+    // ハンドを閉じる
+    control_gripper(GRIPPER_DEFAULT);
+  }
+
+  // グリッパ制御
   void control_gripper(const double angle)
   {
     auto joint_values = move_group_gripper_->getCurrentJointValues();
@@ -184,6 +208,7 @@ private:
     move_group_gripper_->move();
   }
 
+  // アーム制御
   void control_arm(
     const double x, const double y, const double z,
     const double roll, const double pitch, const double yaw)

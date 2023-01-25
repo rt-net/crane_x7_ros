@@ -57,7 +57,7 @@ def generate_launch_description():
     kinematics_yaml = load_yaml('crane_x7_moveit_config', 'config/kinematics.yaml')
 
     declare_example_name = DeclareLaunchArgument(
-        'example', default_value='pose_groupstate',
+        'example', default_value='aruco_detection',
         description=('Set an example executable name: '
                      '[aruco_detection]')
     )
@@ -80,18 +80,9 @@ def generate_launch_description():
                           executable=LaunchConfiguration('example'),
                           output='screen')
 
-    rviz_config_file = get_package_share_directory(
-        'crane_x7_examples') + '/launch/camera_example.rviz'
-    rviz_node = Node(package='rviz2',
-                     executable='rviz2',
-                     name='rviz2_camera_example',
-                     output='log',
-                     arguments=['-d', rviz_config_file])
-
     return LaunchDescription([
         declare_use_sim_time,
         SetParameter(name='use_sim_time', value=LaunchConfiguration('use_sim_time')),
-        rviz_node,
         picking_node,
         detection_node,
         declare_example_name
