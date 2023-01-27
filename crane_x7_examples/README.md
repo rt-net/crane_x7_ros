@@ -130,10 +130,10 @@ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
 
 <img src=https://rt-net.github.io/images/crane-x7/gazebo_gripper_example.gif width=500px />
 
-[back to example list](#examples)
-
 #### Videos
-[![crane_x7_aruco_detection_demo](http://img.youtube.com/vi/uLRLkwbXUP0/hqdefault.jpg)](https://youtu.be/uLRLkwbXUP0)
+[![crane_x7_gripper_control_demo](http://img.youtube.com/vi/uLRLkwbXUP0/hqdefault.jpg)](https://youtu.be/uLRLkwbXUP0)
+
+[back to example list](#examples)
 
 ---
 
@@ -152,10 +152,10 @@ ros2 launch crane_x7_examples example.launch.py example:='pose_groupstate'
 
 <img src=https://rt-net.github.io/images/crane-x7/gazebo_pose_groupstate.gif width=500px />
 
-[back to example list](#examples)
-
 #### Videos
-[![crane_x7_aruco_detection_demo](http://img.youtube.com/vi/FH18dA_xcjM/hqdefault.jpg)](https://youtu.be/FH18dA_xcjM)
+[![crane_x7_pose_groupstate_demo](http://img.youtube.com/vi/FH18dA_xcjM/hqdefault.jpg)](https://youtu.be/FH18dA_xcjM)
+
+[back to example list](#examples)
 
 ---
 
@@ -170,10 +170,10 @@ ros2 launch crane_x7_examples example.launch.py example:='joint_values'
 ```
 <img src= https://rt-net.github.io/images/crane-x7/gazebo_joint_values_example.gif width = 500px />
 
-[back to example list](#examples)
-
 #### Videos
-[![crane_x7_aruco_detection_demo](http://img.youtube.com/vi/skRwrrlUl4c/hqdefault.jpg)](https://youtu.be/skRwrrlUl4c)
+[![crane_x7_joint_values_demo](http://img.youtube.com/vi/skRwrrlUl4c/hqdefault.jpg)](https://youtu.be/skRwrrlUl4c)
+
+[back to example list](#examples)
 
 ---
 
@@ -189,7 +189,7 @@ ros2 launch crane_x7_examples example.launch.py example:='cartesian_path'
 ```
 
 #### Videos
-[![crane_x7_aruco_detection_demo](http://img.youtube.com/vi/XLhbUqsP2WA/hqdefault.jpg)](https://youtu.be/XLhbUqsP2WA)
+[![crane_x7_cartesian_path_demo](http://img.youtube.com/vi/XLhbUqsP2WA/hqdefault.jpg)](https://youtu.be/XLhbUqsP2WA)
 
 [back to example list](#examples)
 
