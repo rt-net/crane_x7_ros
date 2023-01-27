@@ -14,7 +14,7 @@
 
 // Reference:
 // https://docs.opencv.org/4.2.0/d5/dae/tutorial_aruco_detection.html
-// https://docs.ros.org/en/foxy/Tutorials/Intermediate/Tf2/Writing-A-Tf2-Broadcaster-Cpp.html
+// https://docs.ros.org/en/humble/Tutorials/Intermediate/Tf2/Writing-A-Tf2-Broadcaster-Cpp.html
 
 #include <cmath>
 #include <memory>
