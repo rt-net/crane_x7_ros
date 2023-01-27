@@ -14,15 +14,18 @@
   - [サンプルプログラムを実行する](#サンプルプログラムを実行する)
   - [Examples](#examples)
     - [gripper\_control](#gripper_control)
-    - [pose\_groupstate](#pose_groupstate)
-    - [joint\_values](#joint_values)
-    - [cartesian\_path](#cartesian_path)
       - [Videos](#videos)
-    - [pick\_and\_place](#pick_and_place)
+    - [pose\_groupstate](#pose_groupstate)
       - [Videos](#videos-1)
+    - [joint\_values](#joint_values)
+      - [Videos](#videos-2)
+    - [cartesian\_path](#cartesian_path)
+      - [Videos](#videos-3)
+    - [pick\_and\_place](#pick_and_place)
+      - [Videos](#videos-4)
     - [aruco\_detection](#aruco_detection)
       - [実行手順](#実行手順)
-      - [Videos](#videos-2)
+      - [Videos](#videos-5)
 
 ## 準備（実機を使う場合）
 
@@ -118,6 +121,9 @@ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
 
 <img src=https://rt-net.github.io/images/crane-x7/gazebo_gripper_example.gif width=500px />
 
+#### Videos
+[![crane_x7_gripper_control_demo](http://img.youtube.com/vi/uLRLkwbXUP0/hqdefault.jpg)](https://youtu.be/uLRLkwbXUP0)
+
 [back to example list](#examples)
 
 ---
@@ -137,6 +143,9 @@ ros2 launch crane_x7_examples example.launch.py example:='pose_groupstate'
 
 <img src=https://rt-net.github.io/images/crane-x7/gazebo_pose_groupstate.gif width=500px />
 
+#### Videos
+[![crane_x7_pose_groupstate_demo](http://img.youtube.com/vi/FH18dA_xcjM/hqdefault.jpg)](https://youtu.be/FH18dA_xcjM)
+
 [back to example list](#examples)
 
 ---
@@ -151,6 +160,9 @@ ros2 launch crane_x7_examples example.launch.py example:='pose_groupstate'
 ros2 launch crane_x7_examples example.launch.py example:='joint_values'
 ```
 <img src= https://rt-net.github.io/images/crane-x7/gazebo_joint_values_example.gif width = 500px />
+
+#### Videos
+[![crane_x7_joint_values_demo](http://img.youtube.com/vi/skRwrrlUl4c/hqdefault.jpg)](https://youtu.be/skRwrrlUl4c)
 
 [back to example list](#examples)
 
@@ -168,8 +180,7 @@ ros2 launch crane_x7_examples example.launch.py example:='cartesian_path'
 ```
 
 #### Videos
-
-[![](http://img.youtube.com/vi/-Rt3zc3UXMM/sddefault.jpg)](https://youtu.be/-Rt3zc3UXMM)
+[![crane_x7_cartesian_path_demo](http://img.youtube.com/vi/XLhbUqsP2WA/hqdefault.jpg)](https://youtu.be/XLhbUqsP2WA)
 
 [back to example list](#examples)
 
@@ -196,7 +207,7 @@ CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 
 #### Videos
 
-[![crane_x7_pick_and_place_demo](http://img.youtube.com/vi/_8xBgpgMhk8/hqdefault.jpg)](https://youtu.be/_8xBgpgMhk8)
+[![crane_x7_pick_and_place_demo](http://img.youtube.com/vi/S_MwSvG2tKw/hqdefault.jpg)](https://youtu.be/S_MwSvG2tKw)
 
 [back to example list](#examples)
 
