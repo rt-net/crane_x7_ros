@@ -10,7 +10,7 @@ ROS 2 package suite of CRANE-X7.
 
 ## Table of Contents
 
-- [crane_x7_ros](#crane_x7_ros)
+- [crane\_x7\_ros](#crane_x7_ros)
   - [Table of Contents](#table-of-contents)
   - [Supported ROS 2 distributions](#supported-ros-2-distributions)
     - [ROS](#ros)
@@ -55,7 +55,7 @@ $ git clone -b ros2 https://github.com/rt-net/crane_x7_ros.git
 $ git clone -b ros2 https://github.com/rt-net/crane_x7_description.git
 
 # Install dependencies
-$ git clone https://github.com/ros-controls/gz_ros2_control.git
+$ git clone -b humble https://github.com/ros-controls/gz_ros2_control.git
 $ rosdep install -r -y -i --from-paths .
 
 # Build & Install

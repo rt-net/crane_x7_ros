@@ -2,25 +2,31 @@
 
 このパッケージはCRANE-X7 ROS 2パッケージのサンプルコード集です。
 
-- [crane_x7_examples](#crane_x7_examples)
+- [crane\_x7\_examples](#crane_x7_examples)
   - [準備（実機を使う場合）](#準備実機を使う場合)
     - [1. CRANE-X7本体をPCに接続する](#1-crane-x7本体をpcに接続する)
     - [2. USB通信ポートの接続を確認する](#2-usb通信ポートの接続を確認する)
-    - [3. move_groupとcontrollerを起動する](#3-move_groupとcontrollerを起動する)
-      - [標準モデルを使用する場合](#標準モデルを使用する場合)
+    - [3. move\_groupとcontrollerを起動する](#3-move_groupとcontrollerを起動する)
+      - [標準のCRANE-X7を使用する場合](#標準のcrane-x7を使用する場合)
       - [RealSense D435マウンタ搭載モデルを使用する場合](#realsense-d435マウンタ搭載モデルを使用する場合)
   - [準備 (Gazeboを使う場合)](#準備-gazeboを使う場合)
-    - [1. move_groupとGazeboを起動する](#1-move_groupとgazeboを起動する)
+    - [1. move\_groupとGazeboを起動する](#1-move_groupとgazeboを起動する)
   - [サンプルプログラムを実行する](#サンプルプログラムを実行する)
     - [Gazeboでサンプルプログラムを実行する場合](#gazeboでサンプルプログラムを実行する場合)
   - [Examples](#examples)
-    - [gripper_control](#gripper_control)
-    - [pose_groupstate](#pose_groupstate)
-    - [joint_values](#joint_values)
-    - [cartesian_path](#cartesian_path)
+    - [gripper\_control](#gripper_control)
       - [Videos](#videos)
-    - [pick_and_place](#pick_and_place)
+    - [pose\_groupstate](#pose_groupstate)
       - [Videos](#videos-1)
+    - [joint\_values](#joint_values)
+      - [Videos](#videos-2)
+    - [cartesian\_path](#cartesian_path)
+      - [Videos](#videos-3)
+    - [pick\_and\_place](#pick_and_place)
+      - [Videos](#videos-4)
+    - [aruco\_detection](#aruco_detection)
+      - [実行手順](#実行手順)
+      - [Videos](#videos-5)
 
 ## 準備（実機を使う場合）
 
@@ -42,7 +48,7 @@ USB通信ポートの設定については`crane_x7_control`の
 
 ### 3. move_groupとcontrollerを起動する
 
-#### 標準モデルを使用する場合
+#### 標準のCRANE-X7を使用する場合
 次のコマンドでmove_group (`crane_x7_moveit_config`)と
 controller (`crane_x7_control`)を起動します。
 
@@ -124,6 +130,9 @@ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
 
 <img src=https://rt-net.github.io/images/crane-x7/gazebo_gripper_example.gif width=500px />
 
+#### Videos
+[![crane_x7_gripper_control_demo](http://img.youtube.com/vi/uLRLkwbXUP0/hqdefault.jpg)](https://youtu.be/uLRLkwbXUP0)
+
 [back to example list](#examples)
 
 ---
@@ -143,6 +152,9 @@ ros2 launch crane_x7_examples example.launch.py example:='pose_groupstate'
 
 <img src=https://rt-net.github.io/images/crane-x7/gazebo_pose_groupstate.gif width=500px />
 
+#### Videos
+[![crane_x7_pose_groupstate_demo](http://img.youtube.com/vi/FH18dA_xcjM/hqdefault.jpg)](https://youtu.be/FH18dA_xcjM)
+
 [back to example list](#examples)
 
 ---
@@ -157,6 +169,9 @@ ros2 launch crane_x7_examples example.launch.py example:='pose_groupstate'
 ros2 launch crane_x7_examples example.launch.py example:='joint_values'
 ```
 <img src= https://rt-net.github.io/images/crane-x7/gazebo_joint_values_example.gif width = 500px />
+
+#### Videos
+[![crane_x7_joint_values_demo](http://img.youtube.com/vi/skRwrrlUl4c/hqdefault.jpg)](https://youtu.be/skRwrrlUl4c)
 
 [back to example list](#examples)
 
@@ -174,8 +189,7 @@ ros2 launch crane_x7_examples example.launch.py example:='cartesian_path'
 ```
 
 #### Videos
-
-[![](http://img.youtube.com/vi/-Rt3zc3UXMM/sddefault.jpg)](https://youtu.be/-Rt3zc3UXMM)
+[![crane_x7_cartesian_path_demo](http://img.youtube.com/vi/XLhbUqsP2WA/hqdefault.jpg)](https://youtu.be/XLhbUqsP2WA)
 
 [back to example list](#examples)
 
@@ -202,6 +216,29 @@ CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 
 #### Videos
 
-[![crane_x7_pick_and_place_demo](http://img.youtube.com/vi/_8xBgpgMhk8/hqdefault.jpg)](https://youtu.be/_8xBgpgMhk8)
+[![crane_x7_pick_and_place_demo](http://img.youtube.com/vi/S_MwSvG2tKw/hqdefault.jpg)](https://youtu.be/S_MwSvG2tKw)
+
+[back to example list](#examples)
+
+---
+
+### aruco_detection
+
+モノに取り付けたArUcoマーカをカメラで認識し、マーカ位置に合わせて掴むコード例です。[RealSense D435マウンタ](https://github.com/rt-net/crane_x7_Hardware/blob/master/3d_print_parts/v1.0/CRANE-X7_HandA_RealSenseD435マウンタ.stl)搭載モデルで実行することを想定しています。
+
+認識されたマーカの位置姿勢はtfのフレームとして配信されます。
+tfの`frame_id`はマーカIDごとに異なりID0のマーカの`frame_id`は`target_0`になります。掴む対象は`target_0`に設定されています。マーカ認識には[OpenCV](https://docs.opencv.org/4.x/d5/dae/tutorial_aruco_detection.html)を使用しています。
+
+#### 実行手順
+1. [aruco_markers.pdf](./aruco_markers.pdf)をA4紙に印刷し、一辺50mmの立方体に取り付けます
+1. [「RealSense D435マウンタ搭載モデルを使用する場合」](#realsense-d435マウンタ搭載モデルを使用する場合)の手順でCRANE-X7を起動します
+1. 次のコマンドを実行します
+    ```sh
+    ros2 launch crane_x7_examples camera_example.launch.py example:='aruco_detection'
+    ```
+1. マーカのついた立方体をカメラに写る位置に置きます
+
+#### Videos
+[![crane_x7_aruco_detection_demo](http://img.youtube.com/vi/eWzmG_jbTmM/hqdefault.jpg)](https://youtu.be/eWzmG_jbTmM)
 
 [back to example list](#examples)
