@@ -14,6 +14,8 @@
 
 // Reference:
 // https://docs.ros.org/en/humble/Tutorials/Intermediate/Tf2/Writing-A-Tf2-Broadcaster-Cpp.html
+// https://pcl.readthedocs.io/projects/tutorials/en/master/passthrough.html
+// https://pcl.readthedocs.io/projects/tutorials/en/master/voxel_grid.html
 
 #include <cmath>
 #include <memory>
@@ -32,6 +34,7 @@
 #include "pcl/io/pcd_io.h"
 #include "pcl_conversions/pcl_conversions.h"
 #include "pcl/filters/passthrough.h"
+#include "pcl/filters/voxel_grid.h"
 
 class PointCloudSubscriber : public rclcpp::Node
 {
@@ -61,12 +64,19 @@ private:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::fromROSMsg(*msg, *cloud);
 
+    // Z軸方向に0.5m以上離れている点群をフィルタリング
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PassThrough<pcl::PointXYZRGB> pass;
     pass.setInputCloud(cloud);
     pass.setFilterFieldName("z");
     pass.setFilterLimits(0.0, 0.5);
     pass.filter(*cloud_filtered);
+
+    // Voxel gridでダウンサンプリング
+    pcl::VoxelGrid<pcl::PointXYZRGB> sor;
+    sor.setInputCloud(cloud_filtered);
+    sor.setLeafSize(0.01f, 0.01f, 0.01f);
+    sor.filter(*cloud_filtered);
 
     sensor_msgs::msg::PointCloud2 sensor_msg;
     pcl::toROSMsg(*cloud_filtered, sensor_msg);
