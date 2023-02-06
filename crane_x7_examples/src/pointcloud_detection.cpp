@@ -55,8 +55,8 @@ public:
     using namespace std::chrono_literals;
     publisher_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("/pcl_data", 10);
 
-    tf_broadcaster_ =
-      std::make_unique<tf2_ros::TransformBroadcaster>(*this);
+    //tf_broadcaster_ =
+    //  std::make_unique<tf2_ros::TransformBroadcaster>(*this);
     tf_buffer_ =
       std::make_unique<tf2_ros::Buffer>(this->get_clock());
     tf_listener_ =
@@ -66,7 +66,7 @@ public:
 private:
   rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr point_cloud_subscription_;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr publisher_;
-  std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+  //std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
 
@@ -86,17 +86,18 @@ private:
       return;
     }
 
-    sensor_msgs::msg::PointCloud2::SharedPtr cloud_transfromed;
-    pcl_ros::transformPointCloud("base_link", tf_msg, *msg, *cloud_transfromed);
+    sensor_msgs::msg::PointCloud2 cloud_transformed;
+    pcl_ros::transformPointCloud("base_link", tf_msg, *msg, cloud_transformed);
+
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
-    pcl::fromROSMsg(*cloud_transfromed, *cloud);
+    pcl::fromROSMsg(cloud_transformed, *cloud);
 
     // Z軸方向に0.5m以上離れている点群をフィルタリング
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PassThrough<pcl::PointXYZRGB> pass;
     pass.setInputCloud(cloud);
     pass.setFilterFieldName("z");
-    pass.setFilterLimits(0.0, 0.5);
+    pass.setFilterLimits(0.03, 0.5);
     pass.filter(*cloud_filtered);
 
     // Voxel gridでダウンサンプリング
@@ -104,30 +105,6 @@ private:
     sor.setInputCloud(cloud_filtered);
     sor.setLeafSize(0.01f, 0.01f, 0.01f);
     sor.filter(*cloud_filtered);
-
-    // 平面検出
-    pcl::ModelCoefficients::Ptr coefficients(new pcl::ModelCoefficients);
-    pcl::PointIndices::Ptr inliers(new pcl::PointIndices);
-    pcl::SACSegmentation<pcl::PointXYZRGB> seg;
-    seg.setOptimizeCoefficients(true);
-    seg.setModelType(pcl::SACMODEL_PLANE);
-    seg.setMethodType(pcl::SAC_RANSAC);
-    seg.setDistanceThreshold(0.01);
-    seg.setInputCloud(cloud_filtered);
-    seg.segment(*inliers, *coefficients);
-
-    if(inliers->indices.size() == 0)
-    {
-      PCL_ERROR ("Could not estimate a planar model for the given dataset.\n");
-      return;
-    }
-
-    for (size_t i = 0; i < inliers->indices.size (); ++i)
-    {
-      cloud_filtered->points[inliers->indices[i]].r = 255;
-      cloud_filtered->points[inliers->indices[i]].g = 0;
-      cloud_filtered->points[inliers->indices[i]].b = 0;
-    }
 
     sensor_msgs::msg::PointCloud2 sensor_msg;
     pcl::toROSMsg(*cloud_filtered, sensor_msg);
