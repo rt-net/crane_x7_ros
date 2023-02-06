@@ -58,8 +58,9 @@ public:
     using namespace std::chrono_literals;
     publisher_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("/pcl_data", 10);
 
-    //tf_broadcaster_ =
-    //  std::make_unique<tf2_ros::TransformBroadcaster>(*this);
+    tf_broadcaster_ =
+      std::make_unique<tf2_ros::TransformBroadcaster>(*this);
+
     tf_buffer_ =
       std::make_unique<tf2_ros::Buffer>(this->get_clock());
     tf_listener_ =
@@ -69,7 +70,7 @@ public:
 private:
   rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr point_cloud_subscription_;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr publisher_;
-  //std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+  std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
 
@@ -171,8 +172,23 @@ private:
       cloud_cluster->is_dense = true;
       *cloud_output += *cloud_cluster;
 
+      // tfの配信
+      // 点群位置の最大値、最小値を平均したものを物体位置として配信する
       pcl::PointXYZRGB min_point, max_point;
       pcl::getMinMax3D(*cloud_cluster, min_point, max_point);
+      geometry_msgs::msg::TransformStamped t;
+      t.header.stamp = this->get_clock()->now();
+      t.header.frame_id = cloud->header.frame_id;
+      t.child_frame_id = "target_" + std::to_string(cluster_i);
+      t.transform.translation.x = (max_point.x + min_point.x) * 0.5;
+      t.transform.translation.y = (max_point.y + min_point.y) * 0.5;
+      t.transform.translation.z = (max_point.z + min_point.z) * 0.5;
+      tf2::Quaternion q;
+      t.transform.rotation.x = 0.0;
+      t.transform.rotation.y = 0.0;
+      t.transform.rotation.z = 0.0;
+      t.transform.rotation.w = 1.0;
+      tf_broadcaster_->sendTransform(t);
 
       cluster_i++;
       if(cluster_i >= CLUSTER_MAX){
