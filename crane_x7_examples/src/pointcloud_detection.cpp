@@ -38,8 +38,11 @@
 #include "pcl_conversions/pcl_conversions.h"
 #include "pcl/filters/passthrough.h"
 #include "pcl/filters/voxel_grid.h"
+#include "pcl/kdtree/kdtree.h"
 #include "pcl/segmentation/sac_segmentation.h"
 #include "pcl_ros/transforms.hpp"
+
+#include <pcl/segmentation/extract_clusters.h>
 
 class PointCloudSubscriber : public rclcpp::Node
 {
@@ -72,7 +75,7 @@ private:
 
   void point_cloud_callback(const sensor_msgs::msg::PointCloud2::SharedPtr msg)
   {
-    // ID 0のマーカ位置姿勢を取得
+    // カメラ座標系における点群の位置姿勢をロボット座標系に変換
     geometry_msgs::msg::TransformStamped tf_msg;
 
     try {
@@ -81,7 +84,7 @@ private:
         tf2::TimePointZero);
     } catch (const tf2::TransformException & ex) {
       RCLCPP_INFO(
-        this->get_logger(), "Could not transform base_link to target: %s",
+        this->get_logger(), "Could not transform base_link to camera_depth_optical_frame: %s",
         ex.what());
       return;
     }
@@ -89,6 +92,7 @@ private:
     sensor_msgs::msg::PointCloud2 cloud_transformed;
     pcl_ros::transformPointCloud("base_link", tf_msg, *msg, cloud_transformed);
 
+    // ROSメッセージの点群フォーマットからPCLのフォーマットに変換
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::fromROSMsg(cloud_transformed, *cloud);
 
@@ -97,7 +101,7 @@ private:
     pcl::PassThrough<pcl::PointXYZRGB> pass;
     pass.setInputCloud(cloud);
     pass.setFilterFieldName("x");
-    pass.setFilterLimits(0.05, 0.5);
+    pass.setFilterLimits(0.05, 0.4);
     pass.filter(*cloud_filtered);
 
     // Z軸方向の0.03~0.5m内の点群を使用
@@ -109,11 +113,76 @@ private:
     // Voxel gridでダウンサンプリング
     pcl::VoxelGrid<pcl::PointXYZRGB> sor;
     sor.setInputCloud(cloud_filtered);
-    sor.setLeafSize(0.005f, 0.005f, 0.005f);
+    sor.setLeafSize(0.01f, 0.01f, 0.01f);
     sor.filter(*cloud_filtered);
 
+    // 点群がない場合は物体認識処理をスキップする
+    if(cloud_filtered->size() <= 0){
+      return;
+    }
+
+    // KdTreeを用いて点群を物体ごとに分類(クラスタリング)する
+    pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGB>());
+    tree->setInputCloud(cloud_filtered);
+
+    std::vector<pcl::PointIndices> cluster_indices;
+    pcl::EuclideanClusterExtraction<pcl::PointXYZRGB> ec;
+    ec.setClusterTolerance(0.02);
+    ec.setMinClusterSize(10);
+    ec.setMaxClusterSize(250);
+    ec.setSearchMethod(tree);
+    ec.setInputCloud(cloud_filtered);
+    ec.extract(cluster_indices);
+
+    // クラスタリングした点群ごとに異なる色をつける
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_output (new pcl::PointCloud<pcl::PointXYZRGB>());
+    int cluster_i = 0;
+    enum COLOR_RGB{
+      RED=0,
+      GREEN,
+      BLUE,
+      COLOR_MAX
+    };
+    const int CLUSTER_MAX = 10;
+    const int CLUSTER_COLOR[CLUSTER_MAX][COLOR_MAX] = {
+      {230, 0, 18},{243, 152, 18}, {255, 251, 0},
+      {143, 195, 31},{0, 153, 68}, {0, 158, 150},
+      {0, 160, 233},{0, 104, 183}, {29, 32, 136},
+      {146, 7, 131}
+    };
+
+    for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin();
+      it != cluster_indices.end() ; ++it)
+    {
+      pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_cluster(new pcl::PointCloud<pcl::PointXYZRGB>());
+      // 点群の色を変更
+      for (std::vector<int>::const_iterator pit = it->indices.begin();
+        pit != it->indices.end(); ++pit)
+      {
+        cloud_filtered->points[*pit].r = CLUSTER_COLOR[cluster_i][RED];
+        cloud_filtered->points[*pit].g = CLUSTER_COLOR[cluster_i][GREEN];
+        cloud_filtered->points[*pit].b = CLUSTER_COLOR[cluster_i][BLUE];
+        cloud_cluster->points.push_back(cloud_filtered->points[*pit]);
+      }
+      // 点群サイズの入力
+      cloud_cluster->width = cloud_cluster->points.size();
+      cloud_cluster->height = 1;
+      // 無効なpointがないのでis_denseはtrue
+      cloud_cluster->is_dense = true;
+      *cloud_output += *cloud_cluster;
+
+      pcl::PointXYZRGB min_point, max_point;
+      pcl::getMinMax3D(*cloud_cluster, min_point, max_point);
+
+      cluster_i++;
+      if(cluster_i >= CLUSTER_MAX){
+        break;
+      }
+    }
+
     sensor_msgs::msg::PointCloud2 sensor_msg;
-    pcl::toROSMsg(*cloud_filtered, sensor_msg);
+    cloud_output->header.frame_id = cloud->header.frame_id;
+    pcl::toROSMsg(*cloud_output, sensor_msg);
     publisher_->publish(sensor_msg);
   }
 };
