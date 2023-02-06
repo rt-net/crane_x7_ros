@@ -92,10 +92,16 @@ private:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::fromROSMsg(cloud_transformed, *cloud);
 
-    // Z軸方向に0.5m以上離れている点群をフィルタリング
+    // X軸方向の0.05~0.5m内の点群を使用
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PassThrough<pcl::PointXYZRGB> pass;
     pass.setInputCloud(cloud);
+    pass.setFilterFieldName("x");
+    pass.setFilterLimits(0.05, 0.5);
+    pass.filter(*cloud_filtered);
+
+    // Z軸方向の0.03~0.5m内の点群を使用
+    pass.setInputCloud(cloud_filtered);
     pass.setFilterFieldName("z");
     pass.setFilterLimits(0.03, 0.5);
     pass.filter(*cloud_filtered);
@@ -103,7 +109,7 @@ private:
     // Voxel gridでダウンサンプリング
     pcl::VoxelGrid<pcl::PointXYZRGB> sor;
     sor.setInputCloud(cloud_filtered);
-    sor.setLeafSize(0.01f, 0.01f, 0.01f);
+    sor.setLeafSize(0.005f, 0.005f, 0.005f);
     sor.filter(*cloud_filtered);
 
     sensor_msgs::msg::PointCloud2 sensor_msg;
