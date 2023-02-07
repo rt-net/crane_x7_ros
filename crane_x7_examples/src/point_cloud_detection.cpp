@@ -16,6 +16,8 @@
 // https://docs.ros.org/en/humble/Tutorials/Intermediate/Tf2/Writing-A-Tf2-Broadcaster-Cpp.html
 // https://pcl.readthedocs.io/projects/tutorials/en/master/passthrough.html
 // https://pcl.readthedocs.io/projects/tutorials/en/master/voxel_grid.html
+// https://pcl.readthedocs.io/projects/tutorials/en/master/planar_segmentation.html
+// https://pcl.readthedocs.io/projects/tutorials/en/master/extract_indices.html
 // https://pcl.readthedocs.io/projects/tutorials/en/master/cluster_extraction.html
 //
 
@@ -28,6 +30,7 @@
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "sensor_msgs/msg/point_cloud2.hpp"
 #include "pcl/common/common.h"
+#include "pcl/filters/extract_indices.h"
 #include "pcl/filters/passthrough.h"
 #include "pcl/filters/voxel_grid.h"
 #include "pcl/io/pcd_io.h"
@@ -106,10 +109,13 @@ private:
     pass.filter(*cloud_filtered);
 
     // Z軸方向0.03~0.5m以外の点群を削除
+    // 平面検出に失敗する場合はこちらを使用してください
+    /*
     pass.setInputCloud(cloud_filtered);
     pass.setFilterFieldName("z");
     pass.setFilterLimits(0.03, 0.5);
     pass.filter(*cloud_filtered);
+    */
 
     // Voxel gridで点群を間引く(ダウンサンプリング)
     pcl::VoxelGrid<pcl::PointXYZRGB> sor;
@@ -121,6 +127,30 @@ private:
     if (cloud_filtered->size() <= 0) {
       return;
     }
+
+    // 平面検出
+    pcl::ModelCoefficients::Ptr coefficients(new pcl::ModelCoefficients);
+    pcl::PointIndices::Ptr inliers(new pcl::PointIndices);
+    pcl::SACSegmentation<pcl::PointXYZRGB> seg;
+    seg.setOptimizeCoefficients(true);
+    seg.setModelType(pcl::SACMODEL_PLANE);
+    seg.setMethodType(pcl::SAC_RANSAC);
+    seg.setDistanceThreshold(0.01);
+    seg.setInputCloud(cloud_filtered);
+    seg.segment(*inliers, *coefficients);
+
+    // 平面検出に失敗した場合は物体認識をスキップする
+    if (inliers->indices.size() == 0) {
+      RCLCPP_INFO(this->get_logger(), "Could not estimate a planar model for the given dataset.");
+      return;
+    }
+
+    // 検出した平面を削除
+    pcl::ExtractIndices<pcl::PointXYZRGB> extract;
+    extract.setInputCloud(cloud_filtered);
+    extract.setIndices(inliers);
+    extract.setNegative(true);
+    extract.filter(*cloud_filtered);
 
     // KdTreeを用いて点群を物体ごとに分類(クラスタリング)する
     pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZRGB>());
