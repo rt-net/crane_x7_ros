@@ -180,16 +180,16 @@ private:
     control_arm(target_position.x(), target_position.y(), 0.2, -180, 0, 90);
 
     // 移動する
-    control_arm(0.2, 0.2, 0.2, -180, 0, 90);
+    control_arm(0.1, 0.2, 0.2, -180, 0, 90);
 
     // 下ろす
-    control_arm(0.2, 0.2, 0.13, -180, 0, 90);
+    control_arm(0.1, 0.2, 0.13, -180, 0, 90);
 
     // ハンドを開く
     control_gripper(GRIPPER_OPEN);
 
     // 少しだけハンドを持ち上げる
-    control_arm(0.2, 0.2, 0.2, -180, 0, 90);
+    control_arm(0.1, 0.2, 0.2, -180, 0, 90);
 
     // 初期姿勢に戻る
     // control_arm(0.15, 0.0, 0.3, -180, 0, 90);
