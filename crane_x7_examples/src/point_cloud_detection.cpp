@@ -16,6 +16,7 @@
 // https://docs.ros.org/en/humble/Tutorials/Intermediate/Tf2/Writing-A-Tf2-Broadcaster-Cpp.html
 // https://pcl.readthedocs.io/projects/tutorials/en/master/passthrough.html
 // https://pcl.readthedocs.io/projects/tutorials/en/master/voxel_grid.html
+// https://pcl.readthedocs.io/projects/tutorials/en/master/cluster_extraction.html
 //
 
 #include <cmath>
@@ -170,6 +171,7 @@ private:
       cloud_cluster->height = 1;
       // 無効なpointがないのでis_denseはtrue
       cloud_cluster->is_dense = true;
+      // 配信用の点群に追加
       *cloud_output += *cloud_cluster;
 
       // tfの配信
@@ -183,7 +185,6 @@ private:
       t.transform.translation.x = (max_point.x + min_point.x) * 0.5;
       t.transform.translation.y = (max_point.y + min_point.y) * 0.5;
       t.transform.translation.z = (max_point.z + min_point.z) * 0.5;
-      tf2::Quaternion q;
       t.transform.rotation.x = 0.0;
       t.transform.rotation.y = 0.0;
       t.transform.rotation.z = 0.0;
