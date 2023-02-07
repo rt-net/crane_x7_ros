@@ -16,7 +16,7 @@
 // https://docs.ros.org/en/humble/Tutorials/Intermediate/Tf2/Writing-A-Tf2-Broadcaster-Cpp.html
 // https://pcl.readthedocs.io/projects/tutorials/en/master/passthrough.html
 // https://pcl.readthedocs.io/projects/tutorials/en/master/voxel_grid.html
-// 
+//
 
 #include <cmath>
 #include <memory>
@@ -26,23 +26,22 @@
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "sensor_msgs/msg/point_cloud2.hpp"
+#include "pcl/common/common.h"
+#include "pcl/filters/passthrough.h"
+#include "pcl/filters/voxel_grid.h"
+#include "pcl/io/pcd_io.h"
+#include "pcl/kdtree/kdtree.h"
+#include "pcl/point_cloud.h"
+#include "pcl/point_types.h"
+#include "pcl/segmentation/extract_clusters.h"
+#include "pcl/segmentation/sac_segmentation.h"
+#include "pcl_conversions/pcl_conversions.h"
+#include "pcl_ros/transforms.hpp"
 #include "tf2/LinearMath/Quaternion.h"
 #include "tf2/LinearMath/Matrix3x3.h"
 #include "tf2_ros/transform_broadcaster.h"
 #include "tf2_ros/transform_listener.h"
 #include "tf2_ros/buffer.h"
-#include "pcl/point_cloud.h"
-#include "pcl/point_types.h"
-#include "pcl/common/common.h"
-#include "pcl/io/pcd_io.h"
-#include "pcl_conversions/pcl_conversions.h"
-#include "pcl/filters/passthrough.h"
-#include "pcl/filters/voxel_grid.h"
-#include "pcl/kdtree/kdtree.h"
-#include "pcl/segmentation/sac_segmentation.h"
-#include "pcl_ros/transforms.hpp"
-
-#include <pcl/segmentation/extract_clusters.h>
 
 class PointCloudSubscriber : public rclcpp::Node
 {
@@ -55,8 +54,7 @@ public:
       10,
       std::bind(&PointCloudSubscriber::point_cloud_callback, this, std::placeholders::_1));
 
-    using namespace std::chrono_literals;
-    publisher_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("/pcl_data", 10);
+    publisher_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("/classified_points", 10);
 
     tf_broadcaster_ =
       std::make_unique<tf2_ros::TransformBroadcaster>(*this);
@@ -76,7 +74,7 @@ private:
 
   void point_cloud_callback(const sensor_msgs::msg::PointCloud2::SharedPtr msg)
   {
-    // カメラ座標系における点群の位置姿勢をロボット座標系に変換
+    // カメラ座標系における点群をロボット座標系に変換
     geometry_msgs::msg::TransformStamped tf_msg;
 
     try {
@@ -97,33 +95,34 @@ private:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::fromROSMsg(cloud_transformed, *cloud);
 
-    // X軸方向の0.05~0.5m内の点群を使用
+    // 取得した点群すべてを認識対象にすると処理が重いため前処理(取得範囲の制限や間引き)を行う
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZRGB>);
+    // X軸方向0.05~0.5m以外の点群を削除
     pcl::PassThrough<pcl::PointXYZRGB> pass;
     pass.setInputCloud(cloud);
     pass.setFilterFieldName("x");
     pass.setFilterLimits(0.05, 0.4);
     pass.filter(*cloud_filtered);
 
-    // Z軸方向の0.03~0.5m内の点群を使用
+    // Z軸方向0.03~0.5m以外の点群を削除
     pass.setInputCloud(cloud_filtered);
     pass.setFilterFieldName("z");
     pass.setFilterLimits(0.03, 0.5);
     pass.filter(*cloud_filtered);
 
-    // Voxel gridでダウンサンプリング
+    // Voxel gridで点群を間引く(ダウンサンプリング)
     pcl::VoxelGrid<pcl::PointXYZRGB> sor;
     sor.setInputCloud(cloud_filtered);
     sor.setLeafSize(0.01f, 0.01f, 0.01f);
     sor.filter(*cloud_filtered);
 
     // 点群がない場合は物体認識処理をスキップする
-    if(cloud_filtered->size() <= 0){
+    if (cloud_filtered->size() <= 0) {
       return;
     }
 
     // KdTreeを用いて点群を物体ごとに分類(クラスタリング)する
-    pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGB>());
+    pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZRGB>());
     tree->setInputCloud(cloud_filtered);
 
     std::vector<pcl::PointIndices> cluster_indices;
@@ -136,24 +135,25 @@ private:
     ec.extract(cluster_indices);
 
     // クラスタリングした点群ごとに異なる色をつける
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_output (new pcl::PointCloud<pcl::PointXYZRGB>());
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_output(new pcl::PointCloud<pcl::PointXYZRGB>());
     int cluster_i = 0;
-    enum COLOR_RGB{
-      RED=0,
+    enum COLOR_RGB
+    {
+      RED = 0,
       GREEN,
       BLUE,
       COLOR_MAX
     };
     const int CLUSTER_MAX = 10;
     const int CLUSTER_COLOR[CLUSTER_MAX][COLOR_MAX] = {
-      {230, 0, 18},{243, 152, 18}, {255, 251, 0},
-      {143, 195, 31},{0, 153, 68}, {0, 158, 150},
-      {0, 160, 233},{0, 104, 183}, {29, 32, 136},
+      {230, 0, 18}, {243, 152, 18}, {255, 251, 0},
+      {143, 195, 31}, {0, 153, 68}, {0, 158, 150},
+      {0, 160, 233}, {0, 104, 183}, {29, 32, 136},
       {146, 7, 131}
     };
 
     for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin();
-      it != cluster_indices.end() ; ++it)
+      it != cluster_indices.end(); ++it)
     {
       pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_cluster(new pcl::PointCloud<pcl::PointXYZRGB>());
       // 点群の色を変更
@@ -190,12 +190,14 @@ private:
       t.transform.rotation.w = 1.0;
       tf_broadcaster_->sendTransform(t);
 
+      // 設定した最大クラスタ数を超えたら処理を終える
       cluster_i++;
-      if(cluster_i >= CLUSTER_MAX){
+      if (cluster_i >= CLUSTER_MAX) {
         break;
       }
     }
 
+    // クラスタリングした点群を配信する
     sensor_msgs::msg::PointCloud2 sensor_msg;
     cloud_output->header.frame_id = cloud->header.frame_id;
     pcl::toROSMsg(*cloud_output, sensor_msg);
