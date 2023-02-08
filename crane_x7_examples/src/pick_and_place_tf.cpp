@@ -102,7 +102,7 @@ public:
 private:
   void on_timer()
   {
-    // ID 0のマーカ位置姿勢を取得
+    // target_0のtf位置姿勢を取得
     geometry_msgs::msg::TransformStamped tf_msg;
 
     try {
