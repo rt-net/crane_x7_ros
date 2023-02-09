@@ -28,6 +28,7 @@
     - [aruco\_detection](#aruco_detection)
       - [Videos](#videos-5)
     - [point\_cloud\_detection](#point_cloud_detection)
+      - [Videos](#videos-6)
 
 ## 準備（実機を使う場合）
 
@@ -272,5 +273,8 @@ tfの`frame_id`は認識された順に`target_0`、`target_1`、`target_2`…�
 ```sh
 ros2 launch crane_x7_examples camera_example.launch.py example:='point_cloud_detection'
 ```
+
+#### Videos
+[![crane_x7_point_cloud_detection_demo](http://img.youtube.com/vi/crxUa9NoBRo/hqdefault.jpg)](https://youtu.be/crxUa9NoBRo)
 
 [back to camera example list](#camera-examples)
