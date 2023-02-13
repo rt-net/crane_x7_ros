@@ -29,6 +29,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "sensor_msgs/msg/point_cloud2.hpp"
+#include "pcl/common/centroid.h"
 #include "pcl/common/common.h"
 #include "pcl/filters/extract_indices.h"
 #include "pcl/filters/passthrough.h"
@@ -205,15 +206,15 @@ private:
       *cloud_output += *cloud_cluster;
 
       // tfの配信
-      // 点群位置の最大値、最小値を平均したものを物体位置として配信する
-      pcl::PointXYZRGB min_point, max_point;
-      pcl::getMinMax3D(*cloud_cluster, min_point, max_point);
+      // 点群の重心位置を物体位置として配信する
+      Eigen::Vector4f cluster_centroid;
+      pcl::compute3DCentroid(*cloud_cluster, cluster_centroid);
       geometry_msgs::msg::TransformStamped t;
       t.header = cloud_transformed.header;
       t.child_frame_id = "target_" + std::to_string(cluster_i);
-      t.transform.translation.x = (max_point.x + min_point.x) * 0.5;
-      t.transform.translation.y = (max_point.y + min_point.y) * 0.5;
-      t.transform.translation.z = (max_point.z + min_point.z) * 0.5;
+      t.transform.translation.x = cluster_centroid.x();
+      t.transform.translation.y = cluster_centroid.y();
+      t.transform.translation.z = cluster_centroid.z();
       t.transform.rotation.x = 0.0;
       t.transform.rotation.y = 0.0;
       t.transform.rotation.z = 0.0;
