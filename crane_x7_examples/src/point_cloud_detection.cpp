@@ -209,8 +209,7 @@ private:
       pcl::PointXYZRGB min_point, max_point;
       pcl::getMinMax3D(*cloud_cluster, min_point, max_point);
       geometry_msgs::msg::TransformStamped t;
-      t.header.stamp = this->get_clock()->now();
-      t.header.frame_id = cloud->header.frame_id;
+      t.header = cloud_transformed.header;
       t.child_frame_id = "target_" + std::to_string(cluster_i);
       t.transform.translation.x = (max_point.x + min_point.x) * 0.5;
       t.transform.translation.y = (max_point.y + min_point.y) * 0.5;
@@ -230,7 +229,7 @@ private:
 
     // クラスタリングした点群を配信する
     sensor_msgs::msg::PointCloud2 sensor_msg;
-    cloud_output->header.frame_id = cloud->header.frame_id;
+    cloud_output->header = cloud->header;
     pcl::toROSMsg(*cloud_output, sensor_msg);
     publisher_->publish(sensor_msg);
   }
