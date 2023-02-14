@@ -110,13 +110,11 @@ private:
     pass.filter(*cloud_filtered);
 
     // Z軸方向0.03~0.5m以外の点群を削除
-    // 平面検出に失敗する場合はこちらを使用してください
-    /*
+    // 物体が乗っている平面の点群を削除します
     pass.setInputCloud(cloud_filtered);
     pass.setFilterFieldName("z");
     pass.setFilterLimits(0.03, 0.5);
     pass.filter(*cloud_filtered);
-    */
 
     // Voxel gridで点群を間引く(ダウンサンプリング)
     pcl::VoxelGrid<pcl::PointXYZRGB> sor;
@@ -130,6 +128,9 @@ private:
     }
 
     // 平面検出
+    // 物体がアームと別の高さの平面に置かれている場合など、
+    // Z軸方向のフィルタリングで不要な点群が除去できない場合に使用してみてください
+    /*
     pcl::ModelCoefficients::Ptr coefficients(new pcl::ModelCoefficients);
     pcl::PointIndices::Ptr inliers(new pcl::PointIndices);
     pcl::SACSegmentation<pcl::PointXYZRGB> seg;
@@ -152,6 +153,7 @@ private:
     extract.setIndices(inliers);
     extract.setNegative(true);
     extract.filter(*cloud_filtered);
+    */
 
     // KdTreeを用いて点群を物体ごとに分類(クラスタリング)する
     pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZRGB>());
