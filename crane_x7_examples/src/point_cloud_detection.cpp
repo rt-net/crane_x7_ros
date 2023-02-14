@@ -97,11 +97,11 @@ private:
     pcl_ros::transformPointCloud("base_link", tf_msg, *msg, cloud_transformed);
 
     // ROSメッセージの点群フォーマットからPCLのフォーマットに変換
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
+    auto cloud = std::make_shared<pcl::PointCloud<pcl::PointXYZRGB>>();
     pcl::fromROSMsg(cloud_transformed, *cloud);
 
     // 取得した点群すべてを認識対象にすると処理が重いため前処理(取得範囲の制限や間引き)を行う
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZRGB>);
+    auto cloud_filtered = std::make_shared<pcl::PointCloud<pcl::PointXYZRGB>>();
     // X軸方向0.05~0.5m以外の点群を削除
     pcl::PassThrough<pcl::PointXYZRGB> pass;
     pass.setInputCloud(cloud);
@@ -131,8 +131,8 @@ private:
     // 物体がアームと別の高さの平面に置かれている場合など、
     // Z軸方向のフィルタリングで不要な点群が除去できない場合に使用してみてください
     /*
-    pcl::ModelCoefficients::Ptr coefficients(new pcl::ModelCoefficients);
-    pcl::PointIndices::Ptr inliers(new pcl::PointIndices);
+    auto coefficients = std::make_shared<pcl::ModelCoefficients>();
+    auto inliers = std::make_shared<pcl::PointIndices>();
     pcl::SACSegmentation<pcl::PointXYZRGB> seg;
     seg.setOptimizeCoefficients(true);
     seg.setModelType(pcl::SACMODEL_PLANE);
@@ -156,7 +156,7 @@ private:
     */
 
     // KdTreeを用いて点群を物体ごとに分類(クラスタリング)する
-    pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZRGB>());
+    auto tree = std::make_shared<pcl::search::KdTree<pcl::PointXYZRGB>>();
     tree->setInputCloud(cloud_filtered);
 
     std::vector<pcl::PointIndices> cluster_indices;
@@ -169,7 +169,7 @@ private:
     ec.extract(cluster_indices);
 
     // クラスタリングした点群ごとに異なる色をつける
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_output(new pcl::PointCloud<pcl::PointXYZRGB>());
+    auto cloud_output = std::make_shared<pcl::PointCloud<pcl::PointXYZRGB>>();
     int cluster_i = 0;
     enum COLOR_RGB
     {
@@ -189,7 +189,7 @@ private:
     for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin();
       it != cluster_indices.end(); ++it)
     {
-      pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_cluster(new pcl::PointCloud<pcl::PointXYZRGB>());
+      auto cloud_cluster = std::make_shared<pcl::PointCloud<pcl::PointXYZRGB>>();
       // 点群の色を変更
       for (std::vector<int>::const_iterator pit = it->indices.begin();
         pit != it->indices.end(); ++pit)
