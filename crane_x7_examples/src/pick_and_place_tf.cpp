@@ -124,6 +124,7 @@ private:
     tf2::convert(tf_msg, tf);
     const auto TF_ELAPSED_TIME = now.nanoseconds() - tf.stamp_.time_since_epoch().count();
     const auto TF_STOP_TIME = now.nanoseconds() - tf_past_.stamp_.time_since_epoch().count();
+    const float target_z_min_limit = 0.04;
 
     // 現在時刻から2秒以内に受け取ったtfを使用
     if (TF_ELAPSED_TIME < FILTERING_TIME.count()) {
@@ -132,6 +133,10 @@ private:
       if (tf_diff < DISTANCE_THRESHOLD) {
         // 把持対象が3秒以上停止している場合ピッキング動作開始
         if (TF_STOP_TIME > STOP_TIME_THRESHOLD.count()) {
+          // 把持対象が低すぎる場合は把持位置を調整
+          if (tf.getOrigin().z() < target_z_min_limit) {
+            tf.getOrigin().setZ(target_z_min_limit);
+          }
           picking(tf.getOrigin());
         }
       } else {
@@ -165,19 +170,19 @@ private:
     control_gripper(GRIPPER_DEFAULT);
 
     // 掴む準備をする
-    control_arm(target_position.x(), target_position.y(), 0.2, -180, 0, 90);
+    control_arm(target_position.x(), target_position.y(), target_position.z() + 0.12, -180, 0, 90);
 
     // ハンドを開く
     control_gripper(GRIPPER_OPEN);
 
     // 掴みに行く
-    control_arm(target_position.x(), target_position.y(), 0.13, -180, 0, 90);
+    control_arm(target_position.x(), target_position.y(), target_position.z() + 0.07, -180, 0, 90);
 
     // ハンドを閉じる
     control_gripper(GRIPPER_CLOSE);
 
     // 持ち上げる
-    control_arm(target_position.x(), target_position.y(), 0.2, -180, 0, 90);
+    control_arm(target_position.x(), target_position.y(), target_position.z() + 0.12, -180, 0, 90);
 
     // 移動する
     control_arm(0.1, 0.2, 0.2, -180, 0, 90);
