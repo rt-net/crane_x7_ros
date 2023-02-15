@@ -224,8 +224,9 @@ CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 
 ## Camera Examples
 
-[RealSense D435マウンタ](https://github.com/rt-net/crane_x7_Hardware/blob/master/3d_print_parts/v1.0/CRANE-X7_HandA_RealSenseD435マウンタ.stl)を搭載したモデルのカメラを使用したサンプルコードです。
-[「RealSense D435マウンタ搭載モデルを使用する場合」](#realsense-d435マウンタ搭載モデルを使用する場合)の手順で`demo.launch`を実行している状態で各サンプルを実行できます。
+[RealSense D435マウンタ](https://github.com/rt-net/crane_x7_Hardware/blob/master/3d_print_parts/v1.0/CRANE-X7_HandA_RealSenseD435マウンタ.stl)搭載モデルのカメラを使用したサンプルコードです。
+
+[「RealSense D435マウンタ搭載モデルを使用する場合」](#realsense-d435マウンタ搭載モデルを使用する場合)の手順に従って`demo.launch`を実行している状態で各サンプルを実行できます。
 
 - [aruco\_detection](#aruco_detection)
 - [point\_cloud\_detection](#point_cloud_detection)
@@ -275,6 +276,6 @@ ros2 launch crane_x7_examples camera_example.launch.py example:='point_cloud_det
 ```
 
 #### Videos
-[![crane_x7_point_cloud_detection_demo](http://img.youtube.com/vi/crxUa9NoBRo/hqdefault.jpg)](https://youtu.be/crxUa9NoBRo)
+[![crane_x7_point_cloud_detection_demo](http://img.youtube.com/vi/RgAjxH0CAuk/hqdefault.jpg)](https://youtu.be/RgAjxH0CAuk)
 
 [back to camera example list](#camera-examples)
