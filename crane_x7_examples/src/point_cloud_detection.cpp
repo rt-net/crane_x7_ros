@@ -100,37 +100,68 @@ private:
     auto cloud = std::make_shared<pcl::PointCloud<pcl::PointXYZRGB>>();
     pcl::fromROSMsg(cloud_transformed, *cloud);
 
-    // 取得した点群すべてを認識対象にすると処理が重いため前処理(取得範囲の制限や間引き)を行う
-    auto cloud_filtered = std::make_shared<pcl::PointCloud<pcl::PointXYZRGB>>();
+    // 物体認識の前処理として点群の取得範囲の制限と間引きを行う
+    // フィルタリング後に点群がない場合は認識処理をスキップする
+    if (preprocessing(cloud) == false) {
+      return;
+    }
+
+    // 平面除去
+    // 平面検知ができない場合は認識処理をスキップする
+    // 物体がアームと別の高さの平面に置かれている場合など、
+    // Z軸方向のフィルタリングで不要な点群が除去できない場合に使用してみてください
+    /*
+    if (plane_extraction(cloud) == false) {
+      return;
+    }
+    */
+
+    // KdTreeを用いて点群を物体ごとに分類(クラスタリング)する
+    auto cluster_indices = clustering(cloud);
+
+    // クラスタごとに色分けし、クラスタ位置をtfで配信する
+    auto cloud_output = std::make_shared<pcl::PointCloud<pcl::PointXYZRGB>>();
+    broadcast_cluster_position(cloud, cloud_output, cluster_indices, cloud_transformed.header);
+
+    // クラスタリングした点群を配信する
+    sensor_msgs::msg::PointCloud2 sensor_msg;
+    cloud_output->header = cloud->header;
+    pcl::toROSMsg(*cloud_output, sensor_msg);
+    publisher_->publish(sensor_msg);
+  }
+
+  bool preprocessing(std::shared_ptr<pcl::PointCloud<pcl::PointXYZRGB>> & cloud)
+  {
     // X軸方向0.05~0.5m以外の点群を削除
     pcl::PassThrough<pcl::PointXYZRGB> pass;
     pass.setInputCloud(cloud);
     pass.setFilterFieldName("x");
     pass.setFilterLimits(0.05, 0.4);
-    pass.filter(*cloud_filtered);
+    pass.filter(*cloud);
 
     // Z軸方向0.03~0.5m以外の点群を削除
     // 物体が乗っている平面の点群を削除します
-    pass.setInputCloud(cloud_filtered);
+    pass.setInputCloud(cloud);
     pass.setFilterFieldName("z");
     pass.setFilterLimits(0.03, 0.5);
-    pass.filter(*cloud_filtered);
+    pass.filter(*cloud);
 
     // Voxel gridで点群を間引く(ダウンサンプリング)
     pcl::VoxelGrid<pcl::PointXYZRGB> sor;
-    sor.setInputCloud(cloud_filtered);
+    sor.setInputCloud(cloud);
     sor.setLeafSize(0.01f, 0.01f, 0.01f);
-    sor.filter(*cloud_filtered);
+    sor.filter(*cloud);
 
-    // 点群がない場合は物体認識処理をスキップする
-    if (cloud_filtered->size() <= 0) {
-      return;
+    // フィルタリング後に点群がない場合はfalseを返す
+    if (cloud->size() <= 0) {
+      return false;
+    } else {
+      return true;
     }
+  }
 
-    // 平面検出
-    // 物体がアームと別の高さの平面に置かれている場合など、
-    // Z軸方向のフィルタリングで不要な点群が除去できない場合に使用してみてください
-    /*
+  bool plane_extraction(std::shared_ptr<pcl::PointCloud<pcl::PointXYZRGB>> & cloud)
+  {
     auto coefficients = std::make_shared<pcl::ModelCoefficients>();
     auto inliers = std::make_shared<pcl::PointIndices>();
     pcl::SACSegmentation<pcl::PointXYZRGB> seg;
@@ -138,26 +169,29 @@ private:
     seg.setModelType(pcl::SACMODEL_PLANE);
     seg.setMethodType(pcl::SAC_RANSAC);
     seg.setDistanceThreshold(0.01);
-    seg.setInputCloud(cloud_filtered);
+    seg.setInputCloud(cloud);
     seg.segment(*inliers, *coefficients);
 
-    // 平面検出に失敗した場合は物体認識をスキップする
+    // 平面が検出できなかった場合
     if (inliers->indices.size() == 0) {
       RCLCPP_INFO(this->get_logger(), "Could not estimate a planar model for the given dataset.");
-      return;
+      return false;
     }
 
     // 検出した平面を削除
     pcl::ExtractIndices<pcl::PointXYZRGB> extract;
-    extract.setInputCloud(cloud_filtered);
+    extract.setInputCloud(cloud);
     extract.setIndices(inliers);
     extract.setNegative(true);
-    extract.filter(*cloud_filtered);
-    */
+    extract.filter(*cloud);
+    return true;
+  }
 
-    // KdTreeを用いて点群を物体ごとに分類(クラスタリング)する
+  std::vector<pcl::PointIndices> clustering(
+    std::shared_ptr<pcl::PointCloud<pcl::PointXYZRGB>> & cloud)
+  {
     auto tree = std::make_shared<pcl::search::KdTree<pcl::PointXYZRGB>>();
-    tree->setInputCloud(cloud_filtered);
+    tree->setInputCloud(cloud);
 
     std::vector<pcl::PointIndices> cluster_indices;
     pcl::EuclideanClusterExtraction<pcl::PointXYZRGB> ec;
@@ -165,11 +199,17 @@ private:
     ec.setMinClusterSize(10);
     ec.setMaxClusterSize(250);
     ec.setSearchMethod(tree);
-    ec.setInputCloud(cloud_filtered);
+    ec.setInputCloud(cloud);
     ec.extract(cluster_indices);
+    return cluster_indices;
+  }
 
-    // クラスタリングした点群ごとに異なる色をつける
-    auto cloud_output = std::make_shared<pcl::PointCloud<pcl::PointXYZRGB>>();
+  void broadcast_cluster_position(
+    std::shared_ptr<pcl::PointCloud<pcl::PointXYZRGB>> & cloud_input,
+    std::shared_ptr<pcl::PointCloud<pcl::PointXYZRGB>> & cloud_output,
+    std::vector<pcl::PointIndices> & cluster_indices,
+    std_msgs::msg::Header & tf_header)
+  {
     int cluster_i = 0;
     enum COLOR_RGB
     {
@@ -194,12 +234,12 @@ private:
       for (std::vector<int>::const_iterator pit = it->indices.begin();
         pit != it->indices.end(); ++pit)
       {
-        cloud_filtered->points[*pit].r = CLUSTER_COLOR[cluster_i][RED];
-        cloud_filtered->points[*pit].g = CLUSTER_COLOR[cluster_i][GREEN];
-        cloud_filtered->points[*pit].b = CLUSTER_COLOR[cluster_i][BLUE];
-        cloud_cluster->points.push_back(cloud_filtered->points[*pit]);
+        cloud_input->points[*pit].r = CLUSTER_COLOR[cluster_i][RED];
+        cloud_input->points[*pit].g = CLUSTER_COLOR[cluster_i][GREEN];
+        cloud_input->points[*pit].b = CLUSTER_COLOR[cluster_i][BLUE];
+        cloud_cluster->points.push_back(cloud_input->points[*pit]);
       }
-      // 点群サイズの入力
+      // 点群数の入力
       cloud_cluster->width = cloud_cluster->points.size();
       cloud_cluster->height = 1;
       // 無効なpointがないのでis_denseはtrue
@@ -212,7 +252,7 @@ private:
       Eigen::Vector4f cluster_centroid;
       pcl::compute3DCentroid(*cloud_cluster, cluster_centroid);
       geometry_msgs::msg::TransformStamped t;
-      t.header = cloud_transformed.header;
+      t.header = tf_header;
       t.child_frame_id = "target_" + std::to_string(cluster_i);
       t.transform.translation.x = cluster_centroid.x();
       t.transform.translation.y = cluster_centroid.y();
@@ -229,12 +269,6 @@ private:
         break;
       }
     }
-
-    // クラスタリングした点群を配信する
-    sensor_msgs::msg::PointCloud2 sensor_msg;
-    cloud_output->header = cloud->header;
-    pcl::toROSMsg(*cloud_output, sensor_msg);
-    publisher_->publish(sensor_msg);
   }
 };
 
