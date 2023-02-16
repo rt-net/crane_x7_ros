@@ -134,8 +134,8 @@ private:
         // 把持対象が3秒以上停止している場合ピッキング動作開始
         if (TF_STOP_TIME > STOP_TIME_THRESHOLD.count()) {
           // 把持対象が低すぎる場合は把持位置を調整
-          if (tf.getOrigin().z() < target_z_min_limit) {
-            tf.getOrigin().setZ(target_z_min_limit);
+          if (tf.getOrigin().z() < TARGET_Z_MIN_LIMIT) {
+            tf.getOrigin().setZ(TARGET_Z_MIN_LIMIT);
           }
           picking(tf.getOrigin());
         }
