@@ -154,6 +154,7 @@ private:
 
     // フィルタリング後に点群がない場合はfalseを返す
     if (cloud->size() <= 0) {
+      RCLCPP_INFO(this->get_logger(), "No point cloud in the detection area.");
       return false;
     } else {
       return true;
@@ -226,12 +227,10 @@ private:
       {146, 7, 131}
     };
 
-    for (const auto & point_indices : cluster_indices)
-    {
+    for (const auto & point_indices : cluster_indices) {
       auto cloud_cluster = std::make_shared<pcl::PointCloud<pcl::PointXYZRGB>>();
       // 点群の色を変更
-      for (const auto & point_i : point_indices.indices)
-      {
+      for (const auto & point_i : point_indices.indices) {
         cloud_input->points[point_i].r = CLUSTER_COLOR[cluster_i][RED];
         cloud_input->points[point_i].g = CLUSTER_COLOR[cluster_i][GREEN];
         cloud_input->points[point_i].b = CLUSTER_COLOR[cluster_i][BLUE];
