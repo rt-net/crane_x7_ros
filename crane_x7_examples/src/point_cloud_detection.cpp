@@ -136,7 +136,7 @@ private:
     pcl::PassThrough<pcl::PointXYZRGB> pass;
     pass.setInputCloud(cloud);
     pass.setFilterFieldName("x");
-    pass.setFilterLimits(0.05, 0.4);
+    pass.setFilterLimits(0.05, 0.5);
     pass.filter(*cloud);
 
     // Z軸方向0.03~0.5m以外の点群を削除
