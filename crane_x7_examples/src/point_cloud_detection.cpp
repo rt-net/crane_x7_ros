@@ -226,8 +226,7 @@ private:
       {146, 7, 131}
     };
 
-    for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin();
-      it != cluster_indices.end(); ++it)
+    for (const auto & point_indices : cluster_indices)
     {
       auto cloud_cluster = std::make_shared<pcl::PointCloud<pcl::PointXYZRGB>>();
       // 点群の色を変更
