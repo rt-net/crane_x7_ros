@@ -230,13 +230,12 @@ private:
     {
       auto cloud_cluster = std::make_shared<pcl::PointCloud<pcl::PointXYZRGB>>();
       // 点群の色を変更
-      for (std::vector<int>::const_iterator pit = it->indices.begin();
-        pit != it->indices.end(); ++pit)
+      for (const auto & point_i : point_indices.indices)
       {
-        cloud_input->points[*pit].r = CLUSTER_COLOR[cluster_i][RED];
-        cloud_input->points[*pit].g = CLUSTER_COLOR[cluster_i][GREEN];
-        cloud_input->points[*pit].b = CLUSTER_COLOR[cluster_i][BLUE];
-        cloud_cluster->points.push_back(cloud_input->points[*pit]);
+        cloud_input->points[point_i].r = CLUSTER_COLOR[cluster_i][RED];
+        cloud_input->points[point_i].g = CLUSTER_COLOR[cluster_i][GREEN];
+        cloud_input->points[point_i].b = CLUSTER_COLOR[cluster_i][BLUE];
+        cloud_cluster->points.push_back(cloud_input->points[point_i]);
       }
       // 点群数の入力
       cloud_cluster->width = cloud_cluster->points.size();
