@@ -119,7 +119,7 @@ private:
     rclcpp::Time now = this->get_clock()->now();
     const std::chrono::nanoseconds FILTERING_TIME = 2s;
     const std::chrono::nanoseconds STOP_TIME_THRESHOLD = 3s;
-    const float DISTANCE_THRESHOLD = 0.01;
+    const double DISTANCE_THRESHOLD = 0.01;
     tf2::Stamped<tf2::Transform> tf;
     tf2::convert(tf_msg, tf);
     const auto TF_ELAPSED_TIME = now.nanoseconds() - tf.stamp_.time_since_epoch().count();
