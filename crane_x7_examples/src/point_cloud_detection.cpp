@@ -173,7 +173,7 @@ private:
     seg.segment(*inliers, *coefficients);
 
     // 平面が検出できなかった場合
-    if (inliers->indices.size() == 0) {
+    if (inliers->indices.size() <= 0) {
       RCLCPP_INFO(this->get_logger(), "Could not estimate a planar model for the given dataset.");
       return false;
     }
