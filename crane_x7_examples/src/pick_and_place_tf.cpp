@@ -124,7 +124,7 @@ private:
     tf2::convert(tf_msg, tf);
     const auto TF_ELAPSED_TIME = now.nanoseconds() - tf.stamp_.time_since_epoch().count();
     const auto TF_STOP_TIME = now.nanoseconds() - tf_past_.stamp_.time_since_epoch().count();
-    const float target_z_min_limit = 0.04;
+    const double TARGET_Z_MIN_LIMIT = 0.04;
 
     // 現在時刻から2秒以内に受け取ったtfを使用
     if (TF_ELAPSED_TIME < FILTERING_TIME.count()) {
