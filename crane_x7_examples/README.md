@@ -24,9 +24,11 @@
       - [Videos](#videos-3)
     - [pick\_and\_place](#pick_and_place)
       - [Videos](#videos-4)
+  - [Camera Examples](#camera-examples)
     - [aruco\_detection](#aruco_detection)
-      - [実行手順](#実行手順)
       - [Videos](#videos-5)
+    - [point\_cloud\_detection](#point_cloud_detection)
+      - [Videos](#videos-6)
 
 ## 準備（実機を使う場合）
 
@@ -105,7 +107,7 @@ ros2 launch crane_x7_examples example.launch.py example:='gripper_control' use_s
 - [cartesian_path](#cartesian_path)
 - [pick_and_place](#pick_and_place)
 
-実行できるサンプルの一覧は、`examples.launch.py`にオプション`-s`を付けて実行することで表示できます。
+実行できるサンプルの一覧は、`example.launch.py`にオプション`-s`を付けて実行することで表示できます。
 
 ```sh
 $ ros2 launch crane_x7_examples example.launch.py -s
@@ -220,25 +222,60 @@ CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 
 [back to example list](#examples)
 
----
+## Camera Examples
+
+[RealSense D435マウンタ](https://github.com/rt-net/crane_x7_Hardware/blob/master/3d_print_parts/v1.0/CRANE-X7_HandA_RealSenseD435マウンタ.stl)搭載モデルのカメラを使用したサンプルコードです。
+
+[「RealSense D435マウンタ搭載モデルを使用する場合」](#realsense-d435マウンタ搭載モデルを使用する場合)の手順に従って`demo.launch`を実行している状態で各サンプルを実行できます。
+
+- [aruco\_detection](#aruco_detection)
+- [point\_cloud\_detection](#point_cloud_detection)
+
+実行できるサンプルの一覧は、`camera_example.launch.py`にオプション`-s`を付けて実行することで表示できます。
+
+```sh
+$ ros2 launch crane_x7_examples camera_example.launch.py -s
+Arguments (pass arguments as '<name>:=<value>'):
+
+    'example':
+        Set an example executable name: [aruco_detection, point_cloud_detection]
+        (default: 'aruco_detection')
+```
 
 ### aruco_detection
 
-モノに取り付けたArUcoマーカをカメラで認識し、マーカ位置に合わせて掴むコード例です。[RealSense D435マウンタ](https://github.com/rt-net/crane_x7_Hardware/blob/master/3d_print_parts/v1.0/CRANE-X7_HandA_RealSenseD435マウンタ.stl)搭載モデルで実行することを想定しています。
+モノに取り付けたArUcoマーカをカメラで認識し、マーカ位置に合わせて掴むコード例です。
+マーカは[aruco_markers.pdf](./aruco_markers.pdf)をA4紙に印刷し、一辺50mmの立方体に取り付けて使用します。
 
 認識されたマーカの位置姿勢はtfのフレームとして配信されます。
 tfの`frame_id`はマーカIDごとに異なりID0のマーカの`frame_id`は`target_0`になります。掴む対象は`target_0`に設定されています。マーカ認識には[OpenCV](https://docs.opencv.org/4.x/d5/dae/tutorial_aruco_detection.html)を使用しています。
 
-#### 実行手順
-1. [aruco_markers.pdf](./aruco_markers.pdf)をA4紙に印刷し、一辺50mmの立方体に取り付けます
-1. [「RealSense D435マウンタ搭載モデルを使用する場合」](#realsense-d435マウンタ搭載モデルを使用する場合)の手順でCRANE-X7を起動します
-1. 次のコマンドを実行します
-    ```sh
-    ros2 launch crane_x7_examples camera_example.launch.py example:='aruco_detection'
-    ```
-1. マーカのついた立方体をカメラに写る位置に置きます
+次のコマンドを実行します
+```sh
+ros2 launch crane_x7_examples camera_example.launch.py example:='aruco_detection'
+```
 
 #### Videos
 [![crane_x7_aruco_detection_demo](http://img.youtube.com/vi/eWzmG_jbTmM/hqdefault.jpg)](https://youtu.be/eWzmG_jbTmM)
 
-[back to example list](#examples)
+[back to camera example list](#camera-examples)
+
+---
+
+### point_cloud_detection
+
+点群から物体位置を認識して掴むコード例です。
+
+認識された物体位置はtfのフレームとして配信されます。
+tfの`frame_id`は認識された順に`target_0`、`target_1`、`target_2`…に設定されます。掴む対象は`target_0`に設定されています。
+物体認識には[Point Cloud Library](https://pointclouds.org/)を使用しています。
+
+次のコマンドを実行します
+```sh
+ros2 launch crane_x7_examples camera_example.launch.py example:='point_cloud_detection'
+```
+
+#### Videos
+[![crane_x7_point_cloud_detection_demo](http://img.youtube.com/vi/RgAjxH0CAuk/hqdefault.jpg)](https://youtu.be/RgAjxH0CAuk)
+
+[back to camera example list](#camera-examples)
