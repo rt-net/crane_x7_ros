@@ -59,7 +59,7 @@ def generate_launch_description():
     declare_example_name = DeclareLaunchArgument(
         'example', default_value='aruco_detection',
         description=('Set an example executable name: '
-                     '[aruco_detection]')
+                     '[aruco_detection, point_cloud_detection]')
     )
 
     declare_use_sim_time = DeclareLaunchArgument(
