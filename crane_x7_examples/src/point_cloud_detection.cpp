@@ -97,7 +97,7 @@ private:
     pcl_ros::transformPointCloud("base_link", tf_msg, *msg, cloud_transformed);
 
     // ROSメッセージの点群フォーマットからPCLのフォーマットに変換
-    auto cloud = std::make_shared<pcl::PointCloud<pcl::PointXYZRGB>>();
+    auto cloud = pcl::make_shared<pcl::PointCloud<pcl::PointXYZRGB>>();
     pcl::fromROSMsg(cloud_transformed, *cloud);
 
     // 物体認識の前処理として点群の取得範囲の制限と間引きを行う
@@ -120,7 +120,7 @@ private:
     auto cluster_indices = clustering(cloud);
 
     // クラスタごとに色分けし、クラスタ位置をtfで配信する
-    auto cloud_output = std::make_shared<pcl::PointCloud<pcl::PointXYZRGB>>();
+    auto cloud_output = pcl::make_shared<pcl::PointCloud<pcl::PointXYZRGB>>();
     broadcast_cluster_position(cloud, cloud_output, cluster_indices, cloud_transformed.header);
 
     // クラスタリングした点群を配信する
@@ -130,7 +130,7 @@ private:
     publisher_->publish(sensor_msg);
   }
 
-  bool preprocessing(std::shared_ptr<pcl::PointCloud<pcl::PointXYZRGB>> & cloud)
+  bool preprocessing(pcl::PointCloud<pcl::PointXYZRGB>::Ptr & cloud)
   {
     // X軸方向0.05~0.5m以外の点群を削除
     pcl::PassThrough<pcl::PointXYZRGB> pass;
@@ -161,10 +161,10 @@ private:
     }
   }
 
-  bool plane_extraction(std::shared_ptr<pcl::PointCloud<pcl::PointXYZRGB>> & cloud)
+  bool plane_extraction(pcl::PointCloud<pcl::PointXYZRGB>::Ptr & cloud)
   {
     auto coefficients = std::make_shared<pcl::ModelCoefficients>();
-    auto inliers = std::make_shared<pcl::PointIndices>();
+    auto inliers = pcl::make_shared<pcl::PointIndices>();
     pcl::SACSegmentation<pcl::PointXYZRGB> seg;
     seg.setOptimizeCoefficients(true);
     seg.setModelType(pcl::SACMODEL_PLANE);
@@ -189,9 +189,9 @@ private:
   }
 
   std::vector<pcl::PointIndices> clustering(
-    std::shared_ptr<pcl::PointCloud<pcl::PointXYZRGB>> & cloud)
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr & cloud)
   {
-    auto tree = std::make_shared<pcl::search::KdTree<pcl::PointXYZRGB>>();
+    auto tree = pcl::make_shared<pcl::search::KdTree<pcl::PointXYZRGB>>();
     tree->setInputCloud(cloud);
 
     std::vector<pcl::PointIndices> cluster_indices;
@@ -206,8 +206,8 @@ private:
   }
 
   void broadcast_cluster_position(
-    std::shared_ptr<pcl::PointCloud<pcl::PointXYZRGB>> & cloud_input,
-    std::shared_ptr<pcl::PointCloud<pcl::PointXYZRGB>> & cloud_output,
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr & cloud_input,
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr & cloud_output,
     std::vector<pcl::PointIndices> & cluster_indices,
     std_msgs::msg::Header & tf_header)
   {
