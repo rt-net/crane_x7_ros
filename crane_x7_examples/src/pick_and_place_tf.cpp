@@ -102,7 +102,7 @@ public:
 private:
   void on_timer()
   {
-    // ID 0のマーカ位置姿勢を取得
+    // target_0のtf位置姿勢を取得
     geometry_msgs::msg::TransformStamped tf_msg;
 
     try {
@@ -117,21 +117,26 @@ private:
     }
 
     rclcpp::Time now = this->get_clock()->now();
-    const std::chrono::nanoseconds FILTERING_TIME = 1s;
+    const std::chrono::nanoseconds FILTERING_TIME = 2s;
     const std::chrono::nanoseconds STOP_TIME_THRESHOLD = 3s;
-    const float DISTANCE_THRESHOLD = 0.01;
+    const double DISTANCE_THRESHOLD = 0.01;
     tf2::Stamped<tf2::Transform> tf;
     tf2::convert(tf_msg, tf);
     const auto TF_ELAPSED_TIME = now.nanoseconds() - tf.stamp_.time_since_epoch().count();
     const auto TF_STOP_TIME = now.nanoseconds() - tf_past_.stamp_.time_since_epoch().count();
+    const double TARGET_Z_MIN_LIMIT = 0.04;
 
-    // 現在時刻から1秒以内に受け取ったtfを使用
+    // 現在時刻から2秒以内に受け取ったtfを使用
     if (TF_ELAPSED_TIME < FILTERING_TIME.count()) {
       double tf_diff = (tf_past_.getOrigin() - tf.getOrigin()).length();
       // 把持対象の位置が停止していることを判定
       if (tf_diff < DISTANCE_THRESHOLD) {
         // 把持対象が3秒以上停止している場合ピッキング動作開始
         if (TF_STOP_TIME > STOP_TIME_THRESHOLD.count()) {
+          // 把持対象が低すぎる場合は把持位置を調整
+          if (tf.getOrigin().z() < TARGET_Z_MIN_LIMIT) {
+            tf.getOrigin().setZ(TARGET_Z_MIN_LIMIT);
+          }
           picking(tf.getOrigin());
         }
       } else {
@@ -165,31 +170,31 @@ private:
     control_gripper(GRIPPER_DEFAULT);
 
     // 掴む準備をする
-    control_arm(target_position.x(), target_position.y(), 0.2, -180, 0, 90);
+    control_arm(target_position.x(), target_position.y(), target_position.z() + 0.12, -180, 0, 90);
 
     // ハンドを開く
     control_gripper(GRIPPER_OPEN);
 
     // 掴みに行く
-    control_arm(target_position.x(), target_position.y(), 0.13, -180, 0, 90);
+    control_arm(target_position.x(), target_position.y(), target_position.z() + 0.07, -180, 0, 90);
 
     // ハンドを閉じる
     control_gripper(GRIPPER_CLOSE);
 
     // 持ち上げる
-    control_arm(target_position.x(), target_position.y(), 0.2, -180, 0, 90);
+    control_arm(target_position.x(), target_position.y(), target_position.z() + 0.12, -180, 0, 90);
 
     // 移動する
-    control_arm(0.2, 0.2, 0.2, -180, 0, 90);
+    control_arm(0.1, 0.2, 0.2, -180, 0, 90);
 
     // 下ろす
-    control_arm(0.2, 0.2, 0.13, -180, 0, 90);
+    control_arm(0.1, 0.2, 0.13, -180, 0, 90);
 
     // ハンドを開く
     control_gripper(GRIPPER_OPEN);
 
     // 少しだけハンドを持ち上げる
-    control_arm(0.2, 0.2, 0.2, -180, 0, 90);
+    control_arm(0.1, 0.2, 0.2, -180, 0, 90);
 
     // 初期姿勢に戻る
     // control_arm(0.15, 0.0, 0.3, -180, 0, 90);
