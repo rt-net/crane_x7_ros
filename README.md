@@ -25,6 +25,7 @@ ROSのサンプルコード集はこちらです。
 ### ROS 2
 
 - [Foxy](https://github.com/rt-net/crane_x7_ros/tree/foxy-devel)
+- [Humble](https://github.com/rt-net/crane_x7_ros/tree/humble-devel)
 
 ## インストール方法
 
