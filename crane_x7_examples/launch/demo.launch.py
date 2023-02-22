@@ -104,6 +104,7 @@ def generate_launch_description():
             launch_arguments={
                 'device_type': 'd435',
                 'pointcloud.enable': 'true',
+                'align_depth.enable': 'true',
             }.items()
         )
 
