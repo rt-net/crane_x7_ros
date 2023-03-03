@@ -49,6 +49,9 @@ public:
     camera_info_subscription_ = this->create_subscription<sensor_msgs::msg::CameraInfo>(
       "/camera/color/camera_info", 10, std::bind(&ImageSubscriber::camera_info_callback, this, _1));
 
+    image_thresholded_publisher_ =
+      this->create_publisher<sensor_msgs::msg::Image>("image_thresholded", 10);
+
     tf_broadcaster_ =
       std::make_unique<tf2_ros::TransformBroadcaster>(*this);
   }
@@ -57,7 +60,7 @@ private:
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_subscription_;
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr depth_subscription_;
   rclcpp::Subscription<sensor_msgs::msg::CameraInfo>::SharedPtr camera_info_subscription_;
-  rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr thresholded_image_publisher_;
+  rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr image_thresholded_publisher_;
   sensor_msgs::msg::CameraInfo::SharedPtr camera_info_;
   sensor_msgs::msg::Image::SharedPtr depth_image_;
   std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
@@ -154,6 +157,15 @@ private:
         t.transform.translation.y = ray_after.y;
         t.transform.translation.z = ray_after.z;
         tf_broadcaster_->sendTransform(t);
+
+        // 閾値による二値化画像を配信
+        cv_bridge::CvImage cv_image;
+        cv_image.encoding = "mono8";
+        cv_image.header = msg->header;
+        img_thresholded.copyTo(cv_image.image);
+        sensor_msgs::msg::Image img_thresholded_msg;
+        cv_image.toImageMsg(img_thresholded_msg);
+        image_thresholded_publisher_->publish(std::move(img_thresholded_msg));
       }
     }
   }
