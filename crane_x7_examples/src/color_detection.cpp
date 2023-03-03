@@ -159,13 +159,9 @@ private:
         tf_broadcaster_->sendTransform(t);
 
         // 閾値による二値化画像を配信
-        cv_bridge::CvImage cv_image;
-        cv_image.encoding = "mono8";
-        cv_image.header = msg->header;
-        img_thresholded.copyTo(cv_image.image);
-        sensor_msgs::msg::Image img_thresholded_msg;
-        cv_image.toImageMsg(img_thresholded_msg);
-        image_thresholded_publisher_->publish(std::move(img_thresholded_msg));
+        sensor_msgs::msg::Image::SharedPtr img_thresholded_msg =
+          cv_bridge::CvImage(msg->header, "mono8", img_thresholded).toImageMsg();
+        image_thresholded_publisher_->publish(*img_thresholded_msg);
       }
     }
   }
