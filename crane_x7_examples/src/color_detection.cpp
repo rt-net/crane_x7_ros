@@ -96,14 +96,14 @@ private:
         img_thresholded,
         img_thresholded,
         cv::MORPH_OPEN,
-        cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)));
+        cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5)));
 
       // 穴埋めの処理
       cv::morphologyEx(
         img_thresholded,
         img_thresholded,
         cv::MORPH_CLOSE,
-        cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)));
+        cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5)));
 
       // 画像の検出領域におけるモーメントを計算
       cv::Moments moment = moments(img_thresholded);
