@@ -131,9 +131,11 @@ private:
         const cv::Point3d ray = camera_model.projectPixelTo3dRay(rect_point);
 
         // 把持対象物までの距離を取得
+        // 把持対象物の表面から中心までの距離
+        const double OBJECT_DISTANCE_OFFSET = 0.015;
         auto cv_depth = cv_bridge::toCvShare(depth_image_, depth_image_->encoding);
         auto object_distance = cv_depth->image.at<ushort>(
-          static_cast<int>(pixel_y), static_cast<int>(pixel_x)) / 1000.0;
+          static_cast<int>(pixel_y), static_cast<int>(pixel_x)) / 1000.0 + OBJECT_DISTANCE_OFFSET;
 
         // 距離を取得できないか遠すぎる場合は把持しない
         if (object_distance < 0.2 || object_distance > 0.5) {
