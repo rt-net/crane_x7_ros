@@ -71,9 +71,9 @@ private:
     if (camera_info_ && depth_image_) {
       // 青い物体を認識するようにHSVの範囲を設定
       // 周囲の明るさ等の動作環境に合わせて調整
-      const int low_h = 100, high_h = 125;
-      const int low_s = 100, high_s = 255;
-      const int low_v = 30, high_v = 255;
+      const int LOW_H = 100, HIGH_H = 125;
+      const int LOW_S = 100, HIGH_S = 255;
+      const int LOW_V = 30, HIGH_V = 255;
 
       // ウェブカメラの画像を受け取る
       auto cv_img = cv_bridge::toCvShare(msg, msg->encoding);
@@ -87,8 +87,8 @@ private:
       // 画像の二値化
       cv::inRange(
         cv_img->image,
-        cv::Scalar(low_h, low_s, low_v),
-        cv::Scalar(high_h, high_s, high_v),
+        cv::Scalar(LOW_H, LOW_S, LOW_V),
+        cv::Scalar(HIGH_H, HIGH_S, HIGH_V),
         img_thresholded);
 
       // ノイズ除去の処理
@@ -131,15 +131,20 @@ private:
         const cv::Point3d ray = camera_model.projectPixelTo3dRay(rect_point);
 
         // 把持対象物までの距離を取得
-        // 把持対象物の表面から中心までの距離
+        // 把持対象物の表面より少し奥を掴むように設定
         const double OBJECT_DISTANCE_OFFSET = 0.015;
         auto cv_depth = cv_bridge::toCvShare(depth_image_, depth_image_->encoding);
         auto object_distance = cv_depth->image.at<ushort>(
           static_cast<int>(pixel_y), static_cast<int>(pixel_x)) / 1000.0 + OBJECT_DISTANCE_OFFSET;
 
+
+
         // 距離を取得できないか遠すぎる場合は把持しない
-        if (object_distance < 0.2 || object_distance > 0.5) {
-          RCLCPP_INFO(this->get_logger(), "Failed to get object distance at (%d, %d).",
+        const double OBJECT_DISTANCE_MAX = 0.5;
+        const double OBJECT_DISTANCE_MIN = 0.2;
+        if (object_distance < OBJECT_DISTANCE_MIN || object_distance > OBJECT_DISTANCE_MAX) {
+          RCLCPP_INFO(
+            this->get_logger(), "Failed to get object distance at (%d, %d).",
             static_cast<int>(pixel_y), static_cast<int>(pixel_x));
           return;
         }
