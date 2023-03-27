@@ -137,8 +137,6 @@ private:
         auto object_distance = cv_depth->image.at<ushort>(
           static_cast<int>(pixel_y), static_cast<int>(pixel_x)) / 1000.0 + OBJECT_DISTANCE_OFFSET;
 
-
-
         // 距離を取得できないか遠すぎる場合は把持しない
         const double OBJECT_DISTANCE_MAX = 0.5;
         const double OBJECT_DISTANCE_MIN = 0.2;
