@@ -155,8 +155,7 @@ private:
 
         // 把持対象物の位置をTFに配信
         geometry_msgs::msg::TransformStamped t;
-        t.header.stamp = this->get_clock()->now();
-        t.header.frame_id = "camera_color_optical_frame";
+        t.header = msg->header;
         t.child_frame_id = "target_0";
         t.transform.translation.x = ray_after.x;
         t.transform.translation.y = ray_after.y;
