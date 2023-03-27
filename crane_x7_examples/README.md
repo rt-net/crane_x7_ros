@@ -27,8 +27,10 @@
   - [Camera Examples](#camera-examples)
     - [aruco\_detection](#aruco_detection)
       - [Videos](#videos-5)
-    - [point\_cloud\_detection](#point_cloud_detection)
+    - [color\_detection](#color_detection)
       - [Videos](#videos-6)
+    - [point\_cloud\_detection](#point_cloud_detection)
+      - [Videos](#videos-7)
 
 ## 準備（実機を使う場合）
 
@@ -229,6 +231,7 @@ CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 [「RealSense D435マウンタ搭載モデルを使用する場合」](#realsense-d435マウンタ搭載モデルを使用する場合)の手順に従って`demo.launch`を実行している状態で各サンプルを実行できます。
 
 - [aruco\_detection](#aruco_detection)
+- [color\_detection](#color_detection)
 - [point\_cloud\_detection](#point_cloud_detection)
 
 実行できるサンプルの一覧は、`camera_example.launch.py`にオプション`-s`を付けて実行することで表示できます。
@@ -258,6 +261,25 @@ ros2 launch crane_x7_examples camera_example.launch.py example:='aruco_detection
 #### Videos
 [![crane_x7_aruco_detection_demo](http://img.youtube.com/vi/eWzmG_jbTmM/hqdefault.jpg)](https://youtu.be/eWzmG_jbTmM)
 
+[back to camera example list](#camera-examples)
+
+---
+
+### color_detection
+
+特定の色の物体を検出して掴むコード例です。
+
+デフォルトでは青い物体の位置をtfのフレームとして配信します。
+tfの`frame_id`は`target_0`です。
+色の検出には[OpenCV](https://docs.opencv.org/4.x/db/d8e/tutorial_threshold.html)を使用しています。
+検出した物体の距離は深度画像から取得します。
+
+次のコマンドを実行します
+```sh
+ros2 launch crane_x7_examples camera_example.launch.py example:='color_detection'
+```
+
+#### Videos
 [back to camera example list](#camera-examples)
 
 ---
