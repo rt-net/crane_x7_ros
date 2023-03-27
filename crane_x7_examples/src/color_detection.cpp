@@ -24,12 +24,12 @@
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "sensor_msgs/msg/camera_info.hpp"
 #include "sensor_msgs/msg/image.hpp"
-#include "opencv2/opencv.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-#include "cv_bridge/cv_bridge.h"
 #include "tf2/LinearMath/Quaternion.h"
 #include "tf2/LinearMath/Matrix3x3.h"
 #include "tf2_ros/transform_broadcaster.h"
+#include "opencv2/opencv.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+#include "cv_bridge/cv_bridge.h"
 #include "image_geometry/pinhole_camera_model.h"
 using std::placeholders::_1;
 
@@ -127,28 +127,25 @@ private:
         // 補正後の画像座標系における把持対象物の位置を取得（2D）
         const cv::Point2d rect_point = camera_model.rectifyPoint(point);
 
-        // 画像座標系における把持対象物の位置（2D）をカメラ座標系における位置（3D）に変換
+        // カメラ座標系から見た把持対象物の方向（Ray）を取得する
         const cv::Point3d ray = camera_model.projectPixelTo3dRay(rect_point);
 
         // 把持対象物までの距離を取得
         // 把持対象物の表面より少し奥を掴むように設定
-        const double OBJECT_DISTANCE_OFFSET = 0.015;
+        const double DEPTH_OFFSET = 0.015;
         auto cv_depth = cv_bridge::toCvShare(depth_image_, depth_image_->encoding);
-        auto object_distance = cv_depth->image.at<ushort>(
-          static_cast<int>(pixel_y), static_cast<int>(pixel_x)) / 1000.0 + OBJECT_DISTANCE_OFFSET;
+        auto object_distance = cv_depth->image.at<ushort>(point) / 1000.0 + DEPTH_OFFSET;
 
         // 距離を取得できないか遠すぎる場合は把持しない
-        const double OBJECT_DISTANCE_MAX = 0.5;
-        const double OBJECT_DISTANCE_MIN = 0.2;
-        if (object_distance < OBJECT_DISTANCE_MIN || object_distance > OBJECT_DISTANCE_MAX) {
-          RCLCPP_INFO(
-            this->get_logger(), "Failed to get object distance at (%d, %d).",
-            static_cast<int>(pixel_y), static_cast<int>(pixel_x));
+        const double DEPTH_MAX = 0.5;
+        const double DEPTH_MIN = 0.2;
+        if (object_distance < DEPTH_MIN || object_distance > DEPTH_MAX) {
+          RCLCPP_INFO_STREAM(this->get_logger(), "Failed to get depth at" << point << ".");
           return;
         }
 
         // 把持対象物の位置を計算
-        cv::Point3d ray_after(
+        cv::Point3d object_position(
           ray.x * object_distance,
           ray.y * object_distance,
           ray.z * object_distance);
@@ -157,9 +154,9 @@ private:
         geometry_msgs::msg::TransformStamped t;
         t.header = msg->header;
         t.child_frame_id = "target_0";
-        t.transform.translation.x = ray_after.x;
-        t.transform.translation.y = ray_after.y;
-        t.transform.translation.z = ray_after.z;
+        t.transform.translation.x = object_position.x;
+        t.transform.translation.y = object_position.y;
+        t.transform.translation.z = object_position.z;
         tf_broadcaster_->sendTransform(t);
 
         // 閾値による二値化画像を配信
