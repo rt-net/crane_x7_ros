@@ -69,7 +69,7 @@ private:
   {
     // カメラのパラメータを取得してから処理を行う
     if (camera_info_ && depth_image_) {
-      // 青い物体を認識するようにHSVの範囲を設定
+      // 青い物体を検出するようにHSVの範囲を設定
       // 周囲の明るさ等の動作環境に合わせて調整
       const int LOW_H = 100, HIGH_H = 125;
       const int LOW_S = 100, HIGH_S = 255;

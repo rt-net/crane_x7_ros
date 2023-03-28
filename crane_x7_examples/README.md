@@ -247,11 +247,11 @@ Arguments (pass arguments as '<name>:=<value>'):
 
 ### aruco_detection
 
-モノに取り付けたArUcoマーカをカメラで認識し、マーカ位置に合わせて掴むコード例です。
+モノに取り付けたArUcoマーカをカメラで検出し、マーカ位置に合わせて掴むコード例です。
 マーカは[aruco_markers.pdf](./aruco_markers.pdf)をA4紙に印刷し、一辺50mmの立方体に取り付けて使用します。
 
-認識されたマーカの位置姿勢はtfのフレームとして配信されます。
-tfの`frame_id`はマーカIDごとに異なりID0のマーカの`frame_id`は`target_0`になります。掴む対象は`target_0`に設定されています。マーカ認識には[OpenCV](https://docs.opencv.org/4.x/d5/dae/tutorial_aruco_detection.html)を使用しています。
+検出されたマーカの位置姿勢はtfのフレームとして配信されます。
+tfの`frame_id`はマーカIDごとに異なりID0のマーカの`frame_id`は`target_0`になります。掴む対象は`target_0`に設定されています。マーカ検出には[OpenCV](https://docs.opencv.org/4.x/d5/dae/tutorial_aruco_detection.html)を使用しています。
 
 次のコマンドを実行します
 ```sh
@@ -286,11 +286,11 @@ ros2 launch crane_x7_examples camera_example.launch.py example:='color_detection
 
 ### point_cloud_detection
 
-点群から物体位置を認識して掴むコード例です。
+点群から物体を検出して掴むコード例です。
 
-認識された物体位置はtfのフレームとして配信されます。
-tfの`frame_id`は認識された順に`target_0`、`target_1`、`target_2`…に設定されます。掴む対象は`target_0`に設定されています。
-物体認識には[Point Cloud Library](https://pointclouds.org/)を使用しています。
+検出された物体位置はtfのフレームとして配信されます。
+tfの`frame_id`は検出された順に`target_0`、`target_1`、`target_2`…に設定されます。掴む対象は`target_0`に設定されています。
+物体検出には[Point Cloud Library](https://pointclouds.org/)を使用しています。
 
 次のコマンドを実行します
 ```sh
