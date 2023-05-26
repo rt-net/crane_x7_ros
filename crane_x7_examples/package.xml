@@ -18,6 +18,7 @@
   <depend>crane_x7_moveit_config</depend>
   <depend>cv_bridge</depend>
   <depend>geometry_msgs</depend>
+  <depend>image_geometry</depend>
   <depend>libopencv-dev</depend>
   <depend>moveit_ros_planning_interface</depend>
   <depend>pcl_ros</depend>
