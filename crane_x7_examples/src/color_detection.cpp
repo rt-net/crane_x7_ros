@@ -133,22 +133,24 @@ private:
         // 把持対象物までの距離を取得
         // 把持対象物の表面より少し奥を掴むように設定
         const double DEPTH_OFFSET = 0.015;
-        auto cv_depth = cv_bridge::toCvShare(depth_image_, depth_image_->encoding);
-        auto object_distance = cv_depth->image.at<ushort>(point) / 1000.0 + DEPTH_OFFSET;
+        const auto cv_depth = cv_bridge::toCvShare(depth_image_, depth_image_->encoding);
+        // カメラから把持対象物の表面までの距離
+        const auto front_distance = cv_depth->image.at<ushort>(point) / 1000.0;
+        const auto center_distance = front_distance + DEPTH_OFFSET;
 
         // 距離を取得できないか遠すぎる場合は把持しない
         const double DEPTH_MAX = 0.5;
         const double DEPTH_MIN = 0.2;
-        if (object_distance < DEPTH_MIN || object_distance > DEPTH_MAX) {
+        if (center_distance < DEPTH_MIN || center_distance > DEPTH_MAX) {
           RCLCPP_INFO_STREAM(this->get_logger(), "Failed to get depth at" << point << ".");
           return;
         }
 
         // 把持対象物の位置を計算
         cv::Point3d object_position(
-          ray.x * object_distance,
-          ray.y * object_distance,
-          ray.z * object_distance);
+          ray.x * center_distance,
+          ray.y * center_distance,
+          ray.z * center_distance);
 
         // 把持対象物の位置をTFに配信
         geometry_msgs::msg::TransformStamped t;
