@@ -280,6 +280,8 @@ ros2 launch crane_x7_examples camera_example.launch.py example:='color_detection
 ```
 
 #### Videos
+[![crane_x7_color_detection_demo](http://img.youtube.com/vi/O8lqw7yemAI/hqdefault.jpg)](https://youtu.be/O8lqw7yemAI)
+
 [back to camera example list](#camera-examples)
 
 ---
