@@ -57,9 +57,9 @@ def generate_launch_description():
     kinematics_yaml = load_yaml('crane_x7_moveit_config', 'config/kinematics.yaml')
 
     declare_example_name = DeclareLaunchArgument(
-        'example', default_value='aruco_detection',
+        'example', default_value='color_detection',
         description=('Set an example executable name: '
-                     '[aruco_detection, point_cloud_detection]')
+                     '[color_detection, aruco_detection, point_cloud_detection]')
     )
 
     declare_use_sim_time = DeclareLaunchArgument(
