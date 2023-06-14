@@ -19,6 +19,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(image_geometry REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
 find_package(OpenCV REQUIRED COMPONENTS core)
 find_package(pcl_conversions REQUIRED)
@@ -35,6 +36,7 @@ set(executable_list
   pick_and_place
   pick_and_place_tf
   aruco_detection
+  color_detection
   point_cloud_detection
 )
 foreach(loop_var IN LISTS executable_list)
@@ -42,6 +44,7 @@ foreach(loop_var IN LISTS executable_list)
   ament_target_dependencies(${loop_var}
     cv_bridge
     geometry_msgs
+    image_geometry
     moveit_ros_planning_interface
     OpenCV
     pcl_ros
