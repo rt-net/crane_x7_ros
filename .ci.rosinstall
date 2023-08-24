@@ -2,7 +2,3 @@
     uri: https://github.com/rt-net/crane_x7_description.git
     local-name: crane_x7_description
     version: ros2
-- git:
-    uri: https://github.com/ros-controls/gz_ros2_control.git
-    local-name: gz_ros2_control
-    version: humble
