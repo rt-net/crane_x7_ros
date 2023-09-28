@@ -14,7 +14,7 @@ Terminalを開き、`crane_x7_bringup`の`demo.launch`を起動します。
 
 実機を使用する/使用しない
 
-### シミュレータを使う場合
+### 簡易シミュレータを使う場合
 
 実機無しで動作を確認する場合、
 制御信号ケーブルを接続しない状態で次のコマンドを実行します。
@@ -22,6 +22,9 @@ Terminalを開き、`crane_x7_bringup`の`demo.launch`を起動します。
 ```sh
 roslaunch crane_x7_bringup demo.launch fake_execution:=true
 ```
+
+物理演算やセンサを含めたシミュレーションは、
+後述の[「Gazeboを使う場合」](#gazeboを使う場合)の手順に従ってください。
 
 ### 実機を使う場合
 
@@ -51,17 +54,32 @@ roslaunch crane_x7_gazebo crane_x7_with_table.launch
 
 `demo.launch`を実行している状態で各サンプルを実行できます。
 
-- [gripper_action_example](#gripper_action_example)
-- [pose_groupstate_example](#pose_groupstate_example)
-- [joint_values_example](#joint_values_example)
-- [cartesian_path_example](#cartesian_path_example)
-- [crane_x7_pick_and_place_demo](#crane_x7_pick_and_place_demo)
-- [preset_pid_gain_example](#preset_pid_gain_example)
-- [teaching_example](#teaching_example)
-- [joystick_example](#joystick_example)
-- [obstacle_avoidance_example](#obstacle_avoidance_example)
-- [servo_info_example](#servo_info_example)
-- [pick_and_place_in_gazebo_example](#pick_and_place_in_gazebo_example)
+- [crane\_x7\_examples](#crane_x7_examples)
+  - [システムの起動方法](#システムの起動方法)
+    - [簡易シミュレータを使う場合](#簡易シミュレータを使う場合)
+    - [実機を使う場合](#実機を使う場合)
+    - [Gazeboを使う場合](#gazeboを使う場合)
+  - [Run Examples](#run-examples)
+    - [gripper\_action\_example](#gripper_action_example)
+    - [pose\_groupstate\_example](#pose_groupstate_example)
+    - [joint\_values\_example](#joint_values_example)
+    - [cartesian\_path\_example](#cartesian_path_example)
+      - [Videos](#videos)
+    - [crane\_x7\_pick\_and\_place\_demo](#crane_x7_pick_and_place_demo)
+      - [Videos](#videos-1)
+    - [preset\_pid\_gain\_example](#preset_pid_gain_example)
+      - [Videos](#videos-2)
+    - [teaching\_example](#teaching_example)
+      - [Videos](#videos-3)
+    - [joystick\_example](#joystick_example)
+      - [実機を使う場合](#実機を使う場合-1)
+      - [シミュレータを使う場合](#シミュレータを使う場合)
+      - [キー割り当ての変更](#キー割り当ての変更)
+      - [Videos](#videos-4)
+    - [obstacle\_avoidance\_example](#obstacle_avoidance_example)
+    - [servo\_info\_example](#servo_info_example)
+    - [pick\_and\_place\_in\_gazebo\_example](#pick_and_place_in_gazebo_example)
+      - [Videos](#videos-5)
 
 ---
 
