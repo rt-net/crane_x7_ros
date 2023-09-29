@@ -14,7 +14,7 @@ Terminalを開き、`crane_x7_bringup`の`demo.launch`を起動します。
 
 実機を使用する/使用しない
 
-### シミュレータを使う場合
+### 簡易シミュレータを使う場合
 
 実機無しで動作を確認する場合、
 制御信号ケーブルを接続しない状態で次のコマンドを実行します。
@@ -22,6 +22,9 @@ Terminalを開き、`crane_x7_bringup`の`demo.launch`を起動します。
 ```sh
 roslaunch crane_x7_bringup demo.launch fake_execution:=true
 ```
+
+物理演算やセンサを含めたシミュレーションは、
+後述の[「Gazeboを使う場合」](#gazeboを使う場合)の手順に従ってください。
 
 ### 実機を使う場合
 
