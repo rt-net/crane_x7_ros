@@ -82,6 +82,13 @@ def generate_launch_description():
                 output='screen',
             )
 
+    bridge = Node(
+                package='ros_gz_bridge',
+                executable='parameter_bridge',
+                arguments=['/clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock'],
+                output='screen'
+            )
+
     return LaunchDescription([
         SetParameter(name='use_sim_time', value=True),
         ign_gazebo,
@@ -89,5 +96,6 @@ def generate_launch_description():
         move_group,
         spawn_joint_state_controller,
         spawn_arm_controller,
-        spawn_gripper_controller
+        spawn_gripper_controller,
+        bridge
     ])
