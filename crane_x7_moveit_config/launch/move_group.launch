@@ -1,6 +1,9 @@
 <launch>
 
   <arg name="use_gazebo" default="false" />
+  <!-- By default the URDF is loaded in crane_x7_control if fake_control==false. -->
+  <!-- Change the following to false to change the default behavior. -->
+  <arg name="load_robot_description" default="true"/>
 
   <include file="$(find crane_x7_moveit_config)/launch/planning_context.launch" />
 
@@ -43,6 +46,7 @@
     <!-- If fake==false, launch X7 controller -->
     <include file="$(find crane_x7_control)/launch/crane_x7_control.launch" unless="$(arg fake_execution)">
       <arg name="port" value="$(arg port)" />
+      <arg name="load_robot_description" value="$(arg load_robot_description)" />
     </include>
   </group>
 
