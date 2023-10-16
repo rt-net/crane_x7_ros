@@ -163,7 +163,7 @@ private:
   {
     const double GRIPPER_DEFAULT = 0.0;
     const double GRIPPER_OPEN = angles::from_degrees(60.0);
-    const double GRIPPER_CLOSE = angles::from_degrees(15.0);
+    const double GRIPPER_CLOSE = angles::from_degrees(20.0);
 
     // 何かを掴んでいた時のためにハンドを開閉
     control_gripper(GRIPPER_OPEN);
