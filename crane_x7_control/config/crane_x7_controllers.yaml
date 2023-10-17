@@ -29,6 +29,7 @@ crane_x7_arm_controller:
 crane_x7_gripper_controller:
   ros__parameters:
     joint: crane_x7_gripper_finger_a_joint
+    goal_tolerance: 0.1
 
     command_interfaces:
       - position
