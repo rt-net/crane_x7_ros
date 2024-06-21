@@ -102,6 +102,7 @@ def generate_launch_description():
                 '/launch/rs_launch.py']),
             condition=IfCondition(LaunchConfiguration('use_d435')),
             launch_arguments={
+                'camera_namespace': '',
                 'device_type': 'd435',
                 'pointcloud.enable': 'true',
                 'align_depth.enable': 'true',
