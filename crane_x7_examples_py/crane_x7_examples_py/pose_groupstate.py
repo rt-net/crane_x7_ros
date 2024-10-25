@@ -22,7 +22,7 @@ from moveit.planning import (
     MoveItPy,
     PlanRequestParameters,
 )
-from crane_plus_examples_py.utils import plan_and_execute
+from crane_x7_examples_py.utils import plan_and_execute
 
 
 def main(args=None):
@@ -33,13 +33,13 @@ def main(args=None):
     logger = get_logger("pose_groupstate")
 
     # MoveItPy初期化
-    crane_plus = MoveItPy(node_name="moveit_py")
-    crane_plus_arm = crane_plus.get_planning_component("arm")
+    crane_x7 = MoveItPy(node_name="moveit_py")
+    crane_x7_arm = crane_x7.get_planning_component("arm")
     logger.info("MoveItPy instance created")
 
     # planningのパラメータ設定
     plan_request_params = PlanRequestParameters(
-        crane_plus,
+        crane_x7,
         "ompl_rrtc",
     )
 
@@ -48,37 +48,37 @@ def main(args=None):
     plan_request_params.max_velocity_scaling_factor = 1.0  # Set 0.0 ~ 1.0
 
     # 現在の位置から"home"ポジションに動かす
-    crane_plus_arm.set_start_state_to_current_state()
-    crane_plus_arm.set_goal_state(configuration_name="home")
+    crane_x7_arm.set_start_state_to_current_state()
+    crane_x7_arm.set_goal_state(configuration_name="home")
     plan_and_execute(
-        crane_plus,
-        crane_plus_arm,
+        crane_x7,
+        crane_x7_arm,
         logger,
         single_plan_parameters=plan_request_params,
     )
 
     # 現在の位置から"vertical"ポジションに動かす
-    crane_plus_arm.set_start_state_to_current_state()
-    crane_plus_arm.set_goal_state(configuration_name="vertical")
+    crane_x7_arm.set_start_state_to_current_state()
+    crane_x7_arm.set_goal_state(configuration_name="vertical")
     plan_and_execute(
-        crane_plus,
-        crane_plus_arm,
+        crane_x7,
+        crane_x7_arm,
         logger,
         single_plan_parameters=plan_request_params,
     )
 
     # 現在の位置から"home"ポジションに動かす
-    crane_plus_arm.set_start_state_to_current_state()
-    crane_plus_arm.set_goal_state(configuration_name="home")
+    crane_x7_arm.set_start_state_to_current_state()
+    crane_x7_arm.set_goal_state(configuration_name="home")
     plan_and_execute(
-        crane_plus,
-        crane_plus_arm,
+        crane_x7,
+        crane_x7_arm,
         logger,
         single_plan_parameters=plan_request_params,
     )
 
     # MoveItPyの終了
-    crane_plus.shutdown()
+    crane_x7.shutdown()
 
     # rclpyの終了
     rclpy.shutdown()
