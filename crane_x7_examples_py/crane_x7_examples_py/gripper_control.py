@@ -33,13 +33,13 @@ def main(args=None):
     rclpy.init(args=args)
 
     # ロガー生成
-    logger = get_logger("pick_and_place")
+    logger = get_logger('pick_and_place')
 
     # MoveItPy初期化
-    crane_x7 = MoveItPy(node_name="moveit_py")
-    crane_x7_arm = crane_x7.get_planning_component("arm")
-    crane_x7_gripper = crane_x7.get_planning_component("gripper")
-    logger.info("MoveItPy instance created")
+    crane_x7 = MoveItPy(node_name='moveit_py')
+    crane_x7_arm = crane_x7.get_planning_component('arm')
+    crane_x7_gripper = crane_x7.get_planning_component('gripper')
+    logger.info('MoveItPy instance created')
 
     # instantiate a RobotState instance using the current robot model
     robot_model = crane_x7.get_robot_model()
@@ -49,7 +49,7 @@ def main(args=None):
     # armのパラメータ設定用
     arm_plan_request_params = PlanRequestParameters(
         crane_x7,
-        "ompl_rrtc",
+        'ompl_rrtc',
     )
     arm_plan_request_params.max_acceleration_scaling_factor \
         = 1.0  # Set 0.0 ~ 1.0
@@ -59,16 +59,16 @@ def main(args=None):
     # gripperのパラメータ設定用
     gripper_plan_request_params = PlanRequestParameters(
         crane_x7,
-        "ompl_rrtc",
+        'ompl_rrtc',
     )
     gripper_plan_request_params.max_acceleration_scaling_factor \
         = 1.0  # Set 0.0 ~ 1.0
     gripper_plan_request_params.max_velocity_scaling_factor \
         = 1.0  # Set 0.0 ~ 1.0
 
-    # SRDFに定義されている"home"の姿勢にする
+    # SRDFに定義されている'home'の姿勢にする
     crane_x7_arm.set_start_state_to_current_state()
-    crane_x7_arm.set_goal_state(configuration_name="home")
+    crane_x7_arm.set_goal_state(configuration_name='home')
     plan_and_execute(
         crane_x7,
         crane_x7_arm,
@@ -77,7 +77,7 @@ def main(args=None):
     )
 
     # gripperを60[deg]に開く
-    robot_state.set_joint_group_positions("gripper", [math.radians(60)])
+    robot_state.set_joint_group_positions('gripper', [math.radians(60)])
     crane_x7_gripper.set_start_state_to_current_state()
     crane_x7_gripper.set_goal_state(robot_state=robot_state)
     plan_and_execute(
@@ -88,7 +88,7 @@ def main(args=None):
     )
 
     # gripperを0[deg]に閉じる
-    robot_state.set_joint_group_positions("gripper", [math.radians(0)])
+    robot_state.set_joint_group_positions('gripper', [math.radians(0)])
     crane_x7_gripper.set_start_state_to_current_state()
     crane_x7_gripper.set_goal_state(robot_state=robot_state)
     plan_and_execute(
@@ -99,7 +99,7 @@ def main(args=None):
     )
 
     # gripperを60[deg]に開く
-    robot_state.set_joint_group_positions("gripper", [math.radians(60)])
+    robot_state.set_joint_group_positions('gripper', [math.radians(60)])
     crane_x7_gripper.set_start_state_to_current_state()
     crane_x7_gripper.set_goal_state(robot_state=robot_state)
     plan_and_execute(
@@ -110,7 +110,7 @@ def main(args=None):
     )
 
     # gripperを0[deg]に閉じる
-    robot_state.set_joint_group_positions("gripper", [math.radians(0)])
+    robot_state.set_joint_group_positions('gripper', [math.radians(0)])
     crane_x7_gripper.set_start_state_to_current_state()
     crane_x7_gripper.set_goal_state(robot_state=robot_state)
     plan_and_execute(
@@ -127,5 +127,5 @@ def main(args=None):
     rclpy.shutdown()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

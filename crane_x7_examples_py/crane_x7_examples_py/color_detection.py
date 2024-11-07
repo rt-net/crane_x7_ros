@@ -29,17 +29,17 @@ import tf2_ros
 
 class ImageSubscriber(Node):
     def __init__(self):
-        super().__init__("color_detection")
+        super().__init__('color_detection')
         self.image_subscription = self.create_subscription(
-            Image, "/camera/color/image_raw",
+            Image, '/camera/color/image_raw',
             self.image_callback, 10
         )
         self.depth_info_subscription = self.create_subscription(
-            Image, "/camera/aligned_depth_to_color/image_raw",
+            Image, '/camera/aligned_depth_to_color/image_raw',
             self.depth_callback, 10
         )
         self.camera_info_subscription = self.create_subscription(
-            CameraInfo, "/camera/color/camera_info", 
+            CameraInfo, '/camera/color/camera_info', 
             self.camera_info_callback, 10
         )
         self.image_thresholded_publisher = self.create_publisher(Image, 'image_thresholded',  10)
@@ -48,7 +48,7 @@ class ImageSubscriber(Node):
         self.depth_image = None
         self.bridge = CvBridge()
         # ロガー生成
-        self.logger = get_logger("pick_and_place")
+        self.logger = get_logger('pick_and_place')
 
     def image_callback(self, msg):
         # カメラのパラメータを取得してから処理を行う
@@ -117,7 +117,7 @@ class ImageSubscriber(Node):
             DEPTH_MAX = 0.5
             DEPTH_MIN = 0.2
             if center_distance < DEPTH_MIN or center_distance > DEPTH_MAX:
-                self.logger.info(f"Failed to get depth at {point}.")
+                self.logger.info(f'Failed to get depth at {point}.')
                 return
             
             # 把持対象物の位置を計算
@@ -126,14 +126,14 @@ class ImageSubscriber(Node):
             # 把持対象物の位置をTFに配信
             t = TransformStamped()
             t.header = msg.header
-            t.child_frame_id = "target_0"
+            t.child_frame_id = 'target_0'
             t.transform.translation.x = object_position['x']
             t.transform.translation.y = object_position['y']
             t.transform.translation.z = object_position['z']
             self.tf_broadcaster.sendTransform(t)
             
             # 閾値による二値化画像を配信
-            img_thresholded_msg = self.bridge.cv2_to_imgmsg(img_thresholded, encoding="mono8")   
+            img_thresholded_msg = self.bridge.cv2_to_imgmsg(img_thresholded, encoding='mono8')   
             self.image_thresholded_publisher.publish(img_thresholded_msg)
 
     def camera_info_callback(self, msg):
@@ -141,7 +141,8 @@ class ImageSubscriber(Node):
 
     def depth_callback(self, msg):
         self.depth_image = msg
-            
+
+
 def main(args=None):
     rclpy.init(args=args)
 
@@ -247,14 +248,14 @@ if __name__ == '__main__':
                 # 把持対象物の位置をTFに配信
                 t = TransformStamped()
                 t.header = msg.header
-                t.child_frame_id = "target_0"
+                t.child_frame_id = 'target_0'
                 t.transform.translation.x = object_position['x']
                 t.transform.translation.y = object_position['y']
                 t.transform.translation.z = object_position['z']
                 self.tf_broadcaster.sendTransform(t)
             
             # 閾値による二値化画像を配信
-            img_thresholded_msg = self.bridge.cv2_to_imgmsg(img_thresholded, encoding="mono8")   
+            img_thresholded_msg = self.bridge.cv2_to_imgmsg(img_thresholded, encoding='mono8')   
             self.image_thresholded_publisher.publish(img_thresholded_msg)
             
     def camera_info_callback(self, msg):
