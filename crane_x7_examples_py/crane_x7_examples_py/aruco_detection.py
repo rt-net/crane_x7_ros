@@ -31,12 +31,12 @@ from crane_x7_examples_py.utils import rotation_matrix_to_quaternion
 
 class ImageSubscriber(Node):
     def __init__(self):
-        super().__init__("aruco_detection")
+        super().__init__('aruco_detection')
         self.image_subscription = self.create_subscription(
-            Image, "/camera/color/image_raw", self.listener_callback, 10
+            Image, '/camera/color/image_raw', self.listener_callback, 10
         )
         self.camera_info_subscription = self.create_subscription(
-            CameraInfo, "/camera/color/camera_info", self.listener_callback, 10
+            CameraInfo, '/camera/color/camera_info', self.listener_callback, 10
         )
         self.tf_broadcaster = tf2_ros.TransformBroadcaster()
 
@@ -81,8 +81,8 @@ class ImageSubscriber(Node):
                     # tfの配信
                     t = TransformStamped()
                     t.header.stamp = self.get_clock().now().to_msg()
-                    t.header.frame_id = "camera_color_optical_frame"
-                    t.child_frame_id = "target_" + str(ids[i][0])
+                    t.header.frame_id = 'camera_color_optical_frame'
+                    t.child_frame_id = 'target_' + str(ids[i][0])
                     t.transform.translation.x = tvecs[i][0][0]
                     t.transform.translation.y = tvecs[i][0][1]
                     t.transform.translation.z = tvecs[i][0][2]
@@ -113,5 +113,5 @@ def main(args=None):
     rclpy.shutdown()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
