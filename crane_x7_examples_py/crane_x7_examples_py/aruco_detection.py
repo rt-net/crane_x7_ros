@@ -47,31 +47,31 @@ class ImageSubscriber(Node):
         # 画像データをROSのメッセージからOpenCVの配列に変換
         cv_img = self.bridge.imgmsg_to_cv2(msg, desired_encoding=msg.encoding)
         cv_img = cv2.cvtColor(cv_img, cv2.COLOR_RGB2BGR)
-    
+
         if self.camera_info:
             # ArUcoマーカのデータセットを読み込む
             # DICT_6x6_50は6x6ビットのマーカが50個収録されたもの
             MARKER_DICT = aruco.getPredefinedDictionary(aruco.DICT_6X6_50)
-    
+
             # マーカーID
             ids = []
-    
+
             # 画像座標系上のマーカ頂点位置
             corners = []
-            
+
             # マーカの検出
             corners, ids, _ = aruco.detectMarkers(cv_img, MARKER_DICT)
 
             # マーカの検出数
             n_markers = len(ids)
-            
+
             # カメラパラメータ
             CAMERA_MATRIX = np.array(self.camera_info['k']).reshape(3, 3)
             DIST_COEFFS = np.array(self.camera_info['d']).reshape(1, 5)
-            
+
             # マーカ一辺の長さ 0.04 [m]
             MARKER_LENGTH = 0.04
-            
+
             # マーカが一つ以上検出された場合、マーカの位置姿勢をtfで配信
             if n_markers > 0:
                 for i in range(n_markers):
@@ -95,11 +95,11 @@ class ImageSubscriber(Node):
                     t.transform.rotation.z = q.z
                     t.transform.rotation.w = q.w
                     self.tf_broadcaster.sendTransform(t)
-                    
+
     def camera_info_callback(self, msg):
         self.camera_info = msg
-        
-        
+
+
 def main(args=None):
     rclpy.init(args=args)
 
