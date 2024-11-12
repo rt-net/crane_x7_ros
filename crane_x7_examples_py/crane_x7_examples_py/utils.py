@@ -1,11 +1,8 @@
 # Copyright 2020 RT Corporation
-# 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,10 +26,10 @@ def plan_and_execute(
     multi_plan_parameters=None,
     sleep_time=0.0,
 ):
-    """Helper function to plan and execute a motion."""
+    '''Helper function to plan and execute a motion.'''
     # plan to goal
-    logger = get_logger("plan_and_execute")
-    logger.info("Planning trajectory")
+    logger = get_logger('plan_and_execute')
+    logger.info('Planning trajectory')
     if multi_plan_parameters is not None:
         plan_result = planning_component.plan(
             multi_plan_parameters=multi_plan_parameters
@@ -47,11 +44,11 @@ def plan_and_execute(
     # execute the plan
     result = None
     if plan_result:
-        logger.info("Executing plan")
+        logger.info('Executing plan')
         robot_trajectory = plan_result.trajectory
         result = robot.execute(robot_trajectory, controllers=[])
     else:
-        logger.error("Planning failed")
+        logger.error('Planning failed')
         result = False
     time.sleep(sleep_time)
     return result
@@ -77,6 +74,6 @@ def euler_to_quaternion(roll, pitch, yaw):
 # rotation matrix --> quaternion
 def rotation_matrix_to_quaternion(rotation_matrix):
     # numpy-quaternionを使用して回転行列からクォータニオンを計算
-    #3x3の回転行列をnumpy.quaternionに変換する
+    # 3x3の回転行列をnumpy.quaternionに変換する
     q = quaternion.from_rotation_matrix(rotation_matrix)
     return q
