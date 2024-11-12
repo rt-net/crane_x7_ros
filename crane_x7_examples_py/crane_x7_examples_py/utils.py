@@ -26,7 +26,6 @@ def plan_and_execute(
     multi_plan_parameters=None,
     sleep_time=0.0,
 ):
-    '''Helper function to plan and execute a motion.'''
     # plan to goal
     logger = get_logger('plan_and_execute')
     logger.info('Planning trajectory')
