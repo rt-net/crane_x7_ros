@@ -1,4 +1,3 @@
-
 # Copyright 2023 RT Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +15,9 @@
 import os
 
 from ament_index_python.packages import get_package_share_directory
-from crane_x7_description.robot_description_loader import RobotDescriptionLoader
+from crane_x7_description.crane_x7_description.robot_description_loader import (
+    RobotDescriptionLoader,
+)
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
@@ -25,70 +26,78 @@ from moveit_configs_utils import MoveItConfigsBuilder
 
 
 def generate_launch_description():
+    ld = LaunchDescription()
+    description_loader = RobotDescriptionLoader()
+    ld.add_action(
+        DeclareLaunchArgument(
+            'loaded_description',
+            default_value=description_loader.load(),
+            description='Set robot_description text.  \
+                      It is recommended to use RobotDescriptionLoader() \
+                          in crane_x7_description.',
+        )
+    )
     moveit_config = (
-        MoveItConfigsBuilder("crane_x7")
+        MoveItConfigsBuilder('crane_x7')
         .planning_scene_monitor(
             publish_robot_description=True,
             publish_robot_description_semantic=True,
         )
         .robot_description(
             file_path=os.path.join(
-                get_package_share_directory("crane_x7_description"),
-                "urdf",
-                "crane_x7.urdf.xacro",
+                get_package_share_directory('crane_x7_description'),
+                'urdf',
+                'crane_x7.urdf.xacro',
             ),
             mappings={},
         )
-        .robot_description_semantic(
-            file_path="config/crane_x7.srdf",
-            mappings={"model": "crane_x7"},
+        .robot_description_kinematics(
+            file_path=get_package_share_directory('crane_x7_moveit_config')
+            + '/config/kinematics.yaml'
         )
-        .joint_limits(file_path="config/joint_limits.yaml")
         .trajectory_execution(
-            file_path="config/controllers.yaml", moveit_manage_controllers=True
+            file_path=get_package_share_directory('crane_x7_moveit_config')
+            + '/config/controllers.yaml'
         )
-        .planning_pipelines(pipelines=["ompl"])
-        .robot_description_kinematics(file_path="config/kinematics.yaml")
         .moveit_cpp(
-            file_path=get_package_share_directory("crane_x7_examples_py")
-            + "/config/crane_x7_moveit_py_examples.yaml"
+            file_path=get_package_share_directory('crane_x7_examples_py')
+            + '/config/crane_x7_moveit_py_examples.yaml'
         )
         .to_moveit_configs()
     )
 
     moveit_config.robot_description = {
-        "robot_description": LaunchConfiguration("loaded_description")
+        'robot_description': LaunchConfiguration('loaded_description')
     }
 
-    moveit_config.move_group_capabilities = {"capabilities": ""}
+    moveit_config.move_group_capabilities = {'capabilities': ''}
 
     declare_example_name = DeclareLaunchArgument(
-        'example', default_value='color_detection',
+        'example',
+        default_value='color_detection',
         description=('Set an example executable name: '
-                     '[color_detection]')
+                     '[aruco_detection, color_detection]'),
     )
 
     picking_node = Node(
         name='pick_and_place_tf',
-        package="crane_x7_examples_py",
+        package='crane_x7_examples_py',
         executable='pick_and_place_tf',
-        output="screen",
+        output='screen',
         parameters=[
-            moveit_config.robot_description,
-            moveit_config.robot_description_semantic,
-            moveit_config.robot_description_kinematics,
+            moveit_config.to_dict()
         ],
     )
-    
-    detection_node = Node(
-        name=[LaunchConfiguration("example"), "_node"],
-        package="crane_x7_examples_py",
-        executable=LaunchConfiguration("example"),
-        output="screen"
+
+    example_node = Node(
+        name=[LaunchConfiguration('example'), '_node'],
+        package='crane_x7_examples_py',
+        executable=LaunchConfiguration('example'),
+        output='screen',
+        parameters=[moveit_config.to_dict()],
     )
 
-    ld = LaunchDescription()
-    ld.add_action(detection_node)
+    ld.add_action(example_node)
     ld.add_action(picking_node)
     ld.add_action(declare_example_name)
 
