@@ -36,7 +36,7 @@ ROS 2 package suite of CRANE-X7.
   - [Product Introduction](https://rt-net.jp/products/crane-x7/)
   - [Web Shop](https://www.rt-shop.jp/index.php?main_page=product_info&products_id=3660&language=en)
 - Linux OS
-  - Ubuntu 20.04
+  - Ubuntu 22.04
 - ROS
   - [Humble Hawksbill](https://docs.ros.org/en/humble/Installation.html)
 
