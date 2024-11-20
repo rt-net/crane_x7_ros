@@ -20,8 +20,6 @@
       - [Videos](#videos-1)
     - [joint\_values](#joint_values)
       - [Videos](#videos-2)
-    - [cartesian\_path](#cartesian_path)
-      - [Videos](#videos-3)
     - [pick\_and\_place](#pick_and_place)
       - [Videos](#videos-4)
   - [Camera Examples](#camera-examples)
@@ -106,7 +104,6 @@ ros2 launch crane_x7_examples_py example.launch.py example:='gripper_control' us
 - [gripper_control](#gripper_control)
 - [pose_groupstate](#pose_groupstate)
 - [joint_values](#joint_values)
-- [cartesian_path](#cartesian_path)
 - [pick_and_place](#pick_and_place)
 
 実行できるサンプルの一覧は、`example.launch.py`にオプション`-s`を付けて実行することで表示できます。
@@ -116,7 +113,7 @@ $ ros2 launch crane_x7_examples_py example.launch.py -s
 Arguments (pass arguments as '<name>:=<value>'):
 
     'example':
-        Set an example executable name: [gripper_control, pose_groupstate, joint_values,pick_and_place, cartesian_path]
+        Set an example executable name: [gripper_control, pose_groupstate, joint_values,pick_and_place]
         (default: 'pose_groupstate')
 ```
 
@@ -214,7 +211,7 @@ CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 
 - [aruco\_detection](#aruco_detection)
 - [color\_detection](#color_detection)
-- [point\_cloud\_detection](#point_cloud_detection)
+
 
 実行できるサンプルの一覧は、`camera_example.launch.py`にオプション`-s`を付けて実行することで表示できます。
 
