@@ -18,6 +18,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
 from moveit_configs_utils import MoveItConfigsBuilder
 from moveit_configs_utils.launch_utils import DeclareBooleanLaunchArg
 from moveit_configs_utils.launches import generate_move_group_launch
@@ -67,7 +68,7 @@ def generate_launch_description():
     ld.add_action(declare_loaded_description)
 
     ld.add_action(DeclareBooleanLaunchArg('debug', default_value=False))
-    
+
     ld.add_action(
         DeclareLaunchArgument(
             'rviz_config',
@@ -76,6 +77,8 @@ def generate_launch_description():
             description='Set the path to rviz configuration file.',
         )
     )
+
+    rviz_config = LaunchConfiguration('rviz_config')
 
     moveit_config = (
         MoveItConfigsBuilder('crane_x7')
@@ -116,7 +119,11 @@ def generate_launch_description():
     ld.add_entity(generate_move_group_launch(moveit_config))
 
     # RViz
-    ld.add_entity(generate_moveit_rviz_launch(moveit_config))
+    rviz_entities = generate_moveit_rviz_launch(moveit_config).entities
+    for entity in rviz_entities:
+        if isinstance(entity, Node):
+            entity.cmd.extend(['--ros-args', '--params-file', rviz_config])
+            ld.add_entity(entity)
 
     # Static TF
     ld.add_entity(generate_static_virtual_joint_tfs_launch(moveit_config))
