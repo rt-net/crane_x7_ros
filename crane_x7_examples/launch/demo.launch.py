@@ -56,6 +56,24 @@ def generate_launch_description():
         'manipulator_links.csv'
     )
 
+    declare_rviz_config = DeclareLaunchArgument(
+        'rviz_config',
+        default_value=get_package_share_directory(
+            'crane_x7_moveit_config'
+        ) + '/config/moveit.rviz',
+        description='Set the path to rviz configuration file.',
+        condition=UnlessCondition(LaunchConfiguration('use_d435')),
+    )
+
+    declare_rviz_config_camera = DeclareLaunchArgument(
+        'rviz_config',
+        default_value=get_package_share_directory(
+            'crane_x7_examples'
+        ) + '/launch/camera_example.rviz',
+        description='Set the path to rviz configuration file.',
+        condition=IfCondition(LaunchConfiguration('use_d435')),
+    )
+
     description_loader = RobotDescriptionLoader()
     description_loader.port_name = LaunchConfiguration('port_name')
     description_loader.baudrate = LaunchConfiguration('baudrate')
@@ -66,30 +84,13 @@ def generate_launch_description():
 
     description = description_loader.load()
 
-    rviz_config_file_move_group = get_package_share_directory(
-        'crane_x7_moveit_config') + '/config/moveit.rviz',
-    rviz_config_file_camera = get_package_share_directory(
-        'crane_x7_examples') + '/launch/camera_example.rviz'
-
     move_group = IncludeLaunchDescription(
             PythonLaunchDescriptionSource([
                 get_package_share_directory('crane_x7_moveit_config'),
                 '/launch/run_move_group.launch.py']),
-            condition=UnlessCondition(LaunchConfiguration('use_d435')),
             launch_arguments={
                 'loaded_description': description,
-                'rviz_config': rviz_config_file_move_group
-            }.items()
-        )
-
-    move_group_camera = IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([
-                get_package_share_directory('crane_x7_moveit_config'),
-                '/launch/run_move_group.launch.py']),
-            condition=IfCondition(LaunchConfiguration('use_d435')),
-            launch_arguments={
-                'loaded_description': description,
-                'rviz_config': rviz_config_file_camera
+                'rviz_config': LaunchConfiguration('rviz_config')
             }.items()
         )
 
@@ -117,8 +118,9 @@ def generate_launch_description():
         declare_port_name,
         declare_baudrate,
         declare_use_d435,
+        declare_rviz_config,
+        declare_rviz_config_camera,
         move_group,
-        move_group_camera,
         control_node,
         realsense_node
     ])
