@@ -13,7 +13,7 @@ ROS 2 package suite of CRANE-X7.
 - [crane\_x7\_ros](#crane_x7_ros)
   - [Table of Contents](#table-of-contents)
   - [Supported ROS 2 distributions](#supported-ros-2-distributions)
-    - [ROS](#ros)
+    - [ROS 1](#ros-1)
   - [Requirements](#requirements)
   - [Installation](#installation)
     - [Build from source](#build-from-source)
