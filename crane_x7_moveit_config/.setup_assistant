@@ -1,0 +1,25 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: crane_x7_description
+    relative_path: urdf/crane_x7.urdf.xacro
+  srdf:
+    relative_path: config/crane_x7.srdf
+  package_settings:
+    author_name: RT Corporation
+    author_email: shop@rt-net.jp
+    generated_timestamp: 1721799427
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
