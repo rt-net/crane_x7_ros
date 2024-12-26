@@ -48,9 +48,6 @@ ROS 2 package suite of CRANE-X7.
 ### Build from source
 
 ```sh
-# Setup ROS environment
-$ source /opt/ros/jazzy/setup.bash
-
 # Download crane_x7 repositories
 $ mkdir -p ~/ros2_ws/src
 $ cd ~/ros2_ws/src
