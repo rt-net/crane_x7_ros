@@ -52,10 +52,6 @@ def generate_launch_description():
         'robot_description': LaunchConfiguration('loaded_description')
     }
 
-    moveit_config.move_group_capabilities = {
-        'capabilities': ''
-    }
-
     # Move group
     ld.add_entity(generate_move_group_launch(moveit_config))
 
