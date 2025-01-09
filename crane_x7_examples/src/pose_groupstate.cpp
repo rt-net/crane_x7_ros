@@ -17,7 +17,7 @@
 // /5c15da709e9ea8529b54b313dc570f164f9a713e/doc/examples/subframes
 // /src/subframes_tutorial.cpp
 
-#include "moveit/move_group_interface/move_group_interface.h"
+#include "moveit/move_group_interface/move_group_interface.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 using MoveGroupInterface = moveit::planning_interface::MoveGroupInterface;
