@@ -11,6 +11,8 @@
       - [RealSense D435マウンタ搭載モデルを使用する場合](#realsense-d435マウンタ搭載モデルを使用する場合)
   - [準備 (Gazeboを使う場合)](#準備-gazeboを使う場合)
     - [1. move\_groupとGazeboを起動する](#1-move_groupとgazeboを起動する)
+  - [準備（Mock Componentsを使う場合）](#準備mock-componentsを使う場合)
+    - [1. move\_groupとcontrollerを起動する](#1-move_groupとcontrollerを起動する)
   - [サンプルプログラムを実行する](#サンプルプログラムを実行する)
     - [Gazeboでサンプルプログラムを実行する場合](#gazeboでサンプルプログラムを実行する場合)
   - [Examples](#examples)
@@ -79,6 +81,19 @@ Gazeboを起動します。
 ```sh
 ros2 launch crane_x7_gazebo crane_x7_with_table.launch.py
 ```
+
+## 準備（Mock Componentsを使う場合）
+
+### 1. move_groupとcontrollerを起動する
+
+次のコマンドでmove_group (`crane_x7_moveit_config`)と
+controller (`crane_x7_control`)を起動します。
+
+```sh
+ros2 launch crane_x7_examples demo.launch.py use_mock_components:=true
+```
+
+Mock Componentsではカメラを使ったサンプルを実行することはできません。
 
 ## サンプルプログラムを実行する
 

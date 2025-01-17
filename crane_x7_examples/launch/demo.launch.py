@@ -44,6 +44,12 @@ def generate_launch_description():
         description='Use d435.'
     )
 
+    declare_use_mock_components = DeclareLaunchArgument(
+        'use_mock_components',
+        default_value='false',
+        description='Use mock_components or not.'
+    )
+
     config_file_path = os.path.join(
         get_package_share_directory('crane_x7_control'),
         'config',
@@ -78,6 +84,7 @@ def generate_launch_description():
     description_loader.port_name = LaunchConfiguration('port_name')
     description_loader.baudrate = LaunchConfiguration('baudrate')
     description_loader.use_d435 = LaunchConfiguration('use_d435')
+    description_loader.use_mock_components = LaunchConfiguration('use_mock_components')
     description_loader.timeout_seconds = '1.0'
     description_loader.manipulator_config_file_path = config_file_path
     description_loader.manipulator_links_file_path = links_file_path
@@ -118,6 +125,7 @@ def generate_launch_description():
         declare_port_name,
         declare_baudrate,
         declare_use_d435,
+        declare_use_mock_components,
         declare_rviz_config,
         declare_rviz_config_camera,
         move_group,
