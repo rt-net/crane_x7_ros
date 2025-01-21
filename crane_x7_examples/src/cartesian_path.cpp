@@ -23,7 +23,7 @@
 #include "angles/angles.h"
 #include "geometry_msgs/msg/pose.hpp"
 #include "geometry_msgs/msg/quaternion.hpp"
-#include "moveit/move_group_interface/move_group_interface.h"
+#include "moveit/move_group_interface/move_group_interface.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 
@@ -90,11 +90,8 @@ int main(int argc, char ** argv)
   }
 
   moveit_msgs::msg::RobotTrajectory trajectory;
-  const double jump_threshold = 0.0;
   const double eef_step = 0.01;
-  move_group_arm.computeCartesianPath(
-    waypoints, eef_step, jump_threshold,
-    trajectory);
+  move_group_arm.computeCartesianPath(waypoints, eef_step, trajectory);
   move_group_arm.execute(trajectory);
 
   // SRDFに定義されている"home"の姿勢にする

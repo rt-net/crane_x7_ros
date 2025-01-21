@@ -13,7 +13,7 @@ ROS 2 package suite of CRANE-X7.
 - [crane\_x7\_ros](#crane_x7_ros)
   - [Table of Contents](#table-of-contents)
   - [Supported ROS 2 distributions](#supported-ros-2-distributions)
-    - [ROS](#ros)
+    - [ROS 1](#ros-1)
   - [Requirements](#requirements)
   - [Installation](#installation)
     - [Build from source](#build-from-source)
@@ -24,35 +24,34 @@ ROS 2 package suite of CRANE-X7.
 ## Supported ROS 2 distributions
 
 - [Foxy](https://github.com/rt-net/crane_x7_ros/tree/foxy-devel)
-- Humble
+- [Humble](https://github.com/rt-net/crane_x7_ros/tree/humble)
+- [Jazzy](https://github.com/rt-net/crane_x7_ros/tree/jazzy)
 
-### ROS
+### ROS 1
 
 - [Melodic](https://github.com/rt-net/crane_x7_ros/tree/master)
 - [Noetic](https://github.com/rt-net/crane_x7_ros/tree/master)
+
 ## Requirements
 
 - CRANE-X7
   - [Product Introduction](https://rt-net.jp/products/crane-x7/)
   - [Web Shop](https://www.rt-shop.jp/index.php?main_page=product_info&products_id=3660&language=en)
 - Linux OS
-  - Ubuntu 22.04
+  - Ubuntu 24.04
 - ROS
-  - [Humble Hawksbill](https://docs.ros.org/en/humble/Installation.html)
+  - [Jazzy](https://docs.ros.org/en/jazzy/Installation.html)
 
 ## Installation
 
 ### Build from source
 
 ```sh
-# Setup ROS environment
-$ source /opt/ros/humble/setup.bash
-
 # Download crane_x7 repositories
 $ mkdir -p ~/ros2_ws/src
 $ cd ~/ros2_ws/src
-$ git clone -b ros2 https://github.com/rt-net/crane_x7_ros.git
-$ git clone -b ros2 https://github.com/rt-net/crane_x7_description.git
+$ git clone -b $ROS_DISTRO https://github.com/rt-net/crane_x7_ros.git
+$ git clone -b $ROS_DISTRO https://github.com/rt-net/crane_x7_description.git
 
 # Install dependencies
 $ rosdep install -r -y -i --from-paths .

@@ -28,7 +28,7 @@
 #include "geometry_msgs/msg/quaternion.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "geometry_msgs/msg/twist.hpp"
-#include "moveit/move_group_interface/move_group_interface.h"
+#include "moveit/move_group_interface/move_group_interface.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 #include "tf2/convert.h"
