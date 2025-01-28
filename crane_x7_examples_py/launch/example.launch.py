@@ -23,7 +23,6 @@ from moveit_configs_utils import MoveItConfigsBuilder
 
 
 def generate_launch_description():
-
     description_loader = RobotDescriptionLoader()
     declare_loaded_description = DeclareLaunchArgument(
         'loaded_description',
@@ -50,8 +49,6 @@ def generate_launch_description():
         'robot_description': LaunchConfiguration('loaded_description')
     }
 
-    moveit_config.move_group_capabilities = {'capabilities': ''}
-
     declare_example_name = DeclareLaunchArgument(
         'example',
         default_value='gripper_control',
@@ -62,7 +59,8 @@ def generate_launch_description():
     )
 
     declare_use_sim_time = DeclareLaunchArgument(
-        'use_sim_time', default_value='false',
+        'use_sim_time',
+        default_value='false',
         description=('Set true when using the gazebo simulator.')
     )
 
@@ -85,5 +83,3 @@ def generate_launch_description():
         declare_use_sim_time,
         example_node,
     ])
-
-

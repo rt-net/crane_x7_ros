@@ -2,10 +2,20 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>crane_x7_examples_py</name>
-  <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="root@todo.todo">root</maintainer>
+  <version>0.1.0</version>
+  <description>Python examples of CRANE-X7 ROS package</description>
+  <maintainer email="shop@rt-net.jp">RT Corporation</maintainer>
   <license>Apache-2.0</license>
+
+  <author email="mizoguchi@rt-net.jp">Nozomi Mizoguchi</author>
+  <author email="kuwagata@rt-net.jp">Atsushi Kuwagata</author>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>moveit</exec_depend>
+  <exec_depend>moveit_py</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-scipy</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
