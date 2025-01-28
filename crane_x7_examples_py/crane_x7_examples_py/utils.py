@@ -1,4 +1,4 @@
-# Copyright 2020 RT Corporation
+# Copyright 2025 RT Corporation
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -10,8 +10,6 @@
 # limitations under the License.
 
 import time
-import numpy as np
-import quaternion
 
 # generic ros libraries
 from rclpy.logging import get_logger
@@ -51,28 +49,3 @@ def plan_and_execute(
         result = False
     time.sleep(sleep_time)
     return result
-
-
-# euler --> quaternion
-def euler_to_quaternion(roll, pitch, yaw):
-    cy = np.cos(yaw * 0.5)
-    sy = np.sin(yaw * 0.5)
-    cr = np.cos(roll * 0.5)
-    sr = np.sin(roll * 0.5)
-    cp = np.cos(pitch * 0.5)
-    sp = np.sin(pitch * 0.5)
-
-    qw = cy * cr * cp + sy * sr * sp
-    qx = cy * sr * cp - sy * cr * sp
-    qy = cy * cr * sp + sy * sr * cp
-    qz = sy * cr * cp - cy * sr * sp
-
-    return [qx, qy, qz, qw]
-
-
-# rotation matrix --> quaternion
-def rotation_matrix_to_quaternion(rotation_matrix):
-    # numpy-quaternionを使用して回転行列からクォータニオンを計算
-    # 3x3の回転行列をnumpy.quaternionに変換する
-    q = quaternion.from_rotation_matrix(rotation_matrix)
-    return q

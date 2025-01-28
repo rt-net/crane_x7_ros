@@ -1,4 +1,4 @@
-# Copyright 2020 RT Corporation
+# Copyright 2025 RT Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,61 +14,53 @@
 
 import math
 
-import rclpy
-
-# generic ros libraries
-from rclpy.logging import get_logger
-
 # moveit python library
+from moveit.core.kinematic_constraints import construct_joint_constraint
 from moveit.core.robot_state import RobotState
 from moveit.planning import (
     MoveItPy,
     PlanRequestParameters,
 )
-from moveit.core.kinematic_constraints import construct_joint_constraint
+# generic ros libraries
+import rclpy
+from rclpy.logging import get_logger
 
 from crane_x7_examples_py.utils import plan_and_execute
 
-
 def main(args=None):
-    # ros2の初期化
     rclpy.init(args=args)
+    logger = get_logger('joint_values')
 
-    # ロガー生成
-    logger = get_logger("joint_values")
+    # instantiate MoveItPy instance and get planning component
+    crane_x7 = MoveItPy(node_name='joint_values')
+    logger.info('MoveItPy instance created')
 
-    # MoveItPy初期化
-    crane_x7 = MoveItPy(node_name="moveit_py")
-    crane_x7_arm = crane_x7.get_planning_component("arm")
-    logger.info("MoveItPy instance created")
+    # アーム制御用 planning component
+    arm = crane_x7.get_planning_component('arm')
 
-    # instantiate a a RobotState instance using the current robot model
+    # instantiate a RobotState instance using the current robot model
     robot_model = crane_x7.get_robot_model()
     robot_state = RobotState(robot_model)
 
-    plan_request_params = PlanRequestParameters(
+    arm_plan_request_params = PlanRequestParameters(
         crane_x7,
-        "ompl_rrtc",
+        'ompl_rrtc',
     )
-    # 駆動速度を調整する
-    plan_request_params.max_acceleration_scaling_factor = 0.5  # Set 0.0 ~ 1.0
-    plan_request_params.max_velocity_scaling_factor = 0.5  # Set 0.0 ~ 1.0
 
-    # SRDFに定義されている"vertical"の姿勢にする
-    # すべてのジョイントの目標角度が0度になる
-    crane_x7_arm.set_start_state_to_current_state()
-    crane_x7_arm.set_goal_state(configuration_name="vertical")
+    # 動作速度の調整
+    arm_plan_request_params.max_acceleration_scaling_factor = 1.0  # Set 0.0 ~ 1.0
+    arm_plan_request_params.max_velocity_scaling_factor = 1.0  # Set 0.0 ~ 1.0
+
+    # SRDFに定義されている'vertical'の姿勢にする
+    arm.set_start_state_to_current_state()
+    arm.set_goal_state(configuration_name='vertical')
     plan_and_execute(
         crane_x7,
-        crane_x7_arm,
+        arm,
         logger,
-        single_plan_parameters=plan_request_params,
+        single_plan_parameters=arm_plan_request_params,
     )
 
-    # 現在角度をベースに、目標角度を作成する
-    crane_x7_arm.set_start_state_to_current_state()
-
-    # 各ジョイントの角度を１つずつ変更する
     joint_names = [
         "crane_x7_shoulder_fixed_part_pan_joint",
         "crane_x7_shoulder_revolute_part_tilt_joint",
@@ -79,37 +71,38 @@ def main(args=None):
         "crane_x7_wrist_joint",
         ]
     target_joint_value = math.radians(-45.0)
+
+    # 各関節角度を順番に-45[deg]ずつ動かす
     for joint_name in joint_names:
+        arm.set_start_state_to_current_state()
+
         joint_values = {joint_name: target_joint_value}
         robot_state.joint_positions = joint_values
         joint_constraint = construct_joint_constraint(
             robot_state=robot_state,
-            joint_model_group=crane_x7.get_robot_model()
-            .get_joint_model_group("arm"),
+            joint_model_group=crane_x7.get_robot_model().get_joint_model_group("arm"),
         )
-        crane_x7_arm.set_start_state_to_current_state()
-        crane_x7_arm.set_goal_state(motion_plan_constraints=[joint_constraint])
+        arm.set_goal_state(motion_plan_constraints=[joint_constraint])
+
         plan_and_execute(
             crane_x7,
-            crane_x7_arm,
+            arm,
             logger,
-            single_plan_parameters=plan_request_params,
+            single_plan_parameters=arm_plan_request_params,
         )
 
-    # 垂直に戻す
-    crane_x7_arm.set_start_state_to_current_state()
-    crane_x7_arm.set_goal_state(configuration_name="vertical")
+    # SRDFに定義されている'vertical'の姿勢にする
+    arm.set_start_state_to_current_state()
+    arm.set_goal_state(configuration_name='vertical')
     plan_and_execute(
         crane_x7,
-        crane_x7_arm,
+        arm,
         logger,
-        single_plan_parameters=plan_request_params,
+        single_plan_parameters=arm_plan_request_params,
     )
 
-    # MoveItPyの終了
-    crane_x7.shutdown()
-
-    # rclpyの終了
+    # Finish with error. Related Issue
+    # https://github.com/moveit/moveit2/issues/2693
     rclpy.shutdown()
 
 
