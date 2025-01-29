@@ -25,8 +25,11 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'aruco_detection = crane_x7_examples_py.aruco_detection:main',
+            'color_detection = crane_x7_examples_py.color_detection:main',
             'gripper_control = crane_x7_examples_py.gripper_control:main',
             'joint_values = crane_x7_examples_py.joint_values:main',
+            'pick_and_place_tf = crane_x7_examples_py.pick_and_place_tf:main',
             'pick_and_place = crane_x7_examples_py.pick_and_place:main',
             'pose_groupstate = crane_x7_examples_py.pose_groupstate:main',
         ],
