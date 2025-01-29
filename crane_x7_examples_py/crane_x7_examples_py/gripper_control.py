@@ -14,17 +14,16 @@
 
 import math
 
-# moveit python library
+from crane_x7_examples_py.utils import plan_and_execute
+
 from moveit.core.robot_state import RobotState
 from moveit.planning import (
     MoveItPy,
     PlanRequestParameters,
 )
-# generic ros libraries
+
 import rclpy
 from rclpy.logging import get_logger
-
-from crane_x7_examples_py.utils import plan_and_execute
 
 
 def main(args=None):

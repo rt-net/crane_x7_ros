@@ -10,12 +10,21 @@
   <author email="mizoguchi@rt-net.jp">Nozomi Mizoguchi</author>
   <author email="kuwagata@rt-net.jp">Atsushi Kuwagata</author>
 
-  <exec_depend>rclpy</exec_depend>
-  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>crane_x7_control</exec_depend>
+  <exec_depend>crane_x7_description</exec_depend>
+  <exec_depend>crane_x7_moveit_config</exec_depend>
+  <exec_depend>cv_bridge</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>image_geometry</exec_depend>
   <exec_depend>moveit</exec_depend>
   <exec_depend>moveit_py</exec_depend>
   <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-opencv</exec_depend>
   <exec_depend>python3-scipy</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

@@ -15,16 +15,19 @@
 import copy
 import math
 
+from crane_x7_examples_py.utils import plan_and_execute
+
 from geometry_msgs.msg import Point, Pose, PoseStamped, Quaternion
-from moveit_msgs.msg import Constraints, JointConstraint
+
 from moveit.core.robot_state import RobotState
 from moveit.planning import (
     MoveItPy,
     PlanRequestParameters,
 )
+from moveit_msgs.msg import Constraints, JointConstraint
+
 import rclpy
 from rclpy.logging import get_logger
-from crane_x7_examples_py.utils import plan_and_execute
 from scipy.spatial.transform import Rotation
 
 
@@ -68,7 +71,9 @@ def main(args=None):
     LIFTING_HEIFHT = 0.3
     # 物体を掴む位置
     gripper_quat = Rotation.from_euler('xyz', [-180.0, 0.0, -90.0], degrees=True).as_quat()
-    gripper_quat_msg = Quaternion(x=gripper_quat[0], y=gripper_quat[1], z=gripper_quat[2], w=gripper_quat[3])
+    gripper_quat_msg = Quaternion(
+        x=gripper_quat[0], y=gripper_quat[1], z=gripper_quat[2], w=gripper_quat[3]
+    )
     GRASP_POSE = Pose(position=Point(x=0.2, y=0.0, z=0.13), orientation=gripper_quat_msg)
     PRE_AND_POST_GRASP_POSE = copy.deepcopy(GRASP_POSE)
     PRE_AND_POST_GRASP_POSE.position.z = LIFTING_HEIFHT

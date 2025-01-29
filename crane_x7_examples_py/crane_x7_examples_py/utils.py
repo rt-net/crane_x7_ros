@@ -10,8 +10,6 @@
 # limitations under the License.
 
 import time
-
-# generic ros libraries
 from rclpy.logging import get_logger
 
 

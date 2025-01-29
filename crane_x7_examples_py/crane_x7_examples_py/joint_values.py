@@ -14,18 +14,18 @@
 
 import math
 
-# moveit python library
+from crane_x7_examples_py.utils import plan_and_execute
+
 from moveit.core.kinematic_constraints import construct_joint_constraint
 from moveit.core.robot_state import RobotState
 from moveit.planning import (
     MoveItPy,
     PlanRequestParameters,
 )
-# generic ros libraries
+
 import rclpy
 from rclpy.logging import get_logger
 
-from crane_x7_examples_py.utils import plan_and_execute
 
 def main(args=None):
     rclpy.init(args=args)
@@ -62,13 +62,13 @@ def main(args=None):
     )
 
     joint_names = [
-        "crane_x7_shoulder_fixed_part_pan_joint",
-        "crane_x7_shoulder_revolute_part_tilt_joint",
-        "crane_x7_upper_arm_revolute_part_twist_joint",
-        "crane_x7_upper_arm_revolute_part_rotate_joint",
-        "crane_x7_lower_arm_fixed_part_joint",
-        "crane_x7_lower_arm_revolute_part_joint",
-        "crane_x7_wrist_joint",
+        'crane_x7_shoulder_fixed_part_pan_joint',
+        'crane_x7_shoulder_revolute_part_tilt_joint',
+        'crane_x7_upper_arm_revolute_part_twist_joint',
+        'crane_x7_upper_arm_revolute_part_rotate_joint',
+        'crane_x7_lower_arm_fixed_part_joint',
+        'crane_x7_lower_arm_revolute_part_joint',
+        'crane_x7_wrist_joint',
         ]
     target_joint_value = math.radians(-45.0)
 
@@ -80,7 +80,7 @@ def main(args=None):
         robot_state.joint_positions = joint_values
         joint_constraint = construct_joint_constraint(
             robot_state=robot_state,
-            joint_model_group=crane_x7.get_robot_model().get_joint_model_group("arm"),
+            joint_model_group=crane_x7.get_robot_model().get_joint_model_group('arm'),
         )
         arm.set_goal_state(motion_plan_constraints=[joint_constraint])
 
@@ -106,5 +106,5 @@ def main(args=None):
     rclpy.shutdown()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

@@ -12,16 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# moveit python library
+from crane_x7_examples_py.utils import plan_and_execute
+
 from moveit.planning import (
     MoveItPy,
     PlanRequestParameters,
 )
-# generic ros libraries
+
 import rclpy
 from rclpy.logging import get_logger
-
-from crane_x7_examples_py.utils import plan_and_execute
 
 
 def main(args=None):
@@ -79,5 +78,5 @@ def main(args=None):
     rclpy.shutdown()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
