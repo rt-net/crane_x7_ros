@@ -129,11 +129,7 @@ class PickAndPlaceTf(Node):
         # 経過時間
         TF_ELAPSED_TIME = now.nanoseconds - tf_msg.header.stamp.nanosec
         # 停止時間
-        # if self.tf_past is not None:
-        #     TF_STOP_TIME = now.nanoseconds - self.tf_past.header.stamp.nanosec
         TF_STOP_TIME = now.nanoseconds - self.tf_past.header.stamp.nanosec
-        # else:
-        #     TF_STOP_TIME = now.nanoseconds
         TARGET_Z_MIN_LIMIT = 0.04
 
         # 現在時刻から2秒以内に受け取ったtfを使用
