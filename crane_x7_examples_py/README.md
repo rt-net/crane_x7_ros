@@ -53,7 +53,7 @@ $ ros2 launch crane_x7_examples_py example.launch.py -s
 Arguments (pass arguments as '<name>:=<value>'):
 
     'example':
-        Set an example executable name: [gripper_control, pose_groupstate, joint_values,pick_and_place]
+        Set an example executable name: [gripper_control, pose_groupstate, joint_values, pick_and_place]
         (default: 'pose_groupstate')
 ```
 
