@@ -20,7 +20,7 @@ setup(
     zip_safe=True,
     maintainer='RT Corporation',
     maintainer_email='shop@rt-net.jp',
-    description='python examples of Sciurus17 ROS package',
+    description='python examples of CRANE-X7 ROS package',
     license='Apache License 2.0',
     tests_require=['pytest'],
     entry_points={
