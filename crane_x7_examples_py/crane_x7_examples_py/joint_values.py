@@ -48,8 +48,8 @@ def main(args=None):
     )
 
     # 動作速度の調整
-    arm_plan_request_params.max_acceleration_scaling_factor = 1.0  # Set 0.0 ~ 1.0
-    arm_plan_request_params.max_velocity_scaling_factor = 1.0  # Set 0.0 ~ 1.0
+    arm_plan_request_params.max_acceleration_scaling_factor = 0.5  # Set 0.0 ~ 1.0
+    arm_plan_request_params.max_velocity_scaling_factor = 0.5  # Set 0.0 ~ 1.0
 
     # SRDFに定義されている'vertical'の姿勢にする
     arm.set_start_state_to_current_state()
