@@ -71,7 +71,6 @@ ros2 launch crane_x7_examples_py example.launch.py example:='gripper_control'
 
 <img src=https://rt-net.github.io/images/crane-x7/gazebo_gripper_example.gif width=500px />
 
-**videos**
 [![crane_x7_gripper_control_demo](http://img.youtube.com/vi/uLRLkwbXUP0/hqdefault.jpg)](https://youtu.be/uLRLkwbXUP0)
 
 [back to example list](#examples)
@@ -93,7 +92,6 @@ ros2 launch crane_x7_examples_py example.launch.py example:='pose_groupstate'
 
 <img src=https://rt-net.github.io/images/crane-x7/gazebo_pose_groupstate.gif width=500px />
 
-**videos**
 [![crane_x7_pose_groupstate_demo](http://img.youtube.com/vi/FH18dA_xcjM/hqdefault.jpg)](https://youtu.be/FH18dA_xcjM)
 
 [back to example list](#examples)
@@ -111,7 +109,6 @@ ros2 launch crane_x7_examples_py example.launch.py example:='joint_values'
 ```
 <img src= https://rt-net.github.io/images/crane-x7/gazebo_joint_values_example.gif width = 500px />
 
-**videos**
 [![crane_x7_joint_values_demo](http://img.youtube.com/vi/skRwrrlUl4c/hqdefault.jpg)](https://youtu.be/skRwrrlUl4c)
 
 [back to example list](#examples)
@@ -136,8 +133,6 @@ CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 <img src = https://rt-net.github.io/images/crane-x7/bringup.jpg width = 500px />
 
 サンプルで使用しているこのオレンジ色のソフトボールはRT ROBOT SHOPの[こちらのページ](https://www.rt-shop.jp/index.php?main_page=product_info&cPath=1299_1307&products_id=3701)から入手することができます。
-
-**videos**
 
 [![crane_x7_pick_and_place_demo](http://img.youtube.com/vi/S_MwSvG2tKw/hqdefault.jpg)](https://youtu.be/S_MwSvG2tKw)
 
@@ -176,7 +171,6 @@ tfの`frame_id`はマーカIDごとに異なりID0のマーカの`frame_id`は`t
 ros2 launch crane_x7_examples_py camera_example.launch.py example:='aruco_detection'
 ```
 
-**videos**
 [![crane_x7_aruco_detection_demo](http://img.youtube.com/vi/eWzmG_jbTmM/hqdefault.jpg)](https://youtu.be/eWzmG_jbTmM)
 
 [back to camera example list](#camera-examples)
@@ -197,7 +191,6 @@ tfの`frame_id`は`target_0`です。
 ros2 launch crane_x7_examples_py camera_example.launch.py example:='color_detection'
 ```
 
-**videos**
 [![crane_x7_color_detection_demo](http://img.youtube.com/vi/O8lqw7yemAI/hqdefault.jpg)](https://youtu.be/O8lqw7yemAI)
 
 [back to camera example list](#camera-examples)
