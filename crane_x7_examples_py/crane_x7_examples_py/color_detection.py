@@ -38,7 +38,7 @@ class ImageSubscriber(Node):
             Image, 'image_thresholded',  10
         )
 
-        self.tf_broadcaster = TransformBroadcaster()
+        self.tf_broadcaster = TransformBroadcaster(self)
 
         self.camera_info = None
         self.depth_image = None
@@ -47,7 +47,7 @@ class ImageSubscriber(Node):
 
     def image_callback(self, msg):
         # カメラのパラメータを取得してから処理を行う
-        if not self.camera_info and not self.depth_image:
+        if not self.camera_info or not self.depth_image:
             return
 
         # 青い物体を検出するようにHSVの範囲を設定
@@ -55,7 +55,7 @@ class ImageSubscriber(Node):
         LOW_H = 100
         HIGH_H = 125
         LOW_S = 100
-        HIGH_S = 125
+        HIGH_S = 225
         LOW_V = 30
         HIGH_V = 255
 
@@ -103,7 +103,7 @@ class ImageSubscriber(Node):
             point = (pixel_x, pixel_y)
 
             # 補正後の画像座標系における把持対象物の位置を取得（2D）
-            rect_point = camera_model.rectifyImage(point)
+            rect_point = camera_model.rectifyPoint(point)
 
             # カメラ座標系から見た把持対象物の方向（Ray）を取得する
             ray = camera_model.projectPixelTo3dRay(rect_point)
@@ -115,21 +115,21 @@ class ImageSubscriber(Node):
                 self.depth_image, desired_encoding=self.depth_image.encoding)
 
             # カメラから把持対象物の表面までの距離
-            front_distance = cv_depth.image[point[1], point[0]] / 1000.0
+            front_distance = cv_depth[int(point[1]), int(point[0])] / 1000.0
             center_distance = front_distance + DEPTH_OFFSET
 
             # 距離を取得できないか遠すぎる場合は把持しない
             DEPTH_MAX = 0.5
             DEPTH_MIN = 0.2
             if center_distance < DEPTH_MIN or center_distance > DEPTH_MAX:
-                self.logger.info(f'Failed to get depth at {point}.')
+                self.get_logger().info(f'Failed to get depth at {point}.')
                 return
 
             # 把持対象物の位置を計算
             object_position = [
-                ray.x * center_distance,
-                ray.y * center_distance,
-                ray.z * center_distance
+                ray[0] * center_distance,
+                ray[1] * center_distance,
+                ray[2] * center_distance
             ]
 
             # 把持対象物の位置をTFに配信

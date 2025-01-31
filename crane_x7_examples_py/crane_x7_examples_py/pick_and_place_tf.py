@@ -191,7 +191,7 @@ class PickAndPlaceTf(Node):
 
         # 掴みに行く
         self._control_arm(
-            target_position.x, target_position.y, target_position.z + 0.07, -180, 0, 90)
+            target_position.x, target_position.y, target_position.z + 0.05, -180, 0, 90)
 
         # ハンドを閉じる
         self._control_gripper(GRIPPER_CLOSE)
