@@ -103,7 +103,7 @@ class PickAndPlaceTf(Node):
 
         self.arm.set_path_constraints(constraints)
 
-        # 関節への負荷が低い撮影姿勢
+        # 待機姿勢
         self.init_pose()
 
         # Call on_timer function every second

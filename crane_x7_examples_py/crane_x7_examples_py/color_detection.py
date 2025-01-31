@@ -55,7 +55,7 @@ class ImageSubscriber(Node):
         LOW_H = 100
         HIGH_H = 125
         LOW_S = 100
-        HIGH_S = 225
+        HIGH_S = 255
         LOW_V = 30
         HIGH_V = 255
 
