@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import datetime
 import math
 
 from crane_x7_examples_py.utils import plan_and_execute
@@ -29,27 +28,33 @@ from moveit_msgs.msg import Constraints, JointConstraint
 import numpy as np
 
 import rclpy
-from rclpy.logging import get_logger
 from rclpy.node import Node
-from rclpy.time import Time
 from scipy.spatial.transform import Rotation
 from tf2_ros import TransformException, TransformListener, TransformStamped
 from tf2_ros.buffer import Buffer
 
 
 class PickAndPlaceTf(Node):
-    def __init__(self, crane_x7):
-        super().__init__('pick_and_place_tf_node')
-        self.logger = get_logger('pick_and_place_tf')
-        self.crane_x7 = crane_x7
+    def __init__(self):
+        super().__init__('pick_and_place_tf')
+        self.logger = self.get_logger()
+
+        # tf
+        self.tf_buffer = Buffer()
+        self.tf_listener = TransformListener(self.tf_buffer, self)
+        self.tf_past = TransformStamped()
+
+        # instantiate MoveItPy instance and get planning component
+        self.crane_x7 = MoveItPy(node_name='moveit_py')
+        self.logger.info('MoveItPy instance created')
 
         # アーム制御用 planning component
-        self.arm = crane_x7.get_planning_component('arm')
+        self.arm = self.crane_x7.get_planning_component('arm')
         # グリッパ制御用 planning component
-        self.gripper = crane_x7.get_planning_component('gripper')
+        self.gripper = self.crane_x7.get_planning_component('gripper')
 
         # instantiate a RobotState instance using the current robot model
-        self.robot_model = crane_x7.get_robot_model()
+        self.robot_model = self.crane_x7.get_robot_model()
 
         self.arm_plan_request_params = PlanRequestParameters(
             self.crane_x7,
@@ -101,11 +106,6 @@ class PickAndPlaceTf(Node):
         # 関節への負荷が低い撮影姿勢
         self.init_pose()
 
-        # tf
-        self.tf_buffer = Buffer()
-        self.tf_listener = TransformListener(self.tf_buffer, self)
-        self.tf_past = TransformStamped()
-
         # Call on_timer function every second
         self.timer = self.create_timer(0.5, self.on_timer)
 
@@ -113,27 +113,29 @@ class PickAndPlaceTf(Node):
         # target_0のtf位置姿勢を取得
         try:
             tf_msg = self.tf_buffer.lookup_transform(
-                'base_link', 'target_0', Time())
+                'base_link', 'target_0', rclpy.time.Time())
         except TransformException as ex:
-            self.get_logger().info(
+            self.logger.info(
                 f'Could not transform base_link to target: {ex}'
                 )
             return
 
-        now = Time()
-        FILTERING_TIME = datetime.timedelta(seconds=2)
-        STOP_TIME_THRESHOLD = datetime.timedelta(seconds=3)
+        now_time = self.get_clock().now()
+        FILTERING_TIME = rclpy.duration.Duration(seconds=2)
+        STOP_TIME_THRESHOLD = rclpy.duration.Duration(seconds=3)
         DISTANCE_THRESHOLD = 0.01
 
         # 経過時間と停止時間を計算(nsec)
         # 経過時間
-        TF_ELAPSED_TIME = now.nanoseconds - tf_msg.header.stamp.nanosec
+        tf_time = rclpy.time.Time.from_msg(tf_msg.header.stamp)
+        TF_ELAPSED_TIME = now_time - tf_time
         # 停止時間
-        TF_STOP_TIME = now.nanoseconds - self.tf_past.header.stamp.nanosec
+        tf_past_time = rclpy.time.Time.from_msg(self.tf_past.header.stamp)
+        TF_STOP_TIME = now_time - tf_past_time
         TARGET_Z_MIN_LIMIT = 0.04
 
         # 現在時刻から2秒以内に受け取ったtfを使用
-        if TF_ELAPSED_TIME < FILTERING_TIME.total_seconds() * 1e9:
+        if TF_ELAPSED_TIME < FILTERING_TIME:
             tf_diff = np.linalg.norm([
                 self.tf_past.transform.translation.x - tf_msg.transform.translation.x,
                 self.tf_past.transform.translation.y - tf_msg.transform.translation.y,
@@ -142,7 +144,7 @@ class PickAndPlaceTf(Node):
             # 把持対象の位置が停止していることを判定
             if tf_diff < DISTANCE_THRESHOLD:
                 # 把持対象が3秒以上停止している場合ピッキング動作開始
-                if TF_STOP_TIME > STOP_TIME_THRESHOLD.total_seconds() * 1e9:
+                if TF_STOP_TIME > STOP_TIME_THRESHOLD:
                     # 把持対象が低すぎる場合は把持位置を調整
                     if tf_msg.transform.translation.z < TARGET_Z_MIN_LIMIT:
                         tf_msg.transform.translation.z = TARGET_Z_MIN_LIMIT
@@ -151,17 +153,19 @@ class PickAndPlaceTf(Node):
                 self.tf_past = tf_msg
 
     def init_pose(self):
-        joint_values = []
-        joint_values.append(math.radians(0.0))
-        joint_values.append(math.radians(90.0))
-        joint_values.append(math.radians(0.0))
-        joint_values.append(math.radians(-160.0))
-        joint_values.append(math.radians(0.0))
-        joint_values.append(math.radians(-50.0))
-        joint_values.append(math.radians(90.0))
-        self.robot_state.set_joint_group_positions('arm', joint_values)
+        joint_values = [
+            math.radians(0.0),
+            math.radians(90.0),
+            math.radians(0.0),
+            math.radians(-160.0),
+            math.radians(0.0),
+            math.radians(-50.0),
+            math.radians(90.0)
+        ]
+        robot_state = RobotState(self.robot_model)
+        robot_state.set_joint_group_positions('arm', joint_values)
         self.arm.set_start_state_to_current_state()
-        self.arm.set_goal_state(robot_state=self.robot_state)
+        self.arm.set_goal_state(robot_state=robot_state)
         plan_and_execute(
             self.crane_x7,
             self.arm,
@@ -200,7 +204,7 @@ class PickAndPlaceTf(Node):
         self._control_arm(0.1, 0.2, 0.2, -180, 0, 90)
 
         # 下ろす
-        self._control_arm(0.1, 0.2, 0.13, -180, 0, -90)
+        self._control_arm(0.1, 0.2, 0.13, -180, 0, 90)
 
         # ハンドを開く
         self._control_gripper(GRIPPER_OPEN)
@@ -256,14 +260,13 @@ class PickAndPlaceTf(Node):
 def main(args=None):
     rclpy.init(args=args)
 
-    crane_x7 = MoveItPy(node_name='moveit_py')
-    pick_and_place_tf_node = PickAndPlaceTf(crane_x7)
+    pick_and_place_tf_node = PickAndPlaceTf()
 
     rclpy.spin(pick_and_place_tf_node)
 
     # Finish with error. Related Issue
     # https://github.com/moveit/moveit2/issues/2693
-    crane_x7.destroy_node()
+    pick_and_place_tf_node.destroy_node()
     rclpy.shutdown()
 
 
