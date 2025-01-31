@@ -87,7 +87,10 @@ $ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
   - USB通信ポートの設定方法をREAMDEに記載してます
 - crane_x7_examples
   - [README](./crane_x7_examples/README.md)
-  - CRANE-X7のサンプルコード集です
+  - CRANE-X7のC++サンプルコード集です
+- crane_x7_examples_py
+  - [README](./crane_x7_examples_py/README.md)
+  - CRANE-X7のPythonサンプルコード集です  
 - crane_x7_gazebo
   - [README](./crane_x7_gazebo/README.md)
   - CRANE-X7のGazeboシミュレーションパッケージです
