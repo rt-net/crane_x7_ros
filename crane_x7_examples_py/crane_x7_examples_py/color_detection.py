@@ -19,7 +19,7 @@ from image_geometry import PinholeCameraModel
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import CameraInfo, Image
-import tf2_ros
+from tf2_ros import TransformBroadcaster
 
 
 class ImageSubscriber(Node):
@@ -37,9 +37,12 @@ class ImageSubscriber(Node):
         self.image_thresholded_publisher = self.create_publisher(
             Image, 'image_thresholded',  10
         )
-        self.tf_broadcaster = tf2_ros.TransformBroadcaster()
+
+        self.tf_broadcaster = TransformBroadcaster()
+
         self.camera_info = None
         self.depth_image = None
+
         self.bridge = CvBridge()
 
     def image_callback(self, msg):
