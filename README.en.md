@@ -85,7 +85,10 @@ Please refer to [crane_x7_examples](./crane_x7_examples/README.md) for details.
   - This package includes a hardware driver for CRANE-X7.
 - crane_x7_examples
   - [README](./crane_x7_examples/README.md)
-  - This package includes example codes for CRANE-X7.
+  - This package includes C++ example codes for CRANE-X7.
+- crane_x7_examples_py
+  - [README](./crane_x7_examples_py/README.md)
+  - This package includes Python example codes for CRANE-X7.
 - crane_x7_gazebo
   - [README](./crane_x7_gazebo/README.md)
   - This package includes Gazebo simulation environments for CRANE-X7.
