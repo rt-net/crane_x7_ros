@@ -2,8 +2,8 @@
 Changelog for package crane_x7_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+5.0.0 (2025-02-04)
+------------------
 * Jazzy対応 (`#198 <https://github.com/rt-net/crane_x7_ros/issues/198>`_)
 * Gazeboのclockをtopicへ配信 (`#192 <https://github.com/rt-net/crane_x7_ros/issues/192>`_)
 * Contributors: Atsushi Kuwagata, Yusuke Kato, Nozomi Mizoguchi

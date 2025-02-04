@@ -2,8 +2,8 @@
 Changelog for package crane_x7_examples
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+5.0.0 (2025-02-04)
+------------------
 * Mock components対応 (`#201 <https://github.com/rt-net/crane_x7_ros/issues/201>`_)
 * Jazzy対応 (`#198 <https://github.com/rt-net/crane_x7_ros/issues/198>`_)
 * RealSenseのcamera_namespace対応 (`#197 <https://github.com/rt-net/crane_x7_ros/issues/197>`_)

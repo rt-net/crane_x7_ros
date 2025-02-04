@@ -2,8 +2,8 @@
 Changelog for package crane_x7_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+5.0.0 (2025-02-04)
+------------------
 * goal_toleranceの設定と把持角の調整 (`#193 <https://github.com/rt-net/crane_x7_ros/issues/193>`_)
 * Contributors: Atsushi Kuwagata
 

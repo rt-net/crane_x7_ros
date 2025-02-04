@@ -2,8 +2,8 @@
 Changelog for package crane_x7
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+5.0.0 (2025-02-04)
+------------------
 * Contributors: Atsushi Kuwagata
 
 4.3.0 (2023-06-14)
