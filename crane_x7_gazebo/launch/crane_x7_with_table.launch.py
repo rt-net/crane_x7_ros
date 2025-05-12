@@ -94,10 +94,10 @@ def generate_launch_description():
     bridge = Node(
                 package='ros_gz_bridge',
                 executable='parameter_bridge',
+                output='screen'
                 arguments=[
                     '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
                 ],
-                output='screen'
             )
 
     return LaunchDescription([

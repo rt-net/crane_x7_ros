@@ -59,9 +59,9 @@ def generate_launch_description():
     controller_manager = Node(
         package='controller_manager',
         executable='ros2_control_node',
+        output='screen',
         parameters=[{'robot_description': LaunchConfiguration('loaded_description')},
                     crane_x7_controllers],
-        output='screen',
         )
 
     spawn_joint_state_controller = ExecuteProcess(
