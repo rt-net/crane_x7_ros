@@ -64,32 +64,23 @@ def generate_launch_description():
             launch_arguments={'loaded_description': description}.items()
         )
 
-    spawn_joint_state_controller = ExecuteProcess(
-                cmd=[
-                    'ros2 run controller_manager spawner '
-                    'joint_state_controller'
-                ],
-                shell=True,
-                output='screen',
-            )
+    spawn_joint_state_controller = Node(
+        package='controller_manager',
+        executable='spawner',
+        output='screen',
+        arguments=['joint_state_broadcaster'])
 
-    spawn_arm_controller = ExecuteProcess(
-                cmd=[
-                    'ros2 run controller_manager spawner '
-                    'crane_x7_arm_controller'
-                ],
-                shell=True,
-                output='screen',
-            )
+    spawn_arm_controller = Node(
+        package='controller_manager',
+        executable='spawner',
+        output='screen',
+        arguments=['crane_x7_arm_controller'])
 
-    spawn_gripper_controller = ExecuteProcess(
-                cmd=[
-                    'ros2 run controller_manager spawner '
-                    'crane_x7_gripper_controller'
-                ],
-                shell=True,
-                output='screen',
-            )
+    spawn_gripper_controller = Node(
+        package='controller_manager',
+        executable='spawner',
+        output='screen',
+        arguments=['crane_x7_gripper_controller'])
 
     bridge = Node(
                 package='ros_gz_bridge',
