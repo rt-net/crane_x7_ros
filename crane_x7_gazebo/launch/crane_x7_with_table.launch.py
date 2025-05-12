@@ -68,7 +68,7 @@ def generate_launch_description():
         package='controller_manager',
         executable='spawner',
         output='screen',
-        arguments=['joint_state_broadcaster'])
+        arguments=['joint_state_controller'])
 
     spawn_arm_controller = Node(
         package='controller_manager',
