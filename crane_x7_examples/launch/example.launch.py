@@ -23,15 +23,19 @@ from moveit_configs_utils import MoveItConfigsBuilder
 
 def generate_launch_description():
     declare_example_name = DeclareLaunchArgument(
-        'example', default_value='pose_groupstate',
-        description=('Set an example executable name: '
-                     '[gripper_control, pose_groupstate, joint_values,'
-                     'pick_and_place, cartesian_path]')
+        'example',
+        default_value='pose_groupstate',
+        description=(
+            'Set an example executable name: '
+            '[gripper_control, pose_groupstate, joint_values,'
+            'pick_and_place, cartesian_path]'
+        ),
     )
 
     declare_use_sim_time = DeclareLaunchArgument(
-        'use_sim_time', default_value='false',
-        description=('Set true when using the gazebo simulator.')
+        'use_sim_time',
+        default_value='false',
+        description=('Set true when using the gazebo simulator.'),
     )
 
     description_loader = RobotDescriptionLoader()
@@ -41,15 +45,19 @@ def generate_launch_description():
         'robot_description': description_loader.load(),
     }
 
-    example_node = Node(name=[LaunchConfiguration('example'), '_node'],
-                        package='crane_x7_examples',
-                        executable=LaunchConfiguration('example'),
-                        output='screen',
-                        parameters=[moveit_config.to_dict()])
+    example_node = Node(
+        name=[LaunchConfiguration('example'), '_node'],
+        package='crane_x7_examples',
+        executable=LaunchConfiguration('example'),
+        output='screen',
+        parameters=[moveit_config.to_dict()],
+    )
 
-    return LaunchDescription([
-        declare_use_sim_time,
-        SetParameter(name='use_sim_time', value=LaunchConfiguration('use_sim_time')),
-        declare_example_name,
-        example_node
-    ])
+    return LaunchDescription(
+        [
+            declare_use_sim_time,
+            SetParameter(name='use_sim_time', value=LaunchConfiguration('use_sim_time')),
+            declare_example_name,
+            example_node,
+        ]
+    )

@@ -48,10 +48,12 @@ def generate_launch_description():
         'robot_description': LaunchConfiguration('loaded_description')
     }
 
-    return LaunchDescription([
-        declare_robot_description,
-        generate_move_group_launch(moveit_config),
-        generate_moveit_rviz_launch(moveit_config),
-        generate_static_virtual_joint_tfs_launch(moveit_config),
-        generate_rsp_launch(moveit_config)
-    ])
+    return LaunchDescription(
+        [
+            declare_robot_description,
+            generate_move_group_launch(moveit_config),
+            generate_moveit_rviz_launch(moveit_config),
+            generate_static_virtual_joint_tfs_launch(moveit_config),
+            generate_rsp_launch(moveit_config),
+        ]
+    )

@@ -25,8 +25,7 @@ def generate_launch_description():
     declare_example_name = DeclareLaunchArgument(
         'example',
         default_value='color_detection',
-        description=('Set an example executable name: '
-                     '[aruco_detection, color_detection]')
+        description=('Set an example executable name: [aruco_detection, color_detection]'),
     )
 
     declare_use_sim_time = DeclareLaunchArgument(
@@ -71,7 +70,7 @@ def generate_launch_description():
         package='crane_x7_examples_py',
         executable='pick_and_place_tf',
         output='screen',
-        parameters=[config_dict]
+        parameters=[config_dict],
     )
 
     example_node = Node(
@@ -82,10 +81,12 @@ def generate_launch_description():
         parameters=[config_dict],
     )
 
-    return LaunchDescription([
-        declare_loaded_description,
-        declare_example_name,
-        declare_use_sim_time,
-        picking_node,
-        example_node
-    ])
+    return LaunchDescription(
+        [
+            declare_loaded_description,
+            declare_example_name,
+            declare_use_sim_time,
+            picking_node,
+            example_node,
+        ]
+    )

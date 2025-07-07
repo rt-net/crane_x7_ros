@@ -23,14 +23,18 @@ from moveit_configs_utils import MoveItConfigsBuilder
 
 def generate_launch_description():
     declare_example_name = DeclareLaunchArgument(
-        'example', default_value='color_detection',
-        description=('Set an example executable name: '
-                     '[color_detection, aruco_detection, point_cloud_detection]')
+        'example',
+        default_value='color_detection',
+        description=(
+            'Set an example executable name: '
+            '[color_detection, aruco_detection, point_cloud_detection]'
+        ),
     )
 
     declare_use_sim_time = DeclareLaunchArgument(
-        'use_sim_time', default_value='false',
-        description=('Set true when using the gazebo simulator.')
+        'use_sim_time',
+        default_value='false',
+        description=('Set true when using the gazebo simulator.'),
     )
 
     description_loader = RobotDescriptionLoader()
@@ -40,21 +44,27 @@ def generate_launch_description():
         'robot_description': description_loader.load(),
     }
 
-    picking_node = Node(name='pick_and_place_tf',
-                        package='crane_x7_examples',
-                        executable='pick_and_place_tf',
-                        output='screen',
-                        parameters=[moveit_config.to_dict()])
+    picking_node = Node(
+        name='pick_and_place_tf',
+        package='crane_x7_examples',
+        executable='pick_and_place_tf',
+        output='screen',
+        parameters=[moveit_config.to_dict()],
+    )
 
-    detection_node = Node(name=[LaunchConfiguration('example'), '_node'],
-                          package='crane_x7_examples',
-                          executable=LaunchConfiguration('example'),
-                          output='screen')
+    detection_node = Node(
+        name=[LaunchConfiguration('example'), '_node'],
+        package='crane_x7_examples',
+        executable=LaunchConfiguration('example'),
+        output='screen',
+    )
 
-    return LaunchDescription([
-        declare_use_sim_time,
-        SetParameter(name='use_sim_time', value=LaunchConfiguration('use_sim_time')),
-        picking_node,
-        detection_node,
-        declare_example_name
-    ])
+    return LaunchDescription(
+        [
+            declare_use_sim_time,
+            SetParameter(name='use_sim_time', value=LaunchConfiguration('use_sim_time')),
+            picking_node,
+            detection_node,
+            declare_example_name,
+        ]
+    )

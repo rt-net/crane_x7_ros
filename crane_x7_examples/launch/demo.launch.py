@@ -27,55 +27,41 @@ from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
     declare_port_name = DeclareLaunchArgument(
-        'port_name',
-        default_value='/dev/ttyUSB0',
-        description='Set port name.'
+        'port_name', default_value='/dev/ttyUSB0', description='Set port name.'
     )
 
     declare_baudrate = DeclareLaunchArgument(
-        'baudrate',
-        default_value='3000000',
-        description='Set baudrate.'
+        'baudrate', default_value='3000000', description='Set baudrate.'
     )
 
     declare_use_d435 = DeclareLaunchArgument(
-        'use_d435',
-        default_value='false',
-        description='Use d435.'
+        'use_d435', default_value='false', description='Use d435.'
     )
 
     declare_use_mock_components = DeclareLaunchArgument(
-        'use_mock_components',
-        default_value='false',
-        description='Use mock_components or not.'
+        'use_mock_components', default_value='false', description='Use mock_components or not.'
     )
 
     config_file_path = os.path.join(
-        get_package_share_directory('crane_x7_control'),
-        'config',
-        'manipulator_config.yaml'
+        get_package_share_directory('crane_x7_control'), 'config', 'manipulator_config.yaml'
     )
 
     links_file_path = os.path.join(
-        get_package_share_directory('crane_x7_control'),
-        'config',
-        'manipulator_links.csv'
+        get_package_share_directory('crane_x7_control'), 'config', 'manipulator_links.csv'
     )
 
     declare_rviz_config = DeclareLaunchArgument(
         'rviz_config',
-        default_value=get_package_share_directory(
-            'crane_x7_moveit_config'
-        ) + '/config/moveit.rviz',
+        default_value=get_package_share_directory('crane_x7_moveit_config')
+        + '/config/moveit.rviz',
         description='Set the path to rviz configuration file.',
         condition=UnlessCondition(LaunchConfiguration('use_d435')),
     )
 
     declare_rviz_config_camera = DeclareLaunchArgument(
         'rviz_config',
-        default_value=get_package_share_directory(
-            'crane_x7_examples'
-        ) + '/launch/camera_example.rviz',
+        default_value=get_package_share_directory('crane_x7_examples')
+        + '/launch/camera_example.rviz',
         description='Set the path to rviz configuration file.',
         condition=IfCondition(LaunchConfiguration('use_d435')),
     )
@@ -92,43 +78,48 @@ def generate_launch_description():
     description = description_loader.load()
 
     move_group = IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([
+        PythonLaunchDescriptionSource(
+            [
                 get_package_share_directory('crane_x7_moveit_config'),
-                '/launch/run_move_group.launch.py']),
-            launch_arguments={
-                'loaded_description': description,
-                'rviz_config': LaunchConfiguration('rviz_config')
-            }.items()
-        )
+                '/launch/run_move_group.launch.py',
+            ]
+        ),
+        launch_arguments={
+            'loaded_description': description,
+            'rviz_config': LaunchConfiguration('rviz_config'),
+        }.items(),
+    )
 
     control_node = IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([
-                get_package_share_directory('crane_x7_control'),
-                '/launch/crane_x7_control.launch.py']),
-            launch_arguments={'loaded_description': description}.items()
-        )
+        PythonLaunchDescriptionSource(
+            [get_package_share_directory('crane_x7_control'), '/launch/crane_x7_control.launch.py']
+        ),
+        launch_arguments={'loaded_description': description}.items(),
+    )
 
     realsense_node = IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([
-                get_package_share_directory('realsense2_camera'),
-                '/launch/rs_launch.py']),
-            condition=IfCondition(LaunchConfiguration('use_d435')),
-            launch_arguments={
-                'camera_namespace': '',
-                'device_type': 'd435',
-                'pointcloud.enable': 'true',
-                'align_depth.enable': 'true',
-            }.items()
-        )
+        PythonLaunchDescriptionSource(
+            [get_package_share_directory('realsense2_camera'), '/launch/rs_launch.py']
+        ),
+        condition=IfCondition(LaunchConfiguration('use_d435')),
+        launch_arguments={
+            'camera_namespace': '',
+            'device_type': 'd435',
+            'pointcloud.enable': 'true',
+            'align_depth.enable': 'true',
+        }.items(),
+    )
 
-    return LaunchDescription([
-        declare_port_name,
-        declare_baudrate,
-        declare_use_d435,
-        declare_use_mock_components,
-        declare_rviz_config,
-        declare_rviz_config_camera,
-        move_group,
-        control_node,
-        realsense_node
-    ])
+    return LaunchDescription(
+        [
+            declare_port_name,
+            declare_baudrate,
+            declare_use_d435,
+            declare_use_mock_components,
+            declare_rviz_config,
+            declare_rviz_config_camera,
+            move_group,
+            control_node,
+            realsense_node,
+        ]
+    )

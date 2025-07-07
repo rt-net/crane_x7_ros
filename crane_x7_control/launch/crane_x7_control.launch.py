@@ -24,15 +24,11 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     config_file_path = os.path.join(
-        get_package_share_directory('crane_x7_control'),
-        'config',
-        'manipulator_config.yaml'
+        get_package_share_directory('crane_x7_control'), 'config', 'manipulator_config.yaml'
     )
 
     links_file_path = os.path.join(
-        get_package_share_directory('crane_x7_control'),
-        'config',
-        'manipulator_links.csv'
+        get_package_share_directory('crane_x7_control'), 'config', 'manipulator_links.csv'
     )
 
     description_loader = RobotDescriptionLoader()
@@ -46,45 +42,50 @@ def generate_launch_description():
         'loaded_description',
         default_value=description_loader.load(),
         description='Set robot_description text.  \
-                     It is recommended to use RobotDescriptionLoader() in crane_x7_description.'
+                     It is recommended to use RobotDescriptionLoader() in crane_x7_description.',
     )
 
     crane_x7_controllers = os.path.join(
-        get_package_share_directory('crane_x7_control'),
-        'config',
-        'crane_x7_controllers.yaml'
-        )
+        get_package_share_directory('crane_x7_control'), 'config', 'crane_x7_controllers.yaml'
+    )
 
     controller_manager = Node(
         package='controller_manager',
         executable='ros2_control_node',
         output='screen',
-        parameters=[{'robot_description': LaunchConfiguration('loaded_description')},
-                    crane_x7_controllers],
-        )
+        parameters=[
+            {'robot_description': LaunchConfiguration('loaded_description')},
+            crane_x7_controllers,
+        ],
+    )
 
     spawn_joint_state_controller = Node(
         package='controller_manager',
         executable='spawner',
         output='screen',
-        arguments=['joint_state_controller'])
+        arguments=['joint_state_controller'],
+    )
 
     spawn_arm_controller = Node(
         package='controller_manager',
         executable='spawner',
         output='screen',
-        arguments=['crane_x7_arm_controller'])
+        arguments=['crane_x7_arm_controller'],
+    )
 
     spawn_gripper_controller = Node(
         package='controller_manager',
         executable='spawner',
         output='screen',
-        arguments=['crane_x7_gripper_controller'])
+        arguments=['crane_x7_gripper_controller'],
+    )
 
-    return LaunchDescription([
-      declare_loaded_description,
-      controller_manager,
-      spawn_joint_state_controller,
-      spawn_arm_controller,
-      spawn_gripper_controller
-    ])
+    return LaunchDescription(
+        [
+            declare_loaded_description,
+            controller_manager,
+            spawn_joint_state_controller,
+            spawn_arm_controller,
+            spawn_gripper_controller,
+        ]
+    )

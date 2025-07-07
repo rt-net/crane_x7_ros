@@ -34,7 +34,7 @@ def generate_launch_description():
     declare_use_sim_time = DeclareLaunchArgument(
         'use_sim_time',
         default_value='false',
-        description=('Set true when using the gazebo simulator.')
+        description=('Set true when using the gazebo simulator.'),
     )
 
     description_loader = RobotDescriptionLoader()
@@ -76,9 +76,11 @@ def generate_launch_description():
         parameters=[config_dict],
     )
 
-    return LaunchDescription([
-        declare_loaded_description,
-        declare_example_name,
-        declare_use_sim_time,
-        example_node,
-    ])
+    return LaunchDescription(
+        [
+            declare_loaded_description,
+            declare_example_name,
+            declare_use_sim_time,
+            example_node,
+        ]
+    )
