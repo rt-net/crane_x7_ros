@@ -22,10 +22,6 @@ from moveit_configs_utils import MoveItConfigsBuilder
 
 
 def generate_launch_description():
-    moveit_config = MoveItConfigsBuilder('crane_x7').to_moveit_configs()
-
-    description_loader = RobotDescriptionLoader()
-
     declare_example_name = DeclareLaunchArgument(
         'example', default_value='color_detection',
         description=('Set an example executable name: '
@@ -37,13 +33,18 @@ def generate_launch_description():
         description=('Set true when using the gazebo simulator.')
     )
 
+    description_loader = RobotDescriptionLoader()
+
+    moveit_config = MoveItConfigsBuilder('crane_x7').to_moveit_configs()
+    moveit_config.robot_description = {
+        'robot_description': description_loader.load(),
+    }
+
     picking_node = Node(name='pick_and_place_tf',
                         package='crane_x7_examples',
                         executable='pick_and_place_tf',
                         output='screen',
-                        parameters=[{'robot_description': description_loader.load()},
-                                    moveit_config.robot_description_semantic,
-                                    moveit_config.robot_description_kinematics])
+                        parameters=[moveit_config.to_dict()])
 
     detection_node = Node(name=[LaunchConfiguration('example'), '_node'],
                           package='crane_x7_examples',
