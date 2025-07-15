@@ -72,15 +72,16 @@ def main(args=None):
         ]
     target_joint_value = math.radians(-45.0)
 
+    # 現在角度をベースに、目標角度を作成する
+    current_state = arm.get_start_state()
+    joint_values = current_state.get_joint_group_positions('arm')
+
+    # jointのリストを辞書型の形式に変換する
+    joint_values_dict = dict(zip(joint_names, joint_values))
+    
     # 各関節角度を順番に-45[deg]に動かす
     for joint_name in joint_names:
-        arm.set_start_state_to_current_state()
-
-        # jointのリストを取得して辞書型の形式に変換する
-        current_state = arm.get_start_state()
-        joint_values = current_state.get_joint_group_positions('arm')
-        joint_values_dict = dict(zip(joint_names, joint_values))
-
+        
         # 対象のjointに目標値を設定する
         joint_values_dict[joint_name] = target_joint_value
         robot_state.joint_positions = joint_values_dict 
@@ -89,6 +90,8 @@ def main(args=None):
             robot_state=robot_state,
             joint_model_group=crane_x7.get_robot_model().get_joint_model_group('arm'),
         )
+
+        arm.set_start_state_to_current_state()
         arm.set_goal_state(motion_plan_constraints=[joint_constraint])
 
         plan_and_execute(
