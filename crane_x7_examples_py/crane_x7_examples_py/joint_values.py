@@ -48,7 +48,9 @@ def main(args=None):
     )
 
     # 動作速度の調整
-    arm_plan_request_params.max_acceleration_scaling_factor = 0.5  # Set 0.0 ~ 1.0
+    arm_plan_request_params.max_acceleration_scaling_factor = (
+        0.5  # Set 0.0 ~ 1.0
+    )
     arm_plan_request_params.max_velocity_scaling_factor = 0.5  # Set 0.0 ~ 1.0
 
     # SRDFに定義されている'vertical'の姿勢にする
@@ -69,7 +71,7 @@ def main(args=None):
         'crane_x7_lower_arm_fixed_part_joint',
         'crane_x7_lower_arm_revolute_part_joint',
         'crane_x7_wrist_joint',
-        ]
+    ]
     target_joint_value = math.radians(-45.0)
 
     # 現在角度をベースに、目標角度を作成する
@@ -78,17 +80,18 @@ def main(args=None):
 
     # jointのリストを辞書型の形式に変換する
     joint_values_dict = dict(zip(joint_names, joint_values))
-    
+
     # 各関節角度を順番に-45[deg]に動かす
     for joint_name in joint_names:
-        
         # 対象のjointに目標値を設定する
         joint_values_dict[joint_name] = target_joint_value
-        robot_state.joint_positions = joint_values_dict 
-        
+        robot_state.joint_positions = joint_values_dict
+
         joint_constraint = construct_joint_constraint(
             robot_state=robot_state,
-            joint_model_group=crane_x7.get_robot_model().get_joint_model_group('arm'),
+            joint_model_group=crane_x7.get_robot_model().get_joint_model_group(
+                'arm'
+            ),
         )
 
         arm.set_start_state_to_current_state()
