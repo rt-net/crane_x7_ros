@@ -97,26 +97,33 @@ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
 
 Sample programs are available in both C++ and Python. For details, refer to the links below.
 
-- [crane_x7_examples](./crane_x7_examples/README.md) (C++)
-  - Examples
-    - gripper_control
-    - pose_groupstate
-    - joint_values
-    - cartesian_path
-    - pick_and_place
-  - Camera Examples
-    - aruco_detection
-    - color_detection
-    - point_cloud_detection
-- [crane_x7_examples_py](./crane_x7_examples_py/README.md) (Python)
-  - Examples
-    - gripper_control
-    - pose_groupstate
-    - joint_values
-    - pick_and_place
-  - Camera Examples
-    - aruco_detection
-    - color_detection
+### C++
+
+[crane_x7_examples](./crane_x7_examples/README.md)
+
+- Examples
+  - gripper_control
+  - pose_groupstate
+  - joint_values
+  - cartesian_path
+  - pick_and_place
+- Camera Examples
+  - aruco_detection
+  - color_detection
+  - point_cloud_detection
+
+### Python
+
+[crane_x7_examples_py](./crane_x7_examples_py/README.md)
+
+- Examples
+  - gripper_control
+  - pose_groupstate
+  - joint_values
+  - pick_and_place
+- Camera Examples
+  - aruco_detection
+  - color_detection
 
 ## Licenses
 
