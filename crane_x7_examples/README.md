@@ -248,9 +248,8 @@ ros2 launch crane_x7_examples example.launch.py example:='pick_and_place'
 - [color\_detection](#color_detection)
 - [point\_cloud\_detection](#point_cloud_detection)
 
-実行できるサンプルの一覧は、`camera_example.launch.py`にオプション`-s`を付けて実行することで表示できます。
-
 > [!NOTE]
+> 実行できるサンプルの一覧は、`camera_example.launch.py`にオプション`-s`を付けて実行することで表示できます。
 > ```sh
 > $ ros2 launch crane_x7_examples camera_example.launch.py -s
 > Arguments (pass arguments as '<name>:=<value>'):
