@@ -272,6 +272,12 @@ ros2 launch crane_x7_examples example.launch.py example:='pick_and_place'
 
 モノに取り付けたArUcoマーカをカメラで検出し、マーカ位置に合わせて掴むコード例です。
 
+- マーカは[aruco_markers.pdf](./aruco_markers.pdf)をA4紙に印刷し、一辺50mmの立方体に取り付けます。
+- 検出されたマーカの位置姿勢はtfのフレームとして配信されます。
+- tfの`frame_id`はマーカIDごとに異なりID0のマーカの`frame_id`は`target_0`になります。
+- 掴む対象は`target_0`に設定されています。
+- マーカ検出には[OpenCV](https://docs.opencv.org/4.x/d5/dae/tutorial_aruco_detection.html)を使用しています。
+
 <a href="https://youtu.be/eWzmG_jbTmM" target="_blank" rel="noopener noreferrer">
   <img src="http://img.youtube.com/vi/eWzmG_jbTmM/hqdefault.jpg" alt="crane_x7_aruco_detection_demo" width="650">
 </a>
@@ -281,12 +287,6 @@ ros2 launch crane_x7_examples example.launch.py example:='pick_and_place'
 ```sh
 ros2 launch crane_x7_examples camera_example.launch.py example:='aruco_detection'
 ```
-
-- マーカは[aruco_markers.pdf](./aruco_markers.pdf)をA4紙に印刷し、一辺50mmの立方体に取り付けます。
-- 検出されたマーカの位置姿勢はtfのフレームとして配信されます。
-- tfの`frame_id`はマーカIDごとに異なりID0のマーカの`frame_id`は`target_0`になります。
-- 掴む対象は`target_0`に設定されています。
-- マーカ検出には[OpenCV](https://docs.opencv.org/4.x/d5/dae/tutorial_aruco_detection.html)を使用しています。
 
 [back to camera example list](#camera-examples)
 
