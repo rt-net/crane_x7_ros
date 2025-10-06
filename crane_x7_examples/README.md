@@ -229,18 +229,20 @@ ros2 launch crane_x7_examples example.launch.py example:='cartesian_path'
   <img src="http://img.youtube.com/vi/S_MwSvG2tKw/hqdefault.jpg" alt="crane_x7_pick_and_place_demo" width="600">
 </a>
 
+> [!NOTE]
+> 実機を使う場合は、CRANE-X7から20cm離れた位置にピッキング対象を設置します。
+> 
+> オレンジ色のソフトボールは[RT ROBOT SHOP](https://www.rt-shop.jp/index.php?main_page=product_info&cPath=1299_1307&products_id=3701)から入手できます。
+>
+> <img src = https://rt-net.github.io/images/crane-x7/bringup.jpg width = 300 />
+
 次のコマンドを実行します。
 
 ```sh
 ros2 launch crane_x7_examples example.launch.py example:='pick_and_place'
 ```
 
-> [!NOTE]
-> 実機を使う場合は、CRANE-X7から20cm離れた位置にピッキング対象を設置します。
-> 
-> オレンジ色のソフトボールは[RT ROBOT SHOP](https://www.rt-shop.jp/index.php?main_page=product_info&cPath=1299_1307&products_id=3701)から入手できます。
->
-> <img src = https://rt-net.github.io/images/crane-x7/bringup.jpg width = 450 />
+<img src = https://rt-net.github.io/images/crane-x7/bringup_rviz.gif width = 300 />
 
 [back to example list](#examples)
 
@@ -294,6 +296,11 @@ ros2 launch crane_x7_examples camera_example.launch.py example:='aruco_detection
 
 特定の色の物体を検出して掴むコード例です。
 
+- デフォルトでは青い物体の位置をtfのフレームとして配信します。
+- tfの`frame_id`は`target_0`です。
+- 色の検出には[OpenCV](https://docs.opencv.org/4.x/db/d8e/tutorial_threshold.html)を使用しています。
+- 検出した物体の距離は深度画像から取得します。
+
 <a href="https://youtu.be/O8lqw7yemAI" target="_blank" rel="noopener noreferrer">
   <img src="http://img.youtube.com/vi/O8lqw7yemAI/hqdefault.jpg" alt="crane_x7_color_detection_dem" width="600">
 </a>
@@ -304,11 +311,6 @@ ros2 launch crane_x7_examples camera_example.launch.py example:='aruco_detection
 ros2 launch crane_x7_examples camera_example.launch.py example:='color_detection'
 ```
 
-- デフォルトでは青い物体の位置をtfのフレームとして配信します。
-- tfの`frame_id`は`target_0`です。
-- 色の検出には[OpenCV](https://docs.opencv.org/4.x/db/d8e/tutorial_threshold.html)を使用しています。
-- 検出した物体の距離は深度画像から取得します。
-
 [back to camera example list](#camera-examples)
 
 ---
@@ -316,6 +318,11 @@ ros2 launch crane_x7_examples camera_example.launch.py example:='color_detection
 ### point_cloud_detection
 
 点群から物体を検出して掴むコード例です。
+
+- 検出された物体位置はtfのフレームとして配信されます。
+- tfの`frame_id`は検出された順に`target_0`、`target_1`、`target_2`…に設定されます。
+- 掴む対象は`target_0`に設定されています。
+- 物体検出には[Point Cloud Library](https://pointclouds.org/)を使用しています。
 
 <a href="https://youtu.be/RgAjxH0CAuk" target="_blank" rel="noopener noreferrer">
   <img src="http://img.youtube.com/vi/RgAjxH0CAuk/hqdefault.jpg" alt="crane_x7_point_cloud_detection_demo" width="600">
@@ -326,10 +333,5 @@ ros2 launch crane_x7_examples camera_example.launch.py example:='color_detection
 ```sh
 ros2 launch crane_x7_examples camera_example.launch.py example:='point_cloud_detection'
 ```
-
-- 検出された物体位置はtfのフレームとして配信されます。
-- tfの`frame_id`は検出された順に`target_0`、`target_1`、`target_2`…に設定されます。
-- 掴む対象は`target_0`に設定されています。
-- 物体検出には[Point Cloud Library](https://pointclouds.org/)を使用しています。
 
 [back to camera example list](#camera-examples)
