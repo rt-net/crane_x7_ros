@@ -15,7 +15,6 @@ ROS 2でCRANE-X7を動作させるパッケージです。
   - [Supported ROS distributions](#supported-ros-distributions)
   - [Requirements](#requirements)
   - [Installation](#installation)
-    - [Source Build](#source-build)
   - [Quick Start](#quick-start)
   - [Packages](#packages)
   - [How to Use Examples](#how-to-use-examples)
