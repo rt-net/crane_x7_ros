@@ -76,7 +76,7 @@ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
 - crane_x7_control
   - [README](./crane_x7_control/README.md)
   - CRANE-X7を制御するパッケージです
-  - USB通信ポートの設定方法をREAMDEに記載してます
+  - USB通信ポートの設定方法をREAMDEに記載しています
 - crane_x7_examples
   - [README](./crane_x7_examples/README.md)
   - CRANE-X7のC++サンプルコード集です
@@ -95,7 +95,7 @@ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
 
 ## How to Use Examples
 
-サンプルプログラムは、C++とPythonの両方を用意しています。詳しくは、以下のリンクご覧ください。
+サンプルプログラムは、C++とPythonの両方を用意しています。詳しくは、以下のリンクをご覧ください。
 
 ### C++
 
@@ -123,12 +123,12 @@ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
     - aruco_detection
     - color_detection
 
-## Licenses
+## License
 
 (C) 2018 RT Corporation \<support@rt-net.jp\>
 
-各ファイルはライセンスがファイル中に明記されている場合、そのライセンスに従います。
-特に明記されていない場合は、Apache License, Version 2.0に基づき公開されています。  
+各ファイルにライセンスが明記されている場合、そのライセンスに従います。
+特に明記がない場合は、Apache License, Version 2.0に基づいて公開されています。  
 ライセンスの全文は[LICENSE](./LICENSE)または[https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0)から確認できます。
 
 本パッケージが依存する[crane_x7_description](https://github.com/rt-net/crane_x7_description/tree/ros2)には株式会社アールティの非商用ライセンスが適用されています。
