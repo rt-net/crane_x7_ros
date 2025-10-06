@@ -25,7 +25,7 @@
 
 ### 実機を使う場合
 
-<img src=<ttps://rt-net.github.io/images/crane-x7/CRANE-X7-500x500.png> width=500 />
+<img src=https://rt-net.github.io/images/crane-x7/CRANE-X7-500x500.png width=500 />
 
 #### 1. CRANE-X7本体とPCの接続
 
@@ -69,7 +69,7 @@ ros2 launch crane_x7_examples demo.launch.py port_name:=/dev/ttyUSB0 use_d435:=t
 
 ### Gazeboを使う場合
 
-<img src=<https://rt-net.github.io/images/crane-x7/crane_x7_gazebo_ros2.png> width=500 />
+<img src=https://rt-net.github.io/images/crane-x7/crane_x7_gazebo_ros2.png width=500 />
 
 #### 1. move_groupとGazeboの起動
 
@@ -318,7 +318,7 @@ ros2 launch crane_x7_examples camera_example.launch.py example:='color_detection
 点群から物体を検出して掴むコード例です。
 
 <a href="https://youtu.be/RgAjxH0CAuk" target="_blank" rel="noopener noreferrer">
-  <img src="http://img.youtube.com/vi/RgAjxH0CAuk/hqdefault.jpg" alt="rane_x7_point_cloud_detection_demo" width="600">
+  <img src="http://img.youtube.com/vi/RgAjxH0CAuk/hqdefault.jpg" alt="crane_x7_point_cloud_detection_demo" width="600">
 </a>
 
 次のコマンドを実行します。
