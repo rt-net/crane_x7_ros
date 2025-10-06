@@ -134,15 +134,16 @@ Arguments (pass arguments as '<name>:=<value>'):
 
 ハンドを開閉させるコード例です。
 
+[![crane_x7_gripper_control_demo](http://img.youtube.com/vi/uLRLkwbXUP0/hqdefault.jpg)](https://youtu.be/uLRLkwbXUP0)
+
+次のコマンドを実行します。
+
 ```sh
 ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
 ```
 
-次のコマンドを実行します。
-
 <img src=https://rt-net.github.io/images/crane-x7/gazebo_gripper_example.gif width=500px />
 
-[![crane_x7_gripper_control_demo](http://img.youtube.com/vi/uLRLkwbXUP0/hqdefault.jpg)](https://youtu.be/uLRLkwbXUP0)
 
 [back to example list](#examples)
 
@@ -154,7 +155,7 @@ group_stateを使うコード例です。
 
 SRDFファイル[crane_x7_moveit_config/config/crane_x7.srdf](../crane_x7_moveit_config/config/crane_x7.srdf)に記載されている`home`と`vertical`の姿勢に移行します。
 
-<img src=https://rt-net.github.io/images/crane-x7/gazebo_pose_groupstate.gif width=500px />
+[![crane_x7_pose_groupstate_demo](http://img.youtube.com/vi/FH18dA_xcjM/hqdefault.jpg)](https://youtu.be/FH18dA_xcjM)
 
 次のコマンドを実行します。
 
@@ -162,7 +163,8 @@ SRDFファイル[crane_x7_moveit_config/config/crane_x7.srdf](../crane_x7_moveit
 ros2 launch crane_x7_examples example.launch.py example:='pose_groupstate'
 ```
 
-[![crane_x7_pose_groupstate_demo](http://img.youtube.com/vi/FH18dA_xcjM/hqdefault.jpg)](https://youtu.be/FH18dA_xcjM)
+<img src=https://rt-net.github.io/images/crane-x7/gazebo_pose_groupstate.gif width=500px />
+
 
 [back to example list](#examples)
 
@@ -172,7 +174,7 @@ ros2 launch crane_x7_examples example.launch.py example:='pose_groupstate'
 
 アームのジョイント角度を１つずつ変更させるコード例です。
 
-<img src= https://rt-net.github.io/images/crane-x7/gazebo_joint_values_example.gif width = 500px />
+[![crane_x7_joint_values_demo](http://img.youtube.com/vi/skRwrrlUl4c/hqdefault.jpg)](https://youtu.be/skRwrrlUl4c)
 
 次のコマンドを実行します。
 
@@ -180,7 +182,8 @@ ros2 launch crane_x7_examples example.launch.py example:='pose_groupstate'
 ros2 launch crane_x7_examples example.launch.py example:='joint_values'
 ```
 
-[![crane_x7_joint_values_demo](http://img.youtube.com/vi/skRwrrlUl4c/hqdefault.jpg)](https://youtu.be/skRwrrlUl4c)
+<img src= https://rt-net.github.io/images/crane-x7/gazebo_joint_values_example.gif width = 500px />
+
 
 [back to example list](#examples)
 
@@ -190,13 +193,13 @@ ros2 launch crane_x7_examples example.launch.py example:='joint_values'
 
 [Cartesian Path](https://moveit.picknik.ai/humble/doc/examples/move_group_interface/move_group_interface_tutorial.html#cartesian-paths)を生成し、手先で円を描くコード例です。
 
+[![crane_x7_cartesian_path_demo](http://img.youtube.com/vi/XLhbUqsP2WA/hqdefault.jpg)](https://youtu.be/XLhbUqsP2WA)
+
 次のコマンドを実行します。
 
 ```sh
 ros2 launch crane_x7_examples example.launch.py example:='cartesian_path'
 ```
-
-[![crane_x7_cartesian_path_demo](http://img.youtube.com/vi/XLhbUqsP2WA/hqdefault.jpg)](https://youtu.be/XLhbUqsP2WA)
 
 [back to example list](#examples)
 
@@ -205,6 +208,8 @@ ros2 launch crane_x7_examples example.launch.py example:='cartesian_path'
 ### pick_and_place
 
 モノを掴む・持ち上げる・運ぶ・置くコード例です。
+
+[![crane_x7_pick_and_place_demo](http://img.youtube.com/vi/S_MwSvG2tKw/hqdefault.jpg)](https://youtu.be/S_MwSvG2tKw)
 
 次のコマンドを実行します。
 
@@ -219,7 +224,6 @@ ros2 launch crane_x7_examples example.launch.py example:='pick_and_place'
 >
 > <img src = https://rt-net.github.io/images/crane-x7/bringup.jpg width = 500px />
 
-[![crane_x7_pick_and_place_demo](http://img.youtube.com/vi/S_MwSvG2tKw/hqdefault.jpg)](https://youtu.be/S_MwSvG2tKw)
 
 [back to example list](#examples)
 
@@ -247,10 +251,8 @@ Arguments (pass arguments as '<name>:=<value>'):
 ### aruco_detection
 
 モノに取り付けたArUcoマーカをカメラで検出し、マーカ位置に合わせて掴むコード例です。
-マーカは[aruco_markers.pdf](./aruco_markers.pdf)をA4紙に印刷し、一辺50mmの立方体に取り付けて使用します。
 
-検出されたマーカの位置姿勢はtfのフレームとして配信されます。
-tfの`frame_id`はマーカIDごとに異なりID0のマーカの`frame_id`は`target_0`になります。掴む対象は`target_0`に設定されています。マーカ検出には[OpenCV](https://docs.opencv.org/4.x/d5/dae/tutorial_aruco_detection.html)を使用しています。
+[![crane_x7_aruco_detection_demo](http://img.youtube.com/vi/eWzmG_jbTmM/hqdefault.jpg)](https://youtu.be/eWzmG_jbTmM)
 
 次のコマンドを実行します。
 
@@ -258,7 +260,12 @@ tfの`frame_id`はマーカIDごとに異なりID0のマーカの`frame_id`は`t
 ros2 launch crane_x7_examples camera_example.launch.py example:='aruco_detection'
 ```
 
-[![crane_x7_aruco_detection_demo](http://img.youtube.com/vi/eWzmG_jbTmM/hqdefault.jpg)](https://youtu.be/eWzmG_jbTmM)
+- マーカは[aruco_markers.pdf](./aruco_markers.pdf)をA4紙に印刷し、一辺50mmの立方体に取り付けます。
+- 検出されたマーカの位置姿勢はtfのフレームとして配信されます。
+- tfの`frame_id`はマーカIDごとに異なりID0のマーカの`frame_id`は`target_0`になります。
+- 掴む対象は`target_0`に設定されています。
+- マーカ検出には[OpenCV](https://docs.opencv.org/4.x/d5/dae/tutorial_aruco_detection.html)を使用しています。
+
 
 [back to camera example list](#camera-examples)
 
@@ -268,10 +275,7 @@ ros2 launch crane_x7_examples camera_example.launch.py example:='aruco_detection
 
 特定の色の物体を検出して掴むコード例です。
 
-デフォルトでは青い物体の位置をtfのフレームとして配信します。
-tfの`frame_id`は`target_0`です。
-色の検出には[OpenCV](https://docs.opencv.org/4.x/db/d8e/tutorial_threshold.html)を使用しています。
-検出した物体の距離は深度画像から取得します。
+[![crane_x7_color_detection_demo](http://img.youtube.com/vi/O8lqw7yemAI/hqdefault.jpg)](https://youtu.be/O8lqw7yemAI)
 
 次のコマンドを実行します。
 
@@ -279,7 +283,11 @@ tfの`frame_id`は`target_0`です。
 ros2 launch crane_x7_examples camera_example.launch.py example:='color_detection'
 ```
 
-[![crane_x7_color_detection_demo](http://img.youtube.com/vi/O8lqw7yemAI/hqdefault.jpg)](https://youtu.be/O8lqw7yemAI)
+- デフォルトでは青い物体の位置をtfのフレームとして配信します。
+- tfの`frame_id`は`target_0`です。
+- 色の検出には[OpenCV](https://docs.opencv.org/4.x/db/d8e/tutorial_threshold.html)を使用しています。
+- 検出した物体の距離は深度画像から取得します。
+
 
 [back to camera example list](#camera-examples)
 
@@ -289,9 +297,7 @@ ros2 launch crane_x7_examples camera_example.launch.py example:='color_detection
 
 点群から物体を検出して掴むコード例です。
 
-検出された物体位置はtfのフレームとして配信されます。
-tfの`frame_id`は検出された順に`target_0`、`target_1`、`target_2`…に設定されます。掴む対象は`target_0`に設定されています。
-物体検出には[Point Cloud Library](https://pointclouds.org/)を使用しています。
+[![crane_x7_point_cloud_detection_demo](http://img.youtube.com/vi/RgAjxH0CAuk/hqdefault.jpg)](https://youtu.be/RgAjxH0CAuk)
 
 次のコマンドを実行します。
 
@@ -299,6 +305,10 @@ tfの`frame_id`は検出された順に`target_0`、`target_1`、`target_2`…�
 ros2 launch crane_x7_examples camera_example.launch.py example:='point_cloud_detection'
 ```
 
-[![crane_x7_point_cloud_detection_demo](http://img.youtube.com/vi/RgAjxH0CAuk/hqdefault.jpg)](https://youtu.be/RgAjxH0CAuk)
+- 検出された物体位置はtfのフレームとして配信されます。
+- tfの`frame_id`は検出された順に`target_0`、`target_1`、`target_2`…に設定されます。
+- 掴む対象は`target_0`に設定されています。
+- 物体検出には[Point Cloud Library](https://pointclouds.org/)を使用しています。
+
 
 [back to camera example list](#camera-examples)
