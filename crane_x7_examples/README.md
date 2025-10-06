@@ -46,6 +46,8 @@ USB通信ポートの設定については`crane_x7_control`の
 
 #### 3. move_groupとcontrollerの起動
 
+move_groupとcontrollerを起動します。
+
 ##### 標準のCRANE-X7を使用する場合
 
 次のコマンドでmove_group (`crane_x7_moveit_config`)と
@@ -63,6 +65,8 @@ ros2 launch crane_x7_examples demo.launch.py port_name:=/dev/ttyUSB0
 ros2 launch crane_x7_examples demo.launch.py port_name:=/dev/ttyUSB0 use_d435:=true
 ```
 
+---
+
 ### Gazeboを使う場合
 
 ![crane_x7_gazebo](https://rt-net.github.io/images/crane-x7/crane_x7_gazebo_ros2.png)
@@ -74,6 +78,8 @@ ros2 launch crane_x7_examples demo.launch.py port_name:=/dev/ttyUSB0 use_d435:=t
 ```sh
 ros2 launch crane_x7_gazebo crane_x7_with_table.launch.py
 ```
+
+---
 
 ### Mock Componentsを使う場合
 
@@ -88,6 +94,8 @@ ros2 launch crane_x7_examples demo.launch.py use_mock_components:=true
 > [!NOTE]
 > Mock Componentsではカメラを使ったサンプルを実行することはできません。
 
+---
+
 ## 実行方法
 
 準備ができたらサンプルプログラムを実行します。
@@ -99,13 +107,16 @@ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
 
 終了するときは`Ctrl+c`を入力します。
 
-### Gazeboでサンプルプログラムを実行する場合
+> [!NOTE]
+> Gazeboでサンプルプログラムを実行する場合
+> 
+> Gazeboでサンプルプログラムを実行する場合は`use_sim_time`オプションを付けます。
+> 
+> ```sh
+> ros2 launch crane_x7_examples example.launch.py example:='gripper_control' use_sim_time:='true'
+> ```
 
-Gazeboでサンプルプログラムを実行する場合は`use_sim_time`オプションを付けます。
-
-```sh
-ros2 launch crane_x7_examples example.launch.py example:='gripper_control' use_sim_time:='true'
-```
+---
 
 ## Examples
 
@@ -117,16 +128,17 @@ ros2 launch crane_x7_examples example.launch.py example:='gripper_control' use_s
 - [cartesian_path](#cartesian_path)
 - [pick_and_place](#pick_and_place)
 
-実行できるサンプルの一覧は、`example.launch.py`にオプション`-s`を付けて実行することで表示できます。
-
-```sh
-$ ros2 launch crane_x7_examples example.launch.py -s
-Arguments (pass arguments as '<name>:=<value>'):
-
-    'example':
-        Set an example executable name: [gripper_control, pose_groupstate, joint_values,pick_and_place, cartesian_path]
-        (default: 'pose_groupstate')
-```
+> [!NOTE]
+> 実行できるサンプルの一覧は、`example.launch.py`にオプション`-s`を付けて実行することで表示できます。
+> 
+> ```sh
+> $ ros2 launch crane_x7_examples example.launch.py -s
+> Arguments (pass arguments as '<name>:=<value>'):
+> 
+>     'example':
+>         Set an example executable name: [gripper_control, pose_groupstate, joint_values,pick_and_place, cartesian_path]
+>         (default: 'pose_groupstate')
+> ```
 
 ---
 
@@ -165,7 +177,6 @@ ros2 launch crane_x7_examples example.launch.py example:='pose_groupstate'
 
 <img src=https://rt-net.github.io/images/crane-x7/gazebo_pose_groupstate.gif width=500px />
 
-
 [back to example list](#examples)
 
 ---
@@ -183,7 +194,6 @@ ros2 launch crane_x7_examples example.launch.py example:='joint_values'
 ```
 
 <img src= https://rt-net.github.io/images/crane-x7/gazebo_joint_values_example.gif width = 500px />
-
 
 [back to example list](#examples)
 
@@ -224,7 +234,6 @@ ros2 launch crane_x7_examples example.launch.py example:='pick_and_place'
 >
 > <img src = https://rt-net.github.io/images/crane-x7/bringup.jpg width = 500px />
 
-
 [back to example list](#examples)
 
 ## Camera Examples
@@ -239,14 +248,15 @@ ros2 launch crane_x7_examples example.launch.py example:='pick_and_place'
 
 実行できるサンプルの一覧は、`camera_example.launch.py`にオプション`-s`を付けて実行することで表示できます。
 
-```sh
-$ ros2 launch crane_x7_examples camera_example.launch.py -s
-Arguments (pass arguments as '<name>:=<value>'):
-
-    'example':
-        Set an example executable name: [aruco_detection, point_cloud_detection]
-        (default: 'aruco_detection')
-```
+> [!NOTE]
+> ```sh
+> $ ros2 launch crane_x7_examples camera_example.launch.py -s
+> Arguments (pass arguments as '<name>:=<value>'):
+> 
+>     'example':
+>         Set an example executable name: [aruco_detection, point_cloud_detection]
+>         (default: 'aruco_detection')
+> ```
 
 ### aruco_detection
 
@@ -265,7 +275,6 @@ ros2 launch crane_x7_examples camera_example.launch.py example:='aruco_detection
 - tfの`frame_id`はマーカIDごとに異なりID0のマーカの`frame_id`は`target_0`になります。
 - 掴む対象は`target_0`に設定されています。
 - マーカ検出には[OpenCV](https://docs.opencv.org/4.x/d5/dae/tutorial_aruco_detection.html)を使用しています。
-
 
 [back to camera example list](#camera-examples)
 
@@ -288,7 +297,6 @@ ros2 launch crane_x7_examples camera_example.launch.py example:='color_detection
 - 色の検出には[OpenCV](https://docs.opencv.org/4.x/db/d8e/tutorial_threshold.html)を使用しています。
 - 検出した物体の距離は深度画像から取得します。
 
-
 [back to camera example list](#camera-examples)
 
 ---
@@ -309,6 +317,5 @@ ros2 launch crane_x7_examples camera_example.launch.py example:='point_cloud_det
 - tfの`frame_id`は検出された順に`target_0`、`target_1`、`target_2`…に設定されます。
 - 掴む対象は`target_0`に設定されています。
 - 物体検出には[Point Cloud Library](https://pointclouds.org/)を使用しています。
-
 
 [back to camera example list](#camera-examples)
