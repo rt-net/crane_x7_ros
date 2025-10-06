@@ -25,7 +25,7 @@
 
 ### Using CRANE-X7
 
-<img src=https://rt-net.github.io/images/crane-x7/CRANE-X7-500x500.png width=500 />
+<img src=https://rt-net.github.io/images/crane-x7/CRANE-X7-500x500.png width=700 />
 
 #### 1. CRANE-X7本体とPCの接続
 
@@ -67,7 +67,7 @@ move_groupとcontrollerを起動します。
 
 ### Using Gazebo
 
-<img src=https://rt-net.github.io/images/crane-x7/crane_x7_gazebo_ros2.png width=500 />
+<img src=https://rt-net.github.io/images/crane-x7/crane_x7_gazebo_ros2.png width=700 />
 
 #### 1. move_groupとGazeboの起動
 
@@ -92,8 +92,6 @@ ros2 launch crane_x7_examples demo.launch.py use_mock_components:=true
 > [!NOTE]
 > Mock Componentsではカメラを使ったサンプルを実行することはできません。
 
----
-
 ## How to Run
 
 準備ができたらサンプルプログラムを実行します。
@@ -111,8 +109,6 @@ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
 > ```sh
 > ros2 launch crane_x7_examples example.launch.py example:='gripper_control' use_sim_time:='true'
 > ```
-
----
 
 ## Examples
 
@@ -135,8 +131,6 @@ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
 >         Set an example executable name: [gripper_control, pose_groupstate, joint_values,pick_and_place, cartesian_path]
 >         (default: 'pose_groupstate')
 > ```
-
----
 
 ### gripper_control
 
