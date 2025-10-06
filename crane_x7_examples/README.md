@@ -37,9 +37,8 @@ CRANE-X7本体をPCに接続します。
 
 #### 2. USB通信ポートの接続確認
 
-USB通信ポートの設定については`crane_x7_control`の
-[README](../crane_x7_control/README.md)
-を参照してください。
+USB通信ポートの接続を確認します。
+USB通信ポートの設定については`crane_x7_control`の[README](../crane_x7_control/README.md)を参照してください。
 
 > [!NOTE]
 >　正しく設定できていない場合、CRANE-X7が動作しないので注意してください。
@@ -48,22 +47,21 @@ USB通信ポートの設定については`crane_x7_control`の
 
 move_groupとcontrollerを起動します。
 
-##### 標準のCRANE-X7を使用する場合
+- **標準のCRANE-X7を使用する場合**
 
-次のコマンドでmove_group (`crane_x7_moveit_config`)と
-controller (`crane_x7_control`)を起動します。
+  次のコマンドで move_group(`crane_x7_moveit_config`) と controller(`crane_x7_control`) を起動します。
 
-```sh
-ros2 launch crane_x7_examples demo.launch.py port_name:=/dev/ttyUSB0
-```
+  ```sh
+  ros2 launch crane_x7_examples demo.launch.py port_name:=/dev/ttyUSB0
+  ```
 
-##### RealSense D435マウンタ搭載モデルを使用する場合
+- **RealSense D435マウンタ搭載モデルを使用する場合**
 
-[RealSense D435マウンタ](https://github.com/rt-net/crane_x7_Hardware/blob/master/3d_print_parts/v1.0/CRANE-X7_HandA_RealSenseD435マウンタ.stl)を搭載している場合は次のコマンドを実行します。RealSense D435が起動し、camera_linkがロボットモデルに追加されます。
+  [RealSense D435マウンタ](https://github.com/rt-net/crane_x7_Hardware/blob/master/3d_print_parts/v1.0/CRANE-X7_HandA_RealSenseD435マウンタ.stl)を搭載している場合は次のコマンドを実行します。RealSense D435が起動し、camera_linkがロボットモデルに追加されます。
 
-```sh
-ros2 launch crane_x7_examples demo.launch.py port_name:=/dev/ttyUSB0 use_d435:=true
-```
+  ```sh
+  ros2 launch crane_x7_examples demo.launch.py port_name:=/dev/ttyUSB0 use_d435:=true
+  ```
 
 ---
 
