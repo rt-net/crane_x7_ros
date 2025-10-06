@@ -15,7 +15,6 @@ This is a ROS 2 package suite for the CRANE-X7.
   - [Supported ROS distributions](#supported-ros-distributions)
   - [Requirements](#requirements)
   - [Installation](#installation)
-    - [Source Build](#source-build)
   - [Quick Start](#quick-start)
   - [Packages](#packages)
   - [How to Use Examples](#how-to-use-examples)
