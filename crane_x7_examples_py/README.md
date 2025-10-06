@@ -34,7 +34,7 @@ ros2 launch crane_x7_examples_py example.launch.py example:='gripper_control'
 
 > [!NOTE]
 > Gazeboでサンプルプログラムを実行する場合は`use_sim_time`オプションを付けます。
-
+> 
 > ```sh
 > ros2 launch crane_x7_examples_py example.launch.py example:='gripper_control' use_sim_time:='true'
 > ```
@@ -132,13 +132,6 @@ ros2 launch crane_x7_examples_py example.launch.py example:='joint_values'
   <img src="http://img.youtube.com/vi/S_MwSvG2tKw/hqdefault.jpg" alt="crane_x7_pick_and_place_demo" width="650">
 </a>
 
-次のコマンドを実行します。
-
-```sh
-ros2 launch crane_x7_examples_py example.launch.py example:='pick_and_place'
-```
-<img src = https://rt-net.github.io/images/crane-x7/bringup_rviz.gif width = 450px />
-
 > [!NOTE]
 > 実機を使う場合は、CRANE-X7から20cm離れた位置にピッキング対象を設置します。
 > 
@@ -146,6 +139,11 @@ ros2 launch crane_x7_examples_py example.launch.py example:='pick_and_place'
 >
 > <img src = https://rt-net.github.io/images/crane-x7/bringup.jpg width = 300 />
 
+次のコマンドを実行します。
+
+```sh
+ros2 launch crane_x7_examples_py example.launch.py example:='pick_and_place'
+```
 
 <img src = https://rt-net.github.io/images/crane-x7/bringup_rviz.gif width = 450 />
 
