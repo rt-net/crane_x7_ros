@@ -4,7 +4,7 @@
 
 [![industrial_ci](https://github.com/rt-net/crane_x7_ros/actions/workflows/industrial_ci.yml/badge.svg?branch=ros2)](https://github.com/rt-net/crane_x7_ros/actions/workflows/industrial_ci.yml)
 
-ROS 2 package suite of CRANE-X7.
+This is a ROS 2 package suite for the CRANE-X7.
 
 <img src=https://rt-net.github.io/images/crane-x7/CRANE-X7-500x500.png width=400px/><img src=https://rt-net.github.io/images/crane-x7/crane_x7_gazebo_ros2.png width=400px />
 
@@ -19,7 +19,7 @@ ROS 2 package suite of CRANE-X7.
   - [Quick Start](#quick-start)
   - [Packages](#packages)
   - [How to Use Examples](#how-to-use-examples)
-  - [License](#licenses)
+  - [License](#license)
   - [Contributing](#contributing)
 
 ## Supported ROS distributions
@@ -76,13 +76,13 @@ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
 - crane_x7_control
   - [README](./crane_x7_control/README.md)
   - This package includes a hardware driver for CRANE-X7.
-  - USB communication port setup is documented in the README.
+  - The procedure for configuring the USB communication port is described in the README.
 - crane_x7_examples
   - [README](./crane_x7_examples/README.md)
-  - This package includes C++ example codes for CRANE-X7.
+  - This package includes C++ example code for CRANE-X7.
 - crane_x7_examples_py
   - [README](./crane_x7_examples_py/README.md)
-  - This package includes Python example codes for CRANE-X7.
+  - This package includes Python example code for CRANE-X7.
 - crane_x7_gazebo
   - [README](./crane_x7_gazebo/README.md)
   - This package includes Gazebo simulation environments for CRANE-X7.
@@ -91,11 +91,11 @@ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
   - This package includes configuration files for `moveit2`.
 - crane_x7_description (external package)
   - [README](https://github.com/rt-net/crane_x7_description/blob/ros2/README.en.md)
-  - This package includes a model data (xacro) of CRANE-X7.
+  - This package includes model data (xacro) of CRANE-X7.
 
 ## How to Use Examples
 
-Sample programs are available in both C++ and Python. For details, refer to the links below.
+Sample programs are available in both C++ and Python. See the links below for details.
 
 ### C++
 
@@ -123,15 +123,15 @@ Sample programs are available in both C++ and Python. For details, refer to the 
     - aruco_detection
     - color_detection
 
-## Licenses
+## License
 
 (C) 2018 RT Corporation \<support@rt-net.jp\>
 
 This repository is licensed under the Apache License, Version 2.0, see [LICENSE](./LICENSE).  
 Unless attributed otherwise, everything in this repository is under the Apache License, Version 2.0.
 
-The crane_x7_ros depends on [crane_x7_description](https://github.com/rt-net/crane_x7_description/tree/ros2) package.
-The RT Corporation's [NON-COMMERCIAL LICENSE](https://github.com/rt-net/crane_x7_description/blob/ros2/LICENSE) applies to the package.
+crane_x7_ros depends on [crane_x7_description](https://github.com/rt-net/crane_x7_description/tree/ros2) package.
+RT Corporation's [NON-COMMERCIAL LICENSE](https://github.com/rt-net/crane_x7_description/blob/ros2/LICENSE) applies to the package.
 
 ## Contributing
 
