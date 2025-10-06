@@ -1,7 +1,15 @@
 # crane_x7_control
 
-このパッケージは[ros2_control](https://github.com/ros-controls/ros2_control)
-をベースにした、CRANE-X7 のコントローラパッケージです。
+このパッケージは[ros2_control](https://github.com/ros-controls/ros2_control)をベースにした、CRANE-X7 のコントローラパッケージです。
+
+## Table of Contents
+
+- [crane\_x7\_control](#crane_x7_control)
+  - [ros2\_control関連ファイル](#ros2_control関連ファイル)
+  - [実機のセットアップ](#実機のセットアップ)
+  - [ノードの軌道](#ノードの起動)
+  - [Controller Managerのパラメータ](#controller-managerのパラメータ)
+  - [crane\_x7\_hardwareのパラメータ](#crane_x7_hardwareのパラメータ)
 
 ## ros2_control関連ファイル
 
