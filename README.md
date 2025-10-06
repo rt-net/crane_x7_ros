@@ -4,7 +4,7 @@
 
 [![industrial_ci](https://github.com/rt-net/crane_x7_ros/actions/workflows/industrial_ci.yml/badge.svg?branch=ros2)](https://github.com/rt-net/crane_x7_ros/actions/workflows/industrial_ci.yml)
 
-ROS 2 package suite of CRANE-X7.
+ROS 2でCRANE-X7を動作させるパッケージです。
 
 <img src=https://rt-net.github.io/images/crane-x7/CRANE-X7-500x500.png width=400px/><img src=https://rt-net.github.io/images/crane-x7/crane_x7_gazebo_ros2.png width=400px />
 
@@ -12,26 +12,22 @@ ROS 2 package suite of CRANE-X7.
 
 - [crane\_x7\_ros](#crane_x7_ros)
   - [Table of Contents](#table-of-contents)
-  - [Supported ROS 2 distributions](#supported-ros-2-distributions)
-    - [ROS 1](#ros-1)
+  - [Supported ROS distributions](#supported-ros-distributions)
   - [Requirements](#requirements)
   - [Installation](#installation)
-    - [Build from source](#build-from-source)
+    - [Source Build](#source-build)
   - [Quick Start](#quick-start)
   - [Packages](#packages)
-  - [ライセンス](#ライセンス)
-  - [開発について](#開発について)
+  - [How to Use Examples](#how-to-use-examples)
+  - [License](#licenses)
+  - [Contributing](#contributing)
 
-## Supported ROS 2 distributions
+## Supported ROS distributions
 
-- [Foxy](https://github.com/rt-net/crane_x7_ros/tree/foxy-devel)
-- [Humble](https://github.com/rt-net/crane_x7_ros/tree/humble)
-- [Jazzy](https://github.com/rt-net/crane_x7_ros/tree/jazzy)
+### ROS 2
 
-### ROS 1
-
-- [Melodic](https://github.com/rt-net/crane_x7_ros/tree/master)
-- [Noetic](https://github.com/rt-net/crane_x7_ros/tree/master)
+  - [Humble](https://github.com/rt-net/crane_x7_ros/tree/humble)
+  - [Jazzy](https://github.com/rt-net/crane_x7_ros/tree/jazzy)
 
 ## Requirements
 
@@ -45,39 +41,35 @@ ROS 2 package suite of CRANE-X7.
 
 ## Installation
 
-### Build from source
-
 ```sh
 # Download crane_x7 repositories
-$ mkdir -p ~/ros2_ws/src
-$ cd ~/ros2_ws/src
-$ git clone -b $ROS_DISTRO https://github.com/rt-net/crane_x7_ros.git
-$ git clone -b $ROS_DISTRO https://github.com/rt-net/crane_x7_description.git
+mkdir -p ~/ros2_ws/src
+cd ~/ros2_ws/src
+git clone -b $ROS_DISTRO https://github.com/rt-net/crane_x7_ros.git
+git clone -b $ROS_DISTRO https://github.com/rt-net/crane_x7_description.git
 
 # Install dependencies
-$ rosdep install -r -y -i --from-paths .
+rosdep install -r -y -i --from-paths .
 
 # Build & Install
-$ cd ~/ros2_ws
-$ colcon build --symlink-install
-$ source ~/ros2_ws/install/setup.bash
+cd ~/ros2_ws
+colcon build --symlink-install
+source ~/ros2_ws/install/setup.bash
 ```
 
 ## Quick Start
 
 ```sh
 # Connect CRANE-X7 to PC, then
-$ source ~/ros2_ws/install/setup.bash
-$ ros2 launch crane_x7_examples demo.launch.py port_name:=/dev/ttyUSB0
+source ~/ros2_ws/install/setup.bash
+ros2 launch crane_x7_examples demo.launch.py port_name:=/dev/ttyUSB0
 
 # Terminal 2
-$ source ~/ros2_ws/install/setup.bash
-$ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
+source ~/ros2_ws/install/setup.bash
+ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
 
 # Press [Ctrl-c] to terminate.
 ```
-
-詳細は[crane_x7_examples](./crane_x7_examples/README.md)を参照してください。
 
 ## Packages
 
@@ -101,7 +93,39 @@ $ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
   - [README](https://github.com/rt-net/crane_x7_description/blob/ros2/README.md)
   - CRANE-X7のモデルデータ（xacro）を定義するパッケージです
 
-## ライセンス
+## How to Use Examples
+
+サンプルプログラムは、C++とPythonの両方を用意しています。詳しくは、以下のリンクご覧ください。
+
+### C++
+
+[crane_x7_examples](./crane_x7_examples/README.md)
+
+- Examples
+  - gripper_control
+  - pose_groupstate
+  - joint_values
+  - cartesian_path
+  - pick_and_place
+- Camera Examples
+  - aruco_detection
+  - color_detection
+  - point_cloud_detection
+
+### Python
+
+[crane_x7_examples_py](./crane_x7_examples_py/README.md)
+
+- Examples
+  - gripper_control
+  - pose_groupstate
+  - joint_values
+  - pick_and_place
+- Camera Examples
+  - aruco_detection
+  - color_detection
+
+## Licenses
 
 (C) 2018 RT Corporation \<support@rt-net.jp\>
 
@@ -112,7 +136,7 @@ $ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
 本パッケージが依存する[crane_x7_description](https://github.com/rt-net/crane_x7_description/tree/ros2)には株式会社アールティの非商用ライセンスが適用されています。
 詳細は[crane_x7_description/LICENSE](https://github.com/rt-net/crane_x7_description/blob/ros2/LICENSE)を参照してください。
 
-## 開発について
+## Contributing
 
 - 本ソフトウェアはオープンソースですが、開発はオープンではありません。
 - 本ソフトウェアは基本的にオープンソースソフトウェアとして「AS IS」（現状有姿のまま）で提供しています。
