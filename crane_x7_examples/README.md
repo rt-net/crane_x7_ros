@@ -41,7 +41,7 @@ USB通信ポートの接続を確認します。
 USB通信ポートの設定については`crane_x7_control`の[README](../crane_x7_control/README.md)を参照してください。
 
 > [!NOTE]
->　正しく設定できていない場合、CRANE-X7が動作しないので注意してください。
+> 正しく設定できていない場合、CRANE-X7が動作しないので注意してください。
 
 #### 3. move_groupとcontrollerの起動
 
@@ -95,7 +95,7 @@ ros2 launch crane_x7_examples demo.launch.py use_mock_components:=true
 ## How to Run
 
 準備ができたらサンプルプログラムを実行します。
-例えばグリッパを開閉するサンプルは次のコマンドで実行できます。
+例えばグリッパを開閉させるサンプルは次のコマンドで実行できます。
 
 ```sh
 ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
@@ -149,7 +149,7 @@ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
 <img src=https://rt-net.github.io/images/crane-x7/gazebo_gripper_example.gif width=450 />
 
 
-[back to example list](#examples)
+[Back to example list](#examples)
 
 ---
 
@@ -171,7 +171,7 @@ ros2 launch crane_x7_examples example.launch.py example:='pose_groupstate'
 
 <img src=https://rt-net.github.io/images/crane-x7/gazebo_pose_groupstate.gif width=450 />
 
-[back to example list](#examples)
+[Back to example list](#examples)
 
 ---
 
@@ -179,7 +179,7 @@ ros2 launch crane_x7_examples example.launch.py example:='pose_groupstate'
 
 アームのジョイント角度を１つずつ変更させるコード例です。
 
-<a href="https://youtu.be/skRwrrlUl4" target="_blank" rel="noopener noreferrer">
+<a href="https://youtu.be/skRwrrlUl4c" target="_blank" rel="noopener noreferrer">
   <img src="http://img.youtube.com/vi/skRwrrlUl4c/hqdefault.jpg" alt="crane_x7_joint_values_demo" width="650">
 </a>
 
@@ -191,7 +191,7 @@ ros2 launch crane_x7_examples example.launch.py example:='joint_values'
 
 <img src= https://rt-net.github.io/images/crane-x7/gazebo_joint_values_example.gif width=450 />
 
-[back to example list](#examples)
+[Back to example list](#examples)
 
 ---
 
@@ -199,7 +199,7 @@ ros2 launch crane_x7_examples example.launch.py example:='joint_values'
 
 [Cartesian Path](https://moveit.picknik.ai/humble/doc/examples/move_group_interface/move_group_interface_tutorial.html#cartesian-paths)を生成し、手先で円を描くコード例です。
 
-<a href="ttps://youtu.be/XLhbUqsP2WA" target="_blank" rel="noopener noreferrer">
+<a href="https://youtu.be/XLhbUqsP2WA" target="_blank" rel="noopener noreferrer">
   <img src="http://img.youtube.com/vi/XLhbUqsP2WA/hqdefault.jpg" alt="crane_x7_cartesian_path_demo" width="650">
 </a>
 
@@ -209,7 +209,7 @@ ros2 launch crane_x7_examples example.launch.py example:='joint_values'
 ros2 launch crane_x7_examples example.launch.py example:='cartesian_path'
 ```
 
-[back to example list](#examples)
+[Back to example list](#examples)
 
 ---
 
@@ -236,7 +236,7 @@ ros2 launch crane_x7_examples example.launch.py example:='pick_and_place'
 
 <img src = https://rt-net.github.io/images/crane-x7/bringup_rviz.gif width = 450 />
 
-[back to example list](#examples)
+[Back to example list](#examples)
 
 ## Camera Examples
 
@@ -265,7 +265,7 @@ ros2 launch crane_x7_examples example.launch.py example:='pick_and_place'
 
 - マーカは[aruco_markers.pdf](./aruco_markers.pdf)をA4紙に印刷し、一辺50mmの立方体に取り付けます。
 - 検出されたマーカの位置姿勢はtfのフレームとして配信されます。
-- tfの`frame_id`はマーカIDごとに異なりID0のマーカの`frame_id`は`target_0`になります。
+- 各マーカはそれぞれ異なる `tf` フレームとして配信され、ID0のマーカは `frame_id=target_0` になります。
 - 掴む対象は`target_0`に設定されています。
 - マーカ検出には[OpenCV](https://docs.opencv.org/4.x/d5/dae/tutorial_aruco_detection.html)を使用しています。
 
@@ -279,7 +279,7 @@ ros2 launch crane_x7_examples example.launch.py example:='pick_and_place'
 ros2 launch crane_x7_examples camera_example.launch.py example:='aruco_detection'
 ```
 
-[back to camera example list](#camera-examples)
+[Back to camera example list](#camera-examples)
 
 ---
 
@@ -293,7 +293,7 @@ ros2 launch crane_x7_examples camera_example.launch.py example:='aruco_detection
 - 検出した物体の距離は深度画像から取得します。
 
 <a href="https://youtu.be/O8lqw7yemAI" target="_blank" rel="noopener noreferrer">
-  <img src="http://img.youtube.com/vi/O8lqw7yemAI/hqdefault.jpg" alt="crane_x7_color_detection_dem" width="650">
+  <img src="http://img.youtube.com/vi/O8lqw7yemAI/hqdefault.jpg" alt="crane_x7_color_detection_demo" width="650">
 </a>
 
 次のコマンドを実行します。
@@ -302,7 +302,7 @@ ros2 launch crane_x7_examples camera_example.launch.py example:='aruco_detection
 ros2 launch crane_x7_examples camera_example.launch.py example:='color_detection'
 ```
 
-[back to camera example list](#camera-examples)
+[Back to camera example list](#camera-examples)
 
 ---
 
@@ -325,4 +325,4 @@ ros2 launch crane_x7_examples camera_example.launch.py example:='color_detection
 ros2 launch crane_x7_examples camera_example.launch.py example:='point_cloud_detection'
 ```
 
-[back to camera example list](#camera-examples)
+[Back to camera example list](#camera-examples)
