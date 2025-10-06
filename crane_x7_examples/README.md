@@ -145,7 +145,7 @@ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
 ハンドを開閉させるコード例です。
 
 <a href="https://youtu.be/uLRLkwbXUP0" target="_blank" rel="noopener noreferrer">
-  <img src="http://img.youtube.com/vi/uLRLkwbXUP0/hqdefault.jpg" alt="crane_x7_gripper_control_demo" width="600">
+  <img src="http://img.youtube.com/vi/uLRLkwbXUP0/hqdefault.jpg" alt="crane_x7_gripper_control_demo" width="650">
 </a>
 
 次のコマンドを実行します。
@@ -168,7 +168,7 @@ group_stateを使うコード例です。
 SRDFファイル[crane_x7_moveit_config/config/crane_x7.srdf](../crane_x7_moveit_config/config/crane_x7.srdf)に記載されている`home`と`vertical`の姿勢に移行します。
 
 <a href="https://youtu.be/FH18dA_xcjM" target="_blank" rel="noopener noreferrer">
-  <img src="http://img.youtube.com/vi/FH18dA_xcjM/hqdefault.jpg" alt="crane_x7_pose_groupstate_demo" width="600">
+  <img src="http://img.youtube.com/vi/FH18dA_xcjM/hqdefault.jpg" alt="crane_x7_pose_groupstate_demo" width="650">
 </a>
 
 次のコマンドを実行します。
@@ -188,7 +188,7 @@ ros2 launch crane_x7_examples example.launch.py example:='pose_groupstate'
 アームのジョイント角度を１つずつ変更させるコード例です。
 
 <a href="https://youtu.be/skRwrrlUl4" target="_blank" rel="noopener noreferrer">
-  <img src="http://img.youtube.com/vi/skRwrrlUl4c/hqdefault.jpg" alt="crane_x7_joint_values_demo" width="600">
+  <img src="http://img.youtube.com/vi/skRwrrlUl4c/hqdefault.jpg" alt="crane_x7_joint_values_demo" width="650">
 </a>
 
 次のコマンドを実行します。
@@ -208,7 +208,7 @@ ros2 launch crane_x7_examples example.launch.py example:='joint_values'
 [Cartesian Path](https://moveit.picknik.ai/humble/doc/examples/move_group_interface/move_group_interface_tutorial.html#cartesian-paths)を生成し、手先で円を描くコード例です。
 
 <a href="ttps://youtu.be/XLhbUqsP2WA" target="_blank" rel="noopener noreferrer">
-  <img src="http://img.youtube.com/vi/XLhbUqsP2WA/hqdefault.jpg" alt="crane_x7_cartesian_path_demo" width="600">
+  <img src="http://img.youtube.com/vi/XLhbUqsP2WA/hqdefault.jpg" alt="crane_x7_cartesian_path_demo" width="650">
 </a>
 
 次のコマンドを実行します。
@@ -226,7 +226,7 @@ ros2 launch crane_x7_examples example.launch.py example:='cartesian_path'
 モノを掴む・持ち上げる・運ぶ・置くコード例です。
 
 <a href="https://youtu.be/S_MwSvG2tKw" target="_blank" rel="noopener noreferrer">
-  <img src="http://img.youtube.com/vi/S_MwSvG2tKw/hqdefault.jpg" alt="crane_x7_pick_and_place_demo" width="600">
+  <img src="http://img.youtube.com/vi/S_MwSvG2tKw/hqdefault.jpg" alt="crane_x7_pick_and_place_demo" width="650">
 </a>
 
 > [!NOTE]
@@ -242,7 +242,7 @@ ros2 launch crane_x7_examples example.launch.py example:='cartesian_path'
 ros2 launch crane_x7_examples example.launch.py example:='pick_and_place'
 ```
 
-<img src = https://rt-net.github.io/images/crane-x7/bringup_rviz.gif width = 300 />
+<img src = https://rt-net.github.io/images/crane-x7/bringup_rviz.gif width = 450 />
 
 [back to example list](#examples)
 
@@ -273,7 +273,7 @@ ros2 launch crane_x7_examples example.launch.py example:='pick_and_place'
 モノに取り付けたArUcoマーカをカメラで検出し、マーカ位置に合わせて掴むコード例です。
 
 <a href="https://youtu.be/eWzmG_jbTmM" target="_blank" rel="noopener noreferrer">
-  <img src="http://img.youtube.com/vi/eWzmG_jbTmM/hqdefault.jpg" alt="crane_x7_aruco_detection_demo" width="600">
+  <img src="http://img.youtube.com/vi/eWzmG_jbTmM/hqdefault.jpg" alt="crane_x7_aruco_detection_demo" width="650">
 </a>
 
 次のコマンドを実行します。
@@ -302,7 +302,7 @@ ros2 launch crane_x7_examples camera_example.launch.py example:='aruco_detection
 - 検出した物体の距離は深度画像から取得します。
 
 <a href="https://youtu.be/O8lqw7yemAI" target="_blank" rel="noopener noreferrer">
-  <img src="http://img.youtube.com/vi/O8lqw7yemAI/hqdefault.jpg" alt="crane_x7_color_detection_dem" width="600">
+  <img src="http://img.youtube.com/vi/O8lqw7yemAI/hqdefault.jpg" alt="crane_x7_color_detection_dem" width="650">
 </a>
 
 次のコマンドを実行します。
@@ -325,7 +325,7 @@ ros2 launch crane_x7_examples camera_example.launch.py example:='color_detection
 - 物体検出には[Point Cloud Library](https://pointclouds.org/)を使用しています。
 
 <a href="https://youtu.be/RgAjxH0CAuk" target="_blank" rel="noopener noreferrer">
-  <img src="http://img.youtube.com/vi/RgAjxH0CAuk/hqdefault.jpg" alt="crane_x7_point_cloud_detection_demo" width="600">
+  <img src="http://img.youtube.com/vi/RgAjxH0CAuk/hqdefault.jpg" alt="crane_x7_point_cloud_detection_demo" width="650">
 </a>
 
 次のコマンドを実行します。
