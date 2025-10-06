@@ -99,31 +99,29 @@ Sample programs are available in both C++ and Python. For details, refer to the 
 
 ### C++
 
-[crane_x7_examples](./crane_x7_examples/README.md)
-
-- Examples
-  - gripper_control
-  - pose_groupstate
-  - joint_values
-  - cartesian_path
-  - pick_and_place
-- Camera Examples
-  - aruco_detection
-  - color_detection
-  - point_cloud_detection
+- [crane_x7_examples](./crane_x7_examples/README.md)
+  - Examples
+    - gripper_control
+    - pose_groupstate
+    - joint_values
+    - cartesian_path
+    - pick_and_place
+  - Camera Examples
+    - aruco_detection
+    - color_detection
+    - point_cloud_detection
 
 ### Python
 
-[crane_x7_examples_py](./crane_x7_examples_py/README.md)
-
-- Examples
-  - gripper_control
-  - pose_groupstate
-  - joint_values
-  - pick_and_place
-- Camera Examples
-  - aruco_detection
-  - color_detection
+- [crane_x7_examples_py](./crane_x7_examples_py/README.md)
+  - Examples
+    - gripper_control
+    - pose_groupstate
+    - joint_values
+    - pick_and_place
+  - Camera Examples
+    - aruco_detection
+    - color_detection
 
 ## Licenses
 
