@@ -5,11 +5,11 @@
 ## Table of Contents
 
 - [crane\_x7\_examples](#crane_x7_examples)
-  - [準備](#準備)
-    - [実機を使う場合](#実機を使う場合)
-    - [Gazeboを使う場合](#gazeboを使う場合)
-    - [Mock Componentsを使う場合](#mock-componentsを使う場合)
-  - [実行方法](#実行方法)
+  - [Setup](#setup)
+    - [Using CRANE-X7](#using-crane-x7)
+    - [Using GAZEBO](#using-gazebo)
+    - [Using Mock Components](#using-mock-components)
+  - [How to Run](#how-to-run)
   - [Examples](#examples)
     - [gripper\_control](#gripper_control)
     - [pose\_groupstate](#pose_groupstate)
@@ -21,9 +21,9 @@
     - [color\_detection](#color_detection)
     - [point\_cloud\_detection](#point_cloud_detection)
 
-## 準備
+## Setup
 
-### 実機を使う場合
+### Using CRANE-X7
 
 <img src=https://rt-net.github.io/images/crane-x7/CRANE-X7-500x500.png width=500 />
 
@@ -67,7 +67,7 @@ ros2 launch crane_x7_examples demo.launch.py port_name:=/dev/ttyUSB0 use_d435:=t
 
 ---
 
-### Gazeboを使う場合
+### Using Gazebo
 
 <img src=https://rt-net.github.io/images/crane-x7/crane_x7_gazebo_ros2.png width=500 />
 
@@ -81,7 +81,7 @@ ros2 launch crane_x7_gazebo crane_x7_with_table.launch.py
 
 ---
 
-### Mock Componentsを使う場合
+### Using Mock Components
 
 #### 1. move_groupとcontrollerの起動
 
@@ -96,7 +96,7 @@ ros2 launch crane_x7_examples demo.launch.py use_mock_components:=true
 
 ---
 
-## 実行方法
+## How to Run
 
 準備ができたらサンプルプログラムを実行します。
 例えばグリッパを開閉するサンプルは次のコマンドで実行できます。
