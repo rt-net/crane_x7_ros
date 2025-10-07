@@ -21,9 +21,7 @@ This is a ROS 2 package suite for the CRANE-X7.
   - [License](#license)
   - [Contributing](#contributing)
 
-## Supported ROS distributions
-
-### ROS 2
+## Supported ROS 2 distributions
 
 - [Humble](https://github.com/rt-net/crane_x7_ros/tree/humble)
 - [Jazzy](https://github.com/rt-net/crane_x7_ros/tree/jazzy)
@@ -39,6 +37,8 @@ This is a ROS 2 package suite for the CRANE-X7.
   - [Jazzy](https://docs.ros.org/en/jazzy/Installation.html)
 
 ## Installation
+
+### Source Build
 
 ```sh
 # Download crane_x7 repositories
