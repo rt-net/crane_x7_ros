@@ -23,8 +23,8 @@ This is a ROS 2 package suite for the CRANE-X7.
 
 ## Supported ROS 2 distributions
 
-- [Humble](https://github.com/rt-net/crane_x7_ros/tree/humble)
-- [Jazzy](https://github.com/rt-net/crane_x7_ros/tree/jazzy)
+- [Humble Hawksbill](https://github.com/rt-net/crane_x7_ros/tree/humble)
+- [Jazzy Jalisco](https://github.com/rt-net/crane_x7_ros/tree/jazzy)
 
 ## Requirements
 
@@ -34,7 +34,7 @@ This is a ROS 2 package suite for the CRANE-X7.
 - Linux OS
   - Ubuntu 24.04
 - ROS
-  - [Jazzy](https://docs.ros.org/en/jazzy/Installation.html)
+  - [Jazzy Jalisco](https://docs.ros.org/en/jazzy/Installation.html)
 
 ## Installation
 

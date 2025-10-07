@@ -23,8 +23,8 @@ ROS 2でCRANE-X7を動作させるパッケージです。
 
 ## Supported ROS 2 distributions
 
-- [Humble](https://github.com/rt-net/crane_x7_ros/tree/humble)
-- [Jazzy](https://github.com/rt-net/crane_x7_ros/tree/jazzy)
+- [Humble Hawksbill](https://github.com/rt-net/crane_x7_ros/tree/humble)
+- [Jazzy Jalisco](https://github.com/rt-net/crane_x7_ros/tree/jazzy)
 
 ## Requirements
 
@@ -34,7 +34,7 @@ ROS 2でCRANE-X7を動作させるパッケージです。
 - Linux OS
   - Ubuntu 24.04
 - ROS
-  - [Jazzy](https://docs.ros.org/en/jazzy/Installation.html)
+  - [Jazzy Jalisco](https://docs.ros.org/en/jazzy/Installation.html)
 
 ## Installation
 
