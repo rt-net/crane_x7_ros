@@ -25,8 +25,8 @@ ROS 2でCRANE-X7を動作させるパッケージです。
 
 ### ROS 2
 
-  - [Humble](https://github.com/rt-net/crane_x7_ros/tree/humble)
-  - [Jazzy](https://github.com/rt-net/crane_x7_ros/tree/jazzy)
+- [Humble](https://github.com/rt-net/crane_x7_ros/tree/humble)
+- [Jazzy](https://github.com/rt-net/crane_x7_ros/tree/jazzy)
 
 ## Requirements
 
