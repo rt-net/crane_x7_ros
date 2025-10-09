@@ -35,15 +35,15 @@ PCとCRANE-X7の設定が必要です。
 
 ```sh
 # /dev/ttyUSB0を使用する場合
-$ sudo chmod 666 /dev/ttyUSB0
+sudo chmod 666 /dev/ttyUSB0
 ```
 
 永続的なアクセス権限を付与する場合は次のコマンドを実行します。
 
 
 ```sh
-$ sudo usermod -aG dialout $USER
-$ reboot
+sudo usermod -aG dialout $USER
+reboot
 ```
 
 ### latency_timerの設定
@@ -57,8 +57,8 @@ USB通信ポートとサーボモータの設定を変更します。
 
 ```sh
 # /dev/ttyUSB0を使用する場合
-$ sudo chmod a+rw /sys/bus/usb-serial/devices/ttyUSB0/latency_timer
-$ sudo echo 1 > /sys/bus/usb-serial/devices/ttyUSB0/latency_timer
+sudo chmod a+rw /sys/bus/usb-serial/devices/ttyUSB0/latency_timer
+sudo echo 1 > /sys/bus/usb-serial/devices/ttyUSB0/latency_timer
 ```
 
 ### Return Delay Timeの設定
@@ -87,7 +87,7 @@ CRANE-X7に搭載されているサーボモータ[Dynamixel](https://emanual.ro
 次のコマンドでジョイント角度情報（`joint_states`）を表示できます
 
 ```sh
-$ ros2 topic echo /joint_states
+ros2 topic echo /joint_states
 ```
 
 ## Controller Managerのパラメータ

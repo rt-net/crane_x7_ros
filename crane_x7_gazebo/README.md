@@ -12,7 +12,7 @@ CRANE-X7 の[Gazebo](https://gazebosim.org/home)
 実機との接続や`crane_x7_examples/launch/demo.launch/py`の実行は必要ありません。
 
 ```sh
-$ ros2 launch crane_x7_gazebo crane_x7_with_table.launch.py
+ros2 launch crane_x7_gazebo crane_x7_with_table.launch.py
 ```
 
 ![crane_x7_gazebo](https://rt-net.github.io/images/crane-x7/crane_x7_gazebo_ros2.png)
