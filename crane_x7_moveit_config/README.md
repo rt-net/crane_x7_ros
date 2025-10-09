@@ -2,13 +2,15 @@
 
 このパッケージはCRANE-X7のmove_group設定ファイル及びlaunchファイルを含んでいます。
 
-## ノードの起動
+## How to Launch Nodes
 
 `run_move_group.launch.py`を実行すると、`move_group`や`rviz`等のノードが起動します。
-コントローラノードは起動しないため、
-CRANE-X7本体を動かすことはできません。(`crane_x7_examples`を参照してください。)
 
-## configファイル
+> [!NOTE]
+> コントローラノードは起動しないため、CRANE-X7本体を動かすことはできません。
+> (`crane_x7_examples`を参照してください。)
+
+## Config Files
 
 - controllers.yaml
   - `moveit_simple_controller_manager`のパラメータを設定しています
