@@ -7,7 +7,7 @@
 - [crane\_x7\_examples](#crane_x7_examples)
   - [Setup](#setup)
     - [Using CRANE-X7](#using-crane-x7)
-    - [Using GAZEBO](#using-gazebo)
+    - [Using Gazebo](#using-gazebo)
     - [Using Mock Components](#using-mock-components)
   - [How to Run](#how-to-run)
   - [Examples](#examples)
