@@ -153,4 +153,4 @@ USBケーブルや電源ケーブルが抜けた場合等に有効です。
 
 ---
 
-[back to top](#crane_x7_control)
+[Back to top](#crane_x7_control)
