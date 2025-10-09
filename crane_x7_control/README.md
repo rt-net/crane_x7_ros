@@ -13,10 +13,12 @@
   - [How to Launch Nodes](#how-to-launch-nodes)
   - [Controller Manager Parameters](#controller-manager-parameters)
     - [Control Cycle](#control-cycle)
+    - [Controllers](#controllers)
+  - [crane\_x7\_hardware Parameters](#crane_x7_hardware-parameters)
     - [USB Port](#usb-port)
     - [Baudrate](#baudrate)
     - [Communication Timeout](#communication-timeout)
-    - [crane\_x7\_hardware Parameters](#crane_x7_hardware-parameters)
+    - [Configuration File Paths for RT Manipulator C++ Library](#configuration-file-paths-for-rt-manipulator-c-library)
 
 ## ros2_control Files
 
