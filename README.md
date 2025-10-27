@@ -87,7 +87,7 @@ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
   - CRANE-X7のGazeboシミュレーションパッケージです
 - crane_x7_moveit_config
   - [README](./crane_x7_moveit_config/README.md)
-  - CRANE-X7の`moveit2`設定ファイルです
+  - CRANE-X7の`MoveIt2`設定ファイルです
 - crane_x7_description (外部パッケージ)
   - [README](https://github.com/rt-net/crane_x7_description/blob/ros2/README.md)
   - CRANE-X7のモデルデータ（xacro）を定義するパッケージです
