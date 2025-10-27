@@ -74,23 +74,23 @@ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
 
 - crane_x7_control
   - [README](./crane_x7_control/README.md)
-  - This package includes a hardware driver for CRANE-X7.
+  - This package provides a hardware driver for CRANE-X7.
   - The procedure for configuring the USB communication port is described in the README.
 - crane_x7_examples
   - [README](./crane_x7_examples/README.md)
-  - This package includes C++ example code for CRANE-X7.
+  - This package provides C++ example code for CRANE-X7.
 - crane_x7_examples_py
   - [README](./crane_x7_examples_py/README.md)
-  - This package includes Python example code for CRANE-X7.
+  - This package provides Python example code for CRANE-X7.
 - crane_x7_gazebo
   - [README](./crane_x7_gazebo/README.md)
-  - This package includes Gazebo simulation environments for CRANE-X7.
+  - This package provides Gazebo simulation environments for CRANE-X7.
 - crane_x7_moveit_config
   - [README](./crane_x7_moveit_config/README.md)
-  - This package includes configuration files for `moveit2`.
+  - This package provides configuration files for `MoveIt2`.
 - crane_x7_description (external package)
   - [README](https://github.com/rt-net/crane_x7_description/blob/ros2/README.en.md)
-  - This package includes model data (xacro) of CRANE-X7.
+  - This package provides model data (xacro) of CRANE-X7.
 
 ## How to Use Examples
 
