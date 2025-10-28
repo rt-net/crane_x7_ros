@@ -87,7 +87,7 @@ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
   - This package provides Gazebo simulation environments for CRANE-X7.
 - crane_x7_moveit_config
   - [README](./crane_x7_moveit_config/README.md)
-  - This package provides configuration files for `MoveIt2`.
+  - This package provides configuration files for `MoveIt 2`.
 - crane_x7_description (external package)
   - [README](https://github.com/rt-net/crane_x7_description/blob/ros2/README.en.md)
   - This package provides model data (xacro) of CRANE-X7.
