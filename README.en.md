@@ -137,4 +137,4 @@ RT Corporation's [NON-COMMERCIAL LICENSE](https://github.com/rt-net/crane_x7_des
 - This software is open source, but its development is not open.
 - This software is essentially provided as open source software on an “AS IS” (in its current state) basis.
 - No free support is available for this software.
-- Requests for bug fixes and corrections of typographical errors are always accepted; however, requests for additional features will be subject to our internal guidelines. For further details, please refer to the [Contribution Guidelines](https://github.com/rt-net/.github/blob/master/CONTRIBUTING.md).
+- Requests for bug fixes and corrections of typographical errors are always accepted; however, requests for additional features will be subject to our internal guidelines. For further details, please refer to the [Contribution Guidelines](https://github.com/rt-net/.github/blob/master/CONTRIBUTING.md#contribution-guide-en).

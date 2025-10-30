@@ -139,4 +139,4 @@ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
 - 本ソフトウェアは基本的にオープンソースソフトウェアとして「AS IS」（現状有姿のまま）で提供しています。
 - 本ソフトウェアに関する無償サポートはありません。
 - バグの修正や誤字脱字の修正に関するリクエストは常に受け付けていますが、それ以外の機能追加等のリクエストについては社内のガイドラインを優先します。
-詳しくは[コントリビューションガイドライン](./CONTRIBUTING.md)に従ってください。
+詳しくは[コントリビューションガイドライン](https://github.com/rt-net/.github/blob/master/CONTRIBUTING.md#contribution-guide-ja)に従ってください。
