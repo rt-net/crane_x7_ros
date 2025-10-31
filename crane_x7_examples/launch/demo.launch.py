@@ -105,7 +105,11 @@ def generate_launch_description():
             PythonLaunchDescriptionSource([
                 get_package_share_directory('crane_x7_control'),
                 '/launch/crane_x7_control.launch.py']),
-            launch_arguments={'loaded_description': description}.items()
+            launch_arguments={
+                'loaded_description': description,
+                'start_rsp': 'false'
+            }.items()
+            
         )
 
     realsense_node = IncludeLaunchDescription(
