@@ -56,11 +56,17 @@ def generate_launch_description():
         'crane_x7_controllers.yaml'
         )
 
+    robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        parameters=[{'robot_description': LaunchConfiguration('loaded_description')}],
+        output='screen'
+    )
+
     controller_manager = Node(
         package='controller_manager',
         executable='ros2_control_node',
-        parameters=[{'robot_description': LaunchConfiguration('loaded_description')},
-                    crane_x7_controllers],
+        parameters=[crane_x7_controllers],
         output='screen',
         )
 
@@ -84,6 +90,7 @@ def generate_launch_description():
 
     return LaunchDescription([
       declare_loaded_description,
+      robot_state_publisher,
       controller_manager,
       spawn_joint_state_controller,
       spawn_arm_controller,
