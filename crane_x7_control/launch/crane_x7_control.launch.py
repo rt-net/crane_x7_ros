@@ -19,6 +19,7 @@ from crane_x7_description.robot_description_loader import RobotDescriptionLoader
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.actions import ExecuteProcess
+from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
@@ -50,6 +51,12 @@ def generate_launch_description():
                      It is recommended to use RobotDescriptionLoader() in crane_x7_description.'
     )
 
+    declare_start_rsp = DeclareLaunchArgument(
+        'start_rsp', 
+        default_value='true',
+        description='Start robot_state_publisher in this launch'
+    )
+    
     crane_x7_controllers = os.path.join(
         get_package_share_directory('crane_x7_control'),
         'config',
@@ -60,6 +67,7 @@ def generate_launch_description():
         package='robot_state_publisher',
         executable='robot_state_publisher',
         parameters=[{'robot_description': LaunchConfiguration('loaded_description')}],
+        condition=IfCondition(LaunchConfiguration('start_rsp')),
         output='screen'
     )
 
@@ -90,6 +98,7 @@ def generate_launch_description():
 
     return LaunchDescription([
       declare_loaded_description,
+      declare_start_rsp,
       robot_state_publisher,
       controller_manager,
       spawn_joint_state_controller,
