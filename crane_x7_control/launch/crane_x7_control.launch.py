@@ -52,11 +52,11 @@ def generate_launch_description():
     )
 
     declare_start_rsp = DeclareLaunchArgument(
-        'start_rsp', 
+        'start_rsp',
         default_value='true',
         description='Start robot_state_publisher in this launch'
     )
-    
+
     crane_x7_controllers = os.path.join(
         get_package_share_directory('crane_x7_control'),
         'config',

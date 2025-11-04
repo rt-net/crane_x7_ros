@@ -109,7 +109,7 @@ def generate_launch_description():
                 'loaded_description': description,
                 'start_rsp': 'false'
             }.items()
-            
+
         )
 
     realsense_node = IncludeLaunchDescription(
