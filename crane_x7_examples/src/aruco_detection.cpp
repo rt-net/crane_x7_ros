@@ -28,8 +28,8 @@
 #include "opencv2/opencv.hpp"
 #include "opencv2/aruco.hpp"
 #include "cv_bridge/cv_bridge.hpp"
-#include "tf2/LinearMath/Quaternion.h"
-#include "tf2/LinearMath/Matrix3x3.h"
+#include "tf2/LinearMath/Quaternion.hpp"
+#include "tf2/LinearMath/Matrix3x3.hpp"
 #include "tf2_ros/transform_broadcaster.h"
 using std::placeholders::_1;
 
