@@ -24,18 +24,14 @@ from moveit_configs_utils.launches import generate_static_virtual_joint_tfs_laun
 
 
 def generate_launch_description():
-    ld = LaunchDescription()
-
     description_loader = RobotDescriptionLoader()
 
-    ld.add_action(
-        DeclareLaunchArgument(
-            'loaded_description',
-            default_value=description_loader.load(),
-            description='Set robot_description text.  \
-                        It is recommended to use RobotDescriptionLoader() in  \
-                            crane_x7_description.',
-        )
+    declare_robot_description = DeclareLaunchArgument(
+        'loaded_description',
+        default_value=description_loader.load(),
+        description='Set robot_description text.  \
+                    It is recommended to use RobotDescriptionLoader() in  \
+                        crane_x7_description.',
     )
 
     moveit_config = (
@@ -52,16 +48,12 @@ def generate_launch_description():
         'robot_description': LaunchConfiguration('loaded_description')
     }
 
-    # Move group
-    ld.add_entity(generate_move_group_launch(moveit_config))
-
-    # RViz
-    ld.add_entity(generate_moveit_rviz_launch(moveit_config))
-
-    # Static TF
-    ld.add_entity(generate_static_virtual_joint_tfs_launch(moveit_config))
-
-    # Publish TF
-    ld.add_entity(generate_rsp_launch(moveit_config))
-
-    return ld
+    return LaunchDescription(
+        [
+            declare_robot_description,
+            generate_move_group_launch(moveit_config),
+            generate_moveit_rviz_launch(moveit_config),
+            generate_static_virtual_joint_tfs_launch(moveit_config),
+            generate_rsp_launch(moveit_config),
+        ]
+    )
