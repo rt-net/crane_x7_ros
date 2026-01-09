@@ -66,17 +66,6 @@ def generate_launch_description():
         condition=IfCondition(LaunchConfiguration('use_d435')),
     )
 
-    description_loader = RobotDescriptionLoader()
-    description_loader.port_name = LaunchConfiguration('port_name')
-    description_loader.baudrate = LaunchConfiguration('baudrate')
-    description_loader.use_d435 = LaunchConfiguration('use_d435')
-    description_loader.use_mock_components = LaunchConfiguration('use_mock_components')
-    description_loader.timeout_seconds = '1.0'
-    description_loader.manipulator_config_file_path = config_file_path
-    description_loader.manipulator_links_file_path = links_file_path
-
-    description = description_loader.load()
-
     move_group = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [
@@ -84,17 +73,22 @@ def generate_launch_description():
                 '/launch/run_move_group.launch.py',
             ]
         ),
-        launch_arguments={
-            'loaded_description': description,
-            'rviz_config': LaunchConfiguration('rviz_config'),
-        }.items(),
+        launch_arguments={'rviz_config': LaunchConfiguration('rviz_config')}.items(),
     )
 
     control_node = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [get_package_share_directory('crane_x7_control'), '/launch/crane_x7_control.launch.py']
         ),
-        launch_arguments={'loaded_description': description}.items(),
+        launch_arguments={
+            'port_name': LaunchConfiguration('port_name'),
+            'baudrate': LaunchConfiguration('baudrate'),
+            'use_d435': LaunchConfiguration('use_d435'),
+            'use_mock_components': LaunchConfiguration('use_mock_components'),
+            'timeout_seconds': '1.0',
+            'manipulator_config_file_path': config_file_path,
+            'manipulator_links_file_path': links_file_path,
+        }.items(),
     )
 
     realsense_node = IncludeLaunchDescription(
