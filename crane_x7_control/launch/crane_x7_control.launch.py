@@ -37,12 +37,19 @@ def generate_launch_description():
         'manipulator_links.csv'
     )
 
+    declare_use_mock_components = DeclareLaunchArgument(
+        'use_mock_components',
+        default_value='false',
+        description='Use mock_components or not.'
+    )
+    
     description_loader = RobotDescriptionLoader()
     description_loader.port_name = '/dev/ttyUSB0'
     description_loader.baudrate = '3000000'
     description_loader.timeout_seconds = '1.0'
     description_loader.manipulator_config_file_path = config_file_path
     description_loader.manipulator_links_file_path = links_file_path
+    description_loader.use_mock_components = LaunchConfiguration('use_mock_components')
 
     declare_loaded_description = DeclareLaunchArgument(
         'loaded_description',
@@ -50,13 +57,7 @@ def generate_launch_description():
         description='Set robot_description text.  \
                      It is recommended to use RobotDescriptionLoader() in crane_x7_description.'
     )
-
-    declare_start_rsp = DeclareLaunchArgument(
-        'start_rsp',
-        default_value='true',
-        description='Start robot_state_publisher in this launch'
-    )
-
+        
     crane_x7_controllers = os.path.join(
         get_package_share_directory('crane_x7_control'),
         'config',
@@ -67,7 +68,6 @@ def generate_launch_description():
         package='robot_state_publisher',
         executable='robot_state_publisher',
         parameters=[{'robot_description': LaunchConfiguration('loaded_description')}],
-        condition=IfCondition(LaunchConfiguration('start_rsp')),
         output='screen'
     )
 
@@ -97,11 +97,11 @@ def generate_launch_description():
             )
 
     return LaunchDescription([
-      declare_loaded_description,
-      declare_start_rsp,
-      robot_state_publisher,
-      controller_manager,
-      spawn_joint_state_controller,
-      spawn_arm_controller,
-      spawn_gripper_controller
+        declare_use_mock_components,
+        declare_loaded_description,
+        robot_state_publisher,
+        controller_manager,
+        spawn_joint_state_controller,
+        spawn_arm_controller,
+        spawn_gripper_controller
     ])
