@@ -23,15 +23,6 @@ from moveit_configs_utils.launches import generate_static_virtual_joint_tfs_laun
 
 
 def generate_launch_description():
-    description_loader = RobotDescriptionLoader()
-
-    declare_robot_description = DeclareLaunchArgument(
-        'loaded_description',
-        default_value=description_loader.load(),
-        description='Set robot_description text.  \
-                    It is recommended to use RobotDescriptionLoader() in  \
-                        crane_x7_description.',
-    )
 
     moveit_config = (
         MoveItConfigsBuilder('crane_x7')
@@ -43,16 +34,10 @@ def generate_launch_description():
         .to_moveit_configs()
     )
 
-    moveit_config.robot_description = {
-        'robot_description': LaunchConfiguration('loaded_description')
-    }
-
     return LaunchDescription(
         [
-            declare_robot_description,
             generate_move_group_launch(moveit_config),
             generate_moveit_rviz_launch(moveit_config),
             generate_static_virtual_joint_tfs_launch(moveit_config),
-            generate_rsp_launch(moveit_config),
         ]
     )
