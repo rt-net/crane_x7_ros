@@ -22,6 +22,18 @@ from moveit_configs_utils import MoveItConfigsBuilder
 
 
 def generate_launch_description():
+    declare_example_name = DeclareLaunchArgument(
+        'example',
+        default_value='color_detection',
+        description=('Set an example executable name: [aruco_detection, color_detection]'),
+    )
+
+    declare_use_sim_time = DeclareLaunchArgument(
+        'use_sim_time',
+        default_value='false',
+        description=('Set true when using the gazebo simulator.'),
+    )
+
     description_loader = RobotDescriptionLoader()
     declare_loaded_description = DeclareLaunchArgument(
         'loaded_description',
@@ -48,19 +60,6 @@ def generate_launch_description():
         'robot_description': LaunchConfiguration('loaded_description')
     }
 
-    declare_example_name = DeclareLaunchArgument(
-        'example',
-        default_value='color_detection',
-        description=('Set an example executable name: '
-                     '[aruco_detection, color_detection]')
-    )
-
-    declare_use_sim_time = DeclareLaunchArgument(
-        'use_sim_time',
-        default_value='false',
-        description=('Set true when using the gazebo simulator.'),
-    )
-
     # 下記Issue対応のためここでパラメータを設定する
     # https://github.com/moveit/moveit2/issues/2940#issuecomment-2401302214
     config_dict = moveit_config.to_dict()
@@ -71,7 +70,7 @@ def generate_launch_description():
         package='crane_x7_examples_py',
         executable='pick_and_place_tf',
         output='screen',
-        parameters=[config_dict]
+        parameters=[config_dict],
     )
 
     example_node = Node(
@@ -82,10 +81,12 @@ def generate_launch_description():
         parameters=[config_dict],
     )
 
-    return LaunchDescription([
-        declare_loaded_description,
-        declare_example_name,
-        declare_use_sim_time,
-        picking_node,
-        example_node
-    ])
+    return LaunchDescription(
+        [
+            declare_loaded_description,
+            declare_example_name,
+            declare_use_sim_time,
+            picking_node,
+            example_node,
+        ]
+    )
