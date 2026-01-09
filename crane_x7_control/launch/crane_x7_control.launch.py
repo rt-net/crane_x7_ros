@@ -102,7 +102,8 @@ def generate_launch_description():
     description_loader.use_mock_components = LaunchConfiguration('use_mock_components')
     description_loader.gz_control_config_package = LaunchConfiguration('gz_control_config_package')
     description_loader.gz_control_config_file_path = LaunchConfiguration('gz_control_config_file_path')
-        
+    loaded_description = description_loader.load()
+    
     crane_x7_controllers = os.path.join(
         get_package_share_directory('crane_x7_control'), 'config', 'crane_x7_controllers.yaml'
     )
@@ -110,7 +111,7 @@ def generate_launch_description():
     robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        parameters=[{'robot_description': LaunchConfiguration('description_loader.load()')}],
+        parameters=[{'robot_description': loaded_description}],
         output='screen'
     )
 
