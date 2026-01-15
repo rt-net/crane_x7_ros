@@ -26,6 +26,14 @@ from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
+    config_file_path = os.path.join(
+        get_package_share_directory('crane_x7_control'), 'config', 'manipulator_config.yaml'
+    )
+
+    links_file_path = os.path.join(
+        get_package_share_directory('crane_x7_control'), 'config', 'manipulator_links.csv'
+    )
+
     declare_port_name = DeclareLaunchArgument(
         'port_name', default_value='/dev/ttyUSB0', description='Set port name.'
     )
@@ -40,14 +48,6 @@ def generate_launch_description():
 
     declare_use_mock_components = DeclareLaunchArgument(
         'use_mock_components', default_value='false', description='Use mock_components or not.'
-    )
-
-    config_file_path = os.path.join(
-        get_package_share_directory('crane_x7_control'), 'config', 'manipulator_config.yaml'
-    )
-
-    links_file_path = os.path.join(
-        get_package_share_directory('crane_x7_control'), 'config', 'manipulator_links.csv'
     )
 
     declare_rviz_config = DeclareLaunchArgument(
@@ -66,16 +66,6 @@ def generate_launch_description():
         condition=IfCondition(LaunchConfiguration('use_d435')),
     )
 
-    move_group = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [
-                get_package_share_directory('crane_x7_moveit_config'),
-                '/launch/run_move_group.launch.py',
-            ]
-        ),
-        launch_arguments={'rviz_config': LaunchConfiguration('rviz_config')}.items(),
-    )
-
     control_node = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [get_package_share_directory('crane_x7_control'), '/launch/crane_x7_control.launch.py']
@@ -89,6 +79,16 @@ def generate_launch_description():
             'manipulator_config_file_path': config_file_path,
             'manipulator_links_file_path': links_file_path,
         }.items(),
+    )
+
+    move_group = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [
+                get_package_share_directory('crane_x7_moveit_config'),
+                '/launch/run_move_group.launch.py',
+            ]
+        ),
+        launch_arguments={'rviz_config': LaunchConfiguration('rviz_config')}.items(),
     )
 
     realsense_node = IncludeLaunchDescription(
