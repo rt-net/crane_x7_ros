@@ -117,6 +117,7 @@ def generate_launch_description():
             SetParameter(name='use_sim_time', value=True),
             gz_sim,
             gz_sim_spawn_entity,
+            robot_state_publisher,
             move_group,
             spawn_joint_state_controller,
             spawn_arm_controller,
