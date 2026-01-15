@@ -23,6 +23,11 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
+
+    crane_x7_controllers = os.path.join(
+        get_package_share_directory('crane_x7_control'), 'config', 'crane_x7_controllers.yaml'
+    )
+
     config_file_path = os.path.join(
         get_package_share_directory('crane_x7_control'), 'config', 'manipulator_config.yaml'
     )
@@ -51,13 +56,13 @@ def generate_launch_description():
 
     declare_manipulator_config_file_path = DeclareLaunchArgument(
         'manipulator_config_file_path', 
-        default_value='', 
+        default_value=config_file_path,
         description='Set manipulator config file path.'
     )
 
     declare_manipulator_links_file_path = DeclareLaunchArgument(
         'manipulator_links_file_path', 
-        default_value='', 
+        default_value=links_file_path,
         description='Set manipulator links file path.'
     )
 
@@ -104,10 +109,6 @@ def generate_launch_description():
     description_loader.gz_control_config_file_path = LaunchConfiguration('gz_control_config_file_path')
     loaded_description = description_loader.load()
     
-    crane_x7_controllers = os.path.join(
-        get_package_share_directory('crane_x7_control'), 'config', 'crane_x7_controllers.yaml'
-    )
-
     robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
