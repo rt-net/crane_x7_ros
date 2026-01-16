@@ -104,7 +104,9 @@ def generate_launch_description():
     description_loader.use_d435 = LaunchConfiguration('use_d435')
     description_loader.use_mock_components = LaunchConfiguration('use_mock_components')
     description_loader.gz_control_config_package = LaunchConfiguration('gz_control_config_package')
-    description_loader.gz_control_config_file_path = LaunchConfiguration('gz_control_config_file_path')
+    description_loader.gz_control_config_file_path = LaunchConfiguration(
+        'gz_control_config_file_path'
+    )
     description_loader.manipulator_config_file_path = LaunchConfiguration(
         'manipulator_config_file_path'
     )
