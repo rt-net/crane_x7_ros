@@ -95,20 +95,24 @@ def generate_launch_description():
         default_value='',
         description='Set gz control config file path.'
     )
-    
+
     description_loader = RobotDescriptionLoader()
     description_loader.port_name = LaunchConfiguration('port_name')
     description_loader.baudrate = LaunchConfiguration('baudrate')
     description_loader.timeout_seconds = LaunchConfiguration('timeout_seconds')
-    description_loader.manipulator_config_file_path = LaunchConfiguration('manipulator_config_file_path')
-    description_loader.manipulator_links_file_path = LaunchConfiguration('manipulator_links_file_path')
     description_loader.use_gazebo = LaunchConfiguration('use_gazebo')
     description_loader.use_d435 = LaunchConfiguration('use_d435')
     description_loader.use_mock_components = LaunchConfiguration('use_mock_components')
     description_loader.gz_control_config_package = LaunchConfiguration('gz_control_config_package')
     description_loader.gz_control_config_file_path = LaunchConfiguration('gz_control_config_file_path')
+    description_loader.manipulator_config_file_path = LaunchConfiguration(
+        'manipulator_config_file_path'
+    )
+    description_loader.manipulator_links_file_path = LaunchConfiguration(
+        'manipulator_links_file_path'
+    )
     loaded_description = description_loader.load()
-    
+
     robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
