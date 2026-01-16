@@ -15,7 +15,6 @@
 import os
 
 from ament_index_python.packages import get_package_share_directory
-from crane_x7_description.robot_description_loader import RobotDescriptionLoader
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.actions import IncludeLaunchDescription

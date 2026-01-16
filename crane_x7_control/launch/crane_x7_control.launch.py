@@ -13,8 +13,8 @@
 # limitations under the License.
 
 import os
-from ament_index_python.packages import get_package_share_directory
 
+from ament_index_python.packages import get_package_share_directory
 from crane_x7_description.robot_description_loader import RobotDescriptionLoader
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
@@ -37,31 +37,31 @@ def generate_launch_description():
     )
 
     declare_port_name = DeclareLaunchArgument(
-        'port_name', 
-        default_value='/dev/ttyUSB0', 
+        'port_name',
+        default_value='/dev/ttyUSB0',
         description='Set port name.'
     )
 
     declare_baudrate = DeclareLaunchArgument(
-        'baudrate', 
-        default_value='3000000', 
+        'baudrate',
+        default_value='3000000',
         description='Set baudrate.'
     )
 
     declare_timeout_seconds = DeclareLaunchArgument(
-        'timeout_seconds', 
-        default_value='1.0', 
+        'timeout_seconds',
+        default_value='1.0',
         description='Set timeout seconds.'
     )
 
     declare_manipulator_config_file_path = DeclareLaunchArgument(
-        'manipulator_config_file_path', 
+        'manipulator_config_file_path',
         default_value=config_file_path,
         description='Set manipulator config file path.'
     )
 
     declare_manipulator_links_file_path = DeclareLaunchArgument(
-        'manipulator_links_file_path', 
+        'manipulator_links_file_path',
         default_value=links_file_path,
         description='Set manipulator links file path.'
     )
@@ -86,13 +86,13 @@ def generate_launch_description():
 
     declare_gz_control_config_package = DeclareLaunchArgument(
         'gz_control_config_package',
-        default_value='', 
+        default_value='',
         description='Set gz control config package.'
     )
 
     declare_gz_control_config_file_path = DeclareLaunchArgument(
         'gz_control_config_file_path',
-        default_value='', 
+        default_value='',
         description='Set gz control config file path.'
     )
     
