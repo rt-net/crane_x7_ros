@@ -53,6 +53,7 @@ ros2 launch crane_x7_examples_py example.launch.py example:='gripper_control'
 > 
 > ```sh
 > ros2 launch crane_x7_examples_py example.launch.py -s
+>
 > Arguments (pass arguments as '<name>:=<value>'):
 > 
 >     'example':
