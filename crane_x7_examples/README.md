@@ -5,6 +5,7 @@
 ## Table of Contents
 
 - [crane\_x7\_examples](#crane_x7_examples)
+  - [Table of Contents](#table-of-contents)
   - [Setup](#setup)
     - [Using CRANE-X7](#using-crane-x7)
     - [Using Gazebo](#using-gazebo)
