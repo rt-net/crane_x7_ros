@@ -21,7 +21,7 @@
 
 CRANE-X7の起動方法は[crane_x7_examplesのREADME](../crane_x7_examples/README.md)を参照してください。
 
-## How to Run
+## How to Run Examples
 
 準備ができたらサンプルプログラムを実行します。
 例えばグリッパを開閉するサンプルは次のコマンドで実行できます。
