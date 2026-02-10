@@ -253,7 +253,9 @@ ros2 launch crane_x7_examples example.launch.py example:='pick_and_place'
 > 
 > ```sh
 > ros2 launch crane_x7_examples camera_example.launch.py -s
+> ```
 >
+> ```sh
 > Arguments (pass arguments as '<name>:=<value>'):
 > 
 >     'example':
