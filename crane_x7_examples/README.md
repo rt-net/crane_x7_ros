@@ -124,7 +124,7 @@ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
 > 実行できるサンプルの一覧は、`example.launch.py`にオプション`-s`を付けて実行することで表示できます。
 > 
 > ```sh
-> $ ros2 launch crane_x7_examples example.launch.py -s
+> ros2 launch crane_x7_examples example.launch.py -s
 > Arguments (pass arguments as '<name>:=<value>'):
 > 
 >     'example':
