@@ -4,7 +4,7 @@
 
 [![industrial_ci](https://github.com/rt-net/crane_x7_ros/actions/workflows/industrial_ci.yml/badge.svg?branch=ros2)](https://github.com/rt-net/crane_x7_ros/actions/workflows/industrial_ci.yml)
 
-ROS 2 package suite of CRANE-X7.
+This is a ROS 2 package suite for the CRANE-X7.
 
 <img src=https://rt-net.github.io/images/crane-x7/CRANE-X7-500x500.png width=400px/><img src=https://rt-net.github.io/images/crane-x7/crane_x7_gazebo_ros2.png width=400px />
 
@@ -12,25 +12,19 @@ ROS 2 package suite of CRANE-X7.
 
 - [crane\_x7\_ros](#crane_x7_ros)
   - [Table of Contents](#table-of-contents)
-  - [Supported ROS 2 distributions](#supported-ros-2-distributions)
-    - [ROS 1](#ros-1)
+  - [Supported ROS distributions](#supported-ros-distributions)
   - [Requirements](#requirements)
   - [Installation](#installation)
-    - [Build from source](#build-from-source)
   - [Quick Start](#quick-start)
   - [Packages](#packages)
+  - [How to Use Examples](#how-to-use-examples)
   - [License](#license)
+  - [Contributing](#contributing)
 
 ## Supported ROS 2 distributions
 
-- [Foxy](https://github.com/rt-net/crane_x7_ros/tree/foxy-devel)
-- [Humble](https://github.com/rt-net/crane_x7_ros/tree/humble)
-- [Jazzy](https://github.com/rt-net/crane_x7_ros/tree/jazzy)
-
-### ROS 1
-
-- [Melodic](https://github.com/rt-net/crane_x7_ros/tree/master)
-- [Noetic](https://github.com/rt-net/crane_x7_ros/tree/master)
+- [Humble Hawksbill](https://github.com/rt-net/crane_x7_ros/tree/humble)
+- [Jazzy Jalisco](https://github.com/rt-net/crane_x7_ros/tree/jazzy)
 
 ## Requirements
 
@@ -40,66 +34,72 @@ ROS 2 package suite of CRANE-X7.
 - Linux OS
   - Ubuntu 24.04
 - ROS
-  - [Jazzy](https://docs.ros.org/en/jazzy/Installation.html)
+  - [Jazzy Jalisco](https://docs.ros.org/en/jazzy/Installation.html)
 
 ## Installation
 
-### Build from source
+### Source Build
 
 ```sh
 # Download crane_x7 repositories
-$ mkdir -p ~/ros2_ws/src
-$ cd ~/ros2_ws/src
-$ git clone -b $ROS_DISTRO https://github.com/rt-net/crane_x7_ros.git
-$ git clone -b $ROS_DISTRO https://github.com/rt-net/crane_x7_description.git
+mkdir -p ~/ros2_ws/src
+cd ~/ros2_ws/src
+git clone -b $ROS_DISTRO https://github.com/rt-net/crane_x7_ros.git
+git clone -b $ROS_DISTRO https://github.com/rt-net/crane_x7_description.git
 
 # Install dependencies
-$ rosdep install -r -y -i --from-paths .
+rosdep install -r -y -i --from-paths .
 
 # Build & Install
-$ cd ~/ros2_ws
-$ colcon build --symlink-install
-$ source ~/ros2_ws/install/setup.bash
+cd ~/ros2_ws
+colcon build --symlink-install
+source ~/ros2_ws/install/setup.bash
 ```
 
 ## Quick Start
 
 ```sh
 # Connect CRANE-X7 to PC, then
-$ source ~/ros2_ws/install/setup.bash
-$ ros2 launch crane_x7_examples demo.launch.py port_name:=/dev/ttyUSB0
+source ~/ros2_ws/install/setup.bash
+ros2 launch crane_x7_examples demo.launch.py port_name:=/dev/ttyUSB0
 
 # Terminal 2
-$ source ~/ros2_ws/install/setup.bash
-$ ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
+source ~/ros2_ws/install/setup.bash
+ros2 launch crane_x7_examples example.launch.py example:='gripper_control'
 
 # Press [Ctrl-c] to terminate.
 ```
-
-Please refer to [crane_x7_examples](./crane_x7_examples/README.md) for details.
 
 ## Packages
 
 - crane_x7_control
   - [README](./crane_x7_control/README.md)
-  - This package includes a hardware driver for CRANE-X7.
+  - This package provides a hardware driver for CRANE-X7.
+  - The procedure for configuring the USB communication port is described in the README.
 - crane_x7_examples
   - [README](./crane_x7_examples/README.md)
-  - This package includes C++ example codes for CRANE-X7.
+  - This package provides C++ example code for CRANE-X7.
 - crane_x7_examples_py
   - [README](./crane_x7_examples_py/README.md)
-  - This package includes Python example codes for CRANE-X7.
+  - This package provides Python example code for CRANE-X7.
 - crane_x7_gazebo
   - [README](./crane_x7_gazebo/README.md)
-  - This package includes Gazebo simulation environments for CRANE-X7.
+  - This package provides Gazebo simulation environments for CRANE-X7.
 - crane_x7_moveit_config
   - [README](./crane_x7_moveit_config/README.md)
-  - This package includes configuration files for `moveit2`.
+  - This package provides configuration files for `MoveIt 2`.
 - crane_x7_description (external package)
   - [README](https://github.com/rt-net/crane_x7_description/blob/ros2/README.en.md)
-  - This package includes a model data (xacro) of CRANE-X7.
+  - This package provides model data (xacro) of CRANE-X7.
 
----
+## How to Use Examples
+
+Sample programs are available in both C++ and Python. See the links below for details.
+
+- C++
+  - [crane_x7_examples](./crane_x7_examples/README.md)
+- Python
+  - [crane_x7_examples_py](./crane_x7_examples_py/README.md)
 
 ## License
 
@@ -108,5 +108,12 @@ Please refer to [crane_x7_examples](./crane_x7_examples/README.md) for details.
 This repository is licensed under the Apache License, Version 2.0, see [LICENSE](./LICENSE).  
 Unless attributed otherwise, everything in this repository is under the Apache License, Version 2.0.
 
-The crane_x7_ros depends on [crane_x7_description](https://github.com/rt-net/crane_x7_description/tree/ros2) package.
-The RT Corporation's [NON-COMMERCIAL LICENSE](https://github.com/rt-net/crane_x7_description/blob/ros2/LICENSE) applies to the package.
+crane_x7_ros depends on [crane_x7_description](https://github.com/rt-net/crane_x7_description/tree/ros2) package.
+RT Corporation's [NON-COMMERCIAL LICENSE](https://github.com/rt-net/crane_x7_description/blob/ros2/LICENSE) applies to the package.
+
+## Contributing
+
+- This software is open source, but its development is not open.
+- This software is essentially provided as open source software on an “AS IS” (in its current state) basis.
+- No free support is available for this software.
+- Requests for bug fixes and corrections of typographical errors are always accepted; however, requests for additional features will be subject to our internal guidelines. For further details, please refer to the [Contribution Guidelines](https://github.com/rt-net/.github/blob/master/CONTRIBUTING.md#contribution-guide-en).
