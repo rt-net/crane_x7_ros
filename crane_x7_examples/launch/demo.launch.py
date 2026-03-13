@@ -33,8 +33,16 @@ def generate_launch_description():
         'baudrate', default_value='3000000', description='Set baudrate.'
     )
 
+    declare_timeout_seconds = DeclareLaunchArgument(
+        'timeout_seconds', default_value='1.0', description='Set timeout seconds.'
+    )
+
     declare_use_d435 = DeclareLaunchArgument(
         'use_d435', default_value='false', description='Use d435.'
+    )
+
+    declare_use_gazebo = DeclareLaunchArgument(
+        'use_gazebo', default_value='false', description='Use gazebo or not.'
     )
 
     declare_use_mock_components = DeclareLaunchArgument(
@@ -47,6 +55,26 @@ def generate_launch_description():
 
     links_file_path = os.path.join(
         get_package_share_directory('crane_x7_control'), 'config', 'manipulator_links.csv'
+    )
+
+    declare_manipulator_config_file_path = DeclareLaunchArgument(
+        'manipulator_config_file_path',
+        default_value=config_file_path,
+        description='Set manipulator config file path.',
+    )
+
+    declare_manipulator_links_file_path = DeclareLaunchArgument(
+        'manipulator_links_file_path',
+        default_value=links_file_path,
+        description='Set manipulator links file path.',
+    )
+
+    declare_gz_control_config_package = DeclareLaunchArgument(
+        'gz_control_config_package', default_value='', description='Set gz control config package.'
+    )
+
+    declare_gz_control_config_file_path = DeclareLaunchArgument(
+        'gz_control_config_file_path', default_value='', description='Set gz control config file path.'
     )
 
     declare_rviz_config = DeclareLaunchArgument(
@@ -72,7 +100,19 @@ def generate_launch_description():
                 '/launch/run_move_group.launch.py',
             ]
         ),
-        launch_arguments={'rviz_config': LaunchConfiguration('rviz_config')}.items(),
+        launch_arguments={
+            'rviz_config': LaunchConfiguration('rviz_config'),
+            'port_name': LaunchConfiguration('port_name'),
+            'baudrate': LaunchConfiguration('baudrate'),
+            'timeout_seconds': LaunchConfiguration('timeout_seconds'),
+            'manipulator_config_file_path': LaunchConfiguration('manipulator_config_file_path'),
+            'manipulator_links_file_path': LaunchConfiguration('manipulator_links_file_path'),
+            'use_gazebo': LaunchConfiguration('use_gazebo'),
+            'use_d435': LaunchConfiguration('use_d435'),
+            'use_mock_components': LaunchConfiguration('use_mock_components'),
+            'gz_control_config_package': LaunchConfiguration('gz_control_config_package'),
+            'gz_control_config_file_path': LaunchConfiguration('gz_control_config_file_path'),
+        }.items(),
     )
 
     control_node = IncludeLaunchDescription(
@@ -82,11 +122,14 @@ def generate_launch_description():
         launch_arguments={
             'port_name': LaunchConfiguration('port_name'),
             'baudrate': LaunchConfiguration('baudrate'),
+            'timeout_seconds': LaunchConfiguration('timeout_seconds'),
+            'manipulator_config_file_path': LaunchConfiguration('manipulator_config_file_path'),
+            'manipulator_links_file_path': LaunchConfiguration('manipulator_links_file_path'),
+            'use_gazebo': LaunchConfiguration('use_gazebo'),
             'use_d435': LaunchConfiguration('use_d435'),
             'use_mock_components': LaunchConfiguration('use_mock_components'),
-            'timeout_seconds': '1.0',
-            'manipulator_config_file_path': config_file_path,
-            'manipulator_links_file_path': links_file_path,
+            'gz_control_config_package': LaunchConfiguration('gz_control_config_package'),
+            'gz_control_config_file_path': LaunchConfiguration('gz_control_config_file_path'),
         }.items(),
     )
 
@@ -107,8 +150,14 @@ def generate_launch_description():
         [
             declare_port_name,
             declare_baudrate,
+            declare_timeout_seconds,
             declare_use_d435,
+            declare_use_gazebo,
             declare_use_mock_components,
+            declare_manipulator_config_file_path,
+            declare_manipulator_links_file_path,
+            declare_gz_control_config_package,
+            declare_gz_control_config_file_path,
             declare_rviz_config,
             declare_rviz_config_camera,
             move_group,
