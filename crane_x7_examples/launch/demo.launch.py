@@ -70,11 +70,15 @@ def generate_launch_description():
     )
 
     declare_gz_control_config_package = DeclareLaunchArgument(
-        'gz_control_config_package', default_value='', description='Set gz control config package.'
+        'gz_control_config_package',
+        default_value='',
+        description='Set gz control config package.'
     )
-
+    
     declare_gz_control_config_file_path = DeclareLaunchArgument(
-        'gz_control_config_file_path', default_value='', description='Set gz control config file path.'
+        'gz_control_config_file_path',
+        default_value='',
+        description='Set gz control config file path.'
     )
 
     declare_rviz_config = DeclareLaunchArgument(
