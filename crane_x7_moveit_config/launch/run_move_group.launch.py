@@ -116,10 +116,6 @@ def generate_launch_description():
 
     moveit_config = (
         MoveItConfigsBuilder('crane_x7')
-        .planning_scene_monitor(
-            publish_robot_description=False,
-            publish_robot_description_semantic=True,
-        )
         .planning_pipelines(pipelines=['ompl'])
         .to_moveit_configs()
     )
