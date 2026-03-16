@@ -74,7 +74,7 @@ def generate_launch_description():
         default_value='',
         description='Set gz control config package.'
     )
-    
+
     declare_gz_control_config_file_path = DeclareLaunchArgument(
         'gz_control_config_file_path',
         default_value='',

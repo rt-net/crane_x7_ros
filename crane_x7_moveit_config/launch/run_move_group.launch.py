@@ -26,7 +26,7 @@ from moveit_configs_utils.launches import generate_static_virtual_joint_tfs_laun
 
 
 def generate_launch_description():
-    
+
     config_file_path = os.path.join(
         get_package_share_directory('crane_x7_control'), 'config', 'manipulator_config.yaml'
     )
