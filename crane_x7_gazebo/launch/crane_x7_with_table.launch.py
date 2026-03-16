@@ -80,6 +80,11 @@ def generate_launch_description():
                 '/launch/run_move_group.launch.py',
             ]
         ),
+        launch_arguments={
+            'use_gazebo': 'true',
+            'gz_control_config_package': 'crane_x7_control',
+            'gz_control_config_file_path': 'config/crane_x7_controllers.yaml',
+        }.items(),
     )
 
     spawn_joint_state_controller = Node(
