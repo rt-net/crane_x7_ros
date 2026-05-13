@@ -38,20 +38,9 @@ def generate_launch_description():
     )
 
     description_loader = RobotDescriptionLoader()
-    declare_loaded_description = DeclareLaunchArgument(
-        'loaded_description',
-        default_value=description_loader.load(),
-        description='Set robot_description text.  \
-                    It is recommended to use RobotDescriptionLoader() \
-                        in crane_x7_description.',
-    )
 
     moveit_config = (
         MoveItConfigsBuilder('crane_x7')
-        .planning_scene_monitor(
-            publish_robot_description=True,
-            publish_robot_description_semantic=True,
-        )
         .moveit_cpp(
             file_path=get_package_share_directory('crane_x7_examples_py')
             + '/config/crane_x7_moveit_py_examples.yaml'
@@ -60,7 +49,7 @@ def generate_launch_description():
     )
 
     moveit_config.robot_description = {
-        'robot_description': LaunchConfiguration('loaded_description')
+        'robot_description': description_loader.load()
     }
 
     # 下記Issue対応のためここでパラメータを設定する
@@ -78,7 +67,6 @@ def generate_launch_description():
 
     return LaunchDescription(
         [
-            declare_loaded_description,
             declare_example_name,
             declare_use_sim_time,
             example_node,

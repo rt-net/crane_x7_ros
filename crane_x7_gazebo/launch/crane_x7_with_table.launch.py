@@ -66,6 +66,13 @@ def generate_launch_description():
     description_loader.gz_control_config_file_path = 'config/crane_x7_controllers.yaml'
     description = description_loader.load()
 
+    robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        parameters=[{'robot_description': description}],
+        output='screen'
+    )
+
     move_group = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [
@@ -73,7 +80,11 @@ def generate_launch_description():
                 '/launch/run_move_group.launch.py',
             ]
         ),
-        launch_arguments={'loaded_description': description}.items(),
+        launch_arguments={
+            'use_gazebo': 'true',
+            'gz_control_config_package': 'crane_x7_control',
+            'gz_control_config_file_path': 'config/crane_x7_controllers.yaml',
+        }.items(),
     )
 
     spawn_joint_state_controller = Node(
@@ -111,6 +122,7 @@ def generate_launch_description():
             SetParameter(name='use_sim_time', value=True),
             gz_sim,
             gz_sim_spawn_entity,
+            robot_state_publisher,
             move_group,
             spawn_joint_state_controller,
             spawn_arm_controller,
