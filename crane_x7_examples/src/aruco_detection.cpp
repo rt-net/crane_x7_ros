@@ -61,49 +61,52 @@ private:
     auto cv_img = cv_bridge::toCvShare(msg, msg->encoding);
     cv::cvtColor(cv_img->image, cv_img->image, cv::COLOR_RGB2BGR);
 
-    if (camera_info_) {
-      // ArUcoマーカのデータセットを読み込む
-      // DICT_6x6_50は6x6ビットのマーカが50個収録されたもの
-      const auto MARKER_DICT = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_50);
-      // マーカID
-      std::vector<int> ids;
-      // 画像座標系上のマーカ頂点位置
-      std::vector<std::vector<cv::Point2f>> corners;
-      // マーカの検出
-      cv::aruco::detectMarkers(cv_img->image, MARKER_DICT, corners, ids);
-      // マーカの検出数
-      int n_markers = ids.size();
-      // カメラパラメータ
-      const auto CAMERA_MATRIX = cv::Mat(3, 3, CV_64F, camera_info_->k.data());
-      const auto DIST_COEFFS = cv::Mat(1, 5, CV_64F, camera_info_->d.data());
-      // マーカ一辺の長さ 0.04 [m]
-      const float MARKER_LENGTH = 0.04;
+    if (!camera_info_) {
+      return;
+    }
 
-      // マーカが一つ以上検出された場合、マーカの位置姿勢をtfで配信
-      if (n_markers > 0) {
-        for (int i = 0; i < n_markers; i++) {
-          // マーカの回転ベクトルと位置ベクトル
-          std::vector<cv::Vec3d> rvecs, tvecs;
-          // 画像座標系上のマーカ位置を三次元のカメラ座標系に変換
-          cv::aruco::estimatePoseSingleMarkers(
-            corners, MARKER_LENGTH, CAMERA_MATRIX, DIST_COEFFS, rvecs, tvecs);
+    // ArUcoマーカのデータセットを読み込む
+    // DICT_6x6_50は6x6ビットのマーカが50個収録されたもの
+    const auto MARKER_DICT = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_50);
+    // マーカID
+    std::vector<int> ids;
+    // 画像座標系上のマーカ頂点位置
+    std::vector<std::vector<cv::Point2f>> corners;
+    // マーカの検出
+    cv::aruco::detectMarkers(cv_img->image, MARKER_DICT, corners, ids);
+    // マーカの検出数
+    int n_markers = ids.size();
+    // カメラパラメータ
+    const auto CAMERA_MATRIX = cv::Mat(3, 3, CV_64F, camera_info_->k.data());
+    const auto DIST_COEFFS = cv::Mat(1, 5, CV_64F, camera_info_->d.data());
+    // マーカ一辺の長さ 0.04 [m]
+    const float MARKER_LENGTH = 0.04;
 
-          // tfの配信
-          geometry_msgs::msg::TransformStamped t;
-          t.header.stamp = this->get_clock()->now();
-          t.header.frame_id = "camera_color_optical_frame";
-          t.child_frame_id = "target_" + std::to_string(ids[i]);
-          t.transform.translation.x = tvecs[i][0];
-          t.transform.translation.y = tvecs[i][1];
-          t.transform.translation.z = tvecs[i][2];
-          cv::Quatd cv_q = cv::Quatd::createFromRvec(rvecs[i]);
-          t.transform.rotation.x = cv_q.x;
-          t.transform.rotation.y = cv_q.y;
-          t.transform.rotation.z = cv_q.z;
-          t.transform.rotation.w = cv_q.w;
-          tf_broadcaster_->sendTransform(t);
-        }
-      }
+    // マーカが一つ以上検出された場合、マーカの位置姿勢をtfで配信
+    if (n_markers <= 0) {
+      return;
+    }
+    // マーカの回転ベクトルと位置ベクトル
+    std::vector<cv::Vec3d> rvecs, tvecs;
+    // 画像座標系上のマーカ位置を三次元のカメラ座標系に変換
+    cv::aruco::estimatePoseSingleMarkers(
+      corners, MARKER_LENGTH, CAMERA_MATRIX, DIST_COEFFS, rvecs, tvecs);
+
+    // tfの配信
+    for (int i = 0; i < n_markers; i++) {
+      geometry_msgs::msg::TransformStamped t;
+      t.header.stamp = this->get_clock()->now();
+      t.header.frame_id = "camera_color_optical_frame";
+      t.child_frame_id = "target_" + std::to_string(ids[i]);
+      t.transform.translation.x = tvecs[i][0];
+      t.transform.translation.y = tvecs[i][1];
+      t.transform.translation.z = tvecs[i][2];
+      cv::Quatd cv_q = cv::Quatd::createFromRvec(rvecs[i]);
+      t.transform.rotation.x = cv_q.x;
+      t.transform.rotation.y = cv_q.y;
+      t.transform.rotation.z = cv_q.z;
+      t.transform.rotation.w = cv_q.w;
+      tf_broadcaster_->sendTransform(t);
     }
   }
 
