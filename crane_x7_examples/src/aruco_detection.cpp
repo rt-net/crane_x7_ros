@@ -27,6 +27,7 @@
 #include "sensor_msgs/msg/image.hpp"
 #include "opencv2/opencv.hpp"
 #include "opencv2/aruco.hpp"
+#include "opencv2/core/quaternion.hpp"
 #include "cv_bridge/cv_bridge.hpp"
 #include "tf2/LinearMath/Quaternion.hpp"
 #include "tf2/LinearMath/Matrix3x3.hpp"
@@ -95,24 +96,11 @@ private:
           t.transform.translation.x = tvecs[i][0];
           t.transform.translation.y = tvecs[i][1];
           t.transform.translation.z = tvecs[i][2];
-          tf2::Quaternion q;
-          cv::Mat cv_rotation_matrix;
-          cv::Rodrigues(rvecs[i], cv_rotation_matrix);
-          tf2::Matrix3x3 tf2_rotation_matrix = tf2::Matrix3x3(
-            cv_rotation_matrix.at<double>(0, 0),
-            cv_rotation_matrix.at<double>(0, 1),
-            cv_rotation_matrix.at<double>(0, 2),
-            cv_rotation_matrix.at<double>(1, 0),
-            cv_rotation_matrix.at<double>(1, 1),
-            cv_rotation_matrix.at<double>(1, 2),
-            cv_rotation_matrix.at<double>(2, 0),
-            cv_rotation_matrix.at<double>(2, 1),
-            cv_rotation_matrix.at<double>(2, 2));
-          tf2_rotation_matrix.getRotation(q);
-          t.transform.rotation.x = q.x();
-          t.transform.rotation.y = q.y();
-          t.transform.rotation.z = q.z();
-          t.transform.rotation.w = q.w();
+          cv::Quatd cv_q = cv::Quatd::createFromRvec(rvecs[i]);
+          t.transform.rotation.x = cv_q.x;
+          t.transform.rotation.y = cv_q.y;
+          t.transform.rotation.z = cv_q.z;
+          t.transform.rotation.w = cv_q.w;
           tf_broadcaster_->sendTransform(t);
         }
       }
