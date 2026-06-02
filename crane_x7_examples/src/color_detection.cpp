@@ -83,7 +83,7 @@ private:
     // 周囲の明るさ等の動作環境に合わせて調整
     const int LOW_H = 100, HIGH_H = 125;
     const int LOW_S = 100, HIGH_S = 255;
-    const int LOW_V = 30,  HIGH_V = 255;
+    const int LOW_V = 30, HIGH_V = 255;
 
     auto cv_color = cv_bridge::toCvShare(color_msg, color_msg->encoding);
 
@@ -146,7 +146,7 @@ private:
     // 把持対象物の表面より少し奥を掴むように設定
     const double DEPTH_OFFSET = 0.015;
     const auto cv_depth = cv_bridge::toCvShare(depth_msg, depth_msg->encoding);
-    
+
     // カメラから把持対象物の表面までの距離
     const auto front_distance = cv_depth->image.at<ushort>(point) / 1000.0;
     const auto center_distance = front_distance + DEPTH_OFFSET;

@@ -74,14 +74,14 @@ private:
     cv::aruco::detectMarkers(cv_img->image, marker_dict_, corners, ids);
     // マーカの検出数
     int n_markers = ids.size();
-    
+
     if (n_markers <= 0) {
       return;
     }
 
     // カメラパラメータの読み込み
-    const auto CAMERA_MATRIX = cv::Mat(3, 3, CV_64F, const_cast<double*>(info_msg->k.data()));
-    const auto DIST_COEFFS = cv::Mat(1, 5, CV_64F, const_cast<double*>(info_msg->d.data()));
+    const auto CAMERA_MATRIX = cv::Mat(3, 3, CV_64F, const_cast<double *>(info_msg->k.data()));
+    const auto DIST_COEFFS = cv::Mat(1, 5, CV_64F, const_cast<double *>(info_msg->d.data()));
     // マーカ一辺の長さ 0.04 [m]
     const float MARKER_LENGTH = 0.04;
     // マーカの回転ベクトルと位置ベクトル

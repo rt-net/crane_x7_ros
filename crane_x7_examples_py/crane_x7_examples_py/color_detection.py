@@ -17,7 +17,6 @@ from cv_bridge import CvBridge
 from geometry_msgs.msg import TransformStamped
 from image_geometry import PinholeCameraModel
 import message_filters
-import numpy as np
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import CameraInfo, Image
