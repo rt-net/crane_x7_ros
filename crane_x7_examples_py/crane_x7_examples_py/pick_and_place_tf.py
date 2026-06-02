@@ -106,7 +106,7 @@ class PickAndPlaceTf(Node):
         # 待機姿勢
         self.init_pose()
 
-        # Call on_timer function every second
+        # Call on_timer function every 0.5 second
         self.timer = self.create_timer(0.5, self.on_timer)
 
     def on_timer(self):
@@ -120,37 +120,42 @@ class PickAndPlaceTf(Node):
                 )
             return
 
-        now_time = self.get_clock().now()
+        now = self.get_clock().now()
         FILTERING_TIME = rclpy.duration.Duration(seconds=2)
         STOP_TIME_THRESHOLD = rclpy.duration.Duration(seconds=3)
         DISTANCE_THRESHOLD = 0.01
-
+        TARGET_Z_MIN_LIMIT = 0.04
         # 経過時間と停止時間を計算(nsec)
         # 経過時間
-        tf_time = rclpy.time.Time.from_msg(tf_msg.header.stamp)
-        TF_ELAPSED_TIME = now_time - tf_time
+
+        tf_elapsed_time = now - rclpy.time.Time.from_msg(tf_msg.header.stamp)
         # 停止時間
-        tf_past_time = rclpy.time.Time.from_msg(self.tf_past.header.stamp)
-        TF_STOP_TIME = now_time - tf_past_time
-        TARGET_Z_MIN_LIMIT = 0.04
+        tf_stop_time = now - rclpy.time.Time.from_msg(self.tf_past.header.stamp)
 
         # 現在時刻から2秒以内に受け取ったtfを使用
-        if TF_ELAPSED_TIME < FILTERING_TIME:
-            tf_diff = np.linalg.norm([
-                self.tf_past.transform.translation.x - tf_msg.transform.translation.x,
-                self.tf_past.transform.translation.y - tf_msg.transform.translation.y,
-                self.tf_past.transform.translation.z - tf_msg.transform.translation.z
-            ])
-            # 把持対象の位置が停止していることを判定
-            if tf_diff < DISTANCE_THRESHOLD:
-                # 把持対象が3秒以上停止している場合ピッキング動作開始
-                if TF_STOP_TIME > STOP_TIME_THRESHOLD:
-                    # 把持対象が低すぎる場合は把持位置を調整
-                    if tf_msg.transform.translation.z < TARGET_Z_MIN_LIMIT:
-                        tf_msg.transform.translation.z = TARGET_Z_MIN_LIMIT
-                    self._picking(tf_msg.transform.translation)
-            else:
-                self.tf_past = tf_msg
+        if tf_elapsed_time > FILTERING_TIME:
+            return
+
+        tf_diff = np.linalg.norm([
+            self.tf_past.transform.translation.x - tf_msg.transform.translation.x,
+            self.tf_past.transform.translation.y - tf_msg.transform.translation.y,
+            self.tf_past.transform.translation.z - tf_msg.transform.translation.z
+        ])
+
+        # 把持対象の位置が停止していることを判定
+        if tf_diff > DISTANCE_THRESHOLD:
+            self.tf_past = tf_msg
+            return
+
+        # 把持対象が3秒以上停止している場合ピッキング動作開始
+        if tf_stop_time < STOP_TIME_THRESHOLD:
+            return
+
+        # 把持対象が低すぎる場合は把持位置を調整
+        if tf_msg.transform.translation.z < TARGET_Z_MIN_LIMIT:
+            tf_msg.transform.translation.z = TARGET_Z_MIN_LIMIT
+
+        self._picking(tf_msg.transform.translation)
 
     def init_pose(self):
         joint_values = [
@@ -170,7 +175,7 @@ class PickAndPlaceTf(Node):
             self.crane_x7,
             self.arm,
             self.logger,
-            single_plan_parameters=self.gripper_plan_request_params,
+            single_plan_parameters=self.arm_plan_request_params,
         )
 
     def _picking(self, target_position):
