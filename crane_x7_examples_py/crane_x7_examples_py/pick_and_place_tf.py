@@ -112,12 +112,9 @@ class PickAndPlaceTf(Node):
     def on_timer(self):
         # target_0のtf位置姿勢を取得
         try:
-            tf_msg = self.tf_buffer.lookup_transform(
-                'base_link', 'target_0', rclpy.time.Time())
+            tf_msg = self.tf_buffer.lookup_transform('base_link', 'target_0', rclpy.time.Time())
         except TransformException as ex:
-            self.logger.info(
-                f'Could not transform base_link to target: {ex}'
-                )
+            self.logger.info(f'Could not transform base_link to target: {ex}')
             return
 
         now = self.get_clock().now()
@@ -136,11 +133,13 @@ class PickAndPlaceTf(Node):
         if tf_elapsed_time > FILTERING_TIME:
             return
 
-        tf_diff = np.linalg.norm([
-            self.tf_past.transform.translation.x - tf_msg.transform.translation.x,
-            self.tf_past.transform.translation.y - tf_msg.transform.translation.y,
-            self.tf_past.transform.translation.z - tf_msg.transform.translation.z
-        ])
+        tf_diff = np.linalg.norm(
+            [
+                self.tf_past.transform.translation.x - tf_msg.transform.translation.x,
+                self.tf_past.transform.translation.y - tf_msg.transform.translation.y,
+                self.tf_past.transform.translation.z - tf_msg.transform.translation.z,
+            ]
+        )
 
         # 把持対象の位置が停止していることを判定
         if tf_diff > DISTANCE_THRESHOLD:
@@ -165,7 +164,7 @@ class PickAndPlaceTf(Node):
             math.radians(-160.0),
             math.radians(0.0),
             math.radians(-50.0),
-            math.radians(90.0)
+            math.radians(90.0),
         ]
         robot_state = RobotState(self.robot_model)
         robot_state.set_joint_group_positions('arm', joint_values)
@@ -189,21 +188,24 @@ class PickAndPlaceTf(Node):
 
         # 掴む準備をする
         self._control_arm(
-            target_position.x, target_position.y, target_position.z + 0.12, -180, 0, 90)
+            target_position.x, target_position.y, target_position.z + 0.12, -180, 0, 90
+        )
 
         # ハンドを開く
         self._control_gripper(GRIPPER_OPEN)
 
         # 掴みに行く
         self._control_arm(
-            target_position.x, target_position.y, target_position.z + 0.05, -180, 0, 90)
+            target_position.x, target_position.y, target_position.z + 0.05, -180, 0, 90
+        )
 
         # ハンドを閉じる
         self._control_gripper(GRIPPER_CLOSE)
 
         # 持ち上げる
         self._control_arm(
-            target_position.x, target_position.y, target_position.z + 0.12, -180, 0, 90)
+            target_position.x, target_position.y, target_position.z + 0.12, -180, 0, 90
+        )
 
         # 移動する
         self._control_arm(0.1, 0.2, 0.2, -180, 0, 90)
@@ -249,10 +251,7 @@ class PickAndPlaceTf(Node):
         goal_pose.pose.orientation.y = quat[1]
         goal_pose.pose.orientation.z = quat[2]
         goal_pose.pose.orientation.w = quat[3]
-        self.arm.set_goal_state(
-            pose_stamped_msg=goal_pose,
-            pose_link='crane_x7_gripper_base_link'
-        )
+        self.arm.set_goal_state(pose_stamped_msg=goal_pose, pose_link='crane_x7_gripper_base_link')
         result = plan_and_execute(
             self.crane_x7,
             self.arm,

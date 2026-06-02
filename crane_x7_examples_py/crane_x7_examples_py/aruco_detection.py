@@ -28,12 +28,8 @@ from tf2_ros import TransformBroadcaster
 class ImageSubscriber(Node):
     def __init__(self):
         super().__init__('aruco_detection')
-        self.image_sub = message_filters.Subscriber(
-            self, Image, '/camera/color/image_raw'
-        )
-        self.info_sub = message_filters.Subscriber(
-            self, CameraInfo, '/camera/color/camera_info'
-        )
+        self.image_sub = message_filters.Subscriber(self, Image, '/camera/color/image_raw')
+        self.info_sub = message_filters.Subscriber(self, CameraInfo, '/camera/color/camera_info')
         self.ts = message_filters.TimeSynchronizer([self.image_sub, self.info_sub], 10)
         self.ts.registerCallback(self.camera_callback)
 
@@ -70,7 +66,8 @@ class ImageSubscriber(Node):
 
         # 画像座標系上のマーカ位置を三次元のカメラ座標系に変換
         rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(
-            corners, MARKER_LENGTH, CAMERA_MATRIX, DIST_COEFFS)
+            corners, MARKER_LENGTH, CAMERA_MATRIX, DIST_COEFFS
+        )
 
         # マーカの位置姿勢をtfで配信
         for i in range(n_markers):
