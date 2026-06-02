@@ -20,6 +20,7 @@ find_package(ament_cmake REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(image_geometry REQUIRED)
+find_package(image_transport REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
 find_package(OpenCV REQUIRED COMPONENTS core)
 find_package(pcl_conversions REQUIRED)
@@ -45,6 +46,7 @@ foreach(loop_var IN LISTS executable_list)
     cv_bridge
     geometry_msgs
     image_geometry
+    image_transport
     moveit_ros_planning_interface
     OpenCV
     pcl_ros
