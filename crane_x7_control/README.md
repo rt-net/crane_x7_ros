@@ -85,7 +85,7 @@ CRANE-X7に搭載されているサーボモータ[Dynamixel](https://emanual.ro
 
 - joint_state_controller (`joint_state_controller/JointStateController`)
 - crane_x7_arm_controller (`joint_trajectory_controller/JointTrajectoryController`)
-- crane_x7_gripper_controller (`position_controllers/GripperActionController`)
+- crane_x7_gripper_controller (`parallel_gripper_action_controller/GripperActionController`)
 
 ノードが起動した後、次のコマンドでジョイント角度情報（`joint_states`）を表示できます
 
@@ -105,7 +105,7 @@ controller_manager:
     crane_x7_arm_controller:
       type: joint_trajectory_controller/JointTrajectoryController
     crane_x7_gripper_controller:
-      type: position_controllers/GripperActionController
+      type: parallel_gripper_action_controller/GripperActionController
     joint_state_controller:
       type: joint_state_controller/JointStateController
 ```

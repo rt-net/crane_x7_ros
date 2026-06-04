@@ -14,7 +14,7 @@
   <depend>controller_manager</depend>
   <depend>robot_state_publisher</depend>
   <depend>crane_x7_description</depend>
-  <depend>gripper_controllers</depend>
+  <depend>parallel_gripper_controller</depend>
   <depend>hardware_interface</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
