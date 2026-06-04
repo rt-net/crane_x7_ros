@@ -53,8 +53,6 @@ public:
     move_group_arm_->setMaxAccelerationScalingFactor(0.7);
 
     move_group_gripper_ = std::make_shared<MoveGroupInterface>(move_group_gripper_node, "gripper");
-    move_group_gripper_->setMaxVelocityScalingFactor(1.0);
-    move_group_gripper_->setMaxAccelerationScalingFactor(1.0);
 
     // SRDFに定義されている"home"の姿勢にする
     move_group_arm_->setNamedTarget("home");
