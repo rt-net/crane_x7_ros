@@ -20,6 +20,7 @@
   <depend>geometry_msgs</depend>
   <depend>image_geometry</depend>
   <depend>image_transport</depend>
+  <depend>message_filters</depend>
   <depend>libopencv-dev</depend>
   <depend>moveit_ros_planning_interface</depend>
   <depend>pcl_ros</depend>
