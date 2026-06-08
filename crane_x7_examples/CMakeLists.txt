@@ -48,6 +48,7 @@ foreach(loop_var IN LISTS executable_list)
     geometry_msgs
     image_geometry
     image_transport
+    message_filters
     moveit_ros_planning_interface
     OpenCV
     pcl_ros
