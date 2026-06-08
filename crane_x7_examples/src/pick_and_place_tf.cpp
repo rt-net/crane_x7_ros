@@ -27,7 +27,6 @@
 #include "geometry_msgs/msg/pose.hpp"
 #include "geometry_msgs/msg/quaternion.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
-#include "geometry_msgs/msg/twist.hpp"
 #include "moveit/move_group_interface/move_group_interface.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
@@ -117,32 +116,42 @@ private:
     }
 
     rclcpp::Time now = this->get_clock()->now();
-    const std::chrono::nanoseconds FILTERING_TIME = 2s;
-    const std::chrono::nanoseconds STOP_TIME_THRESHOLD = 3s;
+    const auto FILTERING_TIME = rclcpp::Duration(2s);
+    const auto STOP_TIME_THRESHOLD = rclcpp::Duration(3s);
     const double DISTANCE_THRESHOLD = 0.01;
-    tf2::Stamped<tf2::Transform> tf;
-    tf2::convert(tf_msg, tf);
-    const auto TF_ELAPSED_TIME = now.nanoseconds() - tf.stamp_.time_since_epoch().count();
-    const auto TF_STOP_TIME = now.nanoseconds() - tf_past_.stamp_.time_since_epoch().count();
     const double TARGET_Z_MIN_LIMIT = 0.04;
 
+    tf2::Stamped<tf2::Transform> tf_current;
+    tf2::convert(tf_msg, tf_current);
+
+    const auto tf_elapsed_time = now - rclcpp::Time(tf_msg.header.stamp, RCL_ROS_TIME);
+    const auto tf_stop_time =
+      now - rclcpp::Time(tf_past_.stamp_.time_since_epoch().count(), RCL_ROS_TIME);
+
     // 現在時刻から2秒以内に受け取ったtfを使用
-    if (TF_ELAPSED_TIME < FILTERING_TIME.count()) {
-      double tf_diff = (tf_past_.getOrigin() - tf.getOrigin()).length();
-      // 把持対象の位置が停止していることを判定
-      if (tf_diff < DISTANCE_THRESHOLD) {
-        // 把持対象が3秒以上停止している場合ピッキング動作開始
-        if (TF_STOP_TIME > STOP_TIME_THRESHOLD.count()) {
-          // 把持対象が低すぎる場合は把持位置を調整
-          if (tf.getOrigin().z() < TARGET_Z_MIN_LIMIT) {
-            tf.getOrigin().setZ(TARGET_Z_MIN_LIMIT);
-          }
-          picking(tf.getOrigin());
-        }
-      } else {
-        tf_past_ = tf;
-      }
+    if (tf_elapsed_time > FILTERING_TIME) {
+      return;
     }
+
+    double tf_diff = (tf_past_.getOrigin() - tf_current.getOrigin()).length();
+
+    // 把持対象の位置が停止していることを判定
+    if (tf_diff > DISTANCE_THRESHOLD) {
+      tf_past_ = tf_current;
+      return;
+    }
+
+    // 把持対象が3秒以上停止している場合ピッキング動作開始
+    if (tf_stop_time < STOP_TIME_THRESHOLD) {
+      return;
+    }
+
+    // 把持対象が低すぎる場合は把持位置を調整
+    if (tf_current.getOrigin().z() < TARGET_Z_MIN_LIMIT) {
+      tf_current.getOrigin().setZ(TARGET_Z_MIN_LIMIT);
+    }
+
+    picking(tf_current.getOrigin());
   }
 
   void init_pose()

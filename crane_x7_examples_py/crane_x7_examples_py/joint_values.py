@@ -88,9 +88,7 @@ def main(args=None):
 
         joint_constraint = construct_joint_constraint(
             robot_state=robot_state,
-            joint_model_group=crane_x7.get_robot_model().get_joint_model_group(
-                'arm'
-            ),
+            joint_model_group=crane_x7.get_robot_model().get_joint_model_group('arm'),
         )
 
         arm.set_start_state_to_current_state()
