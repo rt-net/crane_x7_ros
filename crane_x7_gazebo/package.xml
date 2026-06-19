@@ -16,7 +16,7 @@
   <test_depend>ament_lint_common</test_depend>
 
   <depend>controller_manager</depend>
-  <depend>gripper_controllers</depend>
+  <depend>parallel_gripper_controller</depend>
   <depend>ros2_controllers</depend>
   <depend>ros_gz</depend>
   <depend>robot_state_publisher</depend>

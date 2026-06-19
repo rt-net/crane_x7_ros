@@ -69,9 +69,6 @@ class PickAndPlaceTf(Node):
         self.arm_plan_request_params.max_acceleration_scaling_factor = 0.7  # Set 0.0 ~ 1.0
         self.arm_plan_request_params.max_velocity_scaling_factor = 0.7  # Set 0.0 ~ 1.0
 
-        self.gripper_plan_request_params.max_acceleration_scaling_factor = 1.0  # Set 0.0 ~ 1.0
-        self.gripper_plan_request_params.max_velocity_scaling_factor = 1.0  # Set 0.0 ~ 1.0
-
         # SRDFに定義されている'home'の姿勢にする
         self.arm.set_start_state_to_current_state()
         self.arm.set_goal_state(configuration_name='home')

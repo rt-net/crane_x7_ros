@@ -48,8 +48,6 @@ int main(int argc, char ** argv)
   move_group_arm.setMaxAccelerationScalingFactor(1.0);  // Set 0.0 ~ 1.0
 
   MoveGroupInterface move_group_gripper(move_group_gripper_node, "gripper");
-  move_group_gripper.setMaxVelocityScalingFactor(1.0);  // Set 0.0 ~ 1.0
-  move_group_gripper.setMaxAccelerationScalingFactor(1.0);  // Set 0.0 ~ 1.0
   auto gripper_joint_values = move_group_gripper.getCurrentJointValues();
   double GRIPPER_DEFAULT = 0.0;
   double GRIPPER_OPEN = angles::from_degrees(60.0);

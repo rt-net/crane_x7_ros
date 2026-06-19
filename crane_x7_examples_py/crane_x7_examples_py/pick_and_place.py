@@ -60,9 +60,6 @@ def main(args=None):
     arm_plan_request_params.max_acceleration_scaling_factor = 1.0  # Set 0.0 ~ 1.0
     arm_plan_request_params.max_velocity_scaling_factor = 1.0  # Set 0.0 ~ 1.0
 
-    gripper_plan_request_params.max_acceleration_scaling_factor = 1.0  # Set 0.0 ~ 1.0
-    gripper_plan_request_params.max_velocity_scaling_factor = 1.0  # Set 0.0 ~ 1.0
-
     # グリッパの開閉角度
     GRIPPER_CLOSE = 0.0
     GRIPPER_OPEN = math.radians(60.0)

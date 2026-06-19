@@ -5,7 +5,7 @@ controller_manager:
     crane_x7_arm_controller:
       type: joint_trajectory_controller/JointTrajectoryController
     crane_x7_gripper_controller:
-      type: position_controllers/GripperActionController
+      type: parallel_gripper_action_controller/GripperActionController
     joint_state_controller:
       type: joint_state_broadcaster/JointStateBroadcaster
 
@@ -31,8 +31,6 @@ crane_x7_gripper_controller:
     joint: crane_x7_gripper_finger_a_joint
     goal_tolerance: 0.1
 
-    command_interfaces:
-      - position
-
     state_interfaces:
       - position
+      - velocity
