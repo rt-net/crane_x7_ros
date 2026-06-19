@@ -31,9 +31,6 @@ crane_x7_gripper_controller:
     joint: crane_x7_gripper_finger_a_joint
     goal_tolerance: 0.1
 
-    command_interfaces:
-      - position
-
     state_interfaces:
       - position
       - velocity
