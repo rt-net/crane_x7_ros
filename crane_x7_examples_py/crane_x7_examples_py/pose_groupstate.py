@@ -23,55 +23,63 @@ import rclpy
 from rclpy.logging import get_logger
 
 
+class PoseGroupstate:
+    def __init__(self):
+        # MoveItPyのインスタンス生成
+        self.crane_x7 = MoveItPy(node_name='pose_groupstate')
+        self.logger = get_logger('pose_groupstate')
+        self.logger.info('MoveItPy instance created')
+
+        # アーム制御用のplanning componentを取得
+        self.arm = self.crane_x7.get_planning_component('arm')
+
+        # 軌道計画パラメータの設定
+        self.arm_plan_request_params = PlanRequestParameters(
+            self.crane_x7,
+            'ompl_rrtc',
+        )
+
+        # 動作速度の調整（0.0〜1.0）
+        self.arm_plan_request_params.max_acceleration_scaling_factor = 1.0
+        self.arm_plan_request_params.max_velocity_scaling_factor = 1.0
+
+    def move_to_home(self):
+        # SRDFに定義されている'home'の姿勢にする
+        self.arm.set_start_state_to_current_state()
+        self.arm.set_goal_state(configuration_name='home')
+        plan_and_execute(
+            self.crane_x7,
+            self.arm,
+            self.logger,
+            single_plan_parameters=self.arm_plan_request_params,
+        )
+
+    def move_to_vertical(self):
+        # SRDFに定義されている'vertical'の姿勢にする
+        self.arm.set_start_state_to_current_state()
+        self.arm.set_goal_state(configuration_name='vertical')
+        plan_and_execute(
+            self.crane_x7,
+            self.arm,
+            self.logger,
+            single_plan_parameters=self.arm_plan_request_params,
+        )
+
+
 def main(args=None):
     rclpy.init(args=args)
-    logger = get_logger('pose_groupstate')
 
-    # instantiate MoveItPy instance and get planning component
-    crane_x7 = MoveItPy(node_name='pose_groupstate')
-    logger.info('MoveItPy instance created')
+    # 制御クラスのインスタンスを生成
+    node = PoseGroupstate()
 
-    # アーム制御用 planning component
-    arm = crane_x7.get_planning_component('arm')
+    # 'home'姿勢へ移動
+    node.move_to_home()
 
-    arm_plan_request_params = PlanRequestParameters(
-        crane_x7,
-        'ompl_rrtc',
-    )
+    # 'vertical'姿勢へ移動
+    node.move_to_vertical()
 
-    # 動作速度の調整
-    arm_plan_request_params.max_acceleration_scaling_factor = 1.0  # Set 0.0 ~ 1.0
-    arm_plan_request_params.max_velocity_scaling_factor = 1.0  # Set 0.0 ~ 1.0
-
-    # SRDFに定義されている'home'の姿勢にする
-    arm.set_start_state_to_current_state()
-    arm.set_goal_state(configuration_name='home')
-    plan_and_execute(
-        crane_x7,
-        arm,
-        logger,
-        single_plan_parameters=arm_plan_request_params,
-    )
-
-    # SRDFに定義されている'vertical'の姿勢にする
-    arm.set_start_state_to_current_state()
-    arm.set_goal_state(configuration_name='vertical')
-    plan_and_execute(
-        crane_x7,
-        arm,
-        logger,
-        single_plan_parameters=arm_plan_request_params,
-    )
-
-    # SRDFに定義されている'home'の姿勢にする
-    arm.set_start_state_to_current_state()
-    arm.set_goal_state(configuration_name='home')
-    plan_and_execute(
-        crane_x7,
-        arm,
-        logger,
-        single_plan_parameters=arm_plan_request_params,
-    )
+    # 'home'姿勢に戻る
+    node.move_to_home()
 
     # Finish with error. Related Issue
     # https://github.com/moveit/moveit2/issues/2693

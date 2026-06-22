@@ -18,6 +18,7 @@
 // /src/move_group_interface_tutorial.cpp
 
 #include <cmath>
+#include <memory>
 #include <vector>
 
 #include "angles/angles.h"
@@ -27,79 +28,114 @@
 #include "rclcpp/rclcpp.hpp"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 
-
 using MoveGroupInterface = moveit::planning_interface::MoveGroupInterface;
 
-static const rclcpp::Logger LOGGER = rclcpp::get_logger("cartesian_path");
+class CartesianPath : public rclcpp::Node
+{
+public:
+  // NodeOptionsを受け取るコンストラクタ
+  explicit CartesianPath(const rclcpp::NodeOptions & options)
+  : Node("cartesian_path", options)
+  {
+  }
+
+  // アームとグリッパのMoveGroupInterfaceを初期化
+  void initialize()
+  {
+    move_group_arm_ = std::make_shared<MoveGroupInterface>(shared_from_this(), "arm");
+    move_group_gripper_ = std::make_shared<MoveGroupInterface>(shared_from_this(), "gripper");
+
+    // 直線補間軌道の場合は、速度を小さく抑えて安全に駆動させます
+    move_group_arm_->setMaxVelocityScalingFactor(0.1);
+    move_group_arm_->setMaxAccelerationScalingFactor(1.0);
+  }
+
+  // SRDFに定義されている"home"の姿勢にするメソッド
+  void moveToHome()
+  {
+    move_group_arm_->setNamedTarget("home");
+    move_group_arm_->move();
+  }
+
+  // グリッパ角度を目標角度（度）で指定して駆動するメソッド
+  void setGripperAngle(double degrees)
+  {
+    auto gripper_joint_values = move_group_gripper_->getCurrentJointValues();
+    gripper_joint_values[0] = angles::from_degrees(degrees);
+    move_group_gripper_->setJointValueTarget(gripper_joint_values);
+    move_group_gripper_->move();
+  }
+
+  // 円を描くような手先目標点を生成し、
+  // 直線軌道計画（Cartesian Path）を計算・実行するメソッド
+  void drawCircles(int repeat, double radius, double cx, double cy, double cz)
+  {
+    std::vector<geometry_msgs::msg::Pose> waypoints;
+    float num_of_waypoints = 30;
+
+    geometry_msgs::msg::Pose target_pose;
+    tf2::Quaternion q;
+    // 手先を垂直（真下）に向ける姿勢を設定
+    q.setRPY(0, angles::from_degrees(180), 0);
+    target_pose.orientation = tf2::toMsg(q);
+
+    // 指定された繰り返し回数で円周上のwaypoint（経由点）を細かく作成
+    for (int r = 0; r < repeat; r++) {
+      for (int i = 0; i < num_of_waypoints; i++) {
+        float theta = 2.0 * M_PI * (i / static_cast<float>(num_of_waypoints));
+        target_pose.position.x = cx + radius * std::cos(theta);
+        target_pose.position.y = cy + radius * std::sin(theta);
+        target_pose.position.z = cz;
+        waypoints.push_back(target_pose);
+      }
+    }
+
+    moveit_msgs::msg::RobotTrajectory trajectory;
+    const double eef_step = 0.01;  // 直線経由点の間隔を1cmに設定して補間
+    // waypointsを結ぶような手先直線補間軌道を計算
+    move_group_arm_->computeCartesianPath(waypoints, eef_step, trajectory);
+    // 計算された軌道を実行
+    move_group_arm_->execute(trajectory);
+  }
+
+private:
+  std::shared_ptr<MoveGroupInterface> move_group_arm_;
+  std::shared_ptr<MoveGroupInterface> move_group_gripper_;
+};
 
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
   rclcpp::NodeOptions node_options;
   node_options.automatically_declare_parameters_from_overrides(true);
+
+  // バックグラウンドで状態監視用のノードを動かす
   auto move_group_arm_node = rclcpp::Node::make_shared("move_group_arm_node", node_options);
   auto move_group_gripper_node = rclcpp::Node::make_shared("move_group_gripper_node", node_options);
-  // For current state monitor
+
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(move_group_arm_node);
   executor.add_node(move_group_gripper_node);
   std::thread([&executor]() {executor.spin();}).detach();
 
-  MoveGroupInterface move_group_arm(move_group_arm_node, "arm");
-  move_group_arm.setMaxVelocityScalingFactor(0.1);  // Set 0.0 ~ 1.0
-  move_group_arm.setMaxAccelerationScalingFactor(1.0);  // Set 0.0 ~ 1.0
+  // CartesianPathクラスを実行
+  auto node = std::make_shared<CartesianPath>(node_options);
+  node->initialize();
 
-  MoveGroupInterface move_group_gripper(move_group_gripper_node, "gripper");
-  auto gripper_joint_values = move_group_gripper.getCurrentJointValues();
+  // アームを初期姿勢にする
+  node->moveToHome();
 
-  // SRDFに定義されている"home"の姿勢にする
-  move_group_arm.setNamedTarget("home");
-  move_group_arm.move();
+  // ハンドを90度まで開く
+  node->setGripperAngle(90.0);
 
-  // ハンドを開く
-  gripper_joint_values[0] = angles::from_degrees(90);
-  move_group_gripper.setJointValueTarget(gripper_joint_values);
-  move_group_gripper.move();
+  // 座標(x=0.3, y=0.0, z=0.1)を中心に、XY平面上に半径0.1 mの円を3回描くように動かす
+  node->drawCircles(3, 0.1, 0.3, 0.0, 0.1);
 
-  // 座標(x=0.3, y=0.0, z=0.1)を中心に、XY平面上に半径0.1 mの円を3回描くように手先を動かす
-  std::vector<geometry_msgs::msg::Pose> waypoints;
-  float num_of_waypoints = 30;
-  int repeat = 3;
-  float radius = 0.1;
+  // アームを初期姿勢に戻す
+  node->moveToHome();
 
-  geometry_msgs::msg::Point center_position;
-  center_position.x = 0.3;
-  center_position.y = 0.0;
-  center_position.z = 0.1;
-
-  geometry_msgs::msg::Pose target_pose;
-  tf2::Quaternion q;
-  q.setRPY(0, angles::from_degrees(180), 0);
-  target_pose.orientation = tf2::toMsg(q);
-
-  for (int r = 0; r < repeat; r++) {
-    for (int i = 0; i < num_of_waypoints; i++) {
-      float theta = 2.0 * M_PI * (i / static_cast<float>(num_of_waypoints));
-      target_pose.position.x = center_position.x + radius * std::cos(theta);
-      target_pose.position.y = center_position.y + radius * std::sin(theta);
-      target_pose.position.z = center_position.z;
-      waypoints.push_back(target_pose);
-    }
-  }
-
-  moveit_msgs::msg::RobotTrajectory trajectory;
-  const double eef_step = 0.01;
-  move_group_arm.computeCartesianPath(waypoints, eef_step, trajectory);
-  move_group_arm.execute(trajectory);
-
-  // SRDFに定義されている"home"の姿勢にする
-  move_group_arm.setNamedTarget("home");
-  move_group_arm.move();
-
-  // ハンドを開く
-  gripper_joint_values[0] = 0;
-  move_group_gripper.setJointValueTarget(gripper_joint_values);
-  move_group_gripper.move();
+  // ハンドを閉じる（0度）
+  node->setGripperAngle(0.0);
 
   rclcpp::shutdown();
   return 0;

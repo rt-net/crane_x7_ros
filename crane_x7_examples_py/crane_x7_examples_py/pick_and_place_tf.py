@@ -39,23 +39,23 @@ class PickAndPlaceTf(Node):
         super().__init__('pick_and_place_tf')
         self.logger = self.get_logger()
 
-        # tf
+        # tf バッファとリスナーのセットアップ
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
         self.tf_past = TransformStamped()
 
-        # instantiate MoveItPy instance and get planning component
+        # MoveItPyのインスタンス生成
         self.crane_x7 = MoveItPy(node_name='moveit_py')
         self.logger.info('MoveItPy instance created')
 
-        # アーム制御用 planning component
+        # アームとグリッパの planning component を取得
         self.arm = self.crane_x7.get_planning_component('arm')
-        # グリッパ制御用 planning component
         self.gripper = self.crane_x7.get_planning_component('gripper')
 
-        # instantiate a RobotState instance using the current robot model
+        # ロボットモデルオブジェクトを取得
         self.robot_model = self.crane_x7.get_robot_model()
 
+        # 軌道計画用パラメータの設定
         self.arm_plan_request_params = PlanRequestParameters(
             self.crane_x7,
             'ompl_rrtc',
@@ -65,10 +65,13 @@ class PickAndPlaceTf(Node):
             'ompl_rrtc',
         )
 
-        # 動作速度の調整
-        self.arm_plan_request_params.max_acceleration_scaling_factor = 0.7  # Set 0.0 ~ 1.0
-        self.arm_plan_request_params.max_velocity_scaling_factor = 0.7  # Set 0.0 ~ 1.0
+        # 動作速度の調整（0.0〜1.0）
+        self.arm_plan_request_params.max_acceleration_scaling_factor = 0.7
+        self.arm_plan_request_params.max_velocity_scaling_factor = 0.7
 
+        self.timer = None
+
+    def move_to_home(self):
         # SRDFに定義されている'home'の姿勢にする
         self.arm.set_start_state_to_current_state()
         self.arm.set_goal_state(configuration_name='home')
@@ -79,6 +82,7 @@ class PickAndPlaceTf(Node):
             single_plan_parameters=self.arm_plan_request_params,
         )
 
+    def set_constraints(self):
         # 可動範囲を制限する
         constraints = Constraints()
         constraints.name = 'arm_constraints'
@@ -91,6 +95,7 @@ class PickAndPlaceTf(Node):
         jointConstraint.weight = 1.0
         constraints.joint_constraints.append(jointConstraint)
 
+        jointConstraint = JointConstraint()
         jointConstraint.joint_name = 'crane_x7_upper_arm_revolute_part_twist_joint'
         jointConstraint.position = 0.0
         jointConstraint.tolerance_above = math.radians(30)
@@ -100,14 +105,12 @@ class PickAndPlaceTf(Node):
 
         self.arm.set_path_constraints(constraints)
 
-        # 待機姿勢
-        self.init_pose()
-
-        # Call on_timer function every 0.5 second
+    def start_timer(self):
+        # 定期的な位置判定のために0.5秒おきにタイマーを実行する
         self.timer = self.create_timer(0.5, self.on_timer)
 
     def on_timer(self):
-        # target_0のtf位置姿勢を取得
+        # 検出対象（target_0）のカメラから見た位置姿勢をTFから取得
         try:
             tf_msg = self.tf_buffer.lookup_transform('base_link', 'target_0', rclpy.time.Time())
         except TransformException as ex:
@@ -119,17 +122,16 @@ class PickAndPlaceTf(Node):
         STOP_TIME_THRESHOLD = rclpy.duration.Duration(seconds=3)
         DISTANCE_THRESHOLD = 0.01
         TARGET_Z_MIN_LIMIT = 0.04
-        # 経過時間と停止時間を計算(nsec)
-        # 経過時間
 
+        # 最新メッセージの経過時間と、停止している時間の測定
         tf_elapsed_time = now - rclpy.time.Time.from_msg(tf_msg.header.stamp)
-        # 停止時間
         tf_stop_time = now - rclpy.time.Time.from_msg(self.tf_past.header.stamp)
 
-        # 現在時刻から2秒以内に受け取ったtfを使用
+        # 現在時刻から2秒以上古いTF情報は信頼できないため無視する
         if tf_elapsed_time > FILTERING_TIME:
             return
 
+        # 過去の位置情報との距離を計算
         tf_diff = np.linalg.norm(
             [
                 self.tf_past.transform.translation.x - tf_msg.transform.translation.x,
@@ -138,22 +140,24 @@ class PickAndPlaceTf(Node):
             ]
         )
 
-        # 把持対象の位置が停止していることを判定
+        # 把持対象オブジェクトが停止している（前回の検出からの移動が少ない）ことを判定
         if tf_diff > DISTANCE_THRESHOLD:
             self.tf_past = tf_msg
             return
 
-        # 把持対象が3秒以上停止している場合ピッキング動作開始
+        # オブジェクトが3秒以上安定して停止している場合にのみピッキングを開始する
         if tf_stop_time < STOP_TIME_THRESHOLD:
             return
 
-        # 把持対象が低すぎる場合は把持位置を調整
+        # オブジェクト位置が低すぎる場合は、把持位置を安全な閾値下限（0.04m）に調整
         if tf_msg.transform.translation.z < TARGET_Z_MIN_LIMIT:
             tf_msg.transform.translation.z = TARGET_Z_MIN_LIMIT
 
-        self._picking(tf_msg.transform.translation)
+        # ピッキング動作を実行
+        self.picking(tf_msg.transform.translation)
 
     def init_pose(self):
+        # 関節負荷の低い待機用の関節角度を設定
         joint_values = [
             math.radians(0.0),
             math.radians(90.0),
@@ -174,56 +178,56 @@ class PickAndPlaceTf(Node):
             single_plan_parameters=self.arm_plan_request_params,
         )
 
-    def _picking(self, target_position):
+    def picking(self, target_position):
         GRIPPER_DEFAULT = 0.0
         GRIPPER_OPEN = math.radians(60.0)
         GRIPPER_CLOSE = math.radians(20.0)
 
-        # 何かを掴んでいた時のためにハンドを開閉
-        self._control_gripper(GRIPPER_OPEN)
-        self._control_gripper(GRIPPER_DEFAULT)
+        # すでに何かを掴んでいた場合のためにハンドを開閉して状態リセット
+        self.control_gripper(GRIPPER_OPEN)
+        self.control_gripper(GRIPPER_DEFAULT)
 
-        # 掴む準備をする
-        self._control_arm(
+        # 把持対象の上空へ移動してアプローチ準備
+        self.control_arm(
             target_position.x, target_position.y, target_position.z + 0.12, -180, 0, 90
         )
 
         # ハンドを開く
-        self._control_gripper(GRIPPER_OPEN)
+        self.control_gripper(GRIPPER_OPEN)
 
-        # 掴みに行く
-        self._control_arm(
+        # 把持位置へ降下
+        self.control_arm(
             target_position.x, target_position.y, target_position.z + 0.05, -180, 0, 90
         )
 
-        # ハンドを閉じる
-        self._control_gripper(GRIPPER_CLOSE)
+        # ハンドを閉じて物体を把持
+        self.control_gripper(GRIPPER_CLOSE)
 
-        # 持ち上げる
-        self._control_arm(
+        # 物体を上に持ち上げる
+        self.control_arm(
             target_position.x, target_position.y, target_position.z + 0.12, -180, 0, 90
         )
 
-        # 移動する
-        self._control_arm(0.1, 0.2, 0.2, -180, 0, 90)
+        # プレース位置の上空へ移動
+        self.control_arm(0.1, 0.2, 0.2, -180, 0, 90)
 
-        # 下ろす
-        self._control_arm(0.1, 0.2, 0.13, -180, 0, 90)
+        # プレース位置へ下ろす
+        self.control_arm(0.1, 0.2, 0.13, -180, 0, 90)
 
-        # ハンドを開く
-        self._control_gripper(GRIPPER_OPEN)
+        # ハンドを開いて物体をリリース
+        self.control_gripper(GRIPPER_OPEN)
 
-        # 少しだけハンドを持ち上げる
-        self._control_arm(0.1, 0.2, 0.2, -180, 0, 90)
+        # ハンドを安全に少し持ち上げる
+        self.control_arm(0.1, 0.2, 0.2, -180, 0, 90)
 
-        # 初期姿勢に戻る
+        # 待機撮影姿勢に戻る
         self.init_pose()
 
-        # ハンドを閉じる
-        self._control_gripper(GRIPPER_DEFAULT)
+        # ハンドを初期状態（閉じる）に戻す
+        self.control_gripper(GRIPPER_DEFAULT)
 
-    # グリッパ制御
-    def _control_gripper(self, angle):
+    def control_gripper(self, angle):
+        # グリッパを制御するメソッド
         self.gripper.set_start_state_to_current_state()
         robot_state = RobotState(self.robot_model)
         robot_state.set_joint_group_positions('gripper', [angle])
@@ -235,14 +239,15 @@ class PickAndPlaceTf(Node):
             single_plan_parameters=self.gripper_plan_request_params,
         )
 
-    # アーム制御
-    def _control_arm(self, x, y, z, roll, pitch, yaw):
+    def control_arm(self, x, y, z, roll, pitch, yaw):
+        # アーム位置姿勢を制御するメソッド
         self.arm.set_start_state_to_current_state()
         goal_pose = PoseStamped()
         goal_pose.header.frame_id = 'crane_x7_mounting_plate_link'
         goal_pose.pose.position.x = x
         goal_pose.pose.position.y = y
         goal_pose.pose.position.z = z
+        # ロール、ピッチ、ヨーからクォータニオンを生成して設定
         quat = Rotation.from_euler('xyz', [roll, pitch, yaw], degrees=True).as_quat()
         goal_pose.pose.orientation.x = quat[0]
         goal_pose.pose.orientation.y = quat[1]
@@ -262,6 +267,18 @@ def main(args=None):
     rclpy.init(args=args)
 
     pick_and_place_tf_node = PickAndPlaceTf()
+
+    # 初期姿勢（home）に移動
+    pick_and_place_tf_node.move_to_home()
+
+    # アームの可動範囲制限を設定
+    pick_and_place_tf_node.set_constraints()
+
+    # 関節負荷の低い待機撮影姿勢にする
+    pick_and_place_tf_node.init_pose()
+
+    # 定期的な位置判定のためのタイマーを開始
+    pick_and_place_tf_node.start_timer()
 
     rclpy.spin(pick_and_place_tf_node)
 
