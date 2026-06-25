@@ -43,9 +43,7 @@ public:
   {
     // カメラ画像とカメラ情報のトピックを同期して受信するためのサブスクライバ
     camera_subscription_ = image_transport::create_camera_subscription(
-      this,
-      "/camera/color/image_raw",
-      std::bind(&ArucoDetector::camera_callback, this, _1, _2),
+      this, "/camera/color/image_raw", std::bind(&ArucoDetector::camera_callback, this, _1, _2),
       "raw");
 
     // ArUcoマーカのデータセットを読み込む
@@ -53,8 +51,7 @@ public:
     marker_dict_ = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_50);
 
     // 検出したマーカの位置姿勢を配信するためのTransformBroadcasterを初期化
-    tf_broadcaster_ =
-      std::make_unique<tf2_ros::TransformBroadcaster>(*this);
+    tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
   }
 
 private:

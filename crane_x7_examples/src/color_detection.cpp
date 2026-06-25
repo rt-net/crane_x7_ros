@@ -62,15 +62,12 @@ public:
       this->create_publisher<sensor_msgs::msg::Image>("image_thresholded", 10);
 
     // 検出した位置をtarget_0としてTFフレームに流すブロードキャスタ
-    tf_broadcaster_ =
-      std::make_unique<tf2_ros::TransformBroadcaster>(*this);
+    tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
   }
 
 private:
   using ExactPolicy = message_filters::sync_policies::ExactTime<
-    sensor_msgs::msg::Image,
-    sensor_msgs::msg::Image,
-    sensor_msgs::msg::CameraInfo>;
+    sensor_msgs::msg::Image, sensor_msgs::msg::Image, sensor_msgs::msg::CameraInfo>;
   image_transport::SubscriberFilter color_sub_;
   image_transport::SubscriberFilter depth_sub_;
   message_filters::Subscriber<sensor_msgs::msg::CameraInfo> info_sub_;
@@ -101,23 +98,17 @@ private:
 
     // 設定範囲でHSV成分を二値化抽出（指定の青い部分だけが白（255）、他は黒（0）になります）
     cv::inRange(
-      cv_color->image,
-      cv::Scalar(LOW_H, LOW_S, LOW_V),
-      cv::Scalar(HIGH_H, HIGH_S, HIGH_V),
+      cv_color->image, cv::Scalar(LOW_H, LOW_S, LOW_V), cv::Scalar(HIGH_H, HIGH_S, HIGH_V),
       img_thresholded);
 
     // モルフォロジー演算（オープニング処理）で孤立点などのゴミを除去
     cv::morphologyEx(
-      img_thresholded,
-      img_thresholded,
-      cv::MORPH_OPEN,
+      img_thresholded, img_thresholded, cv::MORPH_OPEN,
       cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5)));
 
     // モルフォロジー演算（クロージング処理）で青色の領域内の穴を埋める
     cv::morphologyEx(
-      img_thresholded,
-      img_thresholded,
-      cv::MORPH_CLOSE,
+      img_thresholded, img_thresholded, cv::MORPH_CLOSE,
       cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5)));
 
     // 検出した白い領域全体のモーメント（重心）を計算
@@ -164,9 +155,7 @@ private:
 
     // オブジェクトの3次元位置姿勢を計算
     cv::Point3d object_position(
-      ray.x * center_distance,
-      ray.y * center_distance,
-      ray.z * center_distance);
+      ray.x * center_distance, ray.y * center_distance, ray.z * center_distance);
 
     // 3D把持対象位置をtarget_0という名でTF配信する
     geometry_msgs::msg::TransformStamped t;

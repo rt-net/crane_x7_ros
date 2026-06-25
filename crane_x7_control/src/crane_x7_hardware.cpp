@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "crane_x7_control/crane_x7_hardware.hpp"
+
 #include <limits>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "crane_x7_control/crane_x7_hardware.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "rclcpp/rclcpp.hpp"
-
 
 namespace crane_x7_control
 {
@@ -38,7 +38,7 @@ CraneX7Hardware::~CraneX7Hardware()
   if (hardware_) {
     // Set low PID gains for safe shutdown.
     if (!hardware_->write_position_pid_gain_to_group(
-        GROUP_NAME, STOP_P_GAIN, STOP_I_GAIN, STOP_D_GAIN))
+          GROUP_NAME, STOP_P_GAIN, STOP_I_GAIN, STOP_D_GAIN))
     {
       RCLCPP_ERROR(LOGGER, "Failed to set PID gains.");
     }
@@ -46,8 +46,7 @@ CraneX7Hardware::~CraneX7Hardware()
   }
 }
 
-CallbackReturn CraneX7Hardware::on_init(
-  const hardware_interface::HardwareInfo & info)
+CallbackReturn CraneX7Hardware::on_init(const hardware_interface::HardwareInfo & info)
 {
   if (hardware_interface::SystemInterface::on_init(info) != CallbackReturn::SUCCESS) {
     return CallbackReturn::ERROR;
@@ -64,8 +63,7 @@ CallbackReturn CraneX7Hardware::on_init(
       current_to_effort_.push_back(std::stod(joint.parameters["current_to_effort"]));
     } else {
       RCLCPP_ERROR(
-        LOGGER, "Joint '%s' does not have 'current_to_effort' parameter.",
-        joint.name.c_str());
+        LOGGER, "Joint '%s' does not have 'current_to_effort' parameter.", joint.name.c_str());
       return CallbackReturn::ERROR;
     }
   }
@@ -73,16 +71,14 @@ CallbackReturn CraneX7Hardware::on_init(
   for (const hardware_interface::ComponentInfo & joint : info_.joints) {
     if (joint.command_interfaces.size() != 1) {
       RCLCPP_FATAL(
-        LOGGER,
-        "Joint '%s' has %ld command interfaces. 1 expected.",
-        joint.name.c_str(), joint.command_interfaces.size());
+        LOGGER, "Joint '%s' has %ld command interfaces. 1 expected.", joint.name.c_str(),
+        joint.command_interfaces.size());
       return CallbackReturn::ERROR;
     }
 
     if (!(joint.command_interfaces[0].name == hardware_interface::HW_IF_POSITION)) {
       RCLCPP_FATAL(
-        LOGGER,
-        "Joint '%s' has %s command interface. Expected %s, %s, or %s.", joint.name.c_str(),
+        LOGGER, "Joint '%s' has %s command interface. Expected %s, %s, or %s.", joint.name.c_str(),
         joint.command_interfaces[0].name.c_str(), hardware_interface::HW_IF_POSITION,
         hardware_interface::HW_IF_VELOCITY, hardware_interface::HW_IF_ACCELERATION);
       return CallbackReturn::ERROR;
@@ -90,9 +86,8 @@ CallbackReturn CraneX7Hardware::on_init(
 
     if (joint.state_interfaces.size() < 1) {
       RCLCPP_FATAL(
-        LOGGER,
-        "Joint '%s'has %ld state interfaces. At least 1 expected.",
-        joint.name.c_str(), joint.state_interfaces.size());
+        LOGGER, "Joint '%s'has %ld state interfaces. At least 1 expected.", joint.name.c_str(),
+        joint.state_interfaces.size());
       return CallbackReturn::ERROR;
     }
 
@@ -102,8 +97,7 @@ CallbackReturn CraneX7Hardware::on_init(
         state_interface.name == hardware_interface::HW_IF_EFFORT))
       {
         RCLCPP_FATAL(
-          LOGGER,
-          "Joint '%s' has %s state interface. Expected %s, %s, or %s.", joint.name.c_str(),
+          LOGGER, "Joint '%s' has %s state interface. Expected %s, %s, or %s.", joint.name.c_str(),
           joint.state_interfaces[0].name.c_str(), hardware_interface::HW_IF_POSITION,
           hardware_interface::HW_IF_VELOCITY, hardware_interface::HW_IF_EFFORT);
         return CallbackReturn::ERROR;
@@ -133,35 +127,29 @@ CallbackReturn CraneX7Hardware::on_init(
   return CallbackReturn::SUCCESS;
 }
 
-std::vector<hardware_interface::StateInterface>
-CraneX7Hardware::export_state_interfaces()
+std::vector<hardware_interface::StateInterface> CraneX7Hardware::export_state_interfaces()
 {
   std::vector<hardware_interface::StateInterface> state_interfaces;
   for (std::size_t i = 0; i < info_.joints.size(); i++) {
-    state_interfaces.emplace_back(
-      hardware_interface::StateInterface(
-        info_.joints[i].name, hardware_interface::HW_IF_POSITION, &hw_position_states_[i]));
+    state_interfaces.emplace_back(hardware_interface::StateInterface(
+      info_.joints[i].name, hardware_interface::HW_IF_POSITION, &hw_position_states_[i]));
 
-    state_interfaces.emplace_back(
-      hardware_interface::StateInterface(
-        info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &hw_velocity_states_[i]));
+    state_interfaces.emplace_back(hardware_interface::StateInterface(
+      info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &hw_velocity_states_[i]));
 
-    state_interfaces.emplace_back(
-      hardware_interface::StateInterface(
-        info_.joints[i].name, hardware_interface::HW_IF_EFFORT, &hw_effort_states_[i]));
+    state_interfaces.emplace_back(hardware_interface::StateInterface(
+      info_.joints[i].name, hardware_interface::HW_IF_EFFORT, &hw_effort_states_[i]));
   }
 
   return state_interfaces;
 }
 
-std::vector<hardware_interface::CommandInterface>
-CraneX7Hardware::export_command_interfaces()
+std::vector<hardware_interface::CommandInterface> CraneX7Hardware::export_command_interfaces()
 {
   std::vector<hardware_interface::CommandInterface> command_interfaces;
   for (std::size_t i = 0; i < info_.joints.size(); i++) {
-    command_interfaces.emplace_back(
-      hardware_interface::CommandInterface(
-        info_.joints[i].name, hardware_interface::HW_IF_POSITION, &hw_position_commands_[i]));
+    command_interfaces.emplace_back(hardware_interface::CommandInterface(
+      info_.joints[i].name, hardware_interface::HW_IF_POSITION, &hw_position_commands_[i]));
   }
 
   return command_interfaces;
@@ -190,7 +178,7 @@ CallbackReturn CraneX7Hardware::on_activate(const rclcpp_lifecycle::State & /*pr
   write(prev_comm_timestamp_, rclcpp::Duration::from_seconds(0));
 
   if (!hardware_->write_position_pid_gain_to_group(
-      GROUP_NAME, START_P_GAIN, START_I_GAIN, START_D_GAIN))
+        GROUP_NAME, START_P_GAIN, START_I_GAIN, START_D_GAIN))
   {
     RCLCPP_ERROR(LOGGER, "Failed to set PID gains.");
     return CallbackReturn::ERROR;
@@ -208,7 +196,7 @@ CallbackReturn CraneX7Hardware::on_deactivate(const rclcpp_lifecycle::State & /*
 {
   // Set low PID gains for safe stopping.
   if (!hardware_->write_position_pid_gain_to_group(
-      GROUP_NAME, STOP_P_GAIN, STOP_I_GAIN, STOP_D_GAIN))
+        GROUP_NAME, STOP_P_GAIN, STOP_I_GAIN, STOP_D_GAIN))
   {
     RCLCPP_ERROR(LOGGER, "Failed to set PID gains.");
     return CallbackReturn::ERROR;
@@ -302,6 +290,4 @@ bool CraneX7Hardware::communication_timeout()
 
 #include "pluginlib/class_list_macros.hpp"
 
-PLUGINLIB_EXPORT_CLASS(
-  crane_x7_control::CraneX7Hardware,
-  hardware_interface::SystemInterface)
+PLUGINLIB_EXPORT_CLASS(crane_x7_control::CraneX7Hardware, hardware_interface::SystemInterface)

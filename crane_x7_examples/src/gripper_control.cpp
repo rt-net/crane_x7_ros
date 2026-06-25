@@ -30,9 +30,7 @@ class GripperControl : public rclcpp::Node
 public:
   // NodeOptionsを受け取るコンストラクタ
   explicit GripperControl(const rclcpp::NodeOptions & options)
-  : Node("gripper_control", options)
-  {
-  }
+  : Node("gripper_control", options) {}
 
   // アームとグリッパのMoveGroupInterfaceを初期化
   void initialize()

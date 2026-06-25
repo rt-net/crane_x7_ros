@@ -80,7 +80,7 @@ class JointValues:
         current_state = self.arm.get_start_state()
         joint_values = current_state.get_joint_group_positions('arm')
 
-        # joint of listをdict(関節名: 角度値)に変換する
+        # リストをdict(関節名: 角度値)に変換する
         joint_values_dict = dict(zip(joint_names, joint_values))
 
         # 各関節角度を順番に目標値へ変更して実行する

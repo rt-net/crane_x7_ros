@@ -23,12 +23,10 @@
 
 #include <cmath>
 #include <memory>
-#include <vector>
 #include <string>
+#include <vector>
 
-#include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
-#include "sensor_msgs/msg/point_cloud2.hpp"
 #include "pcl/common/centroid.h"
 #include "pcl/common/common.h"
 #include "pcl/filters/extract_indices.h"
@@ -42,11 +40,13 @@
 #include "pcl/segmentation/sac_segmentation.h"
 #include "pcl_conversions/pcl_conversions.h"
 #include "pcl_ros/transforms.hpp"
-#include "tf2/LinearMath/Quaternion.hpp"
+#include "rclcpp/rclcpp.hpp"
+#include "sensor_msgs/msg/point_cloud2.hpp"
 #include "tf2/LinearMath/Matrix3x3.hpp"
+#include "tf2/LinearMath/Quaternion.hpp"
+#include "tf2_ros/buffer.h"
 #include "tf2_ros/transform_broadcaster.h"
 #include "tf2_ros/transform_listener.h"
-#include "tf2_ros/buffer.h"
 
 class PointCloudSubscriber : public rclcpp::Node
 {
@@ -55,19 +55,15 @@ public:
   : Node("point_cloud_detection")
   {
     point_cloud_subscription_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(
-      "/camera/depth/color/points",
-      10,
+      "/camera/depth/color/points", 10,
       std::bind(&PointCloudSubscriber::point_cloud_callback, this, std::placeholders::_1));
 
     publisher_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("/classified_points", 10);
 
-    tf_broadcaster_ =
-      std::make_unique<tf2_ros::TransformBroadcaster>(*this);
+    tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
 
-    tf_buffer_ =
-      std::make_unique<tf2_ros::Buffer>(this->get_clock());
-    tf_listener_ =
-      std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
+    tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
+    tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
   }
 
 private:
@@ -83,9 +79,7 @@ private:
     geometry_msgs::msg::TransformStamped tf_msg;
 
     try {
-      tf_msg = tf_buffer_->lookupTransform(
-        "base_link", msg->header.frame_id,
-        tf2::TimePointZero);
+      tf_msg = tf_buffer_->lookupTransform("base_link", msg->header.frame_id, tf2::TimePointZero);
     } catch (const tf2::TransformException & ex) {
       RCLCPP_INFO(
         this->get_logger(), "Could not transform base_link to camera_depth_optical_frame: %s",
@@ -208,8 +202,7 @@ private:
   void broadcast_cluster_position(
     std::shared_ptr<pcl::PointCloud<pcl::PointXYZRGB>> & cloud_input,
     std::shared_ptr<pcl::PointCloud<pcl::PointXYZRGB>> & cloud_output,
-    std::vector<pcl::PointIndices> & cluster_indices,
-    std_msgs::msg::Header & tf_header)
+    std::vector<pcl::PointIndices> & cluster_indices, std_msgs::msg::Header & tf_header)
   {
     int cluster_i = 0;
     enum COLOR_RGB
@@ -221,11 +214,8 @@ private:
     };
     const int CLUSTER_MAX = 10;
     const int CLUSTER_COLOR[CLUSTER_MAX][COLOR_MAX] = {
-      {230, 0, 18}, {243, 152, 18}, {255, 251, 0},
-      {143, 195, 31}, {0, 153, 68}, {0, 158, 150},
-      {0, 160, 233}, {0, 104, 183}, {29, 32, 136},
-      {146, 7, 131}
-    };
+      {230, 0, 18}, {243, 152, 18}, {255, 251, 0}, {143, 195, 31}, {0, 153, 68},
+      {0, 158, 150}, {0, 160, 233}, {0, 104, 183}, {29, 32, 136}, {146, 7, 131}};
 
     for (const auto & point_indices : cluster_indices) {
       auto cloud_cluster = std::make_shared<pcl::PointCloud<pcl::PointXYZRGB>>();
