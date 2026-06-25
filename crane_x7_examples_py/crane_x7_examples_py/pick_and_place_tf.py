@@ -16,7 +16,7 @@ import math
 
 from crane_x7_examples_py.utils import plan_and_execute
 
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import Pose, PoseStamped
 
 from moveit.core.robot_state import RobotState
 from moveit.planning import (
@@ -35,6 +35,11 @@ from tf2_ros.buffer import Buffer
 
 
 class PickAndPlaceTf(Node):
+    # グリッパの開閉角度
+    GRIPPER_OPEN = math.radians(60.0)
+    GRIPPER_GRASP = math.radians(20.0)
+    GRIPPER_CLOSE = math.radians(0.0)
+
     def __init__(self):
         super().__init__('pick_and_place_tf')
         self.logger = self.get_logger()
@@ -62,35 +67,8 @@ class PickAndPlaceTf(Node):
 
         self.gripper_plan_params = PlanRequestParameters(self.crane_x7, 'ompl_rrtc')
 
-        # 可動範囲を制限する
-        constraints = Constraints()
-        constraints.name = 'arm_constraints'
-
-        joint_constraint = JointConstraint()
-        joint_constraint.joint_name = 'crane_x7_lower_arm_fixed_part_joint'
-        joint_constraint.position = 0.0
-        joint_constraint.tolerance_above = math.radians(30)
-        joint_constraint.tolerance_below = math.radians(30)
-        joint_constraint.weight = 1.0
-        constraints.joint_constraints.append(joint_constraint)
-
-        joint_constraint = JointConstraint()
-        joint_constraint.joint_name = 'crane_x7_upper_arm_revolute_part_twist_joint'
-        joint_constraint.position = 0.0
-        joint_constraint.tolerance_above = math.radians(30)
-        joint_constraint.tolerance_below = math.radians(30)
-        joint_constraint.weight = 0.8
-        constraints.joint_constraints.append(joint_constraint)
-
-        self.arm.set_path_constraints(constraints)
-
         # homeの姿勢にしてから待機姿勢に移行する
-        self.arm.set_start_state_to_current_state()
-        self.arm.set_goal_state(configuration_name='home')
-        plan_and_execute(
-            self.crane_x7, self.arm, self.logger,
-            single_plan_parameters=self.arm_plan_params,
-        )
+        self.move_arm_to_named_pose('home')
         self.init_pose()
 
         # 0.5秒ごとにon_timerを呼び出すタイマーを作成
@@ -161,23 +139,19 @@ class PickAndPlaceTf(Node):
         )
 
     def picking(self, target_position):
-        GRIPPER_DEFAULT = 0.0
-        GRIPPER_OPEN = math.radians(60.0)
-        GRIPPER_CLOSE = math.radians(20.0)
-
         # 何かを掴んでいた時のためにハンドを開閉
-        self.set_gripper_angle(GRIPPER_OPEN)
-        self.set_gripper_angle(GRIPPER_DEFAULT)
+        self.set_gripper_angle(self.GRIPPER_OPEN)
+        self.set_gripper_angle(self.GRIPPER_CLOSE)
 
         # ピック動作（掴みに行く）
         self.control_arm(
             target_position.x, target_position.y, target_position.z + 0.12, -180, 0, 90
         )
-        self.set_gripper_angle(GRIPPER_OPEN)
+        self.set_gripper_angle(self.GRIPPER_OPEN)
         self.control_arm(
             target_position.x, target_position.y, target_position.z + 0.05, -180, 0, 90
         )
-        self.set_gripper_angle(GRIPPER_CLOSE)
+        self.set_gripper_angle(self.GRIPPER_GRASP)
         self.control_arm(
             target_position.x, target_position.y, target_position.z + 0.12, -180, 0, 90
         )
@@ -185,12 +159,50 @@ class PickAndPlaceTf(Node):
         # プレース動作（移動して置く）
         self.control_arm(0.1, 0.2, 0.2, -180, 0, 90)
         self.control_arm(0.1, 0.2, 0.13, -180, 0, 90)
-        self.set_gripper_angle(GRIPPER_OPEN)
+        self.set_gripper_angle(self.GRIPPER_OPEN)
         self.control_arm(0.1, 0.2, 0.2, -180, 0, 90)
 
         # 待機姿勢に戻る
         self.init_pose()
-        self.set_gripper_angle(GRIPPER_DEFAULT)
+        self.set_gripper_angle(self.GRIPPER_CLOSE)
+
+    def move_arm_to_pose(self, pose):
+        # アームを目標位置・姿勢（Pose）に動かす
+        # 座標系はcrane_x7_mounting_plate_link、目標リンクはcrane_x7_gripper_base_link
+        self.arm.set_start_state_to_current_state()
+        goal_pose = PoseStamped()
+        goal_pose.header.frame_id = 'crane_x7_mounting_plate_link'
+        goal_pose.pose = pose
+        self.arm.set_goal_state(
+            pose_stamped_msg=goal_pose,
+            pose_link='crane_x7_gripper_base_link',
+        )
+        plan_and_execute(
+            self.crane_x7, self.arm, self.logger,
+            single_plan_parameters=self.arm_plan_params,
+        )
+
+    def control_arm(self, x, y, z, roll, pitch, yaw):
+        # アームを目標位置（x, y, z [m]）・姿勢（roll, pitch, yaw [deg]）に動かす
+        pose = Pose()
+        pose.position.x = x
+        pose.position.y = y
+        pose.position.z = z
+        quat = Rotation.from_euler('xyz', [roll, pitch, yaw], degrees=True).as_quat()
+        pose.orientation.x = quat[0]
+        pose.orientation.y = quat[1]
+        pose.orientation.z = quat[2]
+        pose.orientation.w = quat[3]
+        self.move_arm_to_pose(pose)
+
+    def move_arm_to_named_pose(self, configuration_name):
+        # SRDFに定義された姿勢名でアームを動かす
+        self.arm.set_start_state_to_current_state()
+        self.arm.set_goal_state(configuration_name=configuration_name)
+        plan_and_execute(
+            self.crane_x7, self.arm, self.logger,
+            single_plan_parameters=self.arm_plan_params,
+        )
 
     def set_gripper_angle(self, angle):
         # グリッパを角度[rad]を指定して開閉する
@@ -203,32 +215,43 @@ class PickAndPlaceTf(Node):
             single_plan_parameters=self.gripper_plan_params,
         )
 
-    def control_arm(self, x, y, z, roll, pitch, yaw):
-        # アームを目標位置（x, y, z [m]）・姿勢（roll, pitch, yaw [deg]）に動かす
-        self.arm.set_start_state_to_current_state()
-        goal_pose = PoseStamped()
-        goal_pose.header.frame_id = 'crane_x7_mounting_plate_link'
-        goal_pose.pose.position.x = x
-        goal_pose.pose.position.y = y
-        goal_pose.pose.position.z = z
-        quat = Rotation.from_euler('xyz', [roll, pitch, yaw], degrees=True).as_quat()
-        goal_pose.pose.orientation.x = quat[0]
-        goal_pose.pose.orientation.y = quat[1]
-        goal_pose.pose.orientation.z = quat[2]
-        goal_pose.pose.orientation.w = quat[3]
-        self.arm.set_goal_state(pose_stamped_msg=goal_pose, pose_link='crane_x7_gripper_base_link')
-        return plan_and_execute(
-            self.crane_x7, self.arm, self.logger,
-            single_plan_parameters=self.arm_plan_params,
-        )
+    def set_constraints(self):
+        # アームの関節の一部に可動制限を設定する
+        constraints = Constraints()
+        constraints.name = 'arm_constraints'
+
+        joint_constraint = JointConstraint()
+        joint_constraint.joint_name = 'crane_x7_lower_arm_fixed_part_joint'
+        joint_constraint.position = 0.0
+        joint_constraint.tolerance_above = math.radians(30)
+        joint_constraint.tolerance_below = math.radians(30)
+        joint_constraint.weight = 1.0
+        constraints.joint_constraints.append(joint_constraint)
+
+        joint_constraint = JointConstraint()
+        joint_constraint.joint_name = 'crane_x7_upper_arm_revolute_part_twist_joint'
+        joint_constraint.position = 0.0
+        joint_constraint.tolerance_above = math.radians(30)
+        joint_constraint.tolerance_below = math.radians(30)
+        joint_constraint.weight = 0.8
+        constraints.joint_constraints.append(joint_constraint)
+
+        self.arm.set_path_constraints(constraints)
+
+    def clear_constraints(self):
+        # 設定された関節可動制限をクリアする
+        self.arm.clear_path_constraints()
 
 
 def main(args=None):
     rclpy.init(args=args)
 
     pick_and_place_tf_node = PickAndPlaceTf()
+    pick_and_place_tf_node.set_constraints()
 
     rclpy.spin(pick_and_place_tf_node)
+
+    pick_and_place_tf_node.clear_constraints()
 
     # Finish with error. Related Issue
     # https://github.com/moveit/moveit2/issues/2693

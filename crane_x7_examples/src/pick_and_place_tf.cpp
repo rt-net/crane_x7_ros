@@ -40,6 +40,11 @@ using MoveGroupInterface = moveit::planning_interface::MoveGroupInterface;
 class PickAndPlaceTf : public rclcpp::Node
 {
 public:
+  // グリッパの開閉角度
+  inline static const double GRIPPER_OPEN = angles::from_degrees(60.0);
+  inline static const double GRIPPER_GRASP = angles::from_degrees(20.0);
+  inline static const double GRIPPER_CLOSE = 0.0;
+
   PickAndPlaceTf(
     rclcpp::Node::SharedPtr move_group_arm_node,
     rclcpp::Node::SharedPtr move_group_gripper_node)
@@ -52,29 +57,7 @@ public:
     move_group_gripper_ = std::make_shared<MoveGroupInterface>(move_group_gripper_node, "gripper");
 
     // SRDFに定義されている"home"の姿勢にする
-    move_group_arm_->setNamedTarget("home");
-    move_group_arm_->move();
-
-    // 可動範囲を制限する
-    moveit_msgs::msg::Constraints constraints;
-    constraints.name = "arm_constraints";
-
-    moveit_msgs::msg::JointConstraint joint_constraint;
-    joint_constraint.joint_name = "crane_x7_lower_arm_fixed_part_joint";
-    joint_constraint.position = 0.0;
-    joint_constraint.tolerance_above = angles::from_degrees(30);
-    joint_constraint.tolerance_below = angles::from_degrees(30);
-    joint_constraint.weight = 1.0;
-    constraints.joint_constraints.push_back(joint_constraint);
-
-    joint_constraint.joint_name = "crane_x7_upper_arm_revolute_part_twist_joint";
-    joint_constraint.position = 0.0;
-    joint_constraint.tolerance_above = angles::from_degrees(30);
-    joint_constraint.tolerance_below = angles::from_degrees(30);
-    joint_constraint.weight = 0.8;
-    constraints.joint_constraints.push_back(joint_constraint);
-
-    move_group_arm_->setPathConstraints(constraints);
+    move_arm_to_named_pose("home");
 
     // 待機姿勢に移動する
     init_pose();
@@ -94,6 +77,13 @@ public:
     move_group_gripper_->move();
   }
 
+  // アームを目標位置・姿勢（Pose）に動かす
+  void move_arm_to_pose(const geometry_msgs::msg::Pose & pose)
+  {
+    move_group_arm_->setPoseTarget(pose);
+    move_group_arm_->move();
+  }
+
   // アームを目標位置（x, y, z [m]）・姿勢（roll, pitch, yaw [deg]）に動かす
   void control_arm(
     const double x, const double y, const double z,
@@ -106,8 +96,44 @@ public:
     target_pose.position.z = z;
     q.setRPY(angles::from_degrees(roll), angles::from_degrees(pitch), angles::from_degrees(yaw));
     target_pose.orientation = tf2::toMsg(q);
-    move_group_arm_->setPoseTarget(target_pose);
+    move_arm_to_pose(target_pose);
+  }
+
+  // SRDFに定義された姿勢名でアームを動かす
+  void move_arm_to_named_pose(const std::string & name)
+  {
+    move_group_arm_->setNamedTarget(name);
     move_group_arm_->move();
+  }
+
+  // アームの関節の一部に可動制限を設定する
+  void set_constraints()
+  {
+    moveit_msgs::msg::Constraints constraints;
+    constraints.name = "arm_constraints";
+
+    moveit_msgs::msg::JointConstraint joint_constraint;
+    joint_constraint.joint_name = "crane_x7_lower_arm_fixed_part_joint";
+    joint_constraint.position = 0.0;
+    joint_constraint.tolerance_above = angles::from_degrees(30);
+    joint_constraint.tolerance_below = angles::from_degrees(30);
+    joint_constraint.weight = 1.0;
+    constraints.joint_constraints.push_back(joint_constraint);
+
+    joint_constraint.joint_name = "crane_x7_upper_arm_revolute_part_twist_joint";
+    joint_constraint.position = 0.0;
+    joint_constraint.tolerance_above = angles::from_degrees(30);
+    joint_constraint.tolerance_below = angles::from_degrees(30);
+    joint_constraint.weight = 0.8;
+    constraints.joint_constraints.push_back(joint_constraint);
+
+    move_group_arm_->setPathConstraints(constraints);
+  }
+
+  // 設定された関節可動制限をクリアする
+  void clear_constraints()
+  {
+    move_group_arm_->clearPathConstraints();
   }
 
 private:
@@ -179,19 +205,15 @@ private:
 
   void picking(tf2::Vector3 target_position)
   {
-    const double GRIPPER_DEFAULT = 0.0;
-    const double GRIPPER_OPEN = angles::from_degrees(60.0);
-    const double GRIPPER_CLOSE = angles::from_degrees(20.0);
-
     // 何かを掴んでいた時のためにハンドを開閉
     set_gripper_angle(GRIPPER_OPEN);
-    set_gripper_angle(GRIPPER_DEFAULT);
+    set_gripper_angle(GRIPPER_CLOSE);
 
     // ピック動作（掴みに行く）
     control_arm(target_position.x(), target_position.y(), target_position.z() + 0.12, -180, 0, 90);
     set_gripper_angle(GRIPPER_OPEN);
     control_arm(target_position.x(), target_position.y(), target_position.z() + 0.07, -180, 0, 90);
-    set_gripper_angle(GRIPPER_CLOSE);
+    set_gripper_angle(GRIPPER_GRASP);
     control_arm(target_position.x(), target_position.y(), target_position.z() + 0.12, -180, 0, 90);
 
     // プレース動作（移動して置く）
@@ -202,7 +224,7 @@ private:
 
     // 待機姿勢に戻る
     init_pose();
-    set_gripper_angle(GRIPPER_DEFAULT);
+    set_gripper_angle(GRIPPER_CLOSE);
   }
 
   std::shared_ptr<MoveGroupInterface> move_group_arm_;
@@ -226,10 +248,14 @@ int main(int argc, char ** argv)
   auto pick_and_place_tf_node = std::make_shared<PickAndPlaceTf>(
     move_group_arm_node,
     move_group_gripper_node);
+  pick_and_place_tf_node->set_constraints();
+
   exec.add_node(pick_and_place_tf_node);
   exec.add_node(move_group_arm_node);
   exec.add_node(move_group_gripper_node);
   exec.spin();
+
+  pick_and_place_tf_node->clear_constraints();
   rclcpp::shutdown();
   return 0;
 }

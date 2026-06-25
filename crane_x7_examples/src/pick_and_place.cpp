@@ -31,6 +31,11 @@ using MoveGroupInterface = moveit::planning_interface::MoveGroupInterface;
 class PickAndPlace
 {
 public:
+  // グリッパの開閉角度
+  inline static const double GRIPPER_OPEN = angles::from_degrees(60.0);
+  inline static const double GRIPPER_GRASP = angles::from_degrees(20.0);
+  inline static const double GRIPPER_CLOSE = 0.0;
+
   // ノードを受け取り、アーム・グリッパのMoveGroupInterfaceを初期化する
   explicit PickAndPlace(rclcpp::Node::SharedPtr node)
   {
@@ -46,6 +51,21 @@ public:
   {
     move_group_arm_->setPoseTarget(pose);
     move_group_arm_->move();
+  }
+
+  // アームを目標位置（x, y, z [m]）・姿勢（roll, pitch, yaw [deg]）に動かす
+  void control_arm(
+    const double x, const double y, const double z,
+    const double roll, const double pitch, const double yaw)
+  {
+    geometry_msgs::msg::Pose target_pose;
+    tf2::Quaternion q;
+    target_pose.position.x = x;
+    target_pose.position.y = y;
+    target_pose.position.z = z;
+    q.setRPY(angles::from_degrees(roll), angles::from_degrees(pitch), angles::from_degrees(yaw));
+    target_pose.orientation = tf2::toMsg(q);
+    move_arm_to_pose(target_pose);
   }
 
   // SRDFに定義された姿勢名でアームを動かす
@@ -64,14 +84,32 @@ public:
     move_group_gripper_->move();
   }
 
-  // アームの可動範囲に制約を設定する
-  void set_arm_path_constraints(const moveit_msgs::msg::Constraints & constraints)
+  // アームの関節の一部に可動制限を設定する
+  void set_constraints()
   {
+    moveit_msgs::msg::Constraints constraints;
+    constraints.name = "arm_constraints";
+
+    moveit_msgs::msg::JointConstraint joint_constraint;
+    joint_constraint.joint_name = "crane_x7_lower_arm_fixed_part_joint";
+    joint_constraint.position = 0.0;
+    joint_constraint.tolerance_above = angles::from_degrees(30);
+    joint_constraint.tolerance_below = angles::from_degrees(30);
+    joint_constraint.weight = 1.0;
+    constraints.joint_constraints.push_back(joint_constraint);
+
+    joint_constraint.joint_name = "crane_x7_upper_arm_revolute_part_twist_joint";
+    joint_constraint.position = 0.0;
+    joint_constraint.tolerance_above = angles::from_degrees(30);
+    joint_constraint.tolerance_below = angles::from_degrees(30);
+    joint_constraint.weight = 0.8;
+    constraints.joint_constraints.push_back(joint_constraint);
+
     move_group_arm_->setPathConstraints(constraints);
   }
 
-  // アームの可動範囲の制約を解除する
-  void clear_arm_path_constraints()
+  // 設定された関節可動制限をクリアする
+  void clear_constraints()
   {
     move_group_arm_->clearPathConstraints();
   }
@@ -92,11 +130,6 @@ int main(int argc, char ** argv)
   std::thread spin_thread([node]() {rclcpp::spin(node);});
 
   PickAndPlace controller(node);
-
-  // グリッパの開閉角度
-  const double GRIPPER_OPEN = angles::from_degrees(60.0);
-  const double GRIPPER_GRASP = angles::from_degrees(20.0);
-  const double GRIPPER_CLOSE = 0.0;
 
   // アームの目標姿勢（hand down姿勢: RPY = -180, 0, -90 [deg]）
   tf2::Quaternion q;
@@ -119,46 +152,27 @@ int main(int argc, char ** argv)
   geometry_msgs::msg::Pose post_release_pose = pre_release_pose;
   post_release_pose.position.z = 0.2;
 
-  // アームの可動範囲制約
-  moveit_msgs::msg::Constraints constraints;
-  constraints.name = "arm_constraints";
-
-  moveit_msgs::msg::JointConstraint joint_constraint;
-  joint_constraint.joint_name = "crane_x7_lower_arm_fixed_part_joint";
-  joint_constraint.position = 0.0;
-  joint_constraint.tolerance_above = angles::from_degrees(30);
-  joint_constraint.tolerance_below = angles::from_degrees(30);
-  joint_constraint.weight = 1.0;
-  constraints.joint_constraints.push_back(joint_constraint);
-
-  joint_constraint.joint_name = "crane_x7_upper_arm_revolute_part_twist_joint";
-  joint_constraint.position = 0.0;
-  joint_constraint.tolerance_above = angles::from_degrees(30);
-  joint_constraint.tolerance_below = angles::from_degrees(30);
-  joint_constraint.weight = 0.8;
-  constraints.joint_constraints.push_back(joint_constraint);
-
   // 初期化動作
   controller.move_arm_to_named_pose("home");
-  controller.set_gripper_angle(GRIPPER_OPEN);  // 何かを掴んでいた時のために開く
-  controller.set_arm_path_constraints(constraints);
+  controller.set_gripper_angle(PickAndPlace::GRIPPER_OPEN);  // 何かを掴んでいた時のために開く
+  controller.set_constraints();
 
   // ピック動作（掴みに行く）
   controller.move_arm_to_pose(pre_grasp_pose);   // 物体の上に腕を伸ばす
   controller.move_arm_to_pose(grasp_pose);        // アプローチ
-  controller.set_gripper_angle(GRIPPER_GRASP);    // 掴む
+  controller.set_gripper_angle(PickAndPlace::GRIPPER_GRASP);    // 掴む
   controller.move_arm_to_pose(pre_grasp_pose);    // 持ち上げる
 
   // プレース動作（移動して置く）
   controller.move_arm_to_pose(pre_release_pose);  // 移動する
   controller.move_arm_to_pose(release_pose);       // 下ろす
-  controller.set_gripper_angle(GRIPPER_OPEN);      // 離す
+  controller.set_gripper_angle(PickAndPlace::GRIPPER_OPEN);      // 離す
   controller.move_arm_to_pose(post_release_pose);  // 少し持ち上げる
 
   // 終了動作
-  controller.clear_arm_path_constraints();
+  controller.clear_constraints();
   controller.move_arm_to_named_pose("home");
-  controller.set_gripper_angle(GRIPPER_CLOSE);
+  controller.set_gripper_angle(PickAndPlace::GRIPPER_CLOSE);
 
   rclcpp::shutdown();
   spin_thread.join();

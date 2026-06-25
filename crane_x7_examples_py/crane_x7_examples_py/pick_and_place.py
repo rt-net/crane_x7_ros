@@ -32,6 +32,11 @@ from scipy.spatial.transform import Rotation
 
 
 class PickAndPlace:
+    # グリッパの開閉角度
+    GRIPPER_OPEN = math.radians(60.0)
+    GRIPPER_GRASP = math.radians(20.0)
+    GRIPPER_CLOSE = math.radians(0.0)
+
     def __init__(self):
         # MoveItPyのインスタンスを生成し、planning componentを取得
         self.crane_x7 = MoveItPy(node_name='pick_and_place')
@@ -67,6 +72,19 @@ class PickAndPlace:
             single_plan_parameters=self.arm_plan_params,
         )
 
+    def control_arm(self, x, y, z, roll, pitch, yaw):
+        # アームを目標位置（x, y, z [m]）・姿勢（roll, pitch, yaw [deg]）に動かす
+        pose = Pose()
+        pose.position.x = x
+        pose.position.y = y
+        pose.position.z = z
+        quat = Rotation.from_euler('xyz', [roll, pitch, yaw], degrees=True).as_quat()
+        pose.orientation.x = quat[0]
+        pose.orientation.y = quat[1]
+        pose.orientation.z = quat[2]
+        pose.orientation.w = quat[3]
+        self.move_arm_to_pose(pose)
+
     def move_arm_to_named_pose(self, configuration_name):
         # SRDFに定義された姿勢名でアームを動かす
         self.arm.set_start_state_to_current_state()
@@ -87,12 +105,31 @@ class PickAndPlace:
             single_plan_parameters=self.gripper_plan_params,
         )
 
-    def set_arm_path_constraints(self, constraints):
-        # アームの可動範囲に制約を設定する
+    def set_constraints(self):
+        # アームの関節の一部に可動制限を設定する
+        constraints = Constraints()
+        constraints.name = 'arm_constraints'
+
+        joint_constraint = JointConstraint()
+        joint_constraint.joint_name = 'crane_x7_lower_arm_fixed_part_joint'
+        joint_constraint.position = 0.0
+        joint_constraint.tolerance_above = math.radians(30)
+        joint_constraint.tolerance_below = math.radians(30)
+        joint_constraint.weight = 1.0
+        constraints.joint_constraints.append(joint_constraint)
+
+        joint_constraint = JointConstraint()
+        joint_constraint.joint_name = 'crane_x7_upper_arm_revolute_part_twist_joint'
+        joint_constraint.position = 0.0
+        joint_constraint.tolerance_above = math.radians(30)
+        joint_constraint.tolerance_below = math.radians(30)
+        joint_constraint.weight = 0.8
+        constraints.joint_constraints.append(joint_constraint)
+
         self.arm.set_path_constraints(constraints)
 
-    def clear_arm_path_constraints(self):
-        # アームの可動範囲の制約を解除する
+    def clear_constraints(self):
+        # 設定された関節可動制限をクリアする
         self.arm.clear_path_constraints()
 
 
@@ -101,10 +138,6 @@ def main(args=None):
 
     controller = PickAndPlace()
 
-    # グリッパの開閉角度
-    GRIPPER_OPEN = math.radians(60.0)
-    GRIPPER_GRASP = math.radians(20.0)
-    GRIPPER_CLOSE = 0.0
     # 物体を持ち上げる高さ
     LIFTING_HEIGHT = 0.3
 
@@ -121,47 +154,27 @@ def main(args=None):
     pre_release_pose = copy.deepcopy(release_pose)
     pre_release_pose.position.z = LIFTING_HEIGHT
 
-    # アームの可動範囲制約
-    constraints = Constraints()
-    constraints.name = 'arm_constraints'
-
-    joint_constraint = JointConstraint()
-    joint_constraint.joint_name = 'crane_x7_lower_arm_fixed_part_joint'
-    joint_constraint.position = 0.0
-    joint_constraint.tolerance_above = math.radians(30)
-    joint_constraint.tolerance_below = math.radians(30)
-    joint_constraint.weight = 1.0
-    constraints.joint_constraints.append(joint_constraint)
-
-    joint_constraint = JointConstraint()
-    joint_constraint.joint_name = 'crane_x7_upper_arm_revolute_part_twist_joint'
-    joint_constraint.position = 0.0
-    joint_constraint.tolerance_above = math.radians(30)
-    joint_constraint.tolerance_below = math.radians(30)
-    joint_constraint.weight = 0.8
-    constraints.joint_constraints.append(joint_constraint)
-
     # 初期化動作
     controller.move_arm_to_named_pose('home')
-    controller.set_gripper_angle(GRIPPER_OPEN)  # 何かを掴んでいた時のために開く
-    controller.set_arm_path_constraints(constraints)
+    controller.set_gripper_angle(controller.GRIPPER_OPEN)  # 何かを掴んでいた時のために開く
+    controller.set_constraints()
 
     # ピック動作（掴みに行く）
     controller.move_arm_to_pose(pre_grasp_pose)   # 物体の上に腕を伸ばす
     controller.move_arm_to_pose(grasp_pose)        # アプローチ
-    controller.set_gripper_angle(GRIPPER_GRASP)    # 掴む
+    controller.set_gripper_angle(controller.GRIPPER_GRASP)    # 掴む
     controller.move_arm_to_pose(pre_grasp_pose)    # 持ち上げる
 
     # プレース動作（移動して置く）
     controller.move_arm_to_pose(pre_release_pose)  # 移動する
     controller.move_arm_to_pose(release_pose)       # 下ろす
-    controller.set_gripper_angle(GRIPPER_OPEN)      # 離す
+    controller.set_gripper_angle(controller.GRIPPER_OPEN)      # 離す
     controller.move_arm_to_pose(pre_release_pose)   # 少し持ち上げる
 
     # 終了動作
-    controller.clear_arm_path_constraints()
+    controller.clear_constraints()
     controller.move_arm_to_named_pose('home')
-    controller.set_gripper_angle(GRIPPER_CLOSE)
+    controller.set_gripper_angle(controller.GRIPPER_CLOSE)
 
     # Finish with error. Related Issue
     # https://github.com/moveit/moveit2/issues/2693
