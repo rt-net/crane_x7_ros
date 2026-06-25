@@ -17,7 +17,6 @@
 // /run_move_group/src/run_move_group.cpp
 
 #include <cmath>
-#include <memory>
 
 #include "angles/angles.h"
 #include "moveit/move_group_interface/move_group_interface.hpp"
@@ -25,75 +24,47 @@
 
 using MoveGroupInterface = moveit::planning_interface::MoveGroupInterface;
 
-class GripperControl : public rclcpp::Node
-{
-public:
-  // NodeOptionsを受け取るコンストラクタ
-  explicit GripperControl(const rclcpp::NodeOptions & options)
-  : Node("gripper_control", options)
-  {
-  }
-
-  // アームとグリッパのMoveGroupInterfaceを初期化
-  void initialize()
-  {
-    move_group_arm_ = std::make_shared<MoveGroupInterface>(shared_from_this(), "arm");
-    move_group_gripper_ = std::make_shared<MoveGroupInterface>(shared_from_this(), "gripper");
-
-    // アームの駆動速度調整（0.0〜1.0）
-    move_group_arm_->setMaxVelocityScalingFactor(1.0);
-    move_group_arm_->setMaxAccelerationScalingFactor(1.0);
-  }
-
-  // SRDFに定義されている"home"の姿勢にアームを移動するメソッド
-  void moveToHome()
-  {
-    move_group_arm_->setNamedTarget("home");
-    move_group_arm_->move();
-  }
-
-  // グリッパの開閉角度を目標角度（度）で指定して駆動するメソッド
-  void setGripperAngle(double degrees)
-  {
-    auto gripper_joint_values = move_group_gripper_->getCurrentJointValues();
-    gripper_joint_values[0] = angles::from_degrees(degrees);
-    move_group_gripper_->setJointValueTarget(gripper_joint_values);
-    move_group_gripper_->move();
-  }
-
-private:
-  std::shared_ptr<MoveGroupInterface> move_group_arm_;
-  std::shared_ptr<MoveGroupInterface> move_group_gripper_;
-};
+static const rclcpp::Logger LOGGER = rclcpp::get_logger("gripper_control");
 
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
   rclcpp::NodeOptions node_options;
   node_options.automatically_declare_parameters_from_overrides(true);
-
-  // GripperControlノードのノードインスタンス（アーム用、グリッパ用）を定義
   auto move_group_arm_node = rclcpp::Node::make_shared("move_group_arm_node", node_options);
   auto move_group_gripper_node = rclcpp::Node::make_shared("move_group_gripper_node", node_options);
-
-  // スレッドExecutorのセットアップ
+  // For current state monitor
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(move_group_arm_node);
   executor.add_node(move_group_gripper_node);
   std::thread([&executor]() {executor.spin();}).detach();
 
-  // 実処理ノードとしてGripperControlを実行
-  auto node = std::make_shared<GripperControl>(node_options);
-  node->initialize();
+  MoveGroupInterface move_group_arm(move_group_arm_node, "arm");
+  move_group_arm.setMaxVelocityScalingFactor(1.0);  // Set 0.0 ~ 1.0
+  move_group_arm.setMaxAccelerationScalingFactor(1.0);  // Set 0.0 ~ 1.0
 
-  // アームを初期姿勢に移動
-  node->moveToHome();
+  MoveGroupInterface move_group_gripper(move_group_gripper_node, "gripper");
+  auto gripper_joint_values = move_group_gripper.getCurrentJointValues();
 
-  // グリッパを指定の角度（度）で開閉する
-  node->setGripperAngle(60.0);
-  node->setGripperAngle(0.0);
-  node->setGripperAngle(60.0);
-  node->setGripperAngle(0.0);
+  // SRDFに定義されている"home"の姿勢にする
+  move_group_arm.setNamedTarget("home");
+  move_group_arm.move();
+
+  gripper_joint_values[0] = angles::from_degrees(60);
+  move_group_gripper.setJointValueTarget(gripper_joint_values);
+  move_group_gripper.move();
+
+  gripper_joint_values[0] = angles::from_degrees(0);
+  move_group_gripper.setJointValueTarget(gripper_joint_values);
+  move_group_gripper.move();
+
+  gripper_joint_values[0] = angles::from_degrees(60);
+  move_group_gripper.setJointValueTarget(gripper_joint_values);
+  move_group_gripper.move();
+
+  gripper_joint_values[0] = angles::from_degrees(0);
+  move_group_gripper.setJointValueTarget(gripper_joint_values);
+  move_group_gripper.move();
 
   rclcpp::shutdown();
   return 0;
