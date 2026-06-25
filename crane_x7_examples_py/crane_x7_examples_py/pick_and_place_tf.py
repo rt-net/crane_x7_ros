@@ -39,71 +39,61 @@ class PickAndPlaceTf(Node):
         super().__init__('pick_and_place_tf')
         self.logger = self.get_logger()
 
-        # tf
+        # TFリスナーの初期化
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
         self.tf_past = TransformStamped()
 
-        # instantiate MoveItPy instance and get planning component
+        # MoveItPyのインスタンスを生成し、planning componentを取得
         self.crane_x7 = MoveItPy(node_name='moveit_py')
         self.logger.info('MoveItPy instance created')
 
-        # アーム制御用 planning component
+        # アーム・グリッパ制御用 planning component
         self.arm = self.crane_x7.get_planning_component('arm')
-        # グリッパ制御用 planning component
         self.gripper = self.crane_x7.get_planning_component('gripper')
 
-        # instantiate a RobotState instance using the current robot model
+        # ロボットモデルの取得（ジョイント目標値の設定に使用）
         self.robot_model = self.crane_x7.get_robot_model()
 
-        self.arm_plan_request_params = PlanRequestParameters(
-            self.crane_x7,
-            'ompl_rrtc',
-        )
-        self.gripper_plan_request_params = PlanRequestParameters(
-            self.crane_x7,
-            'ompl_rrtc',
-        )
+        # プランニングの設定（動作プランナーと速度・加速度スケール）
+        self.arm_plan_params = PlanRequestParameters(self.crane_x7, 'ompl_rrtc')
+        self.arm_plan_params.max_velocity_scaling_factor = 0.7  # Set 0.0 ~ 1.0
+        self.arm_plan_params.max_acceleration_scaling_factor = 0.7  # Set 0.0 ~ 1.0
 
-        # 動作速度の調整
-        self.arm_plan_request_params.max_acceleration_scaling_factor = 0.7  # Set 0.0 ~ 1.0
-        self.arm_plan_request_params.max_velocity_scaling_factor = 0.7  # Set 0.0 ~ 1.0
-
-        # SRDFに定義されている'home'の姿勢にする
-        self.arm.set_start_state_to_current_state()
-        self.arm.set_goal_state(configuration_name='home')
-        plan_and_execute(
-            self.crane_x7,
-            self.arm,
-            self.logger,
-            single_plan_parameters=self.arm_plan_request_params,
-        )
+        self.gripper_plan_params = PlanRequestParameters(self.crane_x7, 'ompl_rrtc')
 
         # 可動範囲を制限する
         constraints = Constraints()
         constraints.name = 'arm_constraints'
 
-        jointConstraint = JointConstraint()
-        jointConstraint.joint_name = 'crane_x7_lower_arm_fixed_part_joint'
-        jointConstraint.position = 0.0
-        jointConstraint.tolerance_above = math.radians(30)
-        jointConstraint.tolerance_below = math.radians(30)
-        jointConstraint.weight = 1.0
-        constraints.joint_constraints.append(jointConstraint)
+        joint_constraint = JointConstraint()
+        joint_constraint.joint_name = 'crane_x7_lower_arm_fixed_part_joint'
+        joint_constraint.position = 0.0
+        joint_constraint.tolerance_above = math.radians(30)
+        joint_constraint.tolerance_below = math.radians(30)
+        joint_constraint.weight = 1.0
+        constraints.joint_constraints.append(joint_constraint)
 
-        jointConstraint.joint_name = 'crane_x7_upper_arm_revolute_part_twist_joint'
-        jointConstraint.position = 0.0
-        jointConstraint.tolerance_above = math.radians(30)
-        jointConstraint.tolerance_below = math.radians(30)
-        jointConstraint.weight = 0.8
-        constraints.joint_constraints.append(jointConstraint)
+        joint_constraint = JointConstraint()
+        joint_constraint.joint_name = 'crane_x7_upper_arm_revolute_part_twist_joint'
+        joint_constraint.position = 0.0
+        joint_constraint.tolerance_above = math.radians(30)
+        joint_constraint.tolerance_below = math.radians(30)
+        joint_constraint.weight = 0.8
+        constraints.joint_constraints.append(joint_constraint)
 
         self.arm.set_path_constraints(constraints)
 
-        # 待機姿勢
+        # homeの姿勢にしてから待機姿勢に移行する
+        self.arm.set_start_state_to_current_state()
+        self.arm.set_goal_state(configuration_name='home')
+        plan_and_execute(
+            self.crane_x7, self.arm, self.logger,
+            single_plan_parameters=self.arm_plan_params,
+        )
         self.init_pose()
 
-        # Call on_timer function every 0.5 second
+        # 0.5秒ごとにon_timerを呼び出すタイマーを作成
         self.timer = self.create_timer(0.5, self.on_timer)
 
     def on_timer(self):
@@ -119,11 +109,8 @@ class PickAndPlaceTf(Node):
         STOP_TIME_THRESHOLD = rclpy.duration.Duration(seconds=3)
         DISTANCE_THRESHOLD = 0.01
         TARGET_Z_MIN_LIMIT = 0.04
-        # 経過時間と停止時間を計算(nsec)
-        # 経過時間
 
         tf_elapsed_time = now - rclpy.time.Time.from_msg(tf_msg.header.stamp)
-        # 停止時間
         tf_stop_time = now - rclpy.time.Time.from_msg(self.tf_past.header.stamp)
 
         # 現在時刻から2秒以内に受け取ったtfを使用
@@ -151,9 +138,10 @@ class PickAndPlaceTf(Node):
         if tf_msg.transform.translation.z < TARGET_Z_MIN_LIMIT:
             tf_msg.transform.translation.z = TARGET_Z_MIN_LIMIT
 
-        self._picking(tf_msg.transform.translation)
+        self.picking(tf_msg.transform.translation)
 
     def init_pose(self):
+        # カメラで把持対象を撮影するための待機姿勢に移動する
         joint_values = [
             math.radians(0.0),
             math.radians(90.0),
@@ -168,75 +156,55 @@ class PickAndPlaceTf(Node):
         self.arm.set_start_state_to_current_state()
         self.arm.set_goal_state(robot_state=robot_state)
         plan_and_execute(
-            self.crane_x7,
-            self.arm,
-            self.logger,
-            single_plan_parameters=self.arm_plan_request_params,
+            self.crane_x7, self.arm, self.logger,
+            single_plan_parameters=self.arm_plan_params,
         )
 
-    def _picking(self, target_position):
+    def picking(self, target_position):
         GRIPPER_DEFAULT = 0.0
         GRIPPER_OPEN = math.radians(60.0)
         GRIPPER_CLOSE = math.radians(20.0)
 
         # 何かを掴んでいた時のためにハンドを開閉
-        self._control_gripper(GRIPPER_OPEN)
-        self._control_gripper(GRIPPER_DEFAULT)
+        self.set_gripper_angle(GRIPPER_OPEN)
+        self.set_gripper_angle(GRIPPER_DEFAULT)
 
-        # 掴む準備をする
-        self._control_arm(
+        # ピック動作（掴みに行く）
+        self.control_arm(
             target_position.x, target_position.y, target_position.z + 0.12, -180, 0, 90
         )
-
-        # ハンドを開く
-        self._control_gripper(GRIPPER_OPEN)
-
-        # 掴みに行く
-        self._control_arm(
+        self.set_gripper_angle(GRIPPER_OPEN)
+        self.control_arm(
             target_position.x, target_position.y, target_position.z + 0.05, -180, 0, 90
         )
-
-        # ハンドを閉じる
-        self._control_gripper(GRIPPER_CLOSE)
-
-        # 持ち上げる
-        self._control_arm(
+        self.set_gripper_angle(GRIPPER_CLOSE)
+        self.control_arm(
             target_position.x, target_position.y, target_position.z + 0.12, -180, 0, 90
         )
 
-        # 移動する
-        self._control_arm(0.1, 0.2, 0.2, -180, 0, 90)
+        # プレース動作（移動して置く）
+        self.control_arm(0.1, 0.2, 0.2, -180, 0, 90)
+        self.control_arm(0.1, 0.2, 0.13, -180, 0, 90)
+        self.set_gripper_angle(GRIPPER_OPEN)
+        self.control_arm(0.1, 0.2, 0.2, -180, 0, 90)
 
-        # 下ろす
-        self._control_arm(0.1, 0.2, 0.13, -180, 0, 90)
-
-        # ハンドを開く
-        self._control_gripper(GRIPPER_OPEN)
-
-        # 少しだけハンドを持ち上げる
-        self._control_arm(0.1, 0.2, 0.2, -180, 0, 90)
-
-        # 初期姿勢に戻る
+        # 待機姿勢に戻る
         self.init_pose()
+        self.set_gripper_angle(GRIPPER_DEFAULT)
 
-        # ハンドを閉じる
-        self._control_gripper(GRIPPER_DEFAULT)
-
-    # グリッパ制御
-    def _control_gripper(self, angle):
+    def set_gripper_angle(self, angle):
+        # グリッパを角度[rad]を指定して開閉する
         self.gripper.set_start_state_to_current_state()
         robot_state = RobotState(self.robot_model)
         robot_state.set_joint_group_positions('gripper', [angle])
         self.gripper.set_goal_state(robot_state=robot_state)
         plan_and_execute(
-            self.crane_x7,
-            self.gripper,
-            self.logger,
-            single_plan_parameters=self.gripper_plan_request_params,
+            self.crane_x7, self.gripper, self.logger,
+            single_plan_parameters=self.gripper_plan_params,
         )
 
-    # アーム制御
-    def _control_arm(self, x, y, z, roll, pitch, yaw):
+    def control_arm(self, x, y, z, roll, pitch, yaw):
+        # アームを目標位置（x, y, z [m]）・姿勢（roll, pitch, yaw [deg]）に動かす
         self.arm.set_start_state_to_current_state()
         goal_pose = PoseStamped()
         goal_pose.header.frame_id = 'crane_x7_mounting_plate_link'
@@ -249,13 +217,10 @@ class PickAndPlaceTf(Node):
         goal_pose.pose.orientation.z = quat[2]
         goal_pose.pose.orientation.w = quat[3]
         self.arm.set_goal_state(pose_stamped_msg=goal_pose, pose_link='crane_x7_gripper_base_link')
-        result = plan_and_execute(
-            self.crane_x7,
-            self.arm,
-            self.logger,
-            single_plan_parameters=self.arm_plan_request_params,
+        return plan_and_execute(
+            self.crane_x7, self.arm, self.logger,
+            single_plan_parameters=self.arm_plan_params,
         )
-        return result
 
 
 def main(args=None):

@@ -31,77 +31,97 @@ from rclpy.logging import get_logger
 from scipy.spatial.transform import Rotation
 
 
+class PickAndPlace:
+    def __init__(self):
+        # MoveItPyのインスタンスを生成し、planning componentを取得
+        self.crane_x7 = MoveItPy(node_name='pick_and_place')
+        self.logger = get_logger('pick_and_place')
+
+        # アーム・グリッパ制御用 planning component
+        self.arm = self.crane_x7.get_planning_component('arm')
+        self.gripper = self.crane_x7.get_planning_component('gripper')
+
+        # ロボットモデルの取得（ジョイント目標値の設定に使用）
+        self.robot_model = self.crane_x7.get_robot_model()
+
+        # プランニングの設定（動作プランナーと速度・加速度スケール）
+        self.arm_plan_params = PlanRequestParameters(self.crane_x7, 'ompl_rrtc')
+        self.arm_plan_params.max_velocity_scaling_factor = 1.0  # Set 0.0 ~ 1.0
+        self.arm_plan_params.max_acceleration_scaling_factor = 1.0  # Set 0.0 ~ 1.0
+
+        self.gripper_plan_params = PlanRequestParameters(self.crane_x7, 'ompl_rrtc')
+
+    def move_arm_to_pose(self, pose):
+        # アームを目標位置・姿勢（Pose）に動かす
+        # 座標系はcrane_x7_mounting_plate_link、目標リンクはcrane_x7_gripper_base_link
+        self.arm.set_start_state_to_current_state()
+        goal_pose = PoseStamped()
+        goal_pose.header.frame_id = 'crane_x7_mounting_plate_link'
+        goal_pose.pose = pose
+        self.arm.set_goal_state(
+            pose_stamped_msg=goal_pose,
+            pose_link='crane_x7_gripper_base_link',
+        )
+        plan_and_execute(
+            self.crane_x7, self.arm, self.logger,
+            single_plan_parameters=self.arm_plan_params,
+        )
+
+    def move_arm_to_named_pose(self, configuration_name):
+        # SRDFに定義された姿勢名でアームを動かす
+        self.arm.set_start_state_to_current_state()
+        self.arm.set_goal_state(configuration_name=configuration_name)
+        plan_and_execute(
+            self.crane_x7, self.arm, self.logger,
+            single_plan_parameters=self.arm_plan_params,
+        )
+
+    def set_gripper_angle(self, angle):
+        # グリッパを角度[rad]を指定して開閉する
+        self.gripper.set_start_state_to_current_state()
+        robot_state = RobotState(self.robot_model)
+        robot_state.set_joint_group_positions('gripper', [angle])
+        self.gripper.set_goal_state(robot_state=robot_state)
+        plan_and_execute(
+            self.crane_x7, self.gripper, self.logger,
+            single_plan_parameters=self.gripper_plan_params,
+        )
+
+    def set_arm_path_constraints(self, constraints):
+        # アームの可動範囲に制約を設定する
+        self.arm.set_path_constraints(constraints)
+
+    def clear_arm_path_constraints(self):
+        # アームの可動範囲の制約を解除する
+        self.arm.clear_path_constraints()
+
+
 def main(args=None):
     rclpy.init(args=args)
-    logger = get_logger('pick_and_place')
 
-    # instantiate MoveItPy instance and get planning component
-    crane_x7 = MoveItPy(node_name='pick_and_place')
-    logger.info('MoveItPy instance created')
-
-    # アーム制御用 planning component
-    arm = crane_x7.get_planning_component('arm')
-    # グリッパ制御用 planning component
-    gripper = crane_x7.get_planning_component('gripper')
-
-    # instantiate a RobotState instance using the current robot model
-    robot_model = crane_x7.get_robot_model()
-
-    arm_plan_request_params = PlanRequestParameters(
-        crane_x7,
-        'ompl_rrtc',
-    )
-    gripper_plan_request_params = PlanRequestParameters(
-        crane_x7,
-        'ompl_rrtc',
-    )
-
-    # 動作速度の調整
-    arm_plan_request_params.max_acceleration_scaling_factor = 1.0  # Set 0.0 ~ 1.0
-    arm_plan_request_params.max_velocity_scaling_factor = 1.0  # Set 0.0 ~ 1.0
+    controller = PickAndPlace()
 
     # グリッパの開閉角度
-    GRIPPER_CLOSE = 0.0
     GRIPPER_OPEN = math.radians(60.0)
     GRIPPER_GRASP = math.radians(20.0)
+    GRIPPER_CLOSE = 0.0
     # 物体を持ち上げる高さ
-    LIFTING_HEIFHT = 0.3
-    # 物体を掴む位置
+    LIFTING_HEIGHT = 0.3
+
+    # アームの目標姿勢（hand down姿勢: RPY = -180, 0, -90 [deg]）
     gripper_quat = Rotation.from_euler('xyz', [-180.0, 0.0, -90.0], degrees=True).as_quat()
     gripper_quat_msg = Quaternion(
         x=gripper_quat[0], y=gripper_quat[1], z=gripper_quat[2], w=gripper_quat[3]
     )
-    GRASP_POSE = Pose(position=Point(x=0.2, y=0.0, z=0.13), orientation=gripper_quat_msg)
-    PRE_AND_POST_GRASP_POSE = copy.deepcopy(GRASP_POSE)
-    PRE_AND_POST_GRASP_POSE.position.z = LIFTING_HEIFHT
-    # 物体を置く位置
-    RELEASE_POSE = Pose(position=Point(x=0.2, y=0.2, z=0.13), orientation=gripper_quat_msg)
-    PRE_AND_POST_RELEASE_POSE = copy.deepcopy(RELEASE_POSE)
-    PRE_AND_POST_RELEASE_POSE.position.z = LIFTING_HEIFHT
+    grasp_pose = Pose(position=Point(x=0.2, y=0.0, z=0.13), orientation=gripper_quat_msg)
+    pre_grasp_pose = copy.deepcopy(grasp_pose)
+    pre_grasp_pose.position.z = LIFTING_HEIGHT
 
-    # SRDFに定義されている'home'の姿勢にする
-    arm.set_start_state_to_current_state()
-    arm.set_goal_state(configuration_name='home')
-    plan_and_execute(
-        crane_x7,
-        arm,
-        logger,
-        single_plan_parameters=arm_plan_request_params,
-    )
+    release_pose = Pose(position=Point(x=0.2, y=0.2, z=0.13), orientation=gripper_quat_msg)
+    pre_release_pose = copy.deepcopy(release_pose)
+    pre_release_pose.position.z = LIFTING_HEIGHT
 
-    # 何かを掴んでいた時のためにハンドを開く
-    gripper.set_start_state_to_current_state()
-    robot_state = RobotState(robot_model)
-    robot_state.set_joint_group_positions('gripper', [GRIPPER_OPEN])
-    gripper.set_goal_state(robot_state=robot_state)
-    plan_and_execute(
-        crane_x7,
-        gripper,
-        logger,
-        single_plan_parameters=gripper_plan_request_params,
-    )
-
-    # 可動範囲を制限する
+    # アームの可動範囲制約
     constraints = Constraints()
     constraints.name = 'arm_constraints'
 
@@ -113,6 +133,7 @@ def main(args=None):
     joint_constraint.weight = 1.0
     constraints.joint_constraints.append(joint_constraint)
 
+    joint_constraint = JointConstraint()
     joint_constraint.joint_name = 'crane_x7_upper_arm_revolute_part_twist_joint'
     joint_constraint.position = 0.0
     joint_constraint.tolerance_above = math.radians(30)
@@ -120,149 +141,27 @@ def main(args=None):
     joint_constraint.weight = 0.8
     constraints.joint_constraints.append(joint_constraint)
 
-    arm.set_path_constraints(constraints)
+    # 初期化動作
+    controller.move_arm_to_named_pose('home')
+    controller.set_gripper_angle(GRIPPER_OPEN)  # 何かを掴んでいた時のために開く
+    controller.set_arm_path_constraints(constraints)
 
-    # 物体の上に腕を伸ばす
-    arm.set_start_state_to_current_state()
-    goal_pose = PoseStamped()
-    goal_pose.header.frame_id = 'crane_x7_mounting_plate_link'
-    goal_pose.pose = PRE_AND_POST_GRASP_POSE
-    arm.set_goal_state(
-        pose_stamped_msg=goal_pose,
-        pose_link='crane_x7_gripper_base_link',
-    )
-    plan_and_execute(
-        crane_x7,
-        arm,
-        logger,
-        single_plan_parameters=arm_plan_request_params,
-    )
+    # ピック動作（掴みに行く）
+    controller.move_arm_to_pose(pre_grasp_pose)   # 物体の上に腕を伸ばす
+    controller.move_arm_to_pose(grasp_pose)        # アプローチ
+    controller.set_gripper_angle(GRIPPER_GRASP)    # 掴む
+    controller.move_arm_to_pose(pre_grasp_pose)    # 持ち上げる
 
-    # 掴みに行く
-    arm.set_start_state_to_current_state()
-    goal_pose = PoseStamped()
-    goal_pose.header.frame_id = 'crane_x7_mounting_plate_link'
-    goal_pose.pose = GRASP_POSE
-    arm.set_goal_state(
-        pose_stamped_msg=goal_pose,
-        pose_link='crane_x7_gripper_base_link',
-    )
-    plan_and_execute(
-        crane_x7,
-        arm,
-        logger,
-        single_plan_parameters=arm_plan_request_params,
-    )
+    # プレース動作（移動して置く）
+    controller.move_arm_to_pose(pre_release_pose)  # 移動する
+    controller.move_arm_to_pose(release_pose)       # 下ろす
+    controller.set_gripper_angle(GRIPPER_OPEN)      # 離す
+    controller.move_arm_to_pose(pre_release_pose)   # 少し持ち上げる
 
-    # ハンドを閉じる
-    gripper.set_start_state_to_current_state()
-    robot_state = RobotState(robot_model)
-    robot_state.set_joint_group_positions('gripper', [GRIPPER_GRASP])
-    gripper.set_goal_state(robot_state=robot_state)
-    plan_and_execute(
-        crane_x7,
-        gripper,
-        logger,
-        single_plan_parameters=gripper_plan_request_params,
-    )
-
-    # 持ち上げる
-    arm.set_start_state_to_current_state()
-    goal_pose = PoseStamped()
-    goal_pose.header.frame_id = 'crane_x7_mounting_plate_link'
-    goal_pose.pose = PRE_AND_POST_GRASP_POSE
-    arm.set_goal_state(
-        pose_stamped_msg=goal_pose,
-        pose_link='crane_x7_gripper_base_link',
-    )
-    plan_and_execute(
-        crane_x7,
-        arm,
-        logger,
-        single_plan_parameters=arm_plan_request_params,
-    )
-
-    # 移動する
-    arm.set_start_state_to_current_state()
-    goal_pose = PoseStamped()
-    goal_pose.header.frame_id = 'crane_x7_mounting_plate_link'
-    goal_pose.pose = PRE_AND_POST_RELEASE_POSE
-    arm.set_goal_state(
-        pose_stamped_msg=goal_pose,
-        pose_link='crane_x7_gripper_base_link',
-    )
-    plan_and_execute(
-        crane_x7,
-        arm,
-        logger,
-        single_plan_parameters=arm_plan_request_params,
-    )
-
-    # 下ろす
-    arm.set_start_state_to_current_state()
-    goal_pose = PoseStamped()
-    goal_pose.header.frame_id = 'crane_x7_mounting_plate_link'
-    goal_pose.pose = RELEASE_POSE
-    arm.set_goal_state(
-        pose_stamped_msg=goal_pose,
-        pose_link='crane_x7_gripper_base_link',
-    )
-    plan_and_execute(
-        crane_x7,
-        arm,
-        logger,
-        single_plan_parameters=arm_plan_request_params,
-    )
-
-    # ハンドを開く
-    gripper.set_start_state_to_current_state()
-    robot_state = RobotState(robot_model)
-    robot_state.set_joint_group_positions('gripper', [GRIPPER_OPEN])
-    gripper.set_goal_state(robot_state=robot_state)
-    plan_and_execute(
-        crane_x7,
-        gripper,
-        logger,
-        single_plan_parameters=gripper_plan_request_params,
-    )
-
-    # ハンドを持ち上げる
-    arm.set_start_state_to_current_state()
-    goal_pose = PoseStamped()
-    goal_pose.header.frame_id = 'crane_x7_mounting_plate_link'
-    goal_pose.pose = PRE_AND_POST_RELEASE_POSE
-    arm.set_goal_state(
-        pose_stamped_msg=goal_pose,
-        pose_link='crane_x7_gripper_base_link',
-    )
-    plan_and_execute(
-        crane_x7,
-        arm,
-        logger,
-        single_plan_parameters=arm_plan_request_params,
-    )
-
-    # SRDFに定義されている'home'の姿勢にする
-    arm.set_start_state_to_current_state()
-    arm.set_goal_state(configuration_name='home')
-    plan_and_execute(
-        crane_x7,
-        arm,
-        logger,
-        single_plan_parameters=arm_plan_request_params,
-    )
-
-    # ハンドを閉じる
-    gripper.set_start_state_to_current_state()
-    robot_state = RobotState(robot_model)
-    robot_state.set_joint_group_positions('gripper', [GRIPPER_CLOSE])
-    gripper.set_goal_state(robot_state=robot_state)
-    plan_and_execute(
-        crane_x7,
-        gripper,
-        logger,
-        single_plan_parameters=gripper_plan_request_params,
-    )
+    # 終了動作
+    controller.clear_arm_path_constraints()
+    controller.move_arm_to_named_pose('home')
+    controller.set_gripper_angle(GRIPPER_CLOSE)
 
     # Finish with error. Related Issue
     # https://github.com/moveit/moveit2/issues/2693

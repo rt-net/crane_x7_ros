@@ -18,51 +18,108 @@
 // /src/move_group_interface_tutorial.cpp
 
 #include <cmath>
+#include <thread>
 
 #include "angles/angles.h"
 #include "geometry_msgs/msg/pose.hpp"
-#include "geometry_msgs/msg/quaternion.hpp"
 #include "moveit/move_group_interface/move_group_interface.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 
 using MoveGroupInterface = moveit::planning_interface::MoveGroupInterface;
 
-static const rclcpp::Logger LOGGER = rclcpp::get_logger("pick_and_place");
+class PickAndPlace
+{
+public:
+  // ノードを受け取り、アーム・グリッパのMoveGroupInterfaceを初期化する
+  explicit PickAndPlace(rclcpp::Node::SharedPtr node)
+  {
+    move_group_arm_ = std::make_shared<MoveGroupInterface>(node, "arm");
+    move_group_arm_->setMaxVelocityScalingFactor(1.0);  // Set 0.0 ~ 1.0
+    move_group_arm_->setMaxAccelerationScalingFactor(1.0);  // Set 0.0 ~ 1.0
+
+    move_group_gripper_ = std::make_shared<MoveGroupInterface>(node, "gripper");
+  }
+
+  // アームを目標位置・姿勢（Pose）に動かす
+  void move_arm_to_pose(const geometry_msgs::msg::Pose & pose)
+  {
+    move_group_arm_->setPoseTarget(pose);
+    move_group_arm_->move();
+  }
+
+  // SRDFに定義された姿勢名でアームを動かす
+  void move_arm_to_named_pose(const std::string & name)
+  {
+    move_group_arm_->setNamedTarget(name);
+    move_group_arm_->move();
+  }
+
+  // グリッパを角度[rad]を指定して開閉する
+  void set_gripper_angle(const double angle)
+  {
+    auto joint_values = move_group_gripper_->getCurrentJointValues();
+    joint_values[0] = angle;
+    move_group_gripper_->setJointValueTarget(joint_values);
+    move_group_gripper_->move();
+  }
+
+  // アームの可動範囲に制約を設定する
+  void set_arm_path_constraints(const moveit_msgs::msg::Constraints & constraints)
+  {
+    move_group_arm_->setPathConstraints(constraints);
+  }
+
+  // アームの可動範囲の制約を解除する
+  void clear_arm_path_constraints()
+  {
+    move_group_arm_->clearPathConstraints();
+  }
+
+private:
+  std::shared_ptr<MoveGroupInterface> move_group_arm_;
+  std::shared_ptr<MoveGroupInterface> move_group_gripper_;
+};
 
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
   rclcpp::NodeOptions node_options;
   node_options.automatically_declare_parameters_from_overrides(true);
-  auto move_group_arm_node = rclcpp::Node::make_shared("move_group_arm_node", node_options);
-  auto move_group_gripper_node = rclcpp::Node::make_shared("move_group_gripper_node", node_options);
-  // For current state monitor
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(move_group_arm_node);
-  executor.add_node(move_group_gripper_node);
-  std::thread([&executor]() {executor.spin();}).detach();
+  auto node = rclcpp::Node::make_shared("pick_and_place", node_options);
 
-  MoveGroupInterface move_group_arm(move_group_arm_node, "arm");
-  move_group_arm.setMaxVelocityScalingFactor(1.0);  // Set 0.0 ~ 1.0
-  move_group_arm.setMaxAccelerationScalingFactor(1.0);  // Set 0.0 ~ 1.0
+  // MoveGroupInterfaceのデッドロックを防ぐため、スピン処理を別スレッドで走らせる
+  std::thread spin_thread([node]() {rclcpp::spin(node);});
 
-  MoveGroupInterface move_group_gripper(move_group_gripper_node, "gripper");
-  auto gripper_joint_values = move_group_gripper.getCurrentJointValues();
-  double GRIPPER_DEFAULT = 0.0;
-  double GRIPPER_OPEN = angles::from_degrees(60.0);
-  double GRIPPER_CLOSE = angles::from_degrees(20);
+  PickAndPlace controller(node);
 
-  // SRDFに定義されている"home"の姿勢にする
-  move_group_arm.setNamedTarget("home");
-  move_group_arm.move();
+  // グリッパの開閉角度
+  const double GRIPPER_OPEN = angles::from_degrees(60.0);
+  const double GRIPPER_GRASP = angles::from_degrees(20.0);
+  const double GRIPPER_CLOSE = 0.0;
 
-  // 何かを掴んでいた時のためにハンドを開く
-  gripper_joint_values[0] = GRIPPER_OPEN;
-  move_group_gripper.setJointValueTarget(gripper_joint_values);
-  move_group_gripper.move();
+  // アームの目標姿勢（hand down姿勢: RPY = -180, 0, -90 [deg]）
+  tf2::Quaternion q;
+  q.setRPY(angles::from_degrees(-180), angles::from_degrees(0), angles::from_degrees(-90));
+  geometry_msgs::msg::Pose pre_grasp_pose;
+  pre_grasp_pose.position.x = 0.2;
+  pre_grasp_pose.position.y = 0.0;
+  pre_grasp_pose.position.z = 0.3;
+  pre_grasp_pose.orientation = tf2::toMsg(q);
 
-  // 可動範囲を制限する
+  geometry_msgs::msg::Pose grasp_pose = pre_grasp_pose;
+  grasp_pose.position.z = 0.13;
+
+  geometry_msgs::msg::Pose pre_release_pose = pre_grasp_pose;
+  pre_release_pose.position.y = 0.2;
+
+  geometry_msgs::msg::Pose release_pose = pre_release_pose;
+  release_pose.position.z = 0.13;
+
+  geometry_msgs::msg::Pose post_release_pose = pre_release_pose;
+  post_release_pose.position.z = 0.2;
+
+  // アームの可動範囲制約
   moveit_msgs::msg::Constraints constraints;
   constraints.name = "arm_constraints";
 
@@ -81,86 +138,29 @@ int main(int argc, char ** argv)
   joint_constraint.weight = 0.8;
   constraints.joint_constraints.push_back(joint_constraint);
 
-  move_group_arm.setPathConstraints(constraints);
+  // 初期化動作
+  controller.move_arm_to_named_pose("home");
+  controller.set_gripper_angle(GRIPPER_OPEN);  // 何かを掴んでいた時のために開く
+  controller.set_arm_path_constraints(constraints);
 
-  // 掴む準備をする
-  geometry_msgs::msg::Pose target_pose;
-  tf2::Quaternion q;
-  target_pose.position.x = 0.2;
-  target_pose.position.y = 0.0;
-  target_pose.position.z = 0.3;
-  q.setRPY(angles::from_degrees(-180), angles::from_degrees(0), angles::from_degrees(-90));
-  target_pose.orientation = tf2::toMsg(q);
-  move_group_arm.setPoseTarget(target_pose);
-  move_group_arm.move();
+  // ピック動作（掴みに行く）
+  controller.move_arm_to_pose(pre_grasp_pose);   // 物体の上に腕を伸ばす
+  controller.move_arm_to_pose(grasp_pose);        // アプローチ
+  controller.set_gripper_angle(GRIPPER_GRASP);    // 掴む
+  controller.move_arm_to_pose(pre_grasp_pose);    // 持ち上げる
 
-  // 掴みに行く
-  target_pose.position.x = 0.2;
-  target_pose.position.y = 0.0;
-  target_pose.position.z = 0.13;
-  q.setRPY(angles::from_degrees(-180), angles::from_degrees(0), angles::from_degrees(-90));
-  target_pose.orientation = tf2::toMsg(q);
-  move_group_arm.setPoseTarget(target_pose);
-  move_group_arm.move();
+  // プレース動作（移動して置く）
+  controller.move_arm_to_pose(pre_release_pose);  // 移動する
+  controller.move_arm_to_pose(release_pose);       // 下ろす
+  controller.set_gripper_angle(GRIPPER_OPEN);      // 離す
+  controller.move_arm_to_pose(post_release_pose);  // 少し持ち上げる
 
-  // ハンドを閉じる
-  gripper_joint_values[0] = GRIPPER_CLOSE;
-  move_group_gripper.setJointValueTarget(gripper_joint_values);
-  move_group_gripper.move();
-
-  // 持ち上げる
-  target_pose.position.x = 0.2;
-  target_pose.position.y = 0.0;
-  target_pose.position.z = 0.3;
-  q.setRPY(angles::from_degrees(-180), angles::from_degrees(0), angles::from_degrees(-90));
-  target_pose.orientation = tf2::toMsg(q);
-  move_group_arm.setPoseTarget(target_pose);
-  move_group_arm.move();
-
-  // 移動する
-  target_pose.position.x = 0.2;
-  target_pose.position.y = 0.2;
-  target_pose.position.z = 0.3;
-  q.setRPY(angles::from_degrees(-180), angles::from_degrees(0), angles::from_degrees(-90));
-  target_pose.orientation = tf2::toMsg(q);
-  move_group_arm.setPoseTarget(target_pose);
-  move_group_arm.move();
-
-  // 下ろす
-  target_pose.position.x = 0.2;
-  target_pose.position.y = 0.2;
-  target_pose.position.z = 0.13;
-  q.setRPY(angles::from_degrees(-180), angles::from_degrees(0), angles::from_degrees(-90));
-  target_pose.orientation = tf2::toMsg(q);
-  move_group_arm.setPoseTarget(target_pose);
-  move_group_arm.move();
-
-  // ハンドを開く
-  gripper_joint_values[0] = GRIPPER_OPEN;
-  move_group_gripper.setJointValueTarget(gripper_joint_values);
-  move_group_gripper.move();
-
-  // 少しだけハンドを持ち上げる
-  target_pose.position.x = 0.2;
-  target_pose.position.y = 0.2;
-  target_pose.position.z = 0.2;
-  q.setRPY(angles::from_degrees(-180), angles::from_degrees(0), angles::from_degrees(-90));
-  target_pose.orientation = tf2::toMsg(q);
-  move_group_arm.setPoseTarget(target_pose);
-  move_group_arm.move();
-
-  // 可動範囲の制限を解除
-  move_group_arm.clearPathConstraints();
-
-  // SRDFに定義されている"home"の姿勢にする
-  move_group_arm.setNamedTarget("home");
-  move_group_arm.move();
-
-  // ハンドを閉じる
-  gripper_joint_values[0] = GRIPPER_DEFAULT;
-  move_group_gripper.setJointValueTarget(gripper_joint_values);
-  move_group_gripper.move();
+  // 終了動作
+  controller.clear_arm_path_constraints();
+  controller.move_arm_to_named_pose("home");
+  controller.set_gripper_angle(GRIPPER_CLOSE);
 
   rclcpp::shutdown();
+  spin_thread.join();
   return 0;
 }
