@@ -35,7 +35,9 @@ class CartesianPath : public rclcpp::Node
 public:
   // NodeOptionsを受け取るコンストラクタ
   explicit CartesianPath(const rclcpp::NodeOptions & options)
-  : Node("cartesian_path", options) {}
+  : Node("cartesian_path", options)
+  {
+  }
 
   // アームとグリッパのMoveGroupInterfaceを初期化
   void initialize()

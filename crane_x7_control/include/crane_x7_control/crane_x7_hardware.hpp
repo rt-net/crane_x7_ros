@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 #ifndef CRANE_X7_CONTROL__CRANE_X7_HARDWARE_HPP_
 #define CRANE_X7_CONTROL__CRANE_X7_HARDWARE_HPP_
 
@@ -24,15 +25,16 @@
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "rclcpp/macros.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "rclcpp_lifecycle/state.hpp"
 #include "rt_manipulators_cpp/hardware.hpp"
+#include "rclcpp_lifecycle/state.hpp"
 
-using hardware_interface::CallbackReturn;
 using hardware_interface::return_type;
+using hardware_interface::CallbackReturn;
 
 namespace crane_x7_control
 {
-class CraneX7Hardware : public hardware_interface::SystemInterface
+class CraneX7Hardware : public
+  hardware_interface::SystemInterface
 {
 public:
   RCLCPP_SHARED_PTR_DEFINITIONS(CraneX7Hardware)

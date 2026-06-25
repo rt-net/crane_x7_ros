@@ -35,7 +35,9 @@ class PickAndPlace : public rclcpp::Node
 public:
   // NodeOptionsを受け取るコンストラクタ
   explicit PickAndPlace(const rclcpp::NodeOptions & options)
-  : Node("pick_and_place", options) {}
+  : Node("pick_and_place", options)
+  {
+  }
 
   // アームとグリッパのMoveGroupInterfaceを初期化
   void initialize()
@@ -90,7 +92,10 @@ public:
   }
 
   // 設定した動作制約をクリアするメソッド
-  void clearConstraints() {move_group_arm_->clearPathConstraints();}
+  void clearConstraints()
+  {
+    move_group_arm_->clearPathConstraints();
+  }
 
   // ロボットのグリッパ（手先リンク）の位置姿勢を指定して制御するメソッド
   void moveArmToPose(double x, double y, double z, double roll, double pitch, double yaw)

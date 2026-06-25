@@ -31,7 +31,9 @@ class JointValues : public rclcpp::Node
 public:
   // NodeOptionsを受け取るコンストラクタ
   explicit JointValues(const rclcpp::NodeOptions & options)
-  : Node("joint_values", options) {}
+  : Node("joint_values", options)
+  {
+  }
 
   // MoveGroupInterfaceを初期化
   // shared_from_this()を使用するため、コンストラクタではなくこのメソッド内で初期化します

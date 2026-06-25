@@ -29,7 +29,9 @@ class PoseGroupstate : public rclcpp::Node
 public:
   // NodeOptionsを受け取るコンストラクタ
   explicit PoseGroupstate(const rclcpp::NodeOptions & options)
-  : Node("pose_groupstate", options) {}
+  : Node("pose_groupstate", options)
+  {
+  }
 
   // MoveGroupInterfaceの初期化および速度・加速度の設定
   void initialize()

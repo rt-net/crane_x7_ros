@@ -87,21 +87,21 @@ class PickAndPlaceTf(Node):
         constraints = Constraints()
         constraints.name = 'arm_constraints'
 
-        joint_constraint = JointConstraint()
-        joint_constraint.joint_name = 'crane_x7_lower_arm_fixed_part_joint'
-        joint_constraint.position = 0.0
-        joint_constraint.tolerance_above = math.radians(30)
-        joint_constraint.tolerance_below = math.radians(30)
-        joint_constraint.weight = 1.0
-        constraints.joint_constraints.append(joint_constraint)
+        jointConstraint = JointConstraint()
+        jointConstraint.joint_name = 'crane_x7_lower_arm_fixed_part_joint'
+        jointConstraint.position = 0.0
+        jointConstraint.tolerance_above = math.radians(30)
+        jointConstraint.tolerance_below = math.radians(30)
+        jointConstraint.weight = 1.0
+        constraints.joint_constraints.append(jointConstraint)
 
-        joint_constraint = JointConstraint()
-        joint_constraint.joint_name = 'crane_x7_upper_arm_revolute_part_twist_joint'
-        joint_constraint.position = 0.0
-        joint_constraint.tolerance_above = math.radians(30)
-        joint_constraint.tolerance_below = math.radians(30)
-        joint_constraint.weight = 0.8
-        constraints.joint_constraints.append(joint_constraint)
+        jointConstraint = JointConstraint()
+        jointConstraint.joint_name = 'crane_x7_upper_arm_revolute_part_twist_joint'
+        jointConstraint.position = 0.0
+        jointConstraint.tolerance_above = math.radians(30)
+        jointConstraint.tolerance_below = math.radians(30)
+        jointConstraint.weight = 0.8
+        constraints.joint_constraints.append(jointConstraint)
 
         self.arm.set_path_constraints(constraints)
 
@@ -227,7 +227,7 @@ class PickAndPlaceTf(Node):
         self.control_gripper(GRIPPER_DEFAULT)
 
     def control_gripper(self, angle):
-        # グリッパを目標角度（ラジアン）に駆動する
+        # グリッパを制御するメソッド
         self.gripper.set_start_state_to_current_state()
         robot_state = RobotState(self.robot_model)
         robot_state.set_joint_group_positions('gripper', [angle])
@@ -240,7 +240,7 @@ class PickAndPlaceTf(Node):
         )
 
     def control_arm(self, x, y, z, roll, pitch, yaw):
-        # グリッパ（手先リンク）の目標位置姿勢を指定してアームを制御する
+        # アーム位置姿勢を制御するメソッド
         self.arm.set_start_state_to_current_state()
         goal_pose = PoseStamped()
         goal_pose.header.frame_id = 'crane_x7_mounting_plate_link'
