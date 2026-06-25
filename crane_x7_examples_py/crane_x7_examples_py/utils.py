@@ -1,8 +1,11 @@
 # Copyright 2025 RT Corporation
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -11,10 +14,7 @@
 
 import time
 
-from rclpy.logging import get_logger
 
-
-# plan and execute
 def plan_and_execute(
     robot,
     planning_component,
@@ -23,8 +23,7 @@ def plan_and_execute(
     multi_plan_parameters=None,
     sleep_time=0.0,
 ):
-    # plan to goal
-    logger = get_logger('plan_and_execute')
+    # 軌道を計画する
     logger.info('Planning trajectory')
     if multi_plan_parameters is not None:
         plan_result = planning_component.plan(multi_plan_parameters=multi_plan_parameters)
@@ -33,7 +32,7 @@ def plan_and_execute(
     else:
         plan_result = planning_component.plan()
 
-    # execute the plan
+    # 計画した軌道を実行する
     if plan_result:
         logger.info('Executing plan')
         robot_trajectory = plan_result.trajectory
