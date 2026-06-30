@@ -25,39 +25,99 @@
 
 #include "angles/angles.h"
 #include "geometry_msgs/msg/pose.hpp"
-#include "geometry_msgs/msg/quaternion.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "moveit/move_group_interface/move_group_interface.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 #include "tf2/convert.hpp"
 #include "tf2/exceptions.hpp"
-#include "tf2_ros/transform_listener.h"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 #include "tf2_ros/buffer.h"
-#include "std_msgs/msg/string.hpp"
+#include "tf2_ros/transform_listener.h"
+
 using namespace std::chrono_literals;
 using MoveGroupInterface = moveit::planning_interface::MoveGroupInterface;
 
 class PickAndPlaceTf : public rclcpp::Node
 {
 public:
+  // グリッパの開閉角度
+  inline static const double GRIPPER_OPEN = angles::from_degrees(60.0);
+  inline static const double GRIPPER_GRASP = angles::from_degrees(20.0);
+  inline static const double GRIPPER_CLOSE = 0.0;
+
+  // 置く位置（プレース位置）のXYZ[m]とRPY[deg]
+  inline static const double PLACE_X = 0.1;
+  inline static const double PLACE_Y = 0.2;
+  inline static const double PLACE_Z = 0.13;
+  inline static const double PLACE_ROLL = -180.0;
+  inline static const double PLACE_PITCH = 0.0;
+  inline static const double PLACE_YAW = 90.0;
+  inline static const double PLACE_APPROACH_Z = 0.2;
+
   PickAndPlaceTf(
     rclcpp::Node::SharedPtr move_group_arm_node,
     rclcpp::Node::SharedPtr move_group_gripper_node)
   : Node("pick_and_place_tf_node")
   {
-    using namespace std::placeholders;
     move_group_arm_ = std::make_shared<MoveGroupInterface>(move_group_arm_node, "arm");
-    move_group_arm_->setMaxVelocityScalingFactor(0.7);
-    move_group_arm_->setMaxAccelerationScalingFactor(0.7);
+    move_group_arm_->setMaxVelocityScalingFactor(0.7);  // Set 0.0 ~ 1.0
+    move_group_arm_->setMaxAccelerationScalingFactor(0.7);  // Set 0.0 ~ 1.0
 
     move_group_gripper_ = std::make_shared<MoveGroupInterface>(move_group_gripper_node, "gripper");
 
     // SRDFに定義されている"home"の姿勢にする
-    move_group_arm_->setNamedTarget("home");
-    move_group_arm_->move();
+    move_arm_to_named_pose("home");
 
-    // 可動範囲を制限する
+    // 待機姿勢に移動する
+    init_pose();
+
+    tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
+    tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
+
+    timer_ = this->create_wall_timer(500ms, std::bind(&PickAndPlaceTf::on_timer, this));
+  }
+
+  // グリッパを角度[rad]を指定して開閉する
+  void move_gripper_angle(const double angle)
+  {
+    auto joint_values = move_group_gripper_->getCurrentJointValues();
+    joint_values[0] = angle;
+    move_group_gripper_->setJointValueTarget(joint_values);
+    move_group_gripper_->move();
+  }
+
+  // アームを目標位置・姿勢（Pose）に動かす
+  void move_arm_to_pose(const geometry_msgs::msg::Pose & pose)
+  {
+    move_group_arm_->setPoseTarget(pose);
+    move_group_arm_->move();
+  }
+
+  // アームを目標位置（x, y, z [m]）・姿勢（roll, pitch, yaw [deg]）に動かす
+  void control_arm(
+    const double x, const double y, const double z,
+    const double roll, const double pitch, const double yaw)
+  {
+    geometry_msgs::msg::Pose target_pose;
+    tf2::Quaternion q;
+    target_pose.position.x = x;
+    target_pose.position.y = y;
+    target_pose.position.z = z;
+    q.setRPY(angles::from_degrees(roll), angles::from_degrees(pitch), angles::from_degrees(yaw));
+    target_pose.orientation = tf2::toMsg(q);
+    move_arm_to_pose(target_pose);
+  }
+
+  // SRDFに定義された姿勢名でアームを動かす
+  void move_arm_to_named_pose(const std::string & name)
+  {
+    move_group_arm_->setNamedTarget(name);
+    move_group_arm_->move();
+  }
+
+  // アームの関節の一部に可動制限を設定する
+  void set_constraints()
+  {
     moveit_msgs::msg::Constraints constraints;
     constraints.name = "arm_constraints";
 
@@ -77,23 +137,12 @@ public:
     constraints.joint_constraints.push_back(joint_constraint);
 
     move_group_arm_->setPathConstraints(constraints);
+  }
 
-    // 把持対象を撮影するためカメラを下に向ける
-
-    // 真上から見下ろす撮影姿勢
-    // crane_x7_upper_arm_revolute_part_rotate_jointにかかる負荷が高いため長時間の使用に向いておりません
-    // control_arm(0.15, 0.0, 0.3, -180, 0, 90);
-
-    // 関節への負荷が低い撮影姿勢
-    init_pose();
-
-    tf_buffer_ =
-      std::make_unique<tf2_ros::Buffer>(this->get_clock());
-    tf_listener_ =
-      std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
-
-    timer_ = this->create_wall_timer(
-      500ms, std::bind(&PickAndPlaceTf::on_timer, this));
+  // 設定された関節可動制限をクリアする
+  void clear_constraints()
+  {
+    move_group_arm_->clearPathConstraints();
   }
 
 private:
@@ -103,13 +152,9 @@ private:
     geometry_msgs::msg::TransformStamped tf_msg;
 
     try {
-      tf_msg = tf_buffer_->lookupTransform(
-        "base_link", "target_0",
-        tf2::TimePointZero);
+      tf_msg = tf_buffer_->lookupTransform("base_link", "target_0", tf2::TimePointZero);
     } catch (const tf2::TransformException & ex) {
-      RCLCPP_INFO(
-        this->get_logger(), "Could not transform base_link to target: %s",
-        ex.what());
+      RCLCPP_INFO(this->get_logger(), "Could not transform base_link to target: %s", ex.what());
       return;
     }
 
@@ -154,86 +199,41 @@ private:
 
   void init_pose()
   {
-    std::vector<double> joint_values;
-    joint_values.push_back(angles::from_degrees(0.0));
-    joint_values.push_back(angles::from_degrees(90));
-    joint_values.push_back(angles::from_degrees(0.0));
-    joint_values.push_back(angles::from_degrees(-160));
-    joint_values.push_back(angles::from_degrees(0.0));
-    joint_values.push_back(angles::from_degrees(-50));
-    joint_values.push_back(angles::from_degrees(90));
+    std::vector<double> joint_values = {
+      angles::from_degrees(0.0),
+      angles::from_degrees(90.0),
+      angles::from_degrees(0.0),
+      angles::from_degrees(-160.0),
+      angles::from_degrees(0.0),
+      angles::from_degrees(-50.0),
+      angles::from_degrees(90.0),
+    };
     move_group_arm_->setJointValueTarget(joint_values);
     move_group_arm_->move();
   }
 
   void picking(tf2::Vector3 target_position)
   {
-    const double GRIPPER_DEFAULT = 0.0;
-    const double GRIPPER_OPEN = angles::from_degrees(60.0);
-    const double GRIPPER_CLOSE = angles::from_degrees(20.0);
-
     // 何かを掴んでいた時のためにハンドを開閉
-    control_gripper(GRIPPER_OPEN);
-    control_gripper(GRIPPER_DEFAULT);
+    move_gripper_angle(GRIPPER_OPEN);
+    move_gripper_angle(GRIPPER_CLOSE);
 
-    // 掴む準備をする
+    // ピック動作（掴みに行く）
     control_arm(target_position.x(), target_position.y(), target_position.z() + 0.12, -180, 0, 90);
-
-    // ハンドを開く
-    control_gripper(GRIPPER_OPEN);
-
-    // 掴みに行く
+    move_gripper_angle(GRIPPER_OPEN);
     control_arm(target_position.x(), target_position.y(), target_position.z() + 0.07, -180, 0, 90);
-
-    // ハンドを閉じる
-    control_gripper(GRIPPER_CLOSE);
-
-    // 持ち上げる
+    move_gripper_angle(GRIPPER_GRASP);
     control_arm(target_position.x(), target_position.y(), target_position.z() + 0.12, -180, 0, 90);
 
-    // 移動する
-    control_arm(0.1, 0.2, 0.2, -180, 0, 90);
+    // プレース動作（移動して置く）
+    control_arm(PLACE_X, PLACE_Y, PLACE_APPROACH_Z, PLACE_ROLL, PLACE_PITCH, PLACE_YAW);
+    control_arm(PLACE_X, PLACE_Y, PLACE_Z, PLACE_ROLL, PLACE_PITCH, PLACE_YAW);
+    move_gripper_angle(GRIPPER_OPEN);
+    control_arm(PLACE_X, PLACE_Y, PLACE_APPROACH_Z, PLACE_ROLL, PLACE_PITCH, PLACE_YAW);
 
-    // 下ろす
-    control_arm(0.1, 0.2, 0.13, -180, 0, 90);
-
-    // ハンドを開く
-    control_gripper(GRIPPER_OPEN);
-
-    // 少しだけハンドを持ち上げる
-    control_arm(0.1, 0.2, 0.2, -180, 0, 90);
-
-    // 初期姿勢に戻る
-    // control_arm(0.15, 0.0, 0.3, -180, 0, 90);
+    // 待機姿勢に戻る
     init_pose();
-
-    // ハンドを閉じる
-    control_gripper(GRIPPER_DEFAULT);
-  }
-
-  // グリッパ制御
-  void control_gripper(const double angle)
-  {
-    auto joint_values = move_group_gripper_->getCurrentJointValues();
-    joint_values[0] = angle;
-    move_group_gripper_->setJointValueTarget(joint_values);
-    move_group_gripper_->move();
-  }
-
-  // アーム制御
-  void control_arm(
-    const double x, const double y, const double z,
-    const double roll, const double pitch, const double yaw)
-  {
-    geometry_msgs::msg::Pose target_pose;
-    tf2::Quaternion q;
-    target_pose.position.x = x;
-    target_pose.position.y = y;
-    target_pose.position.z = z;
-    q.setRPY(angles::from_degrees(roll), angles::from_degrees(pitch), angles::from_degrees(yaw));
-    target_pose.orientation = tf2::toMsg(q);
-    move_group_arm_->setPoseTarget(target_pose);
-    move_group_arm_->move();
+    move_gripper_angle(GRIPPER_CLOSE);
   }
 
   std::shared_ptr<MoveGroupInterface> move_group_arm_;
@@ -252,14 +252,19 @@ int main(int argc, char ** argv)
   auto move_group_arm_node = rclcpp::Node::make_shared("move_group_arm_node", node_options);
   auto move_group_gripper_node = rclcpp::Node::make_shared("move_group_gripper_node", node_options);
 
+  // タイマーとTFリスナーを持つため、MultiThreadedExecutorを使用する
   rclcpp::executors::MultiThreadedExecutor exec;
   auto pick_and_place_tf_node = std::make_shared<PickAndPlaceTf>(
     move_group_arm_node,
     move_group_gripper_node);
+  pick_and_place_tf_node->set_constraints();
+
   exec.add_node(pick_and_place_tf_node);
   exec.add_node(move_group_arm_node);
   exec.add_node(move_group_gripper_node);
   exec.spin();
+
+  pick_and_place_tf_node->clear_constraints();
   rclcpp::shutdown();
   return 0;
 }
