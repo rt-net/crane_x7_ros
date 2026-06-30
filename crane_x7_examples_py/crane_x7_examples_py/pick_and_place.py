@@ -12,12 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import copy
 import math
 
 from crane_x7_examples_py.utils import plan_and_execute
 
-from geometry_msgs.msg import Point, Pose, PoseStamped, Quaternion
+from geometry_msgs.msg import Pose, PoseStamped
 
 from moveit.core.robot_state import RobotState
 from moveit.planning import (
@@ -25,9 +24,9 @@ from moveit.planning import (
     PlanRequestParameters,
 )
 from moveit_msgs.msg import Constraints, JointConstraint
-
 import rclpy
 from rclpy.logging import get_logger
+
 from scipy.spatial.transform import Rotation
 
 
@@ -68,7 +67,9 @@ class PickAndPlace:
             pose_link='crane_x7_gripper_base_link',
         )
         plan_and_execute(
-            self.crane_x7, self.arm, self.logger,
+            self.crane_x7,
+            self.arm,
+            self.logger,
             single_plan_parameters=self.arm_plan_params,
         )
 
@@ -90,7 +91,9 @@ class PickAndPlace:
         self.arm.set_start_state_to_current_state()
         self.arm.set_goal_state(configuration_name=configuration_name)
         plan_and_execute(
-            self.crane_x7, self.arm, self.logger,
+            self.crane_x7,
+            self.arm,
+            self.logger,
             single_plan_parameters=self.arm_plan_params,
         )
 
@@ -101,7 +104,9 @@ class PickAndPlace:
         robot_state.set_joint_group_positions('gripper', [angle])
         self.gripper.set_goal_state(robot_state=robot_state)
         plan_and_execute(
-            self.crane_x7, self.gripper, self.logger,
+            self.crane_x7,
+            self.gripper,
+            self.logger,
             single_plan_parameters=self.gripper_plan_params,
         )
 
@@ -138,6 +143,9 @@ def main(args=None):
 
     controller = PickAndPlace()
 
+    # アプローチ・退避時の高さ
+    LIFTING_HEIGHT = 0.3
+
     # 掴む位置（ピック位置）のXYZ[m]とRPY[deg]
     PICK_X = 0.2
     PICK_Y = 0.0
@@ -154,48 +162,36 @@ def main(args=None):
     PLACE_PITCH = 0.0
     PLACE_YAW = -90.0
 
-    # アプローチ・退避に使う高さオフセット[m]
-    APPROACH_Z_OFFSET = 0.17
-
-    # 各姿勢を生成
-    pick_quat = Rotation.from_euler(
-        'xyz', [PICK_ROLL, PICK_PITCH, PICK_YAW], degrees=True
-    ).as_quat()
-    pick_quat_msg = Quaternion(
-        x=pick_quat[0], y=pick_quat[1], z=pick_quat[2], w=pick_quat[3]
-    )
-    grasp_pose = Pose(position=Point(x=PICK_X, y=PICK_Y, z=PICK_Z), orientation=pick_quat_msg)
-    pre_grasp_pose = copy.deepcopy(grasp_pose)
-    pre_grasp_pose.position.z = PICK_Z + APPROACH_Z_OFFSET
-
-    place_quat = Rotation.from_euler(
-        'xyz', [PLACE_ROLL, PLACE_PITCH, PLACE_YAW], degrees=True
-    ).as_quat()
-    place_quat_msg = Quaternion(
-        x=place_quat[0], y=place_quat[1], z=place_quat[2], w=place_quat[3]
-    )
-    release_pose = Pose(
-        position=Point(x=PLACE_X, y=PLACE_Y, z=PLACE_Z), orientation=place_quat_msg
-    )
-    pre_release_pose = copy.deepcopy(release_pose)
-    pre_release_pose.position.z = PLACE_Z + APPROACH_Z_OFFSET
-
     # 初期化動作
     controller.move_arm_to_named_pose('home')
-    controller.move_gripper_angle(controller.GRIPPER_OPEN)  # 何かを掴んでいた時のために開く
+    controller.move_gripper_angle(
+        controller.GRIPPER_OPEN
+    )  # 何かを掴んでいた時のために開く
     controller.set_constraints()
 
     # ピック動作（掴みに行く）
-    controller.move_arm_to_pose(pre_grasp_pose)   # 物体の上に腕を伸ばす
-    controller.move_arm_to_pose(grasp_pose)        # アプローチ
-    controller.move_gripper_angle(controller.GRIPPER_GRASP)    # 掴む
-    controller.move_arm_to_pose(pre_grasp_pose)    # 持ち上げる
+    controller.control_arm(
+        PICK_X, PICK_Y, LIFTING_HEIGHT, PICK_ROLL, PICK_PITCH, PICK_YAW
+    )  # 物体の上に腕を伸ばす
+    controller.control_arm(
+        PICK_X, PICK_Y, PICK_Z, PICK_ROLL, PICK_PITCH, PICK_YAW
+    )  # アプローチ
+    controller.move_gripper_angle(controller.GRIPPER_GRASP)  # 掴む
+    controller.control_arm(
+        PICK_X, PICK_Y, LIFTING_HEIGHT, PICK_ROLL, PICK_PITCH, PICK_YAW
+    )  # 持ち上げる
 
     # プレース動作（移動して置く）
-    controller.move_arm_to_pose(pre_release_pose)  # 移動する
-    controller.move_arm_to_pose(release_pose)       # 下ろす
-    controller.move_gripper_angle(controller.GRIPPER_OPEN)      # 離す
-    controller.move_arm_to_pose(pre_release_pose)   # 少し持ち上げる
+    controller.control_arm(
+        PLACE_X, PLACE_Y, LIFTING_HEIGHT, PLACE_ROLL, PLACE_PITCH, PLACE_YAW
+    )  # 移動する
+    controller.control_arm(
+        PLACE_X, PLACE_Y, PLACE_Z, PLACE_ROLL, PLACE_PITCH, PLACE_YAW
+    )  # 下ろす
+    controller.move_gripper_angle(controller.GRIPPER_OPEN)  # 離す
+    controller.control_arm(
+        PLACE_X, PLACE_Y, LIFTING_HEIGHT, PLACE_ROLL, PLACE_PITCH, PLACE_YAW
+    )  # 持ち上げる
 
     # 終了動作
     controller.clear_constraints()

@@ -131,6 +131,9 @@ int main(int argc, char ** argv)
 
   PickAndPlace controller(node);
 
+  // アプローチ・退避時の高さ
+  const double LIFTING_HEIGHT = 0.3;
+
   // 掴む位置（ピック位置）のXYZ[m]とRPY[deg]
   const double PICK_X = 0.2;
   const double PICK_Y = 0.0;
@@ -147,59 +150,31 @@ int main(int argc, char ** argv)
   const double PLACE_PITCH = 0.0;
   const double PLACE_YAW = -90.0;
 
-  // アプローチ・退避に使う高さオフセット[m]
-  const double APPROACH_Z_OFFSET = 0.17;
-  const double LEAVE_Z_OFFSET = 0.07;
-
-  // 各姿勢を生成
-  tf2::Quaternion q;
-  q.setRPY(
-    angles::from_degrees(PICK_ROLL),
-    angles::from_degrees(PICK_PITCH),
-    angles::from_degrees(PICK_YAW));
-
-  geometry_msgs::msg::Pose pre_grasp_pose;
-  pre_grasp_pose.position.x = PICK_X;
-  pre_grasp_pose.position.y = PICK_Y;
-  pre_grasp_pose.position.z = PICK_Z + APPROACH_Z_OFFSET;
-  pre_grasp_pose.orientation = tf2::toMsg(q);
-
-  geometry_msgs::msg::Pose grasp_pose = pre_grasp_pose;
-  grasp_pose.position.z = PICK_Z;
-
-  q.setRPY(
-    angles::from_degrees(PLACE_ROLL),
-    angles::from_degrees(PLACE_PITCH),
-    angles::from_degrees(PLACE_YAW));
-
-  geometry_msgs::msg::Pose pre_release_pose;
-  pre_release_pose.position.x = PLACE_X;
-  pre_release_pose.position.y = PLACE_Y;
-  pre_release_pose.position.z = PLACE_Z + APPROACH_Z_OFFSET;
-  pre_release_pose.orientation = tf2::toMsg(q);
-
-  geometry_msgs::msg::Pose release_pose = pre_release_pose;
-  release_pose.position.z = PLACE_Z;
-
-  geometry_msgs::msg::Pose post_release_pose = pre_release_pose;
-  post_release_pose.position.z = PLACE_Z + LEAVE_Z_OFFSET;
-
   // 初期化動作
   controller.move_arm_to_named_pose("home");
-  controller.move_gripper_angle(PickAndPlace::GRIPPER_OPEN);  // 何かを掴んでいた時のために開く
+  // 何かを掴んでいた時のために開く
+  controller.move_gripper_angle(PickAndPlace::GRIPPER_OPEN);
   controller.set_constraints();
 
   // ピック動作（掴みに行く）
-  controller.move_arm_to_pose(pre_grasp_pose);   // 物体の上に腕を伸ばす
-  controller.move_arm_to_pose(grasp_pose);        // アプローチ
-  controller.move_gripper_angle(PickAndPlace::GRIPPER_GRASP);    // 掴む
-  controller.move_arm_to_pose(pre_grasp_pose);    // 持ち上げる
+  controller.control_arm(  // 物体の上に腕を伸ばす
+    PICK_X, PICK_Y, LIFTING_HEIGHT, PICK_ROLL, PICK_PITCH, PICK_YAW
+  );
+  controller.control_arm(PICK_X, PICK_Y, PICK_Z, PICK_ROLL, PICK_PITCH, PICK_YAW);  // アプローチ
+  controller.move_gripper_angle(PickAndPlace::GRIPPER_GRASP);  // 掴む
+  controller.control_arm(  // 持ち上げる
+      PICK_X, PICK_Y, LIFTING_HEIGHT, PICK_ROLL, PICK_PITCH, PICK_YAW
+  );
 
   // プレース動作（移動して置く）
-  controller.move_arm_to_pose(pre_release_pose);  // 移動する
-  controller.move_arm_to_pose(release_pose);       // 下ろす
-  controller.move_gripper_angle(PickAndPlace::GRIPPER_OPEN);      // 離す
-  controller.move_arm_to_pose(post_release_pose);  // 少し持ち上げる
+  controller.control_arm(  // 移動する
+      PLACE_X, PLACE_Y, LIFTING_HEIGHT, PLACE_ROLL, PLACE_PITCH, PLACE_YAW
+  );
+  controller.control_arm(PLACE_X, PLACE_Y, PLACE_Z, PLACE_ROLL, PLACE_PITCH, PLACE_YAW);  // 下ろす
+  controller.move_gripper_angle(PickAndPlace::GRIPPER_OPEN);  // 離す
+  controller.control_arm(  // 持ち上げる
+    PLACE_X, PLACE_Y, LIFTING_HEIGHT, PLACE_ROLL, PLACE_PITCH, PLACE_YAW
+  );
 
   // 終了動作
   controller.clear_constraints();
