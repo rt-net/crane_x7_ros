@@ -45,7 +45,7 @@ public:
   }
 
   // 各ジョイント角度[rad]を指定してアームを動かす
-  void set_arm_joint_values(const std::vector<double> & joint_values)
+  void move_arm_joint_values(const std::vector<double> & joint_values)
   {
     move_group_arm_->setJointValueTarget(joint_values);
     move_group_arm_->move();
@@ -81,7 +81,7 @@ int main(int argc, char ** argv)
   auto joint_values = controller.get_current_arm_joint_values();
   for (size_t i = 0; i < joint_values.size(); i++) {
     joint_values[i] = target_angle;
-    controller.set_arm_joint_values(joint_values);
+    controller.move_arm_joint_values(joint_values);
   }
 
   // 垂直に戻す

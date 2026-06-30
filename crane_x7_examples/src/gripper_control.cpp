@@ -46,7 +46,7 @@ public:
   }
 
   // グリッパを角度[rad]を指定して開閉する
-  void set_gripper_angle(const double angle)
+  void move_gripper_angle(const double angle)
   {
     auto joint_values = move_group_gripper_->getCurrentJointValues();
     joint_values[0] = angle;
@@ -75,10 +75,10 @@ int main(int argc, char ** argv)
   controller.move_arm_to_named_pose("home");
 
   // グリッパを開閉する
-  controller.set_gripper_angle(angles::from_degrees(60));
-  controller.set_gripper_angle(angles::from_degrees(0));
-  controller.set_gripper_angle(angles::from_degrees(60));
-  controller.set_gripper_angle(angles::from_degrees(0));
+  controller.move_gripper_angle(angles::from_degrees(60));
+  controller.move_gripper_angle(angles::from_degrees(0));
+  controller.move_gripper_angle(angles::from_degrees(60));
+  controller.move_gripper_angle(angles::from_degrees(0));
 
   rclcpp::shutdown();
   spin_thread.join();

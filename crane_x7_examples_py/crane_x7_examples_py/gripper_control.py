@@ -55,7 +55,7 @@ class GripperControl:
             single_plan_parameters=self.arm_plan_params,
         )
 
-    def set_gripper_angle(self, angle):
+    def move_gripper_angle(self, angle):
         # グリッパを角度[rad]を指定して開閉する
         self.gripper.set_start_state_to_current_state()
         robot_state = RobotState(self.robot_model)
@@ -76,10 +76,10 @@ def main(args=None):
     controller.move_arm_to_named_pose('home')
 
     # グリッパを開閉する
-    controller.set_gripper_angle(math.radians(60.0))
-    controller.set_gripper_angle(math.radians(0.0))
-    controller.set_gripper_angle(math.radians(60.0))
-    controller.set_gripper_angle(math.radians(0.0))
+    controller.move_gripper_angle(math.radians(60.0))
+    controller.move_gripper_angle(math.radians(0.0))
+    controller.move_gripper_angle(math.radians(60.0))
+    controller.move_gripper_angle(math.radians(0.0))
 
     # Finish with error. Related Issue
     # https://github.com/moveit/moveit2/issues/2693

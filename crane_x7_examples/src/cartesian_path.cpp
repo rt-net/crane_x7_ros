@@ -50,7 +50,7 @@ public:
   }
 
   // グリッパを角度[rad]を指定して開閉する
-  void set_gripper_angle(const double angle)
+  void move_gripper_angle(const double angle)
   {
     auto joint_values = move_group_gripper_->getCurrentJointValues();
     joint_values[0] = angle;
@@ -86,7 +86,7 @@ int main(int argc, char ** argv)
 
   // homeの姿勢にする
   controller.move_arm_to_named_pose("home");
-  controller.set_gripper_angle(angles::from_degrees(90));
+  controller.move_gripper_angle(angles::from_degrees(90));
 
   // 座標(x=0.3, y=0.0, z=0.1)を中心にXY平面上で半径0.1 mの円を3回描く経由点を生成する
   std::vector<geometry_msgs::msg::Pose> waypoints;
@@ -117,7 +117,7 @@ int main(int argc, char ** argv)
 
   // homeの姿勢に戻る
   controller.move_arm_to_named_pose("home");
-  controller.set_gripper_angle(0);
+  controller.move_gripper_angle(0);
 
   rclcpp::shutdown();
   spin_thread.join();

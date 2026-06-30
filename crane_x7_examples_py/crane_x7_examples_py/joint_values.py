@@ -53,7 +53,7 @@ class JointValues:
             single_plan_parameters=self.arm_plan_params,
         )
 
-    def set_arm_joint_values(self, joint_values_dict):
+    def move_arm_joint_values(self, joint_values_dict):
         # 各ジョイント角度[rad]を指定してアームを動かす
         # joint_values_dictはジョイント名をキー、角度[rad]を値とする辞書
         robot_state = RobotState(self.robot_model)
@@ -102,7 +102,7 @@ def main(args=None):
 
     for joint_name in joint_names:
         joint_values_dict[joint_name] = target_angle
-        controller.set_arm_joint_values(joint_values_dict)
+        controller.move_arm_joint_values(joint_values_dict)
 
     # 垂直に戻す
     controller.move_arm_to_named_pose('vertical')

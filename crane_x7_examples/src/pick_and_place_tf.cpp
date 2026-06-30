@@ -69,7 +69,7 @@ public:
   }
 
   // グリッパを角度[rad]を指定して開閉する
-  void set_gripper_angle(const double angle)
+  void move_gripper_angle(const double angle)
   {
     auto joint_values = move_group_gripper_->getCurrentJointValues();
     joint_values[0] = angle;
@@ -206,25 +206,25 @@ private:
   void picking(tf2::Vector3 target_position)
   {
     // 何かを掴んでいた時のためにハンドを開閉
-    set_gripper_angle(GRIPPER_OPEN);
-    set_gripper_angle(GRIPPER_CLOSE);
+    move_gripper_angle(GRIPPER_OPEN);
+    move_gripper_angle(GRIPPER_CLOSE);
 
     // ピック動作（掴みに行く）
     control_arm(target_position.x(), target_position.y(), target_position.z() + 0.12, -180, 0, 90);
-    set_gripper_angle(GRIPPER_OPEN);
+    move_gripper_angle(GRIPPER_OPEN);
     control_arm(target_position.x(), target_position.y(), target_position.z() + 0.07, -180, 0, 90);
-    set_gripper_angle(GRIPPER_GRASP);
+    move_gripper_angle(GRIPPER_GRASP);
     control_arm(target_position.x(), target_position.y(), target_position.z() + 0.12, -180, 0, 90);
 
     // プレース動作（移動して置く）
     control_arm(0.1, 0.2, 0.2, -180, 0, 90);
     control_arm(0.1, 0.2, 0.13, -180, 0, 90);
-    set_gripper_angle(GRIPPER_OPEN);
+    move_gripper_angle(GRIPPER_OPEN);
     control_arm(0.1, 0.2, 0.2, -180, 0, 90);
 
     // 待機姿勢に戻る
     init_pose();
-    set_gripper_angle(GRIPPER_CLOSE);
+    move_gripper_angle(GRIPPER_CLOSE);
   }
 
   std::shared_ptr<MoveGroupInterface> move_group_arm_;

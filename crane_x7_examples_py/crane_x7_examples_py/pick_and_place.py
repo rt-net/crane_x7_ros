@@ -94,7 +94,7 @@ class PickAndPlace:
             single_plan_parameters=self.arm_plan_params,
         )
 
-    def set_gripper_angle(self, angle):
+    def move_gripper_angle(self, angle):
         # グリッパを角度[rad]を指定して開閉する
         self.gripper.set_start_state_to_current_state()
         robot_state = RobotState(self.robot_model)
@@ -156,25 +156,25 @@ def main(args=None):
 
     # 初期化動作
     controller.move_arm_to_named_pose('home')
-    controller.set_gripper_angle(controller.GRIPPER_OPEN)  # 何かを掴んでいた時のために開く
+    controller.move_gripper_angle(controller.GRIPPER_OPEN)  # 何かを掴んでいた時のために開く
     controller.set_constraints()
 
     # ピック動作（掴みに行く）
     controller.move_arm_to_pose(pre_grasp_pose)   # 物体の上に腕を伸ばす
     controller.move_arm_to_pose(grasp_pose)        # アプローチ
-    controller.set_gripper_angle(controller.GRIPPER_GRASP)    # 掴む
+    controller.move_gripper_angle(controller.GRIPPER_GRASP)    # 掴む
     controller.move_arm_to_pose(pre_grasp_pose)    # 持ち上げる
 
     # プレース動作（移動して置く）
     controller.move_arm_to_pose(pre_release_pose)  # 移動する
     controller.move_arm_to_pose(release_pose)       # 下ろす
-    controller.set_gripper_angle(controller.GRIPPER_OPEN)      # 離す
+    controller.move_gripper_angle(controller.GRIPPER_OPEN)      # 離す
     controller.move_arm_to_pose(pre_release_pose)   # 少し持ち上げる
 
     # 終了動作
     controller.clear_constraints()
     controller.move_arm_to_named_pose('home')
-    controller.set_gripper_angle(controller.GRIPPER_CLOSE)
+    controller.move_gripper_angle(controller.GRIPPER_CLOSE)
 
     # Finish with error. Related Issue
     # https://github.com/moveit/moveit2/issues/2693

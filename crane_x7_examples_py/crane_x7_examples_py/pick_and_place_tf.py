@@ -140,18 +140,18 @@ class PickAndPlaceTf(Node):
 
     def picking(self, target_position):
         # 何かを掴んでいた時のためにハンドを開閉
-        self.set_gripper_angle(self.GRIPPER_OPEN)
-        self.set_gripper_angle(self.GRIPPER_CLOSE)
+        self.move_gripper_angle(self.GRIPPER_OPEN)
+        self.move_gripper_angle(self.GRIPPER_CLOSE)
 
         # ピック動作（掴みに行く）
         self.control_arm(
             target_position.x, target_position.y, target_position.z + 0.12, -180, 0, 90
         )
-        self.set_gripper_angle(self.GRIPPER_OPEN)
+        self.move_gripper_angle(self.GRIPPER_OPEN)
         self.control_arm(
             target_position.x, target_position.y, target_position.z + 0.05, -180, 0, 90
         )
-        self.set_gripper_angle(self.GRIPPER_GRASP)
+        self.move_gripper_angle(self.GRIPPER_GRASP)
         self.control_arm(
             target_position.x, target_position.y, target_position.z + 0.12, -180, 0, 90
         )
@@ -159,12 +159,12 @@ class PickAndPlaceTf(Node):
         # プレース動作（移動して置く）
         self.control_arm(0.1, 0.2, 0.2, -180, 0, 90)
         self.control_arm(0.1, 0.2, 0.13, -180, 0, 90)
-        self.set_gripper_angle(self.GRIPPER_OPEN)
+        self.move_gripper_angle(self.GRIPPER_OPEN)
         self.control_arm(0.1, 0.2, 0.2, -180, 0, 90)
 
         # 待機姿勢に戻る
         self.init_pose()
-        self.set_gripper_angle(self.GRIPPER_CLOSE)
+        self.move_gripper_angle(self.GRIPPER_CLOSE)
 
     def move_arm_to_pose(self, pose):
         # アームを目標位置・姿勢（Pose）に動かす
@@ -204,7 +204,7 @@ class PickAndPlaceTf(Node):
             single_plan_parameters=self.arm_plan_params,
         )
 
-    def set_gripper_angle(self, angle):
+    def move_gripper_angle(self, angle):
         # グリッパを角度[rad]を指定して開閉する
         self.gripper.set_start_state_to_current_state()
         robot_state = RobotState(self.robot_model)

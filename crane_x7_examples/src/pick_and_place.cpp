@@ -76,7 +76,7 @@ public:
   }
 
   // グリッパを角度[rad]を指定して開閉する
-  void set_gripper_angle(const double angle)
+  void move_gripper_angle(const double angle)
   {
     auto joint_values = move_group_gripper_->getCurrentJointValues();
     joint_values[0] = angle;
@@ -154,25 +154,25 @@ int main(int argc, char ** argv)
 
   // 初期化動作
   controller.move_arm_to_named_pose("home");
-  controller.set_gripper_angle(PickAndPlace::GRIPPER_OPEN);  // 何かを掴んでいた時のために開く
+  controller.move_gripper_angle(PickAndPlace::GRIPPER_OPEN);  // 何かを掴んでいた時のために開く
   controller.set_constraints();
 
   // ピック動作（掴みに行く）
   controller.move_arm_to_pose(pre_grasp_pose);   // 物体の上に腕を伸ばす
   controller.move_arm_to_pose(grasp_pose);        // アプローチ
-  controller.set_gripper_angle(PickAndPlace::GRIPPER_GRASP);    // 掴む
+  controller.move_gripper_angle(PickAndPlace::GRIPPER_GRASP);    // 掴む
   controller.move_arm_to_pose(pre_grasp_pose);    // 持ち上げる
 
   // プレース動作（移動して置く）
   controller.move_arm_to_pose(pre_release_pose);  // 移動する
   controller.move_arm_to_pose(release_pose);       // 下ろす
-  controller.set_gripper_angle(PickAndPlace::GRIPPER_OPEN);      // 離す
+  controller.move_gripper_angle(PickAndPlace::GRIPPER_OPEN);      // 離す
   controller.move_arm_to_pose(post_release_pose);  // 少し持ち上げる
 
   // 終了動作
   controller.clear_constraints();
   controller.move_arm_to_named_pose("home");
-  controller.set_gripper_angle(PickAndPlace::GRIPPER_CLOSE);
+  controller.move_gripper_angle(PickAndPlace::GRIPPER_CLOSE);
 
   rclcpp::shutdown();
   spin_thread.join();
