@@ -131,26 +131,58 @@ int main(int argc, char ** argv)
 
   PickAndPlace controller(node);
 
-  // アームの目標姿勢（hand down姿勢: RPY = -180, 0, -90 [deg]）
+  // 掴む位置（ピック位置）のXYZ[m]とRPY[deg]
+  const double PICK_X = 0.2;
+  const double PICK_Y = 0.0;
+  const double PICK_Z = 0.13;
+  const double PICK_ROLL = -180.0;
+  const double PICK_PITCH = 0.0;
+  const double PICK_YAW = -90.0;
+
+  // 置く位置（プレース位置）のXYZ[m]とRPY[deg]
+  const double PLACE_X = 0.2;
+  const double PLACE_Y = 0.2;
+  const double PLACE_Z = 0.13;
+  const double PLACE_ROLL = -180.0;
+  const double PLACE_PITCH = 0.0;
+  const double PLACE_YAW = -90.0;
+
+  // アプローチ・退避に使う高さオフセット[m]
+  const double APPROACH_Z_OFFSET = 0.17;
+  const double LEAVE_Z_OFFSET = 0.07;
+
+  // 各姿勢を生成
   tf2::Quaternion q;
-  q.setRPY(angles::from_degrees(-180), angles::from_degrees(0), angles::from_degrees(-90));
+  q.setRPY(
+    angles::from_degrees(PICK_ROLL),
+    angles::from_degrees(PICK_PITCH),
+    angles::from_degrees(PICK_YAW));
+
   geometry_msgs::msg::Pose pre_grasp_pose;
-  pre_grasp_pose.position.x = 0.2;
-  pre_grasp_pose.position.y = 0.0;
-  pre_grasp_pose.position.z = 0.3;
+  pre_grasp_pose.position.x = PICK_X;
+  pre_grasp_pose.position.y = PICK_Y;
+  pre_grasp_pose.position.z = PICK_Z + APPROACH_Z_OFFSET;
   pre_grasp_pose.orientation = tf2::toMsg(q);
 
   geometry_msgs::msg::Pose grasp_pose = pre_grasp_pose;
-  grasp_pose.position.z = 0.13;
+  grasp_pose.position.z = PICK_Z;
 
-  geometry_msgs::msg::Pose pre_release_pose = pre_grasp_pose;
-  pre_release_pose.position.y = 0.2;
+  q.setRPY(
+    angles::from_degrees(PLACE_ROLL),
+    angles::from_degrees(PLACE_PITCH),
+    angles::from_degrees(PLACE_YAW));
+
+  geometry_msgs::msg::Pose pre_release_pose;
+  pre_release_pose.position.x = PLACE_X;
+  pre_release_pose.position.y = PLACE_Y;
+  pre_release_pose.position.z = PLACE_Z + APPROACH_Z_OFFSET;
+  pre_release_pose.orientation = tf2::toMsg(q);
 
   geometry_msgs::msg::Pose release_pose = pre_release_pose;
-  release_pose.position.z = 0.13;
+  release_pose.position.z = PLACE_Z;
 
   geometry_msgs::msg::Pose post_release_pose = pre_release_pose;
-  post_release_pose.position.z = 0.2;
+  post_release_pose.position.z = PLACE_Z + LEAVE_Z_OFFSET;
 
   // 初期化動作
   controller.move_arm_to_named_pose("home");

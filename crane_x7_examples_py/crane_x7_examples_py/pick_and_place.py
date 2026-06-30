@@ -138,21 +138,43 @@ def main(args=None):
 
     controller = PickAndPlace()
 
-    # 物体を持ち上げる高さ
-    LIFTING_HEIGHT = 0.3
+    # 掴む位置（ピック位置）のXYZ[m]とRPY[deg]
+    PICK_X = 0.2
+    PICK_Y = 0.0
+    PICK_Z = 0.13
+    PICK_ROLL = -180.0
+    PICK_PITCH = 0.0
+    PICK_YAW = -90.0
 
-    # アームの目標姿勢（hand down姿勢: RPY = -180, 0, -90 [deg]）
-    gripper_quat = Rotation.from_euler('xyz', [-180.0, 0.0, -90.0], degrees=True).as_quat()
-    gripper_quat_msg = Quaternion(
-        x=gripper_quat[0], y=gripper_quat[1], z=gripper_quat[2], w=gripper_quat[3]
+    # 置く位置（プレース位置）のXYZ[m]とRPY[deg]
+    PLACE_X = 0.2
+    PLACE_Y = 0.2
+    PLACE_Z = 0.13
+    PLACE_ROLL = -180.0
+    PLACE_PITCH = 0.0
+    PLACE_YAW = -90.0
+
+    # アプローチ・退避に使う高さオフセット[m]
+    APPROACH_Z_OFFSET = 0.17
+
+    # 各姿勢を生成
+    pick_quat = Rotation.from_euler('xyz', [PICK_ROLL, PICK_PITCH, PICK_YAW], degrees=True).as_quat()
+    pick_quat_msg = Quaternion(
+        x=pick_quat[0], y=pick_quat[1], z=pick_quat[2], w=pick_quat[3]
     )
-    grasp_pose = Pose(position=Point(x=0.2, y=0.0, z=0.13), orientation=gripper_quat_msg)
+    grasp_pose = Pose(position=Point(x=PICK_X, y=PICK_Y, z=PICK_Z), orientation=pick_quat_msg)
     pre_grasp_pose = copy.deepcopy(grasp_pose)
-    pre_grasp_pose.position.z = LIFTING_HEIGHT
+    pre_grasp_pose.position.z = PICK_Z + APPROACH_Z_OFFSET
 
-    release_pose = Pose(position=Point(x=0.2, y=0.2, z=0.13), orientation=gripper_quat_msg)
+    place_quat = Rotation.from_euler(
+        'xyz', [PLACE_ROLL, PLACE_PITCH, PLACE_YAW], degrees=True
+    ).as_quat()
+    place_quat_msg = Quaternion(
+        x=place_quat[0], y=place_quat[1], z=place_quat[2], w=place_quat[3]
+    )
+    release_pose = Pose(position=Point(x=PLACE_X, y=PLACE_Y, z=PLACE_Z), orientation=place_quat_msg)
     pre_release_pose = copy.deepcopy(release_pose)
-    pre_release_pose.position.z = LIFTING_HEIGHT
+    pre_release_pose.position.z = PLACE_Z + APPROACH_Z_OFFSET
 
     # 初期化動作
     controller.move_arm_to_named_pose('home')

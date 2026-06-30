@@ -45,6 +45,15 @@ public:
   inline static const double GRIPPER_GRASP = angles::from_degrees(20.0);
   inline static const double GRIPPER_CLOSE = 0.0;
 
+  // 置く位置（プレース位置）のXYZ[m]とRPY[deg]
+  inline static const double PLACE_X = 0.1;
+  inline static const double PLACE_Y = 0.2;
+  inline static const double PLACE_Z = 0.13;
+  inline static const double PLACE_ROLL = -180.0;
+  inline static const double PLACE_PITCH = 0.0;
+  inline static const double PLACE_YAW = 90.0;
+  inline static const double PLACE_APPROACH_Z = 0.2;
+
   PickAndPlaceTf(
     rclcpp::Node::SharedPtr move_group_arm_node,
     rclcpp::Node::SharedPtr move_group_gripper_node)
@@ -217,10 +226,10 @@ private:
     control_arm(target_position.x(), target_position.y(), target_position.z() + 0.12, -180, 0, 90);
 
     // プレース動作（移動して置く）
-    control_arm(0.1, 0.2, 0.2, -180, 0, 90);
-    control_arm(0.1, 0.2, 0.13, -180, 0, 90);
+    control_arm(PLACE_X, PLACE_Y, PLACE_APPROACH_Z, PLACE_ROLL, PLACE_PITCH, PLACE_YAW);
+    control_arm(PLACE_X, PLACE_Y, PLACE_Z, PLACE_ROLL, PLACE_PITCH, PLACE_YAW);
     move_gripper_angle(GRIPPER_OPEN);
-    control_arm(0.1, 0.2, 0.2, -180, 0, 90);
+    control_arm(PLACE_X, PLACE_Y, PLACE_APPROACH_Z, PLACE_ROLL, PLACE_PITCH, PLACE_YAW);
 
     // 待機姿勢に戻る
     init_pose();

@@ -40,6 +40,15 @@ class PickAndPlaceTf(Node):
     GRIPPER_GRASP = math.radians(20.0)
     GRIPPER_CLOSE = math.radians(0.0)
 
+    # 置く位置（プレース位置）のXYZ[m]とRPY[deg]
+    PLACE_X = 0.1
+    PLACE_Y = 0.2
+    PLACE_Z = 0.13
+    PLACE_ROLL = -180.0
+    PLACE_PITCH = 0.0
+    PLACE_YAW = 90.0
+    PLACE_APPROACH_Z = 0.2
+
     def __init__(self):
         super().__init__('pick_and_place_tf')
         self.logger = self.get_logger()
@@ -157,10 +166,16 @@ class PickAndPlaceTf(Node):
         )
 
         # プレース動作（移動して置く）
-        self.control_arm(0.1, 0.2, 0.2, -180, 0, 90)
-        self.control_arm(0.1, 0.2, 0.13, -180, 0, 90)
+        self.control_arm(
+            self.PLACE_X, self.PLACE_Y, self.PLACE_APPROACH_Z,
+            self.PLACE_ROLL, self.PLACE_PITCH, self.PLACE_YAW)
+        self.control_arm(
+            self.PLACE_X, self.PLACE_Y, self.PLACE_Z,
+            self.PLACE_ROLL, self.PLACE_PITCH, self.PLACE_YAW)
         self.move_gripper_angle(self.GRIPPER_OPEN)
-        self.control_arm(0.1, 0.2, 0.2, -180, 0, 90)
+        self.control_arm(
+            self.PLACE_X, self.PLACE_Y, self.PLACE_APPROACH_Z,
+            self.PLACE_ROLL, self.PLACE_PITCH, self.PLACE_YAW)
 
         # 待機姿勢に戻る
         self.init_pose()
