@@ -157,24 +157,24 @@ int main(int argc, char ** argv)
   controller.set_constraints();
 
   // ピック動作（掴みに行く）
-  controller.control_arm(  // 物体の上に腕を伸ばす
-    PICK_X, PICK_Y, LIFTING_HEIGHT, PICK_ROLL, PICK_PITCH, PICK_YAW
-  );
-  controller.control_arm(PICK_X, PICK_Y, PICK_Z, PICK_ROLL, PICK_PITCH, PICK_YAW);  // アプローチ
-  controller.move_gripper_angle(PickAndPlace::GRIPPER_GRASP);  // 掴む
-  controller.control_arm(  // 持ち上げる
-      PICK_X, PICK_Y, LIFTING_HEIGHT, PICK_ROLL, PICK_PITCH, PICK_YAW
-  );
+  // 物体の上に腕を伸ばす
+  controller.control_arm(PICK_X, PICK_Y, LIFTING_HEIGHT, PICK_ROLL, PICK_PITCH, PICK_YAW);
+  // アプローチ
+  controller.control_arm(PICK_X, PICK_Y, PICK_Z, PICK_ROLL, PICK_PITCH, PICK_YAW);
+  // 掴む
+  controller.move_gripper_angle(PickAndPlace::GRIPPER_GRASP);
+  // 持ち上げる
+  controller.control_arm(PICK_X, PICK_Y, LIFTING_HEIGHT, PICK_ROLL, PICK_PITCH, PICK_YAW);
 
   // プレース動作（移動して置く）
-  controller.control_arm(  // 移動する
-      PLACE_X, PLACE_Y, LIFTING_HEIGHT, PLACE_ROLL, PLACE_PITCH, PLACE_YAW
-  );
-  controller.control_arm(PLACE_X, PLACE_Y, PLACE_Z, PLACE_ROLL, PLACE_PITCH, PLACE_YAW);  // 下ろす
-  controller.move_gripper_angle(PickAndPlace::GRIPPER_OPEN);  // 離す
-  controller.control_arm(  // 持ち上げる
-    PLACE_X, PLACE_Y, LIFTING_HEIGHT, PLACE_ROLL, PLACE_PITCH, PLACE_YAW
-  );
+  // 移動する
+  controller.control_arm(PLACE_X, PLACE_Y, LIFTING_HEIGHT, PLACE_ROLL, PLACE_PITCH, PLACE_YAW);
+  // 下ろす
+  controller.control_arm(PLACE_X, PLACE_Y, PLACE_Z, PLACE_ROLL, PLACE_PITCH, PLACE_YAW);
+  // 離す
+  controller.move_gripper_angle(PickAndPlace::GRIPPER_OPEN);
+  // 持ち上げる
+  controller.control_arm(PLACE_X, PLACE_Y, LIFTING_HEIGHT, PLACE_ROLL, PLACE_PITCH, PLACE_YAW);
 
   // 終了動作
   controller.clear_constraints();
