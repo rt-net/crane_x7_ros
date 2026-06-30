@@ -158,7 +158,9 @@ def main(args=None):
     APPROACH_Z_OFFSET = 0.17
 
     # 各姿勢を生成
-    pick_quat = Rotation.from_euler('xyz', [PICK_ROLL, PICK_PITCH, PICK_YAW], degrees=True).as_quat()
+    pick_quat = Rotation.from_euler(
+        'xyz', [PICK_ROLL, PICK_PITCH, PICK_YAW], degrees=True
+    ).as_quat()
     pick_quat_msg = Quaternion(
         x=pick_quat[0], y=pick_quat[1], z=pick_quat[2], w=pick_quat[3]
     )
@@ -172,7 +174,9 @@ def main(args=None):
     place_quat_msg = Quaternion(
         x=place_quat[0], y=place_quat[1], z=place_quat[2], w=place_quat[3]
     )
-    release_pose = Pose(position=Point(x=PLACE_X, y=PLACE_Y, z=PLACE_Z), orientation=place_quat_msg)
+    release_pose = Pose(
+        position=Point(x=PLACE_X, y=PLACE_Y, z=PLACE_Z), orientation=place_quat_msg
+    )
     pre_release_pose = copy.deepcopy(release_pose)
     pre_release_pose.position.z = PLACE_Z + APPROACH_Z_OFFSET
 
