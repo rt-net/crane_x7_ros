@@ -43,7 +43,8 @@ public:
   ~CraneX7Hardware();
 
   CRANE_X7_CONTROL_PUBLIC
-  CallbackReturn on_init(const hardware_interface::HardwareInfo & info) override;
+  CallbackReturn on_init(
+    const hardware_interface::HardwareComponentInterfaceParams & params) override;
 
   CRANE_X7_CONTROL_PUBLIC
   std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
