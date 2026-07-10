@@ -230,7 +230,9 @@ return_type CraneX7Hardware::read(
 
   if (!hardware_->sync_read(GROUP_NAME)) {
     RCLCPP_ERROR(LOGGER, "Failed to sync read from servo motors.");
-    return return_type::ERROR;
+    // sync_readに失敗しても通信は継続させる。
+    // 不確かなデータをセットしないようにOKを返す。
+    return return_type::OK;
   }
 
   std::vector<double> positions;
