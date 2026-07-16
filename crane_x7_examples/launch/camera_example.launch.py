@@ -25,15 +25,14 @@ def generate_launch_description():
     declare_example_name = DeclareLaunchArgument(
         'example',
         default_value='color_detection',
-        description=(
-            'Set an example executable name: '
-            '[color_detection, aruco_detection, point_cloud_detection]'
-        ),
+        choices=['color_detection', 'aruco_detection', 'point_cloud_detection'],
+        description='Set an example executable name.',
     )
 
     declare_use_sim_time = DeclareLaunchArgument(
         'use_sim_time',
         default_value='false',
+        choices=['true', 'false'],
         description=('Set true when using the gazebo simulator.'),
     )
 

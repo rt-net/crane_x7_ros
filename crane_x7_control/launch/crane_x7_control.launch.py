@@ -69,18 +69,21 @@ def generate_launch_description():
     declare_use_gazebo = DeclareLaunchArgument(
         'use_gazebo',
         default_value='false',
+        choices=['true', 'false'],
         description='Use gazebo or not.'
     )
 
     declare_use_d435 = DeclareLaunchArgument(
         'use_d435',
         default_value='false',
+        choices=['true', 'false'],
         description='Use d435 or not.'
     )
 
     declare_use_mock_components = DeclareLaunchArgument(
         'use_mock_components',
         default_value='false',
+        choices=['true', 'false'],
         description='Use mock_components or not.'
     )
 
