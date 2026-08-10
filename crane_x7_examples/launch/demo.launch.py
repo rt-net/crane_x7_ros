@@ -24,7 +24,10 @@ from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
     declare_use_d435 = DeclareLaunchArgument(
-        'use_d435', default_value='false', description='Use d435.'
+        'use_d435', 
+        default_value='false',
+        choices=['true', 'false'],
+        description='Use d435.'
     )
 
     declare_rviz_config = DeclareLaunchArgument(
