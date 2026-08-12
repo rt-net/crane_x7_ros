@@ -25,15 +25,14 @@ def generate_launch_description():
     declare_example_name = DeclareLaunchArgument(
         'example',
         default_value='gripper_control',
-        description=(
-            'Set an example executable name: '
-            '[gripper_control, pose_groupstate, joint_values, pick_and_place]'
-        ),
+        choices=['gripper_control', 'pose_groupstate', 'joint_values', 'pick_and_place'],
+        description='Set an example executable name.',
     )
 
     declare_use_sim_time = DeclareLaunchArgument(
         'use_sim_time',
         default_value='false',
+        choices=['true', 'false'],
         description=('Set true when using the gazebo simulator.'),
     )
 
